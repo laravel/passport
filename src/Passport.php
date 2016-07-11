@@ -13,8 +13,7 @@ class Passport
      * @var array
      */
     public static $scopes = [
-        'user' => 'Retrieve your basic profile information.',
-        'write' => 'Update your basic profile information.',
+        //
     ];
 
     /**
@@ -23,8 +22,12 @@ class Passport
      * @param  array  $options
      * @return RouteRegistrar
      */
-    public static function routes($callback, array $options = [])
+    public static function routes($callback = null, array $options = [])
     {
+        $callback = $callback ?: function ($router) {
+            $router->all();
+        };
+
         $options = array_merge($options, [
             'namespace' => '\Laravel\Passport\Http\Controllers',
         ]);
