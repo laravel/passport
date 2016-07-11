@@ -13,7 +13,8 @@ class Passport
      * @var array
      */
     public static $scopes = [
-        'user' => 'Get information about the user.',
+        'user' => 'Retrieve your basic profile information.',
+        'write' => 'Update your basic profile information.',
     ];
 
     /**
