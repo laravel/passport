@@ -54,6 +54,7 @@ class ClientRepository
             'secret' => str_random(80),
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
+            'revoked' => false,
         ]);
 
         $client->save();
