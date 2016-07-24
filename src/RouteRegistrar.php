@@ -62,7 +62,7 @@ class RouteRegistrar
     }
 
     /**
-     * Register the routes for issuing access tokens.
+     * Register the routes for retrieving and issuing access tokens.
      *
      * @return void
      */
@@ -71,6 +71,16 @@ class RouteRegistrar
         $this->router->post('/oauth/token', [
             'uses' => 'AccessTokenController@issueToken'
         ]);
+
+        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+            $router->get('/oauth/tokens', [
+                'uses' => 'AuthorizedAccessTokenController@forUser',
+            ]);
+
+            $router->delete('/oauth/tokens/{token_id}', [
+                'uses' => 'AuthorizedAccessTokenController@destroy',
+            ]);
+        });
     }
 
     /**
@@ -120,15 +130,15 @@ class RouteRegistrar
     public function forPersonalAccessTokens()
     {
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
-            $router->get('/oauth/tokens', [
+            $router->get('/oauth/personal-access-tokens', [
                 'uses' => 'PersonalAccessTokenController@forUser',
             ]);
 
-            $router->post('/oauth/tokens', [
+            $router->post('/oauth/personal-access-tokens', [
                 'uses' => 'PersonalAccessTokenController@store',
             ]);
 
-            $router->delete('/oauth/tokens/{token_id}', [
+            $router->delete('/oauth/personal-access-tokens/{token_id}', [
                 'uses' => 'PersonalAccessTokenController@destroy',
             ]);
         });

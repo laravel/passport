@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
+use DateTime;
 use Illuminate\Database\Connection;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -48,6 +49,8 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->formatScopesForStorage($accessTokenEntity->getScopes()),
             'revoked' => false,
+            'created_at' => new DateTime,
+            'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
     }
