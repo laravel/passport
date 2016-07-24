@@ -12,7 +12,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
-        $clients->shouldReceive('forUser')->once()->with(1)->andReturn('response');
+        $clients->shouldReceive('activeForUser')->once()->with(1)->andReturn('response');
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('user')->andReturn((object) ['id' => 1]);

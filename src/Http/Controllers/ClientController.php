@@ -47,7 +47,7 @@ class ClientController
      */
     public function forUser(Request $request)
     {
-        return $this->clients->forUser($request->user()->id);
+        return $this->clients->activeForUser($request->user()->id);
     }
 
     /**

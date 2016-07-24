@@ -8,11 +8,24 @@ class ClientRepository
      * Get a client by the given ID.
      *
      * @param  int  $id
-     * @return Client
+     * @return Client|null
      */
     public function find($id)
     {
         return Client::find($id);
+    }
+
+    /**
+     * Get an active client by the given ID.
+     *
+     * @param  int  $id
+     * @return Client|null
+     */
+    public function findActive($id)
+    {
+        $client = $this->find($id);
+
+        return $client && ! $client->revoked ? $client : null;
     }
 
     /**
@@ -25,6 +38,19 @@ class ClientRepository
     {
         return Client::where('user_id', $userId)
                         ->orderBy('name', 'desc')->get();
+    }
+
+    /**
+     * Get the active client instances for the given user ID.
+     *
+     * @param  mixed  $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function activeForUser($userId)
+    {
+        return $this->forUser($userId)->reject(function ($client) {
+            return $client->revoked;
+        })->values();
     }
 
     /**
@@ -87,9 +113,8 @@ class ClientRepository
      */
     public function revoked($id)
     {
-        return Client::withTrashed()
-                ->where('id', $id)
-                ->whereNotNull('deleted_at')->exists();
+        return Client::where('id', $id)
+                ->where('revoked', true)->exists();
     }
 
     /**
@@ -100,8 +125,8 @@ class ClientRepository
      */
     public function delete(Client $client)
     {
-        $client->forceFill(['revoked' => true])->save();
+        $client->tokens()->update(['revoked' => true]);
 
-        $client->delete();
+        $client->forceFill(['revoked' => true])->save();
     }
 }

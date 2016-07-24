@@ -13,7 +13,7 @@ class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $client = new BridgeClientRepositoryTestClientStub;
-        $clients->shouldReceive('find')->with(1)->andReturn($client);
+        $clients->shouldReceive('findActive')->with(1)->andReturn($client);
         $repository = new ClientRepository($clients);
 
         $client = $repository->getClientEntity(1, 'authorization_code', 'secret', true);
@@ -28,7 +28,7 @@ class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $client = new BridgeClientRepositoryTestClientStub;
         $client->personal_access_client = true;
-        $clients->shouldReceive('find')->with(1)->andReturn($client);
+        $clients->shouldReceive('findActive')->with(1)->andReturn($client);
         $repository = new ClientRepository($clients);
 
         $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $repository->getClientEntity(1, 'client_credentials', 'secret', true));
