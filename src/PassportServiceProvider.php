@@ -26,6 +26,10 @@ class PassportServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
+            $this->publishes([
+                __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
+            ], 'passport-views');
+
             $this->commands([
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
