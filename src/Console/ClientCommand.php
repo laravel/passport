@@ -14,54 +14,72 @@ class ClientCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:client';
+    protected $signature = 'passport:client {--personal : Create a personal access token client}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a client for issuing personal access tokens';
+    protected $description = 'Create a client for issuing access tokens';
 
     /**
      * Execute the console command.
      *
      * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return mixed
+     * @return void
      */
     public function handle(ClientRepository $clients)
     {
-        $this->createPersonalAccessClient($this->createClient($clients, $this->ask(
-            'What should we name the client?',
-            config('app.name').' Personal Access Tokens'
-        )));
+        if ($this->option('personal')) {
+            return $this->handlePersonal($clients);
+        }
 
-        $this->info('Personal access token client created successfully.');
+        $userId = $this->ask(
+            'Which user ID should the client be assigned to?'
+        );
+
+        $name = $this->ask(
+            'What should we name the client?'
+        );
+
+        $redirect = $this->ask(
+            'Where should we redirect the request after authorization?',
+            url('/auth/callback')
+        );
+
+        $client = $clients->create(
+            $userId, $name, $redirect
+        );
+
+        $this->info('New client created successfully.');
+        $this->line('<comment>Client ID:</comment> '.$client->id);
+        $this->line('<comment>Client secret:</comment> '.$client->secret);
     }
 
     /**
-     * Create a client with the given name.
+     * Create a new personal access client.
      *
-     * @param  string  $name
-     * @return int
-     */
-    protected function createClient(ClientRepository $clients, $name)
-    {
-        return $clients->create(null, $name, 'http://localhost', true)->id;
-    }
-
-    /**
-     * Create the personal access client record.
-     *
-     * @param  int  $clientId
+     * @param  \Laravel\Passport\ClientRepository  $clients
      * @return void
      */
-    protected function createPersonalAccessClient($clientId)
+    protected function handlePersonal(ClientRepository $clients)
     {
+        $name = $this->ask(
+            'What should we name the client?',
+            config('app.name').' Personal Access Tokens'
+        );
+
+        $client = $clients->create(
+            null, $name, 'http://localhost', true
+        );
+
         DB::table('oauth_personal_access_clients')->insert([
-            'client_id' => $clientId,
+            'client_id' => $client->id,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
         ]);
+
+        $this->info('Personal access token client created successfully.');
     }
 }
