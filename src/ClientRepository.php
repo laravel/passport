@@ -77,7 +77,7 @@ class ClientRepository
         $client = (new Client)->forceFill([
             'user_id' => $userId,
             'name' => $name,
-            'secret' => str_random(80),
+            'secret' => str_random(40),
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
             'revoked' => false,
