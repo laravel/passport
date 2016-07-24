@@ -130,6 +130,10 @@ class RouteRegistrar
     public function forPersonalAccessTokens()
     {
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+            $router->get('/oauth/scopes', [
+                'uses' => 'ScopeController@all',
+            ]);
+
             $router->get('/oauth/personal-access-tokens', [
                 'uses' => 'PersonalAccessTokenController@forUser',
             ]);
