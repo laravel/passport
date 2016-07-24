@@ -57,7 +57,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
             'scopes' => ['user', 'user-admin'],
         ], [
             'name' => 'required|max:255',
-            'scopes' => 'required|array|in:'.implode(',', Passport::scopeIds()),
+            'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 

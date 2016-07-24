@@ -69,7 +69,7 @@ class PersonalAccessTokenFactory
     public function make($userId, $name, array $scopes = [])
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($this->clients->personalAccessClient(), $scopes)
+            $this->createRequest($this->clients->personalAccessClient(), $userId, $scopes)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
@@ -88,15 +88,17 @@ class PersonalAccessTokenFactory
      * Create a request instance for the given client.
      *
      * @param  Client  $client
+     * @param  mixed  $userId
      * @param  array  $scopes
      * @return ServerRequest
      */
-    protected function createRequest($client, array $scopes)
+    protected function createRequest($client, $userId, array $scopes)
     {
         return (new ServerRequest)->withParsedBody([
-            'grant_type' => 'client_credentials',
+            'grant_type' => 'personal_access',
             'client_id' => $client->id,
             'client_secret' => $client->secret,
+            'user_id' => $userId,
             'scope' => implode(' ', $scopes),
         ]);
     }

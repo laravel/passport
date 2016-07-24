@@ -10,7 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
-use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use Laravel\Passport\Bridge\PersonalAccessGrant;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -65,7 +65,7 @@ class PassportServiceProvider extends ServiceProvider
                 );
 
                 $server->enableGrantType(
-                    new ClientCredentialsGrant, new DateInterval('P100Y')
+                    new PersonalAccessGrant, new DateInterval('P100Y')
                 );
             });
         });
