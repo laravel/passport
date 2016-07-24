@@ -65,7 +65,7 @@ class ClientController
 
         return $this->clients->create(
             $request->user()->id, $request->name, $request->redirect
-        );
+        )->makeVisible('secret');
     }
 
     /**

@@ -100,6 +100,8 @@ class ClientRepository
      */
     public function delete(Client $client)
     {
+        $client->forceFill(['revoked' => true])->save();
+
         $client->delete();
     }
 }

@@ -33,7 +33,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
             return (object) ['id' => 1];
         });
 
-        $clients->shouldReceive('create')->once()->with(1, 'client name', 'http://localhost')->andReturn('response');
+        $clients->shouldReceive('create')->once()->with(1, 'client name', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
         $validator->shouldReceive('make')->once()->with([
@@ -49,7 +49,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
             $clients, $validator
         );
 
-        $this->assertEquals('response', $controller->store($request));
+        $this->assertEquals($client, $controller->store($request));
     }
 
     public function test_clients_can_be_updated()
