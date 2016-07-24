@@ -7,19 +7,12 @@
 
     <title>{{ config('app.name') }} - Authorization</title>
 
-    <!-- Fonts -->
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600' rel='stylesheet' type='text/css'>
-
     <!-- Styles -->
     <link href="/css/app.css" rel="stylesheet">
 
     <style>
         .passport-authorize .container {
             margin-top: 30px;
-        }
-
-        .passport-authorize h4 {
-            margin-top: 0;
         }
 
         .passport-authorize .scopes {
@@ -49,24 +42,25 @@
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
                 <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Authorization Request
+                    </div>
                     <div class="panel-body">
                         <!-- Introduction -->
-                        <h4>
-                            Authorize <strong>{{ $client->name }}</strong> to use your account?
-                        </h4>
+                        <p><strong>{{ $client->name }}</strong> is requesting permission to access your account.</p>
 
                         <!-- Scope List -->
-                        <div class="scopes">
-                            @if (count($scopes) > 0)
-                                <p><strong>This application will be able to:</strong></p>
+                        @if (count($scopes) > 0)
+                            <div class="scopes">
+                                    <p><strong>This application will be able to:</strong></p>
 
-                                <ul>
-                                    @foreach ($scopes as $scope)
-                                        <li>{{ $scope->description }}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
+                                    <ul>
+                                        @foreach ($scopes as $scope)
+                                            <li>{{ $scope->description }}</li>
+                                        @endforeach
+                                    </ul>
+                            </div>
+                        @endif
 
                         <div class="buttons">
                             <!-- Authorize Button -->
@@ -78,14 +72,14 @@
                                 <button type="submit" class="btn btn-success btn-approve">Authorize</button>
                             </form>
 
-                            <!-- Deny Button -->
+                            <!-- Cancel Button -->
                             <form method="post" action="/oauth/authorize">
                                 {{ csrf_field() }}
                                 {{ method_field('DELETE') }}
 
                                 <input type="hidden" name="state" value="{{ $request->state }}">
                                 <input type="hidden" name="client_id" value="{{ $client->id }}">
-                                <button class="btn btn-default">Cancel</button>
+                                <button class="btn btn-danger">Cancel</button>
                             </form>
                         </div>
                     </div>
