@@ -63,7 +63,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(AuthorizationServer::class, function () {
             return tap($this->makeAuthorizationServer(), function ($server) {
                 $server->enableGrantType(
-                    $this->makeAuthCodeGrant(), new DateInterval('P100Y')
+                    $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
 
                 $server->enableGrantType(
@@ -71,7 +71,7 @@ class PassportServiceProvider extends ServiceProvider
                 );
 
                 $server->enableGrantType(
-                    $this->makeRefreshTokenGrant(), new DateInterval('P100Y')
+                    $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
                 );
             });
         });
@@ -85,7 +85,7 @@ class PassportServiceProvider extends ServiceProvider
     protected function makeAuthCodeGrant()
     {
         return tap($this->buildAuthCodeGrant(), function ($grant) {
-            $grant->setRefreshTokenTTL(new DateInterval('P100Y'));
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
 
@@ -99,7 +99,7 @@ class PassportServiceProvider extends ServiceProvider
         return new AuthCodeGrant(
             $this->app->make(Bridge\AuthCodeRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class),
-            new DateInterval('P100Y')
+            new DateInterval('PT10M')
         );
     }
 
@@ -113,7 +113,7 @@ class PassportServiceProvider extends ServiceProvider
         $repository = $this->app->make(RefreshTokenRepository::class);
 
         return tap(new RefreshTokenGrant($repository), function ($grant) {
-            $grant->setRefreshTokenTTL(new DateInterval('P100Y'));
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
 

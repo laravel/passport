@@ -2,6 +2,9 @@
 
 namespace Laravel\Passport;
 
+use DateInterval;
+use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +18,20 @@ class Passport
     public static $scopes = [
         //
     ];
+
+    /**
+     * The date when access tokens expire.
+     *
+     * @var \DateTimeInterface|null
+     */
+    public static $tokensExpireAt;
+
+    /**
+     * The date when refresh tokens expire.
+     *
+     * @var \DateTimeInterface|null
+     */
+    public static $refreshTokensExpireAt;
 
     /**
      * Get a Passport route registrar.
@@ -96,5 +113,43 @@ class Passport
     public static function tokensCan(array $scopes)
     {
         static::$scopes = $scopes;
+    }
+
+    /**
+     * Get or set when access tokens expire.
+     *
+     * @param  \DateTimeInterface|null  $date
+     * @return \DateInterval|static
+     */
+    public static function tokensExpireIn(DateTimeInterface $date = null)
+    {
+        if (is_null($date)) {
+            return static::$tokensExpireAt
+                            ? Carbon::now()->diff(static::$tokensExpireAt)
+                            : new DateInterval('P100Y');
+        } else {
+            static::$tokensExpireAt = $date;
+        }
+
+        return new static;
+    }
+
+    /**
+     * Get or set when refresh tokens expire.
+     *
+     * @param  \DateTimeInterface|null  $date
+     * @return \DateInterval|static
+     */
+    public static function refreshTokensExpireIn(DateTimeInterface $date = null)
+    {
+        if (is_null($date)) {
+            return static::$refreshTokensExpireAt
+                            ? Carbon::now()->diff(static::$refreshTokensExpireAt)
+                            : new DateInterval('P100Y');
+        } else {
+            static::$refreshTokensExpireAt = $date;
+        }
+
+        return new static;
     }
 }
