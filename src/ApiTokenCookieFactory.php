@@ -73,7 +73,7 @@ class ApiTokenCookieFactory
     {
         return JWT::encode([
             'sub' => $userId,
-            'xsrf' => $csrfToken,
+            'csrf' => $csrfToken,
             'expiry' => $expiration->getTimestamp(),
         ], $this->encrypter->getKey());
     }

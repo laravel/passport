@@ -96,10 +96,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
-        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token'));
+        $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'xsrf' => 'token',
+                'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)))
         );
@@ -122,10 +122,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
-        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('wrong_token'));
+        $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'xsrf' => 'token',
+                'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)))
         );
@@ -146,10 +146,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
-        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token'));
+        $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'xsrf' => 'token',
+                'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)))
         );
