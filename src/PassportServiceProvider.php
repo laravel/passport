@@ -33,6 +33,7 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-views');
 
             $this->commands([
+                Console\InstallCommand::class,
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
             ]);

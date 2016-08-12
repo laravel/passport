@@ -66,7 +66,7 @@ class ClientCommand extends Command
     protected function handlePersonal(ClientRepository $clients)
     {
         $name = $this->ask(
-            'What should we name the client?',
+            'What should we name the personal access token client?',
             config('app.name').' Personal Access Tokens'
         );
 
