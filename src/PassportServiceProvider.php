@@ -32,6 +32,10 @@ class PassportServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
             ], 'passport-views');
 
+            $this->publishes([
+                __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/passport'),
+            ], 'passport-components');
+
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
