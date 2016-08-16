@@ -5,8 +5,9 @@ namespace Laravel\Passport\Http\Controllers;
 use Zend\Diactoros\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
+use Illuminate\Routing\Controller;
 
-class AccessTokenController
+class AccessTokenController extends Controller
 {
     use HandlesOAuthErrors;
 

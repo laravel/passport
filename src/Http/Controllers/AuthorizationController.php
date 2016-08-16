@@ -8,8 +8,9 @@ use Laravel\Passport\ClientRepository;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Routing\Controller;
 
-class AuthorizationController
+class AuthorizationController extends Controller
 {
     use HandlesOAuthErrors;
 
