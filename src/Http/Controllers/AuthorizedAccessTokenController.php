@@ -4,8 +4,9 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 
-class AuthorizedAccessTokenController
+class AuthorizedAccessTokenController extends Controller
 {
     /**
      * Get all of the authorized tokens for the authenticated user.

@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Laravel\Passport\Bridge\AccessTokenRepository;
+use Illuminate\Routing\Controller;
 
-class ApproveAuthorizationController
+class ApproveAuthorizationController extends Controller
 {
     use HandlesOAuthErrors, RetrievesAuthRequestFromSession;
 

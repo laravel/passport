@@ -4,9 +4,10 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Controller;
 use Laravel\Passport\ApiTokenCookieFactory;
 
-class TransientTokenController
+class TransientTokenController extends Controller
 {
     /**
      * The cookie factory instance.
