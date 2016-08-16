@@ -64,6 +64,21 @@ class ClientRepository
     }
 
     /**
+     * Resets the client secret code.
+     *
+     * @param  Client $client
+     * @return Client
+     */
+    public function resetSecret(Client $client)
+    {
+        $client->forceFill([
+            'secret' => str_random(40),
+        ])->save();
+
+        return $client;
+    }
+
+    /**
      * Store a new client.
      *
      * @param  int  $userId
