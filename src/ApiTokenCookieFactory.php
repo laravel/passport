@@ -25,7 +25,7 @@ class ApiTokenCookieFactory
     protected $encrypter;
 
     /**
-     * Create a API token cookie factory instance.
+     * Create an API token cookie factory instance.
      *
      * @param  Config  $config
      * @param  Encrypter  $encrypter
