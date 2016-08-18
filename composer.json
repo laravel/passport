@@ -14,6 +14,7 @@
         "firebase/php-jwt": "~3.0",
         "guzzlehttp/guzzle": "~6.0",
         "illuminate/auth": "~5.3",
+        "illuminate/console": "~5.3",
         "illuminate/container": "~5.3",
         "illuminate/contracts": "~5.3",
         "illuminate/database": "~5.3",
