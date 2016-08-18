@@ -47,18 +47,17 @@ class RouteRegistrar
     {
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
             $router->get('/oauth/authorize', [
-                'uses' => 'AuthorizationController@authorize'
+                'uses' => 'AuthorizationController@authorize',
             ]);
 
             $router->post('/oauth/authorize', [
-                'uses' => 'ApproveAuthorizationController@approve'
+                'uses' => 'ApproveAuthorizationController@approve',
             ]);
 
             $router->delete('/oauth/authorize', [
-                'uses' => 'DenyAuthorizationController@deny'
+                'uses' => 'DenyAuthorizationController@deny',
             ]);
         });
-
     }
 
     /**
@@ -69,7 +68,7 @@ class RouteRegistrar
     public function forAccessTokens()
     {
         $this->router->post('/oauth/token', [
-            'uses' => 'AccessTokenController@issueToken'
+            'uses' => 'AccessTokenController@issueToken',
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {

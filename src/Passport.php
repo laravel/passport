@@ -100,7 +100,7 @@ class Passport
                 return new Scope($id, static::$scopes[$id]);
             }
 
-            return null;
+            return;
         })->filter()->values()->all();
     }
 

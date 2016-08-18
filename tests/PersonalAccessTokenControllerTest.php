@@ -24,8 +24,9 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
             $token1->client = (object) ['personal_access_client' => true];
             $token2->client = (object) ['personal_access_client' => false];
             $user->tokens->shouldReceive('load')->with('client')->andReturn(collect([
-                $token1, $token2
+                $token1, $token2,
             ]));
+
             return $user;
         });
 
@@ -48,6 +49,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         $request->setUserResolver(function () {
             $user = Mockery::mock();
             $user->shouldReceive('createToken')->once()->with('token name', ['user', 'user-admin'])->andReturn('response');
+
             return $user;
         });
 
@@ -83,6 +85,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
             $user = Mockery::mock();
             $user->id = 1;
             $user->tokens = new Illuminate\Database\Eloquent\Collection([$token1, $token2]);
+
             return $user;
         });
 
@@ -107,6 +110,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
             $user = Mockery::mock();
             $user->id = 1;
             $user->tokens = new Illuminate\Database\Eloquent\Collection([$token1, $token2]);
+
             return $user;
         });
 

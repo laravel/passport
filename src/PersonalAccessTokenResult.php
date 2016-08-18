@@ -43,7 +43,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable
     {
         return [
             'accessToken' => $this->accessToken,
-            'token' => $this->token
+            'token' => $this->token,
         ];
     }
 
