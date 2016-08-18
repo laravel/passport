@@ -66,7 +66,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         switch ($grantType) {
             case 'authorization_code':
-                return ! $record->personal_access_client;
+                return ! $record->firstParty();
             case 'personal_access':
                 return $record->personal_access_client;
             case 'password':

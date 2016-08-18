@@ -42,4 +42,9 @@ class BridgeClientRepositoryTestClientStub
     public $redirect = 'http://localhost';
     public $secret = 'secret';
     public $personal_access_client = false;
+    public $password_client = false;
+    public function firstParty()
+    {
+        return $this->personal_access_client || $this->password_client;
+    }
 }
