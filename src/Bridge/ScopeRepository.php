@@ -27,7 +27,7 @@ class ScopeRepository implements ScopeRepositoryInterface
     {
         if ($grantType !== 'password') {
             $scopes = collect($scopes)->reject(function ($scope) {
-                return $scope->getIdentifier() === '*';
+                return trim($scope->getIdentifier()) === '*';
             })->values()->all();
         }
 
