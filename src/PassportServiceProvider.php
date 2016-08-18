@@ -77,7 +77,7 @@ class PassportServiceProvider extends ServiceProvider
                 );
 
                 $server->enableGrantType(
-                    $this->makePasswordGrant(), new DateInterval('P100Y')
+                    $this->makePasswordGrant(), Passport::tokensExpireIn()
                 );
 
                 $server->enableGrantType(
@@ -139,7 +139,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\RefreshTokenRepository::class)
         );
 
-        $grant->setRefreshTokenTTL(new DateInterval('P100Y'));
+        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
 
         return $grant;
     }
