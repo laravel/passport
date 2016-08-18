@@ -68,8 +68,9 @@ class ClientRepository implements ClientRepositoryInterface
             case 'authorization_code':
                 return ! $record->personal_access_client;
             case 'personal_access':
-            case 'password':
                 return $record->personal_access_client;
+            case 'password':
+                return $record->password_client;
             default:
                 return true;
         }

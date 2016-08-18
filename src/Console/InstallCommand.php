@@ -28,6 +28,7 @@ class InstallCommand extends Command
     public function handle()
     {
         $this->call('passport:keys');
-        $this->call('passport:client', ['--personal' => true]);
+        $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
+        $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client']);
     }
 }

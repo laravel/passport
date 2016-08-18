@@ -14,7 +14,7 @@ class ClientCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:client {--personal : Create a personal access token client}';
+    protected $signature = 'passport:client {--personal : Create a personal access token client} {--password : Create a password grant client} {--name : The name of the client}';
 
     /**
      * The console command description.
@@ -33,6 +33,10 @@ class ClientCommand extends Command
     {
         if ($this->option('personal')) {
             return $this->handlePersonal($clients);
+        }
+
+        if ($this->option('password')) {
+            return $this->handlePassword($clients);
         }
 
         $userId = $this->ask(
@@ -65,9 +69,9 @@ class ClientCommand extends Command
      */
     protected function handlePersonal(ClientRepository $clients)
     {
-        $name = $this->ask(
-            'What should we name the personal access token client?',
-            config('app.name').' Personal Access Tokens'
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the personal access client?',
+            config('app.name').' Personal Access Client'
         );
 
         $client = $clients->create(
@@ -80,6 +84,26 @@ class ClientCommand extends Command
             'updated_at' => new DateTime,
         ]);
 
-        $this->info('Personal access token client created successfully.');
+        $this->info('Personal access client created successfully.');
+    }
+
+    /**
+     * Create a new password grant client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function handlePassword(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the password grant client?',
+            config('app.name').' Password Grant Client'
+        );
+
+        $client = $clients->create(
+            null, $name, 'http://localhost', false, true
+        );
+
+        $this->info('Password grant client created successfully.');
     }
 }

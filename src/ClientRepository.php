@@ -74,9 +74,10 @@ class ClientRepository
      * @param  string  $name
      * @param  string  $redirect
      * @param  bool  $personalAccess
+     * @param  bool  $password
      * @return Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false)
+    public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
         $client = (new Client)->forceFill([
             'user_id' => $userId,
@@ -84,6 +85,7 @@ class ClientRepository
             'secret' => str_random(40),
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
+            'password_client' => $password,
             'revoked' => false,
         ]);
 

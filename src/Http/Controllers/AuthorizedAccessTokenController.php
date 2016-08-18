@@ -16,7 +16,7 @@ class AuthorizedAccessTokenController
     public function forUser(Request $request)
     {
         return $request->user()->tokens->load('client')->filter(function ($token) {
-            return ! $token->client->personal_access_client && ! $token->revoked;
+            return ! $token->client->firstParty() && ! $token->revoked;
         })->values();
     }
 

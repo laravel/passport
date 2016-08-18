@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Laravel\Passport\Client;
 
 class AuthorizedAccessTokenControllerTest extends PHPUnit_Framework_TestCase
 {
@@ -20,8 +21,12 @@ class AuthorizedAccessTokenControllerTest extends PHPUnit_Framework_TestCase
             $user = Mockery::mock();
             $user->id = 1;
             $user->tokens = Mockery::mock();
-            $token1->client = (object) ['personal_access_client' => true];
-            $token2->client = (object) ['personal_access_client' => false];
+            $client1 = new Client;
+            $client1->personal_access_client = true;
+            $client2 = new Client;
+            $client2->personal_access_client = false;
+            $token1->client = $client1;
+            $token2->client = $client2;
             $user->tokens->shouldReceive('load')->with('client')->andReturn(collect([
                 $token1, $token2,
             ]));

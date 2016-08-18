@@ -44,4 +44,14 @@ class Client extends Model
     {
         return $this->hasMany(Token::class);
     }
+
+    /**
+     * Determine if the client is a "first party" client.
+     *
+     * @return bool
+     */
+    public function firstParty()
+    {
+        return $this->personal_access_client || $this->password_client;
+    }
 }
