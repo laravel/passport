@@ -18,7 +18,7 @@ trait HasApiTokens
      */
     public function clients()
     {
-        return $this->hasMany(Client::class);
+        return $this->hasMany(Client::class, 'user_id');
     }
 
     /**
@@ -26,7 +26,7 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Token::class, 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
