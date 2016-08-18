@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\PasswordGrant;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
@@ -72,11 +73,15 @@ class PassportServiceProvider extends ServiceProvider
                 );
 
                 $server->enableGrantType(
-                    new PersonalAccessGrant, new DateInterval('P100Y')
+                    $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
                 );
 
                 $server->enableGrantType(
-                    $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
+                    $this->makePasswordGrant(), Passport::tokensExpireIn()
+                );
+
+                $server->enableGrantType(
+                    new PersonalAccessGrant, new DateInterval('P100Y')
                 );
             });
         });
@@ -120,6 +125,23 @@ class PassportServiceProvider extends ServiceProvider
         return tap(new RefreshTokenGrant($repository), function ($grant) {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
+    }
+
+    /**
+     * Create and configure a Password grant instance.
+     *
+     * @return PasswordGrant
+     */
+    protected function makePasswordGrant()
+    {
+        $grant = new PasswordGrant(
+            $this->app->make(Bridge\UserRepository::class),
+            $this->app->make(Bridge\RefreshTokenRepository::class)
+        );
+
+        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+
+        return $grant;
     }
 
     /**
