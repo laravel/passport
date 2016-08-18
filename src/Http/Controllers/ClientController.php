@@ -6,7 +6,6 @@ use Laravel\Passport\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class ClientController

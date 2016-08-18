@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Container\Container;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
 
