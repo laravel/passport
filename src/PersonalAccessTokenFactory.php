@@ -6,7 +6,6 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Lcobucci\JWT\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
 class PersonalAccessTokenFactory
 {

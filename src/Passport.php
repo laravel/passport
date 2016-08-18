@@ -5,7 +5,6 @@ namespace Laravel\Passport;
 use DateInterval;
 use Carbon\Carbon;
 use DateTimeInterface;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Route;
 
 class Passport
