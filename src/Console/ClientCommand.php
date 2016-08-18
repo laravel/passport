@@ -32,33 +32,14 @@ class ClientCommand extends Command
     public function handle(ClientRepository $clients)
     {
         if ($this->option('personal')) {
-            return $this->handlePersonal($clients);
+            return $this->createPersonalClient($clients);
         }
 
         if ($this->option('password')) {
-            return $this->handlePassword($clients);
+            return $this->createPasswordClient($clients);
         }
 
-        $userId = $this->ask(
-            'Which user ID should the client be assigned to?'
-        );
-
-        $name = $this->ask(
-            'What should we name the client?'
-        );
-
-        $redirect = $this->ask(
-            'Where should we redirect the request after authorization?',
-            url('/auth/callback')
-        );
-
-        $client = $clients->create(
-            $userId, $name, $redirect
-        );
-
-        $this->info('New client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+        $this->createAuthCodeClient($clients);
     }
 
     /**
@@ -67,15 +48,15 @@ class ClientCommand extends Command
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @return void
      */
-    protected function handlePersonal(ClientRepository $clients)
+    protected function createPersonalClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the personal access client?',
             config('app.name').' Personal Access Client'
         );
 
-        $client = $clients->create(
-            null, $name, 'http://localhost', true
+        $client = $clients->createPersonalAccessClient(
+            null, $name, 'http://localhost'
         );
 
         DB::table('oauth_personal_access_clients')->insert([
@@ -93,17 +74,47 @@ class ClientCommand extends Command
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @return void
      */
-    protected function handlePassword(ClientRepository $clients)
+    protected function createPasswordClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the password grant client?',
             config('app.name').' Password Grant Client'
         );
 
-        $client = $clients->create(
-            null, $name, 'http://localhost', false, true
+        $client = $clients->createPasswordGrantClient(
+            null, $name, 'http://localhost'
         );
 
         $this->info('Password grant client created successfully.');
+    }
+
+    /**
+     * Create a authorization code client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function createAuthCodeClient(ClientRepository $clients)
+    {
+        $userId = $this->ask(
+            'Which user ID should the client be assigned to?'
+        );
+
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the client?'
+        );
+
+        $redirect = $this->ask(
+            'Where should we redirect the request after authorization?',
+            url('/auth/callback')
+        );
+
+        $client = $clients->create(
+            $userId, $name, $redirect
+        );
+
+        $this->info('New client created successfully.');
+        $this->line('<comment>Client ID:</comment> '.$client->id);
+        $this->line('<comment>Client secret:</comment> '.$client->secret);
     }
 }

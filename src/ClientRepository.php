@@ -95,6 +95,32 @@ class ClientRepository
     }
 
     /**
+     * Store a new personal access token client.
+     *
+     * @param  int  $userId
+     * @param  string  $name
+     * @param  string  $redirect
+     * @return Client
+     */
+    public function createPersonalAccessClient($userId, $name, $redirect)
+    {
+        return $this->create($userId, $name, $redirect, true);
+    }
+
+    /**
+     * Store a new password grant client.
+     *
+     * @param  int  $userId
+     * @param  string  $name
+     * @param  string  $redirect
+     * @return Client
+     */
+    public function createPasswordGrantClient($userId, $name, $redirect)
+    {
+        return $this->create($userId, $name, $redirect, false, true);
+    }
+
+    /**
      * Update the given client.
      *
      * @param  Client  $client
