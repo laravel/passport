@@ -78,7 +78,7 @@ class Passport
      */
     public static function hasScope($id)
     {
-        return array_key_exists($id, static::$scopes);
+        return $id === '*' || array_key_exists($id, static::$scopes);
     }
 
     /**

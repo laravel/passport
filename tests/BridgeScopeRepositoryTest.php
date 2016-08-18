@@ -21,4 +21,19 @@ class BridgeScopeRepositoryTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals([$scope1], $scopes);
     }
+
+    public function test_superuser_scope_cant_be_applied_if_wrong_grant()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $repository = new ScopeRepository;
+
+        $scopes = $repository->finalizeScopes(
+            [$scope1 = new Scope('*')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
+        );
+
+        $this->assertEquals([], $scopes);
+    }
 }

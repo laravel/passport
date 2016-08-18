@@ -61,7 +61,8 @@ class Token extends Model
      */
     public function can($scope)
     {
-        return array_key_exists($scope, array_flip($this->scopes));
+        return in_array('*', $this->scopes) ||
+               array_key_exists($scope, array_flip($this->scopes));
     }
 
     /**

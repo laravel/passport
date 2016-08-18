@@ -10,5 +10,9 @@ class TokenTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($token->can('something'));
         $this->assertTrue($token->cant('something'));
         $this->assertFalse($token->cant('user'));
+
+        $token = new Laravel\Passport\Token(['scopes' => ['*']]);
+        $this->assertTrue($token->can('user'));
+        $this->assertTrue($token->can('something'));
     }
 }

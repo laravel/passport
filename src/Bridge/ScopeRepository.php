@@ -25,6 +25,12 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes, $grantType,
         ClientEntityInterface $clientEntity, $userIdentifier = null)
     {
+        if ($grantType !== 'password') {
+            $scopes = collect($scopes)->reject(function ($scope) {
+                return $scope->getIdentifier() === '*';
+            })->values()->all();
+        }
+
         return collect($scopes)->filter(function ($scope) {
             return Passport::hasScope($scope->getIdentifier());
         })->values()->all();
