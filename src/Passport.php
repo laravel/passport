@@ -33,6 +33,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The personal access token client ID.
+     *
+     * @var int
+     */
+    public static $personalAccessClient;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -148,6 +155,19 @@ class Passport
         } else {
             static::$refreshTokensExpireAt = $date;
         }
+
+        return new static;
+    }
+
+    /**
+     * Set the client ID that should be used to issue personal access tokens.
+     *
+     * @param  int  $clientId
+     * @return static
+     */
+    public static function personalAccessClient($clientId)
+    {
+        static::$personalAccessClient = $clientId;
 
         return new static;
     }

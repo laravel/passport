@@ -47,7 +47,7 @@ class ClientRepository implements ClientRepositoryInterface
             $clientIdentifier, $record->name, $record->redirect
         );
 
-        if ($mustValidateSecret &&
+        if ($grantType !== 'password' && $mustValidateSecret &&
             ! hash_equals($record->secret, (string) $clientSecret)) {
             return;
         }
@@ -68,6 +68,7 @@ class ClientRepository implements ClientRepositoryInterface
             case 'authorization_code':
                 return ! $record->personal_access_client;
             case 'personal_access':
+            case 'password':
                 return $record->personal_access_client;
             default:
                 return true;

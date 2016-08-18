@@ -60,7 +60,11 @@ class ClientRepository
      */
     public function personalAccessClient()
     {
-        return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+        if (Passport::$personalAccessClient) {
+            return Client::find(Passport::$personalAccessClient);
+        } else {
+            return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+        }
     }
 
     /**
