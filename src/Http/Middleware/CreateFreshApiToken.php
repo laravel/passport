@@ -5,9 +5,17 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Illuminate\Http\Response;
 use Laravel\Passport\ApiTokenCookieFactory;
+use Illuminate\Contracts\Config\Repository as Config;
 
 class CreateFreshApiToken
 {
+    /**
+     * The configuration repository implementation.
+     *
+     * @var Config
+     */
+    protected $config;
+
     /**
      * The API token cookie factory instance.
      *
@@ -18,11 +26,13 @@ class CreateFreshApiToken
     /**
      * Create a new middleware instance.
      *
+     * @param  Config  $config
      * @param  ApiTokenCookieFactory  $cookieFactory
      * @return void
      */
-    public function __construct(ApiTokenCookieFactory $cookieFactory)
+    public function __construct(Config $config, ApiTokenCookieFactory $cookieFactory)
     {
+        $this->config = $config;
         $this->cookieFactory = $cookieFactory;
     }
 
@@ -93,7 +103,7 @@ class CreateFreshApiToken
     protected function alreadyContainsToken($response)
     {
         foreach ($response->headers->getCookies() as $cookie) {
-            if ($cookie->getName() === 'laravel_token') {
+            if ($cookie->getName() === $this->config->get('session.token_cookie', 'laravel_token')) {
                 return true;
             }
         }

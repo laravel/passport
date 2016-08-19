@@ -14,11 +14,19 @@ use League\OAuth2\Server\ResourceServer;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Config\Repository as Config;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
 class TokenGuard
 {
+    /**
+     * The configuration repository implementation.
+     *
+     * @var Config
+     */
+    protected $config;
+
     /**
      * The resource server instance.
      *
@@ -57,6 +65,7 @@ class TokenGuard
     /**
      * Create a new token guard instance.
      *
+     * @param  Config $config
      * @param  ResourceServer  $server
      * @param  UserProvider  $provider
      * @param  TokenRepository  $tokens
@@ -64,12 +73,14 @@ class TokenGuard
      * @param  Encrypter  $encrypter
      * @return void
      */
-    public function __construct(ResourceServer $server,
+    public function __construct(Config $config,
+                                ResourceServer $server,
                                 UserProvider $provider,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
                                 Encrypter $encrypter)
     {
+        $this->config = $config;
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
@@ -87,7 +98,7 @@ class TokenGuard
     {
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
-        } elseif ($request->cookie('laravel_token')) {
+        } elseif ($request->cookie($this->config->get('session.token_cookie', 'laravel_token'))) {
             return $this->authenticateViaCookie($request);
         }
     }
@@ -185,7 +196,7 @@ class TokenGuard
     protected function decodeJwtTokenCookie($request)
     {
         return (array) JWT::decode(
-            $this->encrypter->decrypt($request->cookie('laravel_token')),
+            $this->encrypter->decrypt($request->cookie($this->config->get('session.token_cookie', 'laravel_token'))),
             $this->encrypter->getKey(), ['HS256']
         );
     }
