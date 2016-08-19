@@ -9,12 +9,14 @@ trait HasApiTokens
     /**
      * The current access token for the authentication user.
      *
-     * @var Token
+     * @var \Laravel\Passport\Token
      */
     protected $accessToken;
 
     /**
      * Get all of the user's registered OAuth clients.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function clients()
     {
@@ -23,6 +25,8 @@ trait HasApiTokens
 
     /**
      * Get all of the access tokens for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function tokens()
     {
@@ -32,7 +36,7 @@ trait HasApiTokens
     /**
      * Get the current access token being used by the user.
      *
-     * @return Token|null
+     * @return \Laravel\Passport\Token|null
      */
     public function token()
     {
@@ -55,7 +59,7 @@ trait HasApiTokens
      *
      * @param  string  $name
      * @param  array  $scopes
-     * @return PersonalAccessTokenResult
+     * @return \Laravel\Passport\PersonalAccessTokenResult
      */
     public function createToken($name, array $scopes = [])
     {
@@ -67,7 +71,7 @@ trait HasApiTokens
     /**
      * Set the current access token for the user.
      *
-     * @param  Token  $token
+     * @param  \Laravel\Passport\Token  $accessToken
      * @return $this
      */
     public function withAccessToken($accessToken)
