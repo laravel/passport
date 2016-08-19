@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Route;
 class Passport
 {
     /**
+     * Indicates if Passport should prune revoked tokens.
+     *
+     * @var bool
+     */
+    public static $pruneRevokedTokens = false;
+
+    /**
+     * The personal access token client ID.
+     *
+     * @var int
+     */
+    public static $personalAccessClient;
+
+    /**
      * All of the scopes defined for the application.
      *
      * @var array
@@ -33,13 +47,6 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
-     * The personal access token client ID.
-     *
-     * @var int
-     */
-    public static $personalAccessClient;
-
-    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -58,6 +65,31 @@ class Passport
         Route::group($options, function ($router) use ($callback) {
             $callback(new RouteRegistrar($router));
         });
+    }
+
+    /**
+     * Instruct Passport to keep revoked tokens pruned.
+     *
+     * @return static
+     */
+    public static function shouldPruneRevokedTokens()
+    {
+        static::$pruneRevokedTokens = true;
+
+        return new static;
+    }
+
+    /**
+     * Set the client ID that should be used to issue personal access tokens.
+     *
+     * @param  int  $clientId
+     * @return static
+     */
+    public static function personalAccessClient($clientId)
+    {
+        static::$personalAccessClient = $clientId;
+
+        return new static;
     }
 
     /**
@@ -155,19 +187,6 @@ class Passport
         } else {
             static::$refreshTokensExpireAt = $date;
         }
-
-        return new static;
-    }
-
-    /**
-     * Set the client ID that should be used to issue personal access tokens.
-     *
-     * @param  int  $clientId
-     * @return static
-     */
-    public static function personalAccessClient($clientId)
-    {
-        static::$personalAccessClient = $clientId;
 
         return new static;
     }

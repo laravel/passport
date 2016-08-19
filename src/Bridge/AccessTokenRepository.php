@@ -65,21 +65,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     }
 
     /**
-     * Revoke all of the access tokens for a given user and client.
-     *
-     * @param  mixed  $clientId
-     * @param  mixed  $userId
-     * @return void
-     */
-    public function revokeUserAccessTokensForClient($clientId, $userId)
-    {
-        $this->database->table('oauth_access_tokens')
-                    ->where('user_id', $userId)
-                    ->where('client_id', $clientId)
-                    ->update(['revoked' => true]);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function isAccessTokenRevoked($tokenId)
