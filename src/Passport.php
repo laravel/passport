@@ -72,7 +72,7 @@ class Passport
      *
      * @return static
      */
-    public static function shouldPruneRevokedTokens()
+    public static function pruneRevokedTokens()
     {
         static::$pruneRevokedTokens = true;
 
