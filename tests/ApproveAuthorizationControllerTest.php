@@ -13,9 +13,8 @@ class ApproveAuthorizationControllerTest extends PHPUnit_Framework_TestCase
     public function test_complete_authorization_request()
     {
         $server = Mockery::mock(AuthorizationServer::class);
-        $tokens = Mockery::mock(AccessTokenRepository::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\ApproveAuthorizationController($server, $tokens);
+        $controller = new Laravel\Passport\Http\Controllers\ApproveAuthorizationController($server);
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('session')->andReturn($session = Mockery::mock());
@@ -25,7 +24,6 @@ class ApproveAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $authRequest->shouldReceive('getUser->getIdentifier')->andReturn(2);
         $authRequest->shouldReceive('setUser')->once();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $tokens->shouldReceive('revokeUserAccessTokensForClient')->once()->with(1, 2);
 
         $server->shouldReceive('completeAuthorizationRequest')->with($authRequest, Mockery::type('Psr\Http\Message\ResponseInterface'))->andReturn('response');
 
