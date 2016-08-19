@@ -15,13 +15,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
     public function test_user_can_be_pulled_via_bearer_token()
     {
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -47,13 +48,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $container->instance('Illuminate\Contracts\Debug\ExceptionHandler', $handler = Mockery::mock());
         $handler->shouldReceive('report')->once()->with(Mockery::type('League\OAuth2\Server\Exception\OAuthServerException'));
 
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -67,13 +69,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
     public function test_null_is_returned_if_no_user_is_found()
     {
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -87,13 +90,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
     public function test_users_may_be_retrieved_from_cookies()
     {
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
@@ -104,6 +108,9 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
             ], str_repeat('a', 16)))
         );
 
+        $config->shouldReceive('get')->with('session.token_cookie', 'laravel_token')->andReturn(
+            'laravel_token'
+        );
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
         $user = $guard->user($request);
@@ -113,13 +120,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
     public function test_cookie_xsrf_is_verified_against_header()
     {
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
@@ -130,6 +138,9 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
             ], str_repeat('a', 16)))
         );
 
+        $config->shouldReceive('get')->with('session.token_cookie', 'laravel_token')->andReturn(
+            'laravel_token'
+        );
         $userProvider->shouldReceive('retrieveById')->never();
 
         $this->assertNull($guard->user($request));
@@ -137,13 +148,14 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
     public function test_expired_cookies_may_not_be_used()
     {
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+        $guard = new TokenGuard($config, $resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
@@ -154,6 +166,9 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
             ], str_repeat('a', 16)))
         );
 
+        $config->shouldReceive('get')->with('session.token_cookie', 'laravel_token')->andReturn(
+            'laravel_token'
+        );
         $userProvider->shouldReceive('retrieveById')->never();
 
         $this->assertNull($guard->user($request));

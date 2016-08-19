@@ -51,7 +51,7 @@ class ApiTokenCookieFactory
         $expiration = Carbon::now()->addMinutes($config['lifetime']);
 
         return new Cookie(
-            'laravel_token',
+            $this->config->get('session.token_cookie', 'laravel_token'),
             $this->createToken($userId, $csrfToken, $expiration),
             $expiration,
             $config['path'],
