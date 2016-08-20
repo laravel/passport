@@ -56,6 +56,8 @@ class Token extends Model
 
     /**
      * Get the client that the token belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function client()
     {
