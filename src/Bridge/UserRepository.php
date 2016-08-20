@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Bridge;
 
 use RuntimeException;
-use Laravel\Passport\Client;
 use Illuminate\Contracts\Hashing\Hasher;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
