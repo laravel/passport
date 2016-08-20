@@ -22,6 +22,8 @@ class AuthCode extends Model
 
     /**
      * Get the client that owns the authentication code.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function client()
     {
