@@ -36,5 +36,8 @@ class KeysCommand extends Command
         (new Process('openssl rsa -in oauth-private.key -pubout -out oauth-public.key', storage_path()))->run($callback);
 
         $this->info('Encryption keys generated successfully.');
+
+        (new Process('grep -Fq "/storage/oauth-private.key" .gitignore || echo "/storage/oauth-private.key" >> .gitignore', base_path()))->run($callback);
+        (new Process('grep -Fq "/storage/oauth-public.key" .gitignore || echo "/storage/oauth-public.key" >> .gitignore', base_path()))->run($callback);
     }
 }
