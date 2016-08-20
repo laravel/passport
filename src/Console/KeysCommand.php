@@ -32,8 +32,9 @@ class KeysCommand extends Command
             $this->output->write($line);
         };
 
-        (new Process('openssl genrsa -out oauth-private.key 4096', storage_path()))->run($callback);
-        (new Process('openssl rsa -in oauth-private.key -pubout -out oauth-public.key', storage_path()))->run($callback);
+        (new Process('mkdir -p keys', storage_path('app')))->run($callback);
+        (new Process('openssl genrsa -out oauth-private.key 4096', storage_path('app/keys')))->run($callback);
+        (new Process('openssl rsa -in oauth-private.key -pubout -out oauth-public.key', storage_path('app/keys')))->run($callback);
 
         $this->info('Encryption keys generated successfully.');
     }
