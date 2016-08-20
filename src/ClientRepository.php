@@ -140,7 +140,7 @@ class ClientRepository
     /**
      * Regenerate the client secret.
      *
-     * @param  Client $client
+     * @param  Client  $client
      * @return Client
      */
     public function regenerateSecret(Client $client)
