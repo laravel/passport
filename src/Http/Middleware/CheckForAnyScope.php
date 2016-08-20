@@ -10,7 +10,7 @@ class CheckForAnyScope
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure $next
+     * @param  \Closure  $next
      * @param  array  $scopes
      * @return \Illuminate\Http\Response
      */
