@@ -84,7 +84,7 @@ class ClientCommand extends Command
             config('app.name').' Password Grant Client'
         );
 
-        $client = $clients->createPasswordGrantClient(
+        $clients->createPasswordGrantClient(
             null, $name, 'http://localhost'
         );
 
