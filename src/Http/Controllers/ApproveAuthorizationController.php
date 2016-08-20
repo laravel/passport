@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 
