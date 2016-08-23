@@ -70,6 +70,7 @@ class ClientRepository
     /**
      * Store a new client.
      *
+     * @param  string  $userId
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
@@ -77,9 +78,10 @@ class ClientRepository
      * @param  bool  $password
      * @return Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
+    public function create($clientId, $userId, $name, $redirect, $personalAccess = false, $password = false)
     {
         $client = (new Client)->forceFill([
+            'id' => $clientId,
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -97,27 +99,29 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      *
+     * @param  string  $client_id
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
      * @return Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect)
+    public function createPersonalAccessClient($client_id, $userId, $name, $redirect)
     {
-        return $this->create($userId, $name, $redirect, true);
+        return $this->create($client_id, $userId, $name, $redirect, true);
     }
 
     /**
      * Store a new password grant client.
      *
+     * @param  string  $clientId
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
      * @return Client
      */
-    public function createPasswordGrantClient($userId, $name, $redirect)
+    public function createPasswordGrantClient($clientId, $userId, $name, $redirect)
     {
-        return $this->create($userId, $name, $redirect, false, true);
+        return $this->create($clientId, $userId, $name, $redirect, false, true);
     }
 
     /**

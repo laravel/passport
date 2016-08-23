@@ -62,8 +62,10 @@ class ClientController
             'redirect' => 'required|url',
         ])->validate();
 
+        $userId = $request->user()->id;
+
         return $this->clients->create(
-            $request->user()->id, $request->name, $request->redirect
+            md5($userId.$request->name), $userId, $request->name, $request->redirect
         )->makeVisible('secret');
     }
 

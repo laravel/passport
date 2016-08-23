@@ -59,7 +59,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            md5($name.time()), null, $name, 'http://localhost'
         );
 
         DB::table('oauth_personal_access_clients')->insert([
@@ -85,7 +85,7 @@ class ClientCommand extends Command
         );
 
         $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost'
+            md5($name.time()), null, $name, 'http://localhost'
         );
 
         $this->info('Password grant client created successfully.');
@@ -113,7 +113,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect
+            md5($userId.$name), $userId, $name, $redirect
         );
 
         $this->info('New client created successfully.');

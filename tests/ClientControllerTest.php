@@ -34,7 +34,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
             return (object) ['id' => 1];
         });
 
-        $clients->shouldReceive('create')->once()->with(1, 'client name', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
+        $clients->shouldReceive('create')->once()->with(md5('1client name'), 1, 'client name', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
         $validator->shouldReceive('make')->once()->with([
