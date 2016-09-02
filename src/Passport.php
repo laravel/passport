@@ -47,6 +47,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * If implicit flow grant type is enabled.
+     *
+     * @var boolean|null
+     */
+    public static $enableImplicitFlow;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -187,6 +194,18 @@ class Passport
         } else {
             static::$refreshTokensExpireAt = $date;
         }
+
+        return new static;
+    }
+
+    /**
+     * Enable implicit flow grant type.
+     *
+     * @return static
+     */
+    public static function enableImplicitFlow()
+    {
+        static::$enableImplicitFlow = true;
 
         return new static;
     }

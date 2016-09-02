@@ -73,9 +73,11 @@ class PassportServiceProvider extends ServiceProvider
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
 
-                $server->enableGrantType(
-                    $this->makeImplicitGrant(), Passport::tokensExpireIn()
-                );
+                if (Passport::$enableImplicitFlow) {
+                    $server->enableGrantType(
+                        $this->makeImplicitGrant(), Passport::tokensExpireIn()
+                    );
+                }
 
                 $server->enableGrantType(
                     $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
