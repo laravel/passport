@@ -78,9 +78,7 @@ class PersonalAccessTokenFactory
             ]));
         });
 
-        return new PersonalAccessTokenResult(
-            $response['access_token'], $token
-        );
+        return new PersonalAccessTokenResult($response['access_token'], $token);
     }
 
     /**
@@ -110,9 +108,10 @@ class PersonalAccessTokenFactory
      */
     protected function dispatchRequestToAuthorizationServer(ServerRequest $request)
     {
-        return json_decode($this->server->respondToAccessTokenRequest(
-            $request, new Response
-        )->getBody()->__toString(), true);
+        return json_decode(
+            $this->server->respondToAccessTokenRequest($request, new Response)->getBody()->__toString(),
+            true
+        );
     }
 
     /**

@@ -32,7 +32,6 @@ class AuthorizationController
      *
      * @param  AuthorizationServer  $server
      * @param  ResponseFactory  $response
-     * @return void
      */
     public function __construct(AuthorizationServer $server, ResponseFactory $response)
     {
@@ -48,10 +47,11 @@ class AuthorizationController
      * @param  ClientRepository  $clients
      * @return Response
      */
-    public function authorize(ServerRequestInterface $psrRequest,
-                              Request $request,
-                              ClientRepository $clients)
-    {
+    public function authorize(
+        ServerRequestInterface $psrRequest,
+        Request $request,
+        ClientRepository $clients
+    ) {
         return $this->withErrorHandling(function () use ($psrRequest, $request, $clients) {
             $request->session()->put(
                 'authRequest', $authRequest = $this->server->validateAuthorizationRequest($psrRequest)
