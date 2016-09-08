@@ -4,7 +4,6 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
-use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\TransientToken;
 use Illuminate\Container\Container;
@@ -64,12 +63,13 @@ class TokenGuard
      * @param  Encrypter  $encrypter
      * @return void
      */
-    public function __construct(ResourceServer $server,
-                                UserProvider $provider,
-                                TokenRepository $tokens,
-                                ClientRepository $clients,
-                                Encrypter $encrypter)
-    {
+    public function __construct(
+        ResourceServer $server,
+        UserProvider $provider,
+        TokenRepository $tokens,
+        ClientRepository $clients,
+        Encrypter $encrypter
+    ) {
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;

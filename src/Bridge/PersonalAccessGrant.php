@@ -26,8 +26,10 @@ class PersonalAccessGrant extends AbstractGrant
 
         // Issue and persist access token
         $accessToken = $this->issueAccessToken(
-            $accessTokenTTL, $client,
-            $this->getRequestParameter('user_id', $request), $scopes
+            $accessTokenTTL,
+            $client,
+            $this->getRequestParameter('user_id', $request),
+            $scopes
         );
 
         // Inject access token into response type

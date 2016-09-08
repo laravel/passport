@@ -22,9 +22,11 @@ class ScopeRepository implements ScopeRepositoryInterface
      * {@inheritdoc}
      */
     public function finalizeScopes(
-        array $scopes, $grantType,
-        ClientEntityInterface $clientEntity, $userIdentifier = null)
-    {
+        array $scopes,
+        $grantType,
+        ClientEntityInterface $clientEntity,
+        $userIdentifier = null
+    ) {
         if ($grantType !== 'password') {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
