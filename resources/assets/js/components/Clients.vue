@@ -256,8 +256,8 @@
              */
             getClients() {
                 this.$http.get('/oauth/clients')
-                        .then(response => {
-                            this.clients = response.data;
+                        .then((response) => {
+                            this.clients = response.json();
                         });
             },
 
@@ -306,7 +306,7 @@
                 form.errors = [];
 
                 this.$http[method](uri, form)
-                    .then(response => {
+                    .then((response) => {
                         this.getClients();
 
                         form.name = '';
