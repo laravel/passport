@@ -194,8 +194,8 @@
              */
             getTokens() {
                 this.$http.get('/oauth/personal-access-tokens')
-                        .then(response => {
-                            this.tokens = response.data;
+                        .then((response) => {
+                            this.tokens = response.json();
                         });
             },
 
@@ -204,8 +204,8 @@
              */
             getScopes() {
                 this.$http.get('/oauth/scopes')
-                        .then(response => {
-                            this.scopes = response.data;
+                        .then((response) => {
+                            this.scopes = response.json();
                         });
             },
 
@@ -225,18 +225,18 @@
                 this.form.errors = [];
 
                 this.$http.post('/oauth/personal-access-tokens', this.form)
-                        .then(response => {
+                        .then((response) => {
                             this.form.name = '';
                             this.form.scopes = [];
                             this.form.errors = [];
 
-                            this.tokens.push(response.data.token);
+                            this.tokens.push(response.json().token);
 
-                            this.showAccessToken(response.data.accessToken);
+                            this.showAccessToken(response.json().accessToken);
                         })
                         .catch(response => {
-                            if (typeof response.data === 'object') {
-                                this.form.errors = _.flatten(_.toArray(response.data));
+                            if (typeof response.json() === 'object') {
+                                this.form.errors = _.flatten(_.toArray(response.json()));
                             } else {
                                 this.form.errors = ['Something went wrong. Please try again.'];
                             }
@@ -277,7 +277,7 @@
              */
             revoke(token) {
                 this.$http.delete('/oauth/personal-access-tokens/' + token.id)
-                        .then(response => {
+                        .then((response) => {
                             this.getTokens();
                         });
             }
