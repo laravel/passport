@@ -239,7 +239,7 @@ class TokenGuard
     protected function decryptXsrfHeader($request)
     {
         try {
-            return decrypt($request->header('X-XSRF-TOKEN'));
+            return $this->encrypter->decrypt($request->header('X-XSRF-TOKEN'));
         } catch (Exception $e) {
         }
     }
