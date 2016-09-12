@@ -163,7 +163,7 @@ class TokenGuard
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If the two don't match then this request is sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! $this->validCsrf($token, $request) ||
+        if (! $this->validCsrfOrXsrf($token, $request) ||
             time() >= $token['expiry']) {
             return;
         }
@@ -191,6 +191,18 @@ class TokenGuard
     }
 
     /**
+     * Determine if the CSRF or XSRF / header are valid and match.
+     *
+     * @param  array  $token
+     * @param  Request  $request
+     * @return bool
+     */
+    protected function validCsrfOrXsrf($token, $request)
+    {
+        return $this->validCsrf($token, $request) || $this->validXsrf($token, $request);
+    }
+
+    /**
      * Determine if the CSRF / header are valid and match.
      *
      * @param  array  $token
@@ -202,5 +214,33 @@ class TokenGuard
         return isset($token['csrf']) && hash_equals(
             $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
         );
+    }
+
+    /**
+     * Determine if the XSRF / header are valid and match.
+     *
+     * @param  array  $token
+     * @param  Request  $request
+     * @return bool
+     */
+    protected function validXsrf($token, $request)
+    {
+        return isset($token['csrf']) && hash_equals(
+            $token['csrf'], (string) $this->decryptXsrfHeader($request)
+        );
+    }
+
+    /**
+     * Decrypt the XSRF header on the given request.
+     *
+     * @param  Request  $request
+     * @return string|null
+     */
+    protected function decryptXsrfHeader($request)
+    {
+        try {
+            return decrypt($request->header('X-XSRF-TOKEN'));
+        } catch (Exception $e) {
+        }
     }
 }
