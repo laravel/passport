@@ -258,7 +258,7 @@
              * Determine if the given scope has been assigned to the token.
              */
             scopeIsAssigned(scope) {
-                return _.indexOf(this.form.scopes, scope) > 0;
+                return _.indexOf(this.form.scopes, scope) >= 0;
             },
 
             /**
