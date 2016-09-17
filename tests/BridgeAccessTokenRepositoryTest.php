@@ -13,9 +13,9 @@ class BridgeAccessTokenRepositoryTest extends PHPUnit_Framework_TestCase
     {
         $expiration = Carbon::now();
 
-        $database = Mockery::mock('Illuminate\Database\Connection');
+        $tokenRepository = Mockery::mock('Laravel\Passport\TokenRepository');
 
-        $database->shouldReceive('table->insert')->once()->andReturnUsing(function ($array) use ($expiration) {
+        $tokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
             $this->assertEquals(1, $array['id']);
             $this->assertEquals(2, $array['user_id']);
             $this->assertEquals('client-id', $array['client_id']);
@@ -31,7 +31,7 @@ class BridgeAccessTokenRepositoryTest extends PHPUnit_Framework_TestCase
         $accessToken->setExpiryDateTime($expiration);
         $accessToken->setClient(new Laravel\Passport\Bridge\Client('client-id', 'name', 'redirect'));
 
-        $repository = new Laravel\Passport\Bridge\AccessTokenRepository($database);
+        $repository = new Laravel\Passport\Bridge\AccessTokenRepository($tokenRepository);
 
         $repository->persistNewAccessToken($accessToken);
     }
