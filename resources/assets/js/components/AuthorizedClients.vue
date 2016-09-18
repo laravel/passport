@@ -18,9 +18,11 @@
                     <!-- Authorized Tokens -->
                     <table class="table table-borderless m-b-none">
                         <thead>
-                            <th>Name</th>
-                            <th>Scopes</th>
-                            <th></th>
+                            <tr>
+                                <th>Name</th>
+                                <th>Scopes</th>
+                                <th></th>
+                            </tr>
                         </thead>
 
                         <tbody>
