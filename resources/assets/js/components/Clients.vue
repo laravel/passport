@@ -31,11 +31,13 @@
 
                 <table class="table table-borderless m-b-none" v-if="clients.length > 0">
                     <thead>
-                        <th>Client ID</th>
-                        <th>Name</th>
-                        <th>Secret</th>
-                        <th></th>
-                        <th></th>
+                        <tr>
+                            <th>Client ID</th>
+                            <th>Name</th>
+                            <th>Secret</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
                     </thead>
 
                     <tbody>
