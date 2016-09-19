@@ -47,6 +47,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The location of the encryption keys.
+     *
+     * @var bool
+     */
+    public static $keysLocation;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -189,5 +196,31 @@ class Passport
         }
 
         return new static;
+    }
+
+    /**
+     * Set the location of the encryption keys.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    public static function loadKeysFrom($path)
+    {
+        static::$keysLocation = $path;
+    }
+
+    /**
+     * The location of the encryption keys.
+     *
+     * @param $file
+     * @return string
+     */
+    public static function keysPath($file)
+    {
+        $file = ltrim($file, "/\\");
+
+        return static::$keysLocation
+            ? rtrim(static::$keysLocation, "/\\").DIRECTORY_SEPARATOR.$file
+            : storage_path($file);
     }
 }
