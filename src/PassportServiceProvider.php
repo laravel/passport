@@ -28,7 +28,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
 
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            $this->registerMigrations();
 
             $this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
@@ -44,6 +44,22 @@ class PassportServiceProvider extends ServiceProvider
                 Console\KeysCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Register Passport's migration files.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if (Passport::$runsMigrations) {
+            return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        }
+
+        $this->publishes([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'passport-migrations');
     }
 
     /**

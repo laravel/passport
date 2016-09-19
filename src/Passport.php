@@ -54,6 +54,13 @@ class Passport
     public static $keyPath;
 
     /**
+     * Indicates if Passport migrations will be run.
+     *
+     * @var bool
+     */
+    public static $runsMigrations = true;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -222,5 +229,17 @@ class Passport
         return static::$keyPath
             ? rtrim(static::$keyPath, "/\\").DIRECTORY_SEPARATOR.$file
             : storage_path($file);
+    }
+
+    /**
+     * Configure Passport to not register its migrations.
+     *
+     * @return static
+     */
+    public static function ignoreMigrations()
+    {
+        static::$runsMigrations = false;
+
+        return new static;
     }
 }
