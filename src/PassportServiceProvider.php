@@ -160,8 +160,8 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
-            'file://'.Passport::keysPath('oauth-private.key'),
-            'file://'.Passport::keysPath('oauth-public.key')
+            'file://'.Passport::keyPath('oauth-private.key'),
+            'file://'.Passport::keyPath('oauth-public.key')
         );
     }
 
@@ -175,7 +175,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, function () {
             return new ResourceServer(
                 $this->app->make(Bridge\AccessTokenRepository::class),
-                'file://'.Passport::keysPath('oauth-public.key')
+                'file://'.Passport::keyPath('oauth-public.key')
             );
         });
     }

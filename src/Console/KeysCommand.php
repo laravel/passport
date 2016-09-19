@@ -32,8 +32,8 @@ class KeysCommand extends Command
     {
         $keys = $rsa->createKey(4096);
 
-        file_put_contents(Passport::keysPath('oauth-private.key'), array_get($keys, 'privatekey'));
-        file_put_contents(Passport::keysPath('oauth-public.key'), array_get($keys, 'publickey'));
+        file_put_contents(Passport::keyPath('oauth-private.key'), array_get($keys, 'privatekey'));
+        file_put_contents(Passport::keyPath('oauth-public.key'), array_get($keys, 'publickey'));
 
         $this->info('Encryption keys generated successfully.');
     }
