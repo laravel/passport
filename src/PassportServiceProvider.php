@@ -19,6 +19,13 @@ use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 class PassportServiceProvider extends ServiceProvider
 {
     /**
+     * Indicates if migration should be executed (default as `true`) or published.
+     *
+     * @var bool
+     */
+    protected $migrate = true;
+
+    /**
      * Bootstrap the application services.
      *
      * @return void
@@ -28,7 +35,13 @@ class PassportServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
 
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            if ($this->migrate === true) {
+                $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            } else {
+                $this->publishes([
+                    __DIR__.'/../database/migrations' => database_path('migrations'),
+                ], 'migrations');
+            }
 
             $this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
