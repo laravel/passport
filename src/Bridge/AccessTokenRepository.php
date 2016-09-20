@@ -3,7 +3,7 @@
 namespace Laravel\Passport\Bridge;
 
 use DateTime;
-use Illuminate\Database\Connection;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -17,7 +17,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      *
      * @var \Illuminate\Database\Connection
      */
-    protected $database;
+    protected $tokenRepository;
 
     /**
      * Create a new repository instance.
@@ -25,9 +25,9 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      * @param  \Illuminate\Database\Connection  $database
      * @return void
      */
-    public function __construct(Connection $database)
+    public function __construct(TokenRepository $tokenRepository)
     {
-        $this->database = $database;
+        $this->tokenRepository = $tokenRepository;
     }
 
     /**
@@ -43,7 +43,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        $this->database->table('oauth_access_tokens')->insert([
+        $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
             'user_id' => $accessTokenEntity->getUserIdentifier(),
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
@@ -60,8 +60,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function revokeAccessToken($tokenId)
     {
-        $this->database->table('oauth_access_tokens')
-                    ->where('id', $tokenId)->update(['revoked' => true]);
+        $this->tokenRepository->revokeAccessToken($tokenId);
     }
 
     /**
@@ -69,7 +68,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        return $this->database->table('oauth_access_tokens')
-                    ->where('id', $tokenId)->where('revoked', 1)->exists();
+        return $this->tokenRepository->isAccessTokenRevoked($tokenId);
     }
 }

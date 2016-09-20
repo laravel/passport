@@ -15,6 +15,7 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
+use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -89,6 +90,10 @@ class PassportServiceProvider extends ServiceProvider
 
                 $server->enableGrantType(
                     new PersonalAccessGrant, new DateInterval('P100Y')
+                );
+
+                $server->enableGrantType(
+                    new ClientCredentialsGrant, Passport::tokensExpireIn()
                 );
             });
         });
