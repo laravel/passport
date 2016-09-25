@@ -12,7 +12,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
-        return Token::create($attributes);
+        return Token::on(Passport::$connectionName)->create($attributes);
     }
 
     /**
@@ -23,7 +23,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        return Token::on(Passport::$connectionName)->find($id);
     }
 
     /**
@@ -56,7 +56,10 @@ class TokenRepository
      */
     public function isAccessTokenRevoked($id)
     {
-        return Token::where('id', $id)->where('revoked', 1)->exists();
+        return Token::on(Passport::$connectionName)
+            ->where('id', $id)
+            ->where('revoked', 1)
+            ->exists();
     }
 
     /**
@@ -69,8 +72,9 @@ class TokenRepository
      */
     public function revokeOtherAccessTokens($clientId, $userId, $except = null, $prune = false)
     {
-        $query = Token::where('user_id', $userId)
-                      ->where('client_id', $clientId);
+        $query = Token::on(Passport::$connectionName)
+            ->where('user_id', $userId)
+            ->where('client_id', $clientId);
 
         if ($except) {
             $query->where('id', '<>', $except);
