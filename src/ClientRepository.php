@@ -12,7 +12,8 @@ class ClientRepository
      */
     public function find($id)
     {
-        return Client::find($id);
+        return Client::on(Passport::$connectionName)
+                        ->find($id);
     }
 
     /**
@@ -36,8 +37,10 @@ class ClientRepository
      */
     public function forUser($userId)
     {
-        return Client::where('user_id', $userId)
-                        ->orderBy('name', 'desc')->get();
+        return Client::on(Passport::$connectionName)
+                        ->where('user_id', $userId)
+                        ->orderBy('name', 'desc')
+                        ->get();
     }
 
     /**
@@ -61,9 +64,11 @@ class ClientRepository
     public function personalAccessClient()
     {
         if (Passport::$personalAccessClient) {
-            return Client::find(Passport::$personalAccessClient);
+            return Client::on(Passport::$connectionName)
+                            ->find(Passport::$personalAccessClient);
         } else {
-            return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+            return PersonalAccessClient::on(Passport::$connectionName)
+                            ->orderBy('id', 'desc')->first()->client;
         }
     }
 
@@ -79,7 +84,7 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = (new Client)->forceFill([
+        $client = (new Client)->on(Passport::$connectionName)->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -160,7 +165,8 @@ class ClientRepository
      */
     public function revoked($id)
     {
-        return Client::where('id', $id)
+        return Client::on(Passport::$connectionName)
+                ->where('id', $id)
                 ->where('revoked', true)->exists();
     }
 

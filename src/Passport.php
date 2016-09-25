@@ -47,6 +47,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The connection name used during queries.
+     *
+     * @var string
+     */
+    public static $connectionName;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -187,6 +194,29 @@ class Passport
         } else {
             static::$refreshTokensExpireAt = $date;
         }
+
+        return new static;
+    }
+
+    /**
+     * Get the connection name used during queries.
+     *
+     * @return null|string
+     */
+    public static function getConnectionName()
+    {
+        return static::$connectionName;
+    }
+
+    /**
+     * Set the connection name used during queries.
+     *
+     * @param  null|string  $connectionName
+     * @return static
+     */
+    public static function setConnectionName($connectionName)
+    {
+        static::$connectionName = $connectionName;
 
         return new static;
     }
