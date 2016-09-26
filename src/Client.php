@@ -41,13 +41,27 @@ class Client extends Model
     ];
 
     /**
+     * The auth code relation model.
+     *
+     * @var string
+     */
+    protected static $authCodeModel = AuthCode::class;
+
+    /**
+     * The access token relation model.
+     *
+     * @var string
+     */
+    protected static $tokenModel = Token::class;
+
+    /**
      * Get all of the authentication codes for the client.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function authCodes()
     {
-        return $this->hasMany(AuthCode::class);
+        return $this->hasMany(static::$authCodeModel);
     }
 
     /**
@@ -57,7 +71,7 @@ class Client extends Model
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(static::$tokenModel);
     }
 
     /**
@@ -68,5 +82,51 @@ class Client extends Model
     public function firstParty()
     {
         return $this->personal_access_client || $this->password_client;
+    }
+
+    /**
+     * Get the auth code model.
+     *
+     * @return mixed
+     */
+    public static function getAuthCodeModel()
+    {
+        return static::$authCodeModel;
+    }
+
+    /**
+     * Set the auth code model.
+     *
+     * @param  mixed  $authCodeModel
+     * @return static
+     */
+    public static function setAuthCodeModel($authCodeModel)
+    {
+        static::$authCodeModel = $authCodeModel;
+
+        return new static;
+    }
+
+    /**
+     * Get the token model.
+     *
+     * @return mixed
+     */
+    public static function getTokenModel()
+    {
+        return static::$tokenModel;
+    }
+
+    /**
+     * Set the token model.
+     *
+     * @param  mixed  $tokenModel
+     * @return static
+     */
+    public static function setTokenModel($tokenModel)
+    {
+        static::$tokenModel = $tokenModel;
+
+        return new static;
     }
 }

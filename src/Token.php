@@ -54,13 +54,20 @@ class Token extends Model
     public $timestamps = false;
 
     /**
+     * The client relation model.
+     *
+     * @var string
+     */
+    protected static $clientModel = Client::class;
+
+    /**
      * Get the client that the token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(static::$clientModel);
     }
 
     /**
@@ -104,5 +111,28 @@ class Token extends Model
     public function transient()
     {
         return false;
+    }
+
+    /**
+     * Get the client model.
+     *
+     * @return mixed
+     */
+    public static function getClientModel()
+    {
+        return static::$clientModel;
+    }
+
+    /**
+     * Set the client model.
+     *
+     * @param  mixed  $clientModel
+     * @return static
+     */
+    public static function setClientModel($clientModel)
+    {
+        static::$clientModel = $clientModel;
+
+        return new static;
     }
 }

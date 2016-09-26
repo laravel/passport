@@ -6,6 +6,15 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 
 class AuthCodeRepository
 {
+    use RepositoryTrait;
+
+    /**
+     * The auth code model.
+     *
+     * @var string
+     */
+    protected static $model = AuthCode::class;
+
     /**
      * Get a auth code by the given ID.
      *
@@ -14,7 +23,7 @@ class AuthCodeRepository
      */
     public function find($id)
     {
-        return AuthCode::find($id);
+        return $this->createModel()->find($id);
     }
 
     /**
@@ -25,7 +34,7 @@ class AuthCodeRepository
      */
     public function create(array $attributes)
     {
-        $authCode = (new AuthCode)->forceFill($attributes);
+        $authCode = $this->createModel()->forceFill($attributes);
 
         $authCode->save();
 
@@ -51,6 +60,27 @@ class AuthCodeRepository
      */
     public function revoked($id)
     {
-        return AuthCode::where('id', $id)->where('revoked', true)->exists();
+        return $this->createModel()
+            ->where('id', $id)
+            ->where('revoked', true)
+            ->exists();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getModel()
+    {
+        return static::$model;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function setModel($model)
+    {
+        static::$model = $model;
+
+        return new static;
     }
 }
