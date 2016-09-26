@@ -53,13 +53,20 @@ class RefreshToken extends Model
     public $timestamps = false;
 
     /**
+     * The access token relation model.
+     *
+     * @var string
+     */
+    protected static $tokenModel = Token::class;
+
+    /**
      * Get the access token that the refresh token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function accessToken()
     {
-        return $this->belongsTo(Token::class);
+        return $this->belongsTo(static::$tokenModel);
     }
 
     /**
@@ -80,5 +87,28 @@ class RefreshToken extends Model
     public function transient()
     {
         return false;
+    }
+
+    /**
+     * Get the token model.
+     *
+     * @return mixed
+     */
+    public static function getTokenModel()
+    {
+        return static::$tokenModel;
+    }
+
+    /**
+     * Set the token model.
+     *
+     * @param  mixed  $tokenModel
+     * @return static
+     */
+    public static function setTokenModel($tokenModel)
+    {
+        static::$tokenModel = $tokenModel;
+
+        return new static;
     }
 }

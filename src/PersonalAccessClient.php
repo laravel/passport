@@ -21,12 +21,42 @@ class PersonalAccessClient extends Model
     protected $guarded = [];
 
     /**
+     * The client relation model.
+     *
+     * @var string
+     */
+    protected static $clientModel = Client::class;
+
+    /**
      * Get all of the authentication codes for the client.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(static::$clientModel);
+    }
+
+    /**
+     * Get the client model.
+     *
+     * @return mixed
+     */
+    public static function getClientModel()
+    {
+        return static::$clientModel;
+    }
+
+    /**
+     * Set the client model.
+     *
+     * @param  mixed  $clientModel
+     * @return static
+     */
+    public static function setClientModel($clientModel)
+    {
+        static::$clientModel = $clientModel;
+
+        return new static;
     }
 }

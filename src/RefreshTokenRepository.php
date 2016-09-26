@@ -4,6 +4,15 @@ namespace Laravel\Passport;
 
 class RefreshTokenRepository
 {
+    use RepositoryHelper;
+
+    /**
+     * The refresh token model.
+     *
+     * @var string
+     */
+    protected static $model = RefreshToken::class;
+
     /**
      * Get a token by the given ID.
      *
@@ -12,7 +21,7 @@ class RefreshTokenRepository
      */
     public function find($id)
     {
-        return RefreshToken::find($id);
+        return $this->createModel()->find($id);
     }
 
     /**
@@ -23,7 +32,8 @@ class RefreshTokenRepository
      */
     public function create(array $attributes)
     {
-        $authCode = (new RefreshToken)->forceFill($attributes)
+        $authCode = $this->createModel()
+            ->forceFill($attributes)
             ->save();
 
         return $authCode;
@@ -48,6 +58,27 @@ class RefreshTokenRepository
      */
     public function revoked($id)
     {
-        return RefreshToken::where('id', $id)->where('revoked', 1)->exists();
+        return $this->createModel()
+            ->where('id', $id)
+            ->where('revoked', 1)
+            ->exists();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getModel()
+    {
+        return static::$model;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function setModel($model)
+    {
+        static::$model = $model;
+
+        return new static;
     }
 }
