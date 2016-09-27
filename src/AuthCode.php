@@ -39,12 +39,42 @@ class AuthCode extends Model
     ];
 
     /**
+     * The client relation model.
+     *
+     * @var string
+     */
+    protected static $clientModel = Client::class;
+
+    /**
      * Get the client that owns the authentication code.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function client()
     {
-        return $this->hasMany(Client::class);
+        return $this->hasMany(static::$clientModel);
+    }
+
+    /**
+     * Get the client model.
+     *
+     * @return mixed
+     */
+    public static function getClientModel()
+    {
+        return static::$clientModel;
+    }
+
+    /**
+     * Set the client model.
+     *
+     * @param  mixed  $clientModel
+     * @return static
+     */
+    public static function setClientModel($clientModel)
+    {
+        static::$clientModel = $clientModel;
+
+        return new static;
     }
 }

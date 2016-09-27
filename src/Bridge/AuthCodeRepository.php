@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
-use Illuminate\Database\Connection;
+use Laravel\Passport\AuthCodeRepository as AuthCodeModelRepository;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
@@ -11,21 +11,21 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The database connection.
+     * The auth code model repository.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Laravel\Passport\AuthCodeRepository
      */
-    protected $database;
+    protected $authCodes;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
+     * @param  \Laravel\Passport\AuthCodeRepository  $authCodes
      * @return void
      */
-    public function __construct(Connection $database)
+    public function __construct(AuthCodeModelRepository $authCodes)
     {
-        $this->database = $database;
+        $this->authCodes = $authCodes;
     }
 
     /**
@@ -41,7 +41,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        $this->database->table('oauth_auth_codes')->insert([
+        $this->authCodes->create([
             'id' => $authCodeEntity->getIdentifier(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
@@ -56,8 +56,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-        $this->database->table('oauth_auth_codes')
-                    ->where('id', $codeId)->update(['revoked' => true]);
+        $this->authCodes->revoke($codeId);
     }
 
     /**
@@ -65,7 +64,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return $this->database->table('oauth_auth_codes')
-                    ->where('id', $codeId)->where('revoked', 1)->exists();
+        return $this->authCodes->revoked($codeId);
     }
 }
