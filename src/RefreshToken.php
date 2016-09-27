@@ -4,14 +4,14 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Token extends Model
+class RefreshToken extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'oauth_access_tokens';
+    protected $table = 'oauth_refresh_tokens';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -33,7 +33,6 @@ class Token extends Model
      * @var array
      */
     protected $casts = [
-        'scopes' => 'array',
         'revoked' => 'bool',
     ];
 
@@ -54,43 +53,20 @@ class Token extends Model
     public $timestamps = false;
 
     /**
-     * The client relation model.
+     * The access token relation model.
      *
      * @var string
      */
-    protected static $clientModel = Client::class;
+    protected static $tokenModel = Token::class;
 
     /**
-     * Get the client that the token belongs to.
+     * Get the access token that the refresh token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function client()
+    public function accessToken()
     {
-        return $this->belongsTo(static::$clientModel);
-    }
-
-    /**
-     * Determine if the token has a given scope.
-     *
-     * @param  string  $scope
-     * @return bool
-     */
-    public function can($scope)
-    {
-        return in_array('*', $this->scopes) ||
-               array_key_exists($scope, array_flip($this->scopes));
-    }
-
-    /**
-     * Determine if the token is missing a given scope.
-     *
-     * @param  string  $scope
-     * @return bool
-     */
-    public function cant($scope)
-    {
-        return ! $this->can($scope);
+        return $this->belongsTo(static::$tokenModel);
     }
 
     /**
@@ -114,24 +90,24 @@ class Token extends Model
     }
 
     /**
-     * Get the client model.
+     * Get the token model.
      *
      * @return mixed
      */
-    public static function getClientModel()
+    public static function getTokenModel()
     {
-        return static::$clientModel;
+        return static::$tokenModel;
     }
 
     /**
-     * Set the client model.
+     * Set the token model.
      *
-     * @param  mixed  $clientModel
+     * @param  mixed  $tokenModel
      * @return static
      */
-    public static function setClientModel($clientModel)
+    public static function setTokenModel($tokenModel)
     {
-        static::$clientModel = $clientModel;
+        static::$tokenModel = $tokenModel;
 
         return new static;
     }

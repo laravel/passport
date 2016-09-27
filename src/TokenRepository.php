@@ -4,6 +4,15 @@ namespace Laravel\Passport;
 
 class TokenRepository
 {
+    use RepositoryTrait;
+
+    /**
+     * The access token model.
+     *
+     * @var string
+     */
+    protected static $model = Token::class;
+
     /**
      * Creates a new Access Token
      *
@@ -12,7 +21,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
-        return Token::create($attributes);
+        return $this->createModel()->create($attributes);
     }
 
     /**
@@ -23,7 +32,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        return $this->createModel()->find($id);
     }
 
     /**
@@ -56,7 +65,7 @@ class TokenRepository
      */
     public function isAccessTokenRevoked($id)
     {
-        return Token::where('id', $id)->where('revoked', 1)->exists();
+        return $this->createModel()->where('id', $id)->where('revoked', 1)->exists();
     }
 
     /**
@@ -69,8 +78,9 @@ class TokenRepository
      */
     public function revokeOtherAccessTokens($clientId, $userId, $except = null, $prune = false)
     {
-        $query = Token::where('user_id', $userId)
-                      ->where('client_id', $clientId);
+        $query = $this->createModel()
+            ->where('user_id', $userId)
+            ->where('client_id', $clientId);
 
         if ($except) {
             $query->where('id', '<>', $except);
@@ -81,5 +91,23 @@ class TokenRepository
         } else {
             $query->update(['revoked' => true]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getModel()
+    {
+        return static::$model;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function setModel($model)
+    {
+        static::$model = $model;
+
+        return new static;
     }
 }

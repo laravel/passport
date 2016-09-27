@@ -4,6 +4,22 @@ namespace Laravel\Passport;
 
 class ClientRepository
 {
+    use RepositoryTrait;
+
+    /**
+     * The client model.
+     *
+     * @var string
+     */
+    protected static $model = Client::class;
+
+    /**
+     * The personal access client model.
+     *
+     * @var mixed
+     */
+    protected static $personalAccessClientModel = PersonalAccessClient::class;
+
     /**
      * Get a client by the given ID.
      *
@@ -12,7 +28,7 @@ class ClientRepository
      */
     public function find($id)
     {
-        return Client::find($id);
+        return $this->createModel()->find($id);
     }
 
     /**
@@ -36,8 +52,10 @@ class ClientRepository
      */
     public function forUser($userId)
     {
-        return Client::where('user_id', $userId)
-                        ->orderBy('name', 'desc')->get();
+        return $this->createModel()
+            ->where('user_id', $userId)
+            ->orderBy('name', 'desc')
+            ->get();
     }
 
     /**
@@ -61,9 +79,9 @@ class ClientRepository
     public function personalAccessClient()
     {
         if (Passport::$personalAccessClient) {
-            return Client::find(Passport::$personalAccessClient);
+            return $this->find(Passport::$personalAccessClient);
         } else {
-            return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+            return $this->createPersonalAccessClientModel()->orderBy('id', 'desc')->first()->client;
         }
     }
 
@@ -79,7 +97,7 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = (new Client)->forceFill([
+        $client = $this->createModel()->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -160,8 +178,10 @@ class ClientRepository
      */
     public function revoked($id)
     {
-        return Client::where('id', $id)
-                ->where('revoked', true)->exists();
+        return $this->createModel()
+            ->where('id', $id)
+            ->where('revoked', true)
+            ->exists();
     }
 
     /**
@@ -175,5 +195,65 @@ class ClientRepository
         $client->tokens()->update(['revoked' => true]);
 
         $client->forceFill(['revoked' => true])->save();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getModel()
+    {
+        return static::$model;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function setModel($model)
+    {
+        static::$model = $model;
+
+        return new static;
+    }
+
+    /**
+     * Get the personal access client model.
+     *
+     * @return mixed
+     */
+    public static function getPersonalAccessClientModel()
+    {
+        return static::$personalAccessClientModel;
+    }
+
+    /**
+     * Set the personal access client model.
+     *
+     * @param  mixed  $personalAccessClientModel
+     * @return static
+     */
+    public static function setPersonalAccessClientModel($personalAccessClientModel)
+    {
+        static::$personalAccessClientModel = $personalAccessClientModel;
+
+        return new static;
+    }
+
+    /**
+     * Create a new personal access client model instance.
+     *
+     * @param  array  $attributes  Optional array of model attributes.
+     * @return mixed
+     */
+    public function createPersonalAccessClientModel(array $attributes = [])
+    {
+        if (is_string($model = $this->getPersonalAccessClientModel())) {
+            if (! class_exists($class = '\\'.ltrim($model, '\\'))) {
+                throw new RuntimeException("Class {$model} does not exist!");
+            }
+
+            $model = new $model($attributes);
+        }
+
+        return $model;
     }
 }
