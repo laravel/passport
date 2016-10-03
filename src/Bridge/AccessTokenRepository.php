@@ -69,7 +69,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked($tokenId)
     {
-        return !$this->database->table('oauth_access_tokens')
+        return ! $this->database->table('oauth_access_tokens')
                     ->where('id', $tokenId)->where('revoked', 0)->exists();
     }
 }
