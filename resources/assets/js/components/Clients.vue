@@ -238,21 +238,35 @@
         },
 
         /**
-         * Prepare the component.
+         * Prepare the component (Vue 1.x).
+         */
+        ready() {
+            this.prepareComponent();
+        },
+
+        /**
+         * Prepare the component (Vue 2.x).
          */
         mounted() {
-            this.getClients();
-
-            $('#modal-create-client').on('shown.bs.modal', () => {
-                $('#create-client-name').focus();
-            });
-
-            $('#modal-edit-client').on('shown.bs.modal', () => {
-                $('#edit-client-name').focus();
-            });
+            this.prepareComponent();
         },
 
         methods: {
+            /**
+             * Prepare the component.
+             */
+            prepareComponent() {
+                this.getClients();
+
+                $('#modal-create-client').on('shown.bs.modal', () => {
+                    $('#create-client-name').focus();
+                });
+
+                $('#modal-edit-client').on('shown.bs.modal', () => {
+                    $('#edit-client-name').focus();
+                });
+            },
+
             /**
              * Get all of the OAuth clients for the user.
              */

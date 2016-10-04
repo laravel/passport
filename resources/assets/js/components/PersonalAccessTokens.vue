@@ -179,18 +179,32 @@
         },
 
         /**
-         * Prepare the component.
+         * Prepare the component (Vue 1.x).
+         */
+        ready() {
+            this.prepareComponent();
+        },
+
+        /**
+         * Prepare the component (Vue 2.x).
          */
         mounted() {
-            this.getTokens();
-            this.getScopes();
-
-            $('#modal-create-token').on('shown.bs.modal', () => {
-                $('#create-token-name').focus();
-            });
+            this.prepareComponent();
         },
 
         methods: {
+            /**
+             * Prepare the component.
+             */
+            prepareComponent() {
+                this.getTokens();
+                this.getScopes();
+
+                $('#modal-create-token').on('shown.bs.modal', () => {
+                    $('#create-token-name').focus();
+                });
+            },
+
             /**
              * Get all of the personal access tokens for the user.
              */

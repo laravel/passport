@@ -66,13 +66,27 @@
         },
 
         /**
-         * Prepare the component.
+         * Prepare the component (Vue 1.x).
+         */
+        ready() {
+            this.prepareComponent();
+        },
+
+        /**
+         * Prepare the component (Vue 2.x).
          */
         mounted() {
-            this.getTokens();
+            this.prepareComponent();
         },
 
         methods: {
+            /**
+             * Prepare the component (Vue 2.x).
+             */
+            prepareComponent() {
+                this.getTokens();
+            },
+
             /**
              * Get all of the authorized tokens for the user.
              */
