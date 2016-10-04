@@ -181,7 +181,7 @@
         /**
          * Prepare the component.
          */
-        ready() {
+        mounted() {
             this.getTokens();
             this.getScopes();
 

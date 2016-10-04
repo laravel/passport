@@ -240,7 +240,7 @@
         /**
          * Prepare the component.
          */
-        ready() {
+        mounted() {
             this.getClients();
 
             $('#modal-create-client').on('shown.bs.modal', () => {
