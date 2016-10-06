@@ -17,6 +17,13 @@ class Passport
     public static $pruneRevokedTokens = false;
 
     /**
+     * Multiple Access Token for Grant type password
+     *
+     * @var bool
+     */
+    public static $revokeOtherAccessTokens = true;
+
+    /**
      * The personal access token client ID.
      *
      * @var int
@@ -89,6 +96,30 @@ class Passport
     public static function pruneRevokedTokens()
     {
         static::$pruneRevokedTokens = true;
+
+        return new static;
+    }
+
+    /**
+     * Revoke the other access tokens
+     *
+     * @return static
+     */
+    public static function revokeOtherAccessTokens()
+    {
+        static::$revokeOtherAccessTokens = true;
+
+        return new static;
+    }
+
+    /**
+     * allow the other access tokens
+     *
+     * @return static
+     */
+    public static function allowOtherAccessTokens()
+    {
+        static::$revokeOtherAccessTokens = false;
 
         return new static;
     }
