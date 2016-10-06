@@ -22,9 +22,7 @@ trait RetrievesAuthRequestFromSession
                 throw new Exception('Authorization request was not present in the session.');
             }
 
-            $userId = $request->user() instanceof Model ? $request->user()->getKey() : $request->user()->id;
-
-            $authRequest->setUser(new User($userId));
+            $authRequest->setUser(new User($request->user()->getKey()));
 
             $authRequest->setAuthorizationApproved(true);
         });

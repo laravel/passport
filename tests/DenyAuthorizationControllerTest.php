@@ -18,7 +18,7 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $request = Mockery::mock('Illuminate\Http\Request');
 
         $request->shouldReceive('session')->andReturn($session = Mockery::mock());
-        $request->shouldReceive('user')->andReturn((object) ['id' => 1]);
+        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
 
         $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
@@ -34,5 +34,14 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals('http://localhost?error=access_denied&state=state', $controller->deny($request));
+    }
+}
+
+class DenyAuthorizationControllerFakeUser
+{
+    public $id = 1;
+    public function getKey()
+    {
+        return $this->id;
     }
 }
