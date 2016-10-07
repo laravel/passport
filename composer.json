@@ -1,16 +1,25 @@
 {
-    "name": "laravel/passport",
-    "description": "Laravel Passport provides OAuth2 server support to Laravel.",
-    "keywords": ["laravel", "passport", "oauth"],
+    "name": "laravel/passport-uuid",
+    "description": "Laravel Passport provides OAuth2 server support to Laravel. This is a fork that implement support to Uuid in all models for Oauth by HTML5 Fácil community.",
+    "keywords": ["laravel", "passport", "oauth", "uuid"],
     "license": "MIT",
     "authors": [
         {
             "name": "Taylor Otwell",
             "email": "taylor@laravel.com"
+        },
+        {
+            "name": "Luis Antonio Gomez",
+            "email": "jimmylagp@gmail.com"
+        }
+        {
+            "name": "Misraim Mendoza",
+            "email": "michmendar@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.6.4",
+        "alsofronie/eloquent-uuid": "dev-master",
         "firebase/php-jwt": "~3.0|~4.0",
         "guzzlehttp/guzzle": "~6.0",
         "illuminate/auth": "~5.3",
