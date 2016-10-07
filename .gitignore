@@ -5,3 +5,5 @@ composer.lock
 Thumbs.db
 phpunit.xml
 config.json
+.idea
+C?
