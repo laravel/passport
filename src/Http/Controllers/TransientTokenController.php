@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Passport\Http\Controllers;
+namespace Html5facil\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Passport\ApiTokenCookieFactory;
+use Html5facil\Passport\ApiTokenCookieFactory;
 
 class TransientTokenController
 {

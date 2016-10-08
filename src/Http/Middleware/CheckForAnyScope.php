@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport\Http\Middleware;
+namespace Html5facil\Passport\Http\Middleware;
 
 use Illuminate\Auth\AuthenticationException;
 

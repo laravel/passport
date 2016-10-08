@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\Passport\Console;
+namespace Html5facil\Passport\Console;
 
 use phpseclib\Crypt\RSA;
-use Laravel\Passport\Passport;
+use Html5facil\Passport\Passport;
 use Illuminate\Console\Command;
 
 class KeysCommand extends Command

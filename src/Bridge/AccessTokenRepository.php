@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport\Bridge;
+namespace Html5facil\Passport\Bridge;
 
 use DateTime;
 use Illuminate\Database\Connection;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport\Bridge;
+namespace Html5facil\Passport\Bridge;
 
 use Illuminate\Database\Connection;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\Passport\Http\Controllers;
+namespace Html5facil\Passport\Http\Controllers;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Laravel\Passport\Bridge\User;
+use Html5facil\Passport\Bridge\User;
 
 trait RetrievesAuthRequestFromSession
 {
