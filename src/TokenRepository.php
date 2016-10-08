@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace Html5facil\Passport;
 
 class TokenRepository
 {

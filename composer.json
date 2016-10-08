@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "html5facil\\passport\\": "src/"
+            "Html5facil\\Passport\\": "src/"
         }
     },
     "extra": {

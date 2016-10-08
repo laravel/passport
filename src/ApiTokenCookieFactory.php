@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace Html5facil\Passport;
 
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
