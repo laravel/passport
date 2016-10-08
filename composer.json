@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Passport\\": "src/"
+            "html5facil\\passport\\": "src/"
         }
     },
     "extra": {
