@@ -16,9 +16,9 @@ class CreateFreshApiToken
     protected $cookieFactory;
 
     /**
-     * Authentication guard
+     * The authentication guard.
      *
-     * @var \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard
+     * @var string
      */
     protected $guard;
 
@@ -44,6 +44,7 @@ class CreateFreshApiToken
     public function handle($request, Closure $next, $guard = null)
     {
         $this->guard = $guard;
+
         $response = $next($request);
 
         if ($this->shouldReceiveFreshToken($request, $response)) {
