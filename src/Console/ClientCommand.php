@@ -18,7 +18,7 @@ class ClientCommand extends Command
     protected $signature = 'passport:client
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
-            {--name : The name of the client}';
+            {--name= : The name of the client}';
 
     /**
      * The console command description.
