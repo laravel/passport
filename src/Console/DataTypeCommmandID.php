@@ -37,9 +37,9 @@ class DataTypeCommandID extends Command
     protected function createConfigFile()
     {
         $configFile = array(
-            'path' = '../../',
-            'name' = 'config.json',
-            'content' = array(
+            'path' => '../../',
+            'name' => 'config.json',
+            'content' => array(
                 'data_type_id' => ''
             )
         );
