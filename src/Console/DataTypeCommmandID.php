@@ -29,52 +29,36 @@ class DataTypeCommandID extends Command
     }
 
     /**
+     *
      * Create or overwrite config file
      *
-     * @param
      * @return void
      */
     protected function createConfigFile()
     {
         $configFile = array(
-            'path' => '../../',
+            'path' => $_SERVER['DOCUMENT_ROOT'],
             'name' => 'config.json',
             'content' => array(
                 'data_type_id' => ''
             )
         );
 
-
-        $configFile['content']['data_type_id'] = $this->ask(
-            'What type of data used for the IDs? Uuid or integer? (integer is default):'
-        );
-
-        if($configFile['content']['data_type_id'] != "uuid" or $configFile['content']['data_type_id'] != "integer" && $configFile['content']['data_type_id'] != "")
-        {
-            $configFile['content']['data_type_id'] = $this->ask(
-                'Just can be uuid or integer. Choose one:'
-            );
-        }
-        elseif($configFile['content']['data_type_id'] == "")
-        {
-            $configFile['content']['data_type_id'] = "integer";
-        }
+        $configFile['content']['data_type_id'] = $this->choice( 'What type of data used for the IDs? uuid or integer?', [ 'uuid' => 'uuid', 'integer' => 'integer'], 'integer');
 
         if( file_exists( $configFile['path'].$configFile['name'] ) )
         {
-            $configFileExist = (boolean)$this->ask(
-                'The config file exist. Do you want overwrite? (true/false):'
-            );
-
-            if($configFileExist){
-                file_put_contents($configFile['path'].$configFile['name'], json_encode($configFile['content']['data_type_id']));
+            if ($this->confirm('The config file exist. Do you want overwrite? [y|N]', true)) {
+                file_put_contents($configFile['path'].$configFile['name'], json_encode($configFile['content']));
+                $this->info('Config file overwrited successfully.');
             }
-
-            $this->info('Config file overwrited successfully.');
+            else {
+                $this->info('Failed overwrited the config file.');
+            }
         }
         else
         {
-            file_put_contents($configFile['path'].$configFile['name'], json_encode($configFile['content']['data_type_id']));
+            file_put_contents($configFile['path'].$configFile['name'], json_encode($configFile['content']));
 
             $this->info('Config file created successfully.');
         }
