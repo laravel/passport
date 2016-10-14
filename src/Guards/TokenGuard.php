@@ -12,6 +12,7 @@ use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -68,13 +69,15 @@ class TokenGuard
                                 UserProvider $provider,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
-                                Encrypter $encrypter)
+                                Encrypter $encrypter,
+                                Config $config)
     {
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
         $this->provider = $provider;
         $this->encrypter = $encrypter;
+        $this->config = $config;
     }
 
     /**
@@ -87,7 +90,7 @@ class TokenGuard
     {
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
-        } elseif ($request->cookie('laravel_token')) {
+        } elseif ($request->cookie($this->config->get('session.passport_cookie', 'laravel_token'))) {
             return $this->authenticateViaCookie($request);
         }
     }
@@ -185,7 +188,9 @@ class TokenGuard
     protected function decodeJwtTokenCookie($request)
     {
         return (array) JWT::decode(
-            $this->encrypter->decrypt($request->cookie('laravel_token')),
+            $this->encrypter->decrypt($request->cookie(
+                $this->config->get('session.passport_cookie', 'laravel_token')
+            )),
             $this->encrypter->getKey(), ['HS256']
         );
     }
