@@ -4,6 +4,7 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
+use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\TransientToken;
@@ -87,7 +88,7 @@ class TokenGuard
     {
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
-        } elseif ($request->cookie('laravel_token')) {
+        } elseif ($request->cookie(Passport::cookie())) {
             return $this->authenticateViaCookie($request);
         }
     }
@@ -185,7 +186,7 @@ class TokenGuard
     protected function decodeJwtTokenCookie($request)
     {
         return (array) JWT::decode(
-            $this->encrypter->decrypt($request->cookie('laravel_token')),
+            $this->encrypter->decrypt($request->cookie(Passport::cookie())),
             $this->encrypter->getKey(), ['HS256']
         );
     }

@@ -5,6 +5,7 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Illuminate\Http\Response;
 use Laravel\Passport\ApiTokenCookieFactory;
+use Laravel\Passport\Passport;
 
 class CreateFreshApiToken
 {
@@ -103,7 +104,7 @@ class CreateFreshApiToken
     protected function alreadyContainsToken($response)
     {
         foreach ($response->headers->getCookies() as $cookie) {
-            if ($cookie->getName() === 'laravel_token') {
+            if ($cookie->getName() === Passport::cookie()) {
                 return true;
             }
         }

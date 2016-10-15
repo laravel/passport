@@ -47,6 +47,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The name for API token cookies.
+     *
+     * @var string
+     */
+    public static $cookie = 'laravel_token';
+
+    /**
      * The storage location of the encryption keys.
      *
      * @var string
@@ -200,6 +207,23 @@ class Passport
                             : new DateInterval('P100Y');
         } else {
             static::$refreshTokensExpireAt = $date;
+        }
+
+        return new static;
+    }
+
+    /**
+     * Get or set the name for API token cookies.
+     *
+     * @param  string|null  $cookie
+     * @return string|static
+     */
+    public static function cookie($cookie = null)
+    {
+        if (is_null($cookie)) {
+            return static::$cookie;
+        } else {
+            static::$cookie = $cookie;
         }
 
         return new static;
