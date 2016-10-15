@@ -11,34 +11,18 @@ class DataTypeIdSelector
      *
      * @var ConfigFile
      */
-    protected $configFile = "config.json";
-
-    /**
-     * The data type selection.
-     *
-     * @var DataType
-     */
-    public $dataType = "";
-
-    /**
-     * Create a DataType ID Selector factory instance.
-     *
-     * @param  Config  $config
-     * @return void
-     */
-    public function __construct()
-    {
-    }
+    protected static $configFile = "config.json";
 
     /**
      * Read a config file JSON
      *
      */
-    public function readConfigFile()
+    public static function readConfigFile()
     {
-        if(Storage::disk('local')->exists($configFile['name']))
+        if(Storage::disk('local')->exists(static::$configFile))
         {
-            $dataType = json_decode( Storage::disk('local')->get($configFile['name']) );
+            $dataType = json_decode( Storage::disk('local')->get(static::$configFile), true);
+
             $dataType = $dataType['data_type_id'];
         }
         else

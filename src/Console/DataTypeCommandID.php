@@ -5,7 +5,7 @@ namespace Html5facil\Passport\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 
-class DataTypeCommandID extends Command
+class DataTypeCommandId extends Command
 {
     /**
      * The name and signature of the console command.
@@ -49,14 +49,14 @@ class DataTypeCommandID extends Command
      */
     protected function createConfigFile()
     {
-        $configFile['content']['data_type_id'] = $this->choice( 'What type of data used for the IDs? uuid or integer?', [ 'uuid' => 'uuid', 'integer' => 'integer'], 'integer');
+        $this->configFile['content']['data_type_id'] = $this->choice( 'What type of data used for the IDs? uuid or integer?', [ 'uuid' => 'uuid', 'integer' => 'integer'], 'integer');
 
-        if( Storage::disk('local')->exist($configFile['name']) )
+        if( Storage::disk('local')->exists($this->configFile['name']) )
         {
             if ($this->confirm('The config file exist. Do you want overwrite? [y|N]', true)) {
 
-                Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']));
-                
+                Storage::disk('local')->put($this->configFile['name'], json_encode($this->configFile['content']));
+
                 $this->info('Config file overwrited successfully.');
             }
             else {
@@ -65,7 +65,7 @@ class DataTypeCommandID extends Command
         }
         else
         {
-            Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']));
+            Storage::disk('local')->put($this->configFile['name'], json_encode($this->configFile['content']));
 
             $this->info('Config file created successfully.');
         }
