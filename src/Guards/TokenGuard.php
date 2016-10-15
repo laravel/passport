@@ -4,11 +4,11 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
-use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use Illuminate\Http\Request;
-use Laravel\Passport\TransientToken;
+use Laravel\Passport\Passport;
 use Illuminate\Container\Container;
+use Laravel\Passport\TransientToken;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\ResourceServer;
