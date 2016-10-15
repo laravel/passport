@@ -3,6 +3,7 @@
 namespace Html5facil\Passport\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
 
 class DataTypeCommandID extends Command
 {
@@ -50,11 +51,11 @@ class DataTypeCommandID extends Command
     {
         $configFile['content']['data_type_id'] = $this->choice( 'What type of data used for the IDs? uuid or integer?', [ 'uuid' => 'uuid', 'integer' => 'integer'], 'integer');
 
-        if( file_exists( $configFile['path'].$configFile['name'] ) )
+        if( Storage::disk('local')->exist($configFile['name']) )
         {
             if ($this->confirm('The config file exist. Do you want overwrite? [y|N]', true)) {
 
-                Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']);
+                Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']));
                 
                 $this->info('Config file overwrited successfully.');
             }
@@ -64,7 +65,7 @@ class DataTypeCommandID extends Command
         }
         else
         {
-            Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']);
+            Storage::disk('local')->put($configFile['name'], json_encode($configFile['content']));
 
             $this->info('Config file created successfully.');
         }
