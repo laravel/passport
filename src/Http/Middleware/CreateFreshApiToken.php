@@ -1,10 +1,10 @@
 <?php
 
-namespace Html5facil\Passport\Http\Middleware;
+namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Response;
-use Html5facil\Passport\ApiTokenCookieFactory;
+use Laravel\Passport\ApiTokenCookieFactory;
 
 class CreateFreshApiToken
 {

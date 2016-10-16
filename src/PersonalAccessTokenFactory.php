@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport;
+namespace Laravel\Passport;
 
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;

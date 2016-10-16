@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Html5facil\Passport\DataTypeIdSelector;
+use Laravel\Passport\DataTypeIdSelector;
 
 class CreateOauthAuthCodesTable extends Migration
 {
@@ -18,9 +18,9 @@ class CreateOauthAuthCodesTable extends Migration
 
         Schema::create('oauth_auth_codes', function (Blueprint $table) use ($dataType) {
             $table->string('id', 100)->primary();
-            //User ID filed as data type selection
+            //User ID filed as datatype selection
             eval("\$table->".$dataType."('user_id');");
-            //User ID filed as data type selection
+            //User ID filed as datatype selection
             eval("\$table->".$dataType."('client_id');");
             $table->text('scopes')->nullable();
             $table->boolean('revoked');

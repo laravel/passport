@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Laravel\Passport\DataTypeIdSelector;
 
 class CreateOauthPersonalAccessClientsTable extends Migration
 {
@@ -13,9 +14,13 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('client_id')->index();
+        $dataType = DataTypeIdSelector::readConfigFile();
+
+        Schema::create('oauth_personal_access_clients', function (Blueprint $table) use ($dataType) {
+            //ID filed as datatype selection
+            eval("\$table->".$dataType."('id');");
+            //Client ID filed as datatype selection
+            eval("\$table->".$dataType."('client_id')->index();");
             $table->timestamps();
         });
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Html5facil\Passport\Bridge;
+namespace Laravel\Passport\Bridge;
 
-use Html5facil\Passport\Passport;
+use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 

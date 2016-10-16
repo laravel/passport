@@ -1,9 +1,9 @@
 <?php
 
-namespace Html5facil\Passport\Http\Controllers;
+namespace Laravel\Passport\Http\Controllers;
 
-use Html5facil\Passport\Passport;
-use Html5facil\Passport\TokenRepository;
+use Laravel\Passport\Passport;
+use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
 use Zend\Diactoros\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;

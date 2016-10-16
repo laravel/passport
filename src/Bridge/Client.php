@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport\Bridge;
+namespace Laravel\Passport\Bridge;
 
 use League\OAuth2\Server\Entities\Traits\ClientTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;

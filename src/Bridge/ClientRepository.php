@@ -1,8 +1,8 @@
 <?php
 
-namespace Html5facil\Passport\Bridge;
+namespace Laravel\Passport\Bridge;
 
-use Html5facil\Passport\ClientRepository as ClientModelRepository;
+use Laravel\Passport\ClientRepository as ClientModelRepository;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 class ClientRepository implements ClientRepositoryInterface

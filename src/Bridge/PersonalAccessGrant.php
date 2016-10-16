@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport\Bridge;
+namespace Laravel\Passport\Bridge;
 
 use DateInterval;
 use Psr\Http\Message\ServerRequestInterface;

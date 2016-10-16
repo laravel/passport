@@ -1,19 +1,19 @@
 <?php
 
-namespace Html5facil\Passport;
+namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Support\Facades\Auth;
-use Html5facil\Passport\Guards\TokenGuard;
+use Laravel\Passport\Guards\TokenGuard;
 use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
-use Html5facil\Passport\Bridge\PersonalAccessGrant;
+use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
-use Html5facil\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 
 class PassportServiceProvider extends ServiceProvider

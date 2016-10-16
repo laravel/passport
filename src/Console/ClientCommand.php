@@ -1,12 +1,12 @@
 <?php
 
-namespace Html5facil\Passport\Console;
+namespace Laravel\Passport\Console;
 
 use DateTime;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Html5facil\Passport\ClientRepository;
-use Html5facil\Passport\PersonalAccessClient;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\PersonalAccessClient;
 
 class ClientCommand extends Command
 {

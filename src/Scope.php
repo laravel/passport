@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport;
+namespace Laravel\Passport;
 
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Arrayable;

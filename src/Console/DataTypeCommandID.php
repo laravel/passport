@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport\Console;
+namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;

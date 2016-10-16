@@ -1,11 +1,13 @@
 <?php
 
-namespace Html5facil\Passport;
+namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
 class AuthCode extends Model
 {
+    use Uuid32ModelTrait;
+
     /**
      * The database table used by the model.
      *

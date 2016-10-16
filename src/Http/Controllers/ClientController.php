@@ -1,11 +1,11 @@
 <?php
 
-namespace Html5facil\Passport\Http\Controllers;
+namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Html5facil\Passport\Client;
-use Html5facil\Passport\ClientRepository;
+use Laravel\Passport\Client;
+use Laravel\Passport\ClientRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 

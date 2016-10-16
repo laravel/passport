@@ -1,6 +1,6 @@
 <?php
 
-namespace Html5facil\Passport\Http\Middleware;
+namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
 use League\OAuth2\Server\ResourceServer;
