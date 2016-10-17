@@ -39,7 +39,7 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-components');
 
             $this->commands([
-                //Console\DataTypeCommandId::class,
+                Console\DataTypeCommandId::class,
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
