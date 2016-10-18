@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Laravel\Passport\DataTypeIdSelector;
 
 class CreateOauthAccessTokensTable extends Migration
 {
@@ -13,10 +14,14 @@ class CreateOauthAccessTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_access_tokens', function (Blueprint $table) {
+        $dataType = DataTypeIdSelector::readConfigFile();
+
+        Schema::create('oauth_access_tokens', function (Blueprint $table) use ($dataType) {
             $table->string('id', 100)->primary();
-            $table->integer('user_id')->index()->nullable();
-            $table->integer('client_id');
+            //User ID filed as datatype selection
+            eval("\$table->".$dataType."('user_id')->index()->nullable();");
+            //Client ID field as datatype selection
+            eval("\$table->".$dataType."('client_id');");
             $table->string('name')->nullable();
             $table->text('scopes')->nullable();
             $table->boolean('revoked');

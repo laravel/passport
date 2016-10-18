@@ -35,6 +35,7 @@ class HasApiTokensTest extends PHPUnit_Framework_TestCase
 class HasApiTokensTestStub
 {
     use Laravel\Passport\HasApiTokens;
+
     public function getKey()
     {
         return 1;

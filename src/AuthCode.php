@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AuthCode extends Model
 {
+    use Uuid32ModelTrait;
+
     /**
      * The database table used by the model.
      *
