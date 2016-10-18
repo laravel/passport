@@ -1,5 +1,5 @@
 {
-    "name": "laravel/passport",
+    "name": "html5facil/passport-uuid",
     "description": "Laravel Passport provides OAuth2 server support to Laravel. This is a fork that implement support to Uuid in all models for Oauth by HTML5 Fácil community.",
     "keywords": ["laravel", "passport", "oauth", "uuid"],
     "license": "MIT",
@@ -15,32 +15,6 @@
         {
             "name": "Misraim Mendoza",
             "email": "michmendar@gmail.com"
-        }
-    ],
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "alsofronie/eloquent-uuid",
-                "version": "dev-master",
-                "source": {
-                    "url": "git@github.com:html5facil/eloquent-uuid.git",
-                    "type": "git",
-                    "reference": "origin/master"
-                },
-                "require": {
-                    "webpatser/laravel-uuid": "2.*"
-                },
-                "require-dev": {
-                    "laravel/framework": "^5.1.0",
-                    "phpunit/phpunit": "~4.0"
-                },
-                "autoload": {
-                    "psr-4": {
-                        "Alsofronie\\Uuid\\": "src/"
-                    }
-                }
-            }
         }
     ],
     "require": {
@@ -72,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "1.0-dev"
         }
     },
     "minimum-stability": "dev",
