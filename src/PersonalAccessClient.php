@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Alsofronie\Uuid\Uuid32ModelTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class PersonalAccessClient extends Model
