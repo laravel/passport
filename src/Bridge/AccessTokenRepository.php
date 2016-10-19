@@ -1,24 +1,19 @@
 <?php
-
 namespace Laravel\Passport\Bridge;
-
 use DateTime;
 use Illuminate\Database\Connection;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     use FormatsScopesForStorage;
-
     /**
      * The database connection.
      *
      * @var \Illuminate\Database\Connection
      */
     protected $database;
-
     /**
      * Create a new repository instance.
      *
@@ -29,7 +24,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         $this->database = $database;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -37,7 +31,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         return new AccessToken($userIdentifier, $scopes);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -54,7 +47,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -63,7 +55,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->database->table('oauth_access_tokens')
                     ->where('id', $tokenId)->update(['revoked' => true]);
     }
-
     /**
      * {@inheritdoc}
      */
