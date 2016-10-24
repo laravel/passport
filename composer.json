@@ -22,7 +22,7 @@
         "illuminate/http": "~5.3",
         "illuminate/support": "~5.3",
         "league/oauth2-server": "~5.0",
-        "symfony/psr-http-message-bridge": "^0.3.0",
+        "symfony/psr-http-message-bridge": "~1.0",
         "zendframework/zend-diactoros": "~1.0",
         "phpseclib/phpseclib": "^2.0"
     },
