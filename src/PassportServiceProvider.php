@@ -236,19 +236,15 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register an Event listener that deletes the
-     * token cookie when the user logs out.
+     * Register the cookie deletion event handler.
      *
      * @return void
      */
     protected function deleteCookieOnLogout()
     {
         Event::listen(Logout::class, function () {
-            $token_cookie_name = Passport::cookie();
-            if (Request::hasCookie($token_cookie_name)) {
-                Cookie::queue(
-                    Cookie::forget($token_cookie_name)
-                );
+            if (Request::hasCookie(Passport::cookie())) {
+                Cookie::queue(Cookie::forget(Passport::cookie()));
             }
         });
     }
