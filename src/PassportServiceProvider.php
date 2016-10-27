@@ -4,7 +4,11 @@ namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\RequestGuard;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Request;
 use Laravel\Passport\Guards\TokenGuard;
 use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\ResourceServer;
@@ -26,6 +30,8 @@ class PassportServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
+
+        $this->deleteCookieOnLogout();
 
         if ($this->app->runningInConsole()) {
             $this->registerMigrations();
@@ -227,5 +233,23 @@ class PassportServiceProvider extends ServiceProvider
                 $this->app->make('encrypter')
             ))->user($request);
         }, $this->app['request']);
+    }
+
+    /**
+     * Register an Event listener that deletes the
+     * token cookie when the user logs out.
+     *
+     * @return void
+     */
+    protected function deleteCookieOnLogout()
+    {
+        Event::listen(Logout::class, function () {
+            $token_cookie_name = Passport::cookie();
+            if (Request::hasCookie($token_cookie_name)) {
+                Cookie::queue(
+                    Cookie::forget($token_cookie_name)
+                );
+            }
+        });
     }
 }
