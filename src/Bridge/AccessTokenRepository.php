@@ -47,7 +47,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'id' => $accessTokenEntity->getIdentifier(),
             'user_id' => $accessTokenEntity->getUserIdentifier(),
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
-            'scopes' => $this->formatScopesForStorage($accessTokenEntity->getScopes()),
+            'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
