@@ -8,7 +8,18 @@
 
 ## Introduction
 
-Laravel Passport is an OAuth2 server and API authentication package that is simple and enjoyable to use.
+
+Laravel Passport is an OAuth2 server and API authentication package that is simple and enjoyable to use. This is a fork that implement support to Uuid in all models for Oauth by HTML5 Fácil community.
+
+[HTML5 Fácil](http://html5facil.com)
+
+## Installation
+
+Before run the migrations, run the command for select Data Type for IDs if you prefer use uuid or use default that is integer.
+
+```sh
+php artisan passport:data-type-id
+```
 
 ## Official Documentation
 

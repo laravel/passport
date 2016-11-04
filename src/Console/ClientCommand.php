@@ -6,6 +6,7 @@ use DateTime;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\PersonalAccessClient;
 
 class ClientCommand extends Command
 {
@@ -62,11 +63,9 @@ class ClientCommand extends Command
             null, $name, 'http://localhost'
         );
 
-        DB::table('oauth_personal_access_clients')->insert([
-            'client_id' => $client->id,
-            'created_at' => new DateTime,
-            'updated_at' => new DateTime,
-        ]);
+        $accessClient = new PersonalAccessClient();
+        $accessClient->client_id = $client->id;
+        $accessClient->save();
 
         $this->info('Personal access client created successfully.');
     }

@@ -28,7 +28,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
 
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+            $this->registerMigrations();
 
             $this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
@@ -39,11 +39,28 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-components');
 
             $this->commands([
+                Console\DataTypeCommandId::class,
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Register Passport's migration files.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if (Passport::$runsMigrations) {
+            return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        }
+
+        $this->publishes([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'passport-migrations');
     }
 
     /**
@@ -160,8 +177,8 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
-            'file://'.storage_path('oauth-private.key'),
-            'file://'.storage_path('oauth-public.key')
+            'file://'.Passport::keyPath('oauth-private.key'),
+            'file://'.Passport::keyPath('oauth-public.key')
         );
     }
 
@@ -175,7 +192,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, function () {
             return new ResourceServer(
                 $this->app->make(Bridge\AccessTokenRepository::class),
-                'file://'.storage_path('oauth-public.key')
+                'file://'.Passport::keyPath('oauth-public.key')
             );
         });
     }

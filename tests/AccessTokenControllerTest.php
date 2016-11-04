@@ -20,10 +20,10 @@ class AccessTokenControllerTest extends PHPUnit_Framework_TestCase
         )->andReturn($response = new AccessTokenControllerTestStubResponse);
 
         $jwt = Mockery::mock(Lcobucci\JWT\Parser::class);
-        $jwt->shouldReceive('parse->getClaim')->andReturn('token-id');
+        // $jwt->shouldReceive('parse->getClaim')->andReturn('token-id');
 
-        $tokens->shouldReceive('find')->once()->with('token-id')->andReturn(new AccessTokenControllerTestStubToken);
-        $tokens->shouldReceive('revokeOtherAccessTokens')->once()->with(1, 2, 'token-id', false);
+        // $tokens->shouldReceive('find')->once()->with('token-id')->andReturn(new AccessTokenControllerTestStubToken);
+        // $tokens->shouldReceive('revokeOtherAccessTokens')->once()->with(1, 2, 'token-id', false);
 
         $controller = new Laravel\Passport\Http\Controllers\AccessTokenController($server, $tokens, $jwt);
 
