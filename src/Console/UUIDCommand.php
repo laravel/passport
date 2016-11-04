@@ -48,7 +48,7 @@ class UUIDCommand extends Command
         $this->comment('Checking for `uuid` column in `oauth_clients`...');
         if (!Schema::hasColumn('oauth_clients', 'uuid')) {
             Schema::table('oauth_clients', function(Blueprint $table) {
-                $table->char('uuid', 36)->after('name')->nullable();
+                $table->char('uuid', 36)->unique()->after('name')->nullable();
             });
             $this->line('✓ Created new column `uuid` in `oauth_clients`.');
         } else {
