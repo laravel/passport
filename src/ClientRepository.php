@@ -9,23 +9,27 @@ class ClientRepository
     /**
      * Get a client by the given ID.
      *
-     * @param  string  $uuid
+     * @param  mixed  $id
      * @return Client|null
      */
-    public function find($uuid)
+    public function find($id)
     {
-        return Client::where('uuid', $uuid)->firstOrFail();
+        if (!Passport::$useClientUUIDs) {
+            return Client::find($id);
+        } else {
+            return Client::where('uuid', $id)->firstOrFail();
+        }
     }
 
     /**
      * Get an active client by the given ID.
      *
-     * @param  string  $id
+     * @param  int  $id
      * @return Client|null
      */
-    public function findActive($uuid)
+    public function findActive($id)
     {
-        $client = $this->find($uuid);
+        $client = $this->find($id);
 
         return $client && ! $client->revoked ? $client : null;
     }
@@ -81,10 +85,16 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
+	if (!Passport::$useClientUUIDs) {
+            $uuid = null;
+	} else {
+            $uuid = UUID::generate(4)->string;
+        }
+
         $client = (new Client)->forceFill([
             'user_id' => $userId,
             'name' => $name,
-            'uuid' => UUID::generate(4)->string,
+            'uuid' => $uuid,
             'secret' => str_random(40),
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
