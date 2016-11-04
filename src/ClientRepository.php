@@ -85,22 +85,21 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-	if (!Passport::$useClientUUIDs) {
-            $uuid = null;
-	} else {
-            $uuid = UUID::generate(4)->string;
-        }
-
-        $client = (new Client)->forceFill([
+        $data = [
             'user_id' => $userId,
             'name' => $name,
-            'uuid' => $uuid,
             'secret' => str_random(40),
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
             'password_client' => $password,
             'revoked' => false,
-        ]);
+        ];
+
+	if (Passport::$useClientUUIDs) {
+            $data['uuid'] = UUID::generate(4)->string;
+        }
+
+        $client = (new Client)->forceFill($data);
 
         $client->save();
 
