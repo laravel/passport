@@ -3,6 +3,8 @@
 namespace Laravel\Passport\Bridge;
 
 use DateTime;
+use Laravel\Passport\Client;
+use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
@@ -43,10 +45,19 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
+        if (Passport::$useClientUUIDs) {
+            $uuid = $accessTokenEntity->getClient()->getIdentifier();
+
+            $client = Client::where('uuid', $uuid)->firstOrFail();
+
+            $clientId = $client->id;
+        } else {
+            $clientId = $accessTokenEntity->getClient()->getIdentifier();
+        }
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
             'user_id' => $accessTokenEntity->getUserIdentifier(),
-            'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
+            'client_id' => $clientId,
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
