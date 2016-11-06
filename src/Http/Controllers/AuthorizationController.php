@@ -59,8 +59,16 @@ class AuthorizationController
 
             $scopes = $this->parseScopes($authRequest);
 
+            $identifier = $authRequest->getClient()->getIdentifier();
+
+            if (!Passport::$useClientUUIDs) {
+                $client = $clients->find($identifier);
+            } else {
+                $client = $clients->findUUID($identifier);
+            }
+
             return $this->response->view('passport::authorize', [
-                'client' => $clients->find($authRequest->getClient()->getIdentifier()),
+                'client' => $client,
                 'user' => $request->user(),
                 'scopes' => $scopes,
                 'request' => $request,

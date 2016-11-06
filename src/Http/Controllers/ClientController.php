@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Laravel\Passport\Client;
+use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
@@ -36,6 +37,12 @@ class ClientController
     {
         $this->clients = $clients;
         $this->validation = $validation;
+
+        if (!Passport::$useClientUUIDs) {
+            $this->lookup = 'find';
+        } else {
+            $this->lookup = 'findUUID';
+        }
     }
 
     /**
@@ -76,7 +83,7 @@ class ClientController
      */
     public function update(Request $request, $clientId)
     {
-        if (! $request->user()->clients->find($clientId)) {
+        if (! $request->user()->clients->{$this->lookup}($clientId)) {
             return new Response('', 404);
         }
 
@@ -100,7 +107,7 @@ class ClientController
      */
     public function destroy(Request $request, $clientId)
     {
-        if (! $request->user()->clients->find($clientId)) {
+        if (! $request->user()->clients->{$this->lookup}($clientId)) {
             return new Response('', 404);
         }
 

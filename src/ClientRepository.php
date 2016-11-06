@@ -9,16 +9,23 @@ class ClientRepository
     /**
      * Get a client by the given ID.
      *
-     * @param  mixed  $id
+     * @param  int  $id
      * @return Client|null
      */
     public function find($id)
     {
-        if (!Passport::$useClientUUIDs) {
-            return Client::find($id);
-        } else {
-            return Client::where('uuid', $id)->firstOrFail();
-        }
+        return Client::find($id);
+    }
+
+    /**
+     * Get a client by the given UUID.
+     *
+     * @param  string  $uuid
+     * @return Client|null
+     */
+    public function findUUID($uuid)
+    {
+        return Client::where('uuid', $id)->firstOrFail();
     }
 
     /**
