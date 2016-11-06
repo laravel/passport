@@ -93,7 +93,7 @@ class ClientController
         ])->validate();
 
         return $this->clients->update(
-            $request->user()->clients->find($clientId),
+            $request->user()->clients->{$this->lookup}($clientId),
             $request->name, $request->redirect
         );
     }
@@ -112,7 +112,7 @@ class ClientController
         }
 
         $this->clients->delete(
-            $request->user()->clients->find($clientId)
+            $request->user()->clients->{$this->lookup}($clientId)
         );
     }
 }

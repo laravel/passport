@@ -25,7 +25,7 @@ class ClientRepository
      */
     public function findUUID($uuid)
     {
-        return Client::where('uuid', $id)->firstOrFail();
+        return Client::where('uuid', $uuid)->firstOrFail();
     }
 
     /**
@@ -40,6 +40,19 @@ class ClientRepository
 
         return $client && ! $client->revoked ? $client : null;
     }
+
+    /** 
+     * Get an active client by the given UUID.
+     *
+     * @param  string  $uuid
+     * @return Client|null
+     */
+    public function findActiveUUID($uuid)
+    {   
+        $client = $this->findUUID($uuid);
+
+        return $client && ! $client->revoked ? $client : null;
+    } 
 
     /**
      * Get the client instances for the given user ID.
