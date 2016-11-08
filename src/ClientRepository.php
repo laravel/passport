@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Webpatser\Uuid\Uuid as UUID;
+
 class ClientRepository
 {
     /**
@@ -13,6 +15,17 @@ class ClientRepository
     public function find($id)
     {
         return Client::find($id);
+    }
+
+    /**
+     * Get a client by the given UUID.
+     *
+     * @param  string  $uuid
+     * @return Client|null
+     */
+    public function findUUID($uuid)
+    {
+        return Client::where('uuid', $uuid)->firstOrFail();
     }
 
     /**
@@ -79,7 +92,7 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = (new Client)->forceFill([
+        $data = [
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -87,7 +100,13 @@ class ClientRepository
             'personal_access_client' => $personalAccess,
             'password_client' => $password,
             'revoked' => false,
-        ]);
+        ];
+
+        if (Passport::$useClientUUIDs) {
+            $data['uuid'] = UUID::generate(4)->string;
+        }
+
+        $client = (new Client)->forceFill($data);
 
         $client->save();
 

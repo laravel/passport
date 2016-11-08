@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Laravel\Passport\Passport;
 use Laravel\Passport\ClientRepository as ClientModelRepository;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 

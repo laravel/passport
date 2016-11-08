@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Laravel\Passport\Client;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
@@ -59,6 +60,18 @@ class AccessTokenController
      */
     public function issueToken(ServerRequestInterface $request)
     {
+        if (Passport::$useClientUUIDs) {
+            $rq = request();
+
+            $client = Client::where('uuid', $rq->input('client_id'))->firstOrFail();
+
+            $formData = $request->getParsedBody();
+
+            array_set($formData, 'client_id', $client->id);
+
+            $request = $request->withParsedBody($formData);
+        }
+
         $response = $this->withErrorHandling(function () use ($request) {
             return $this->server->respondToAccessTokenRequest($request, new Psr7Response);
         });

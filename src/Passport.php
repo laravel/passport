@@ -47,6 +47,34 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The name for API token cookies.
+     *
+     * @var string
+     */
+    public static $cookie = 'laravel_token';
+
+    /**
+     * The storage location of the encryption keys.
+     *
+     * @var string
+     */
+    public static $keyPath;
+
+    /**
+     * Indicates if Passport migrations will be run.
+     *
+     * @var bool
+     */
+    public static $runsMigrations = true;
+
+    /**
+     * Indicates if clients should be identified by UUID
+     *
+     * @var bool
+     */
+    public static $useClientUUIDs = false;
+
+    /**
      * Get a Passport route registrar.
      *
      * @param  array  $options
@@ -187,6 +215,73 @@ class Passport
         } else {
             static::$refreshTokensExpireAt = $date;
         }
+
+        return new static;
+    }
+
+    /**
+     * Get or set the name for API token cookies.
+     *
+     * @param  string|null  $cookie
+     * @return string|static
+     */
+    public static function cookie($cookie = null)
+    {
+        if (is_null($cookie)) {
+            return static::$cookie;
+        } else {
+            static::$cookie = $cookie;
+        }
+
+        return new static;
+    }
+
+    /**
+     * Set the storage location of the encryption keys.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    public static function loadKeysFrom($path)
+    {
+        static::$keyPath = $path;
+    }
+
+    /**
+     * The location of the encryption keys.
+     *
+     * @param  string  $file
+     * @return string
+     */
+    public static function keyPath($file)
+    {
+        $file = ltrim($file, "/\\");
+
+        return static::$keyPath
+            ? rtrim(static::$keyPath, "/\\").DIRECTORY_SEPARATOR.$file
+            : storage_path($file);
+    }
+
+    /**
+     * Configure Passport to not register its migrations.
+     *
+     * @return static
+     */
+    public static function ignoreMigrations()
+    {
+        static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to use UUIDs for identifying clients.
+     *
+     * @return static
+     */
+    public static function useClientUUIDs()
+    {
+        static::$useClientUUIDs = true;
 
         return new static;
     }

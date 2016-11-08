@@ -38,11 +38,17 @@ class PassportServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/passport'),
             ], 'passport-components');
 
-            $this->commands([
+            $commands = [
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
-            ]);
+            ];
+
+            if (Passport::$useClientUUIDs) {
+                array_push($commands, Console\UUIDCommand::class);
+            }
+
+            $this->commands($commands);
         }
     }
 
