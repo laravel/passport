@@ -41,19 +41,6 @@ class ClientRepository
         return $client && ! $client->revoked ? $client : null;
     }
 
-    /** 
-     * Get an active client by the given UUID.
-     *
-     * @param  string  $uuid
-     * @return Client|null
-     */
-    public function findActiveUUID($uuid)
-    {   
-        $client = $this->findUUID($uuid);
-
-        return $client && ! $client->revoked ? $client : null;
-    } 
-
     /**
      * Get the client instances for the given user ID.
      *
@@ -115,7 +102,7 @@ class ClientRepository
             'revoked' => false,
         ];
 
-	if (Passport::$useClientUUIDs) {
+        if (Passport::$useClientUUIDs) {
             $data['uuid'] = UUID::generate(4)->string;
         }
 
