@@ -10,18 +10,18 @@ use Illuminate\Support\Facades\Route;
 class Passport
 {
     /**
+     * Indicates if Passport should revoke existing tokens when issuing a new one.
+     *
+     * @var bool
+     */
+    public static $revokeOtherTokens = false;
+
+    /**
      * Indicates if Passport should prune revoked tokens.
      *
      * @var bool
      */
     public static $pruneRevokedTokens = false;
-
-    /**
-     * Indicates if Passport should revoke existing tokens.
-     *
-     * @var bool
-     */
-    public static $revokeOtherTokens = false;
 
     /**
      * The personal access token client ID.
@@ -96,18 +96,6 @@ class Passport
     }
 
     /**
-     * Instruct Passport to keep revoked tokens pruned.
-     *
-     * @return static
-     */
-    public static function pruneRevokedTokens()
-    {
-        static::$pruneRevokedTokens = true;
-
-        return new static;
-    }
-
-    /**
      * Instruct Passport to revoke other tokens when a new one is issued.
      *
      * @return static
@@ -115,6 +103,18 @@ class Passport
     public static function revokeOtherTokens()
     {
         static::$revokeOtherTokens = true;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to keep revoked tokens pruned.
+     *
+     * @return static
+     */
+    public static function pruneRevokedTokens()
+    {
+        static::$pruneRevokedTokens = true;
 
         return new static;
     }
