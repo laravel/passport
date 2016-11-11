@@ -17,6 +17,13 @@ class Passport
     public static $pruneRevokedTokens = false;
 
     /**
+     * Indicates if Passport should revoke existing tokens.
+     *
+     * @var bool
+     */
+    public static $revokeOtherTokens = false;
+
+    /**
      * The personal access token client ID.
      *
      * @var int
@@ -96,6 +103,18 @@ class Passport
     public static function pruneRevokedTokens()
     {
         static::$pruneRevokedTokens = true;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to revoke other tokens when a new one is issued.
+     *
+     * @return static
+     */
+    public static function revokeOtherTokens()
+    {
+        static::$revokeOtherTokens = true;
 
         return new static;
     }
