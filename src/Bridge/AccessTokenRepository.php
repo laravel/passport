@@ -4,6 +4,9 @@ namespace Laravel\Passport\Bridge;
 
 use DateTime;
 use Illuminate\Database\Connection;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Contracts\Events\Dispatcher;
+use Laravel\Passport\Events\NewAccessTokenCreated;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -20,13 +23,21 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     protected $database;
 
     /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Events\Dispatcher
+     */
+    private $events;
+
+    /**
      * Create a new repository instance.
      *
      * @param  \Illuminate\Database\Connection  $database
      * @return void
      */
-    public function __construct(Connection $database)
+    public function __construct(Connection $database, Dispatcher $events)
     {
+        $this->events = $events;
         $this->database = $database;
     }
 
@@ -44,15 +55,17 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
         $this->database->table('oauth_access_tokens')->insert([
-            'id' => $accessTokenEntity->getIdentifier(),
-            'user_id' => $accessTokenEntity->getUserIdentifier(),
-            'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
+            'id' => $id = $accessTokenEntity->getIdentifier(),
+            'user_id' => $userId = $accessTokenEntity->getUserIdentifier(),
+            'client_id' => $clientId = $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->formatScopesForStorage($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
+
+        $this->events->fire(new NewAccessTokenCreated($id, $userId, $clientId));
     }
 
     /**

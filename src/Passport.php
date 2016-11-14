@@ -98,24 +98,24 @@ class Passport
     /**
      * Instruct Passport to revoke other tokens when a new one is issued.
      *
+     * @deprecated since 1.0. Listen to Passport events on token creation instead.
+     *
      * @return static
      */
     public static function revokeOtherTokens()
     {
-        static::$revokeOtherTokens = true;
-
         return new static;
     }
 
     /**
      * Instruct Passport to keep revoked tokens pruned.
      *
+     * @deprecated since 1.0. Listen to Passport events on token creation instead.
+     *
      * @return static
      */
     public static function pruneRevokedTokens()
     {
-        static::$pruneRevokedTokens = true;
-
         return new static;
     }
 
