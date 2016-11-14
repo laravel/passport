@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Events;
 
-class NewRefreshTokenCreated
+class RefreshTokenCreated
 {
     /**
      * The newly created refresh token ID.

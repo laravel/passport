@@ -4,7 +4,7 @@ namespace Laravel\Passport\Bridge;
 
 use Illuminate\Database\Connection;
 use Illuminate\Contracts\Events\Dispatcher;
-use Laravel\Passport\Events\NewRefreshTokenCreated;
+use Laravel\Passport\Events\RefreshTokenCreated;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
@@ -56,7 +56,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
             'expires_at' => $refreshTokenEntity->getExpiryDateTime(),
         ]);
 
-        $this->events->fire(new NewRefreshTokenCreated($id, $accessTokenId));
+        $this->events->fire(new RefreshTokenCreated($id, $accessTokenId));
     }
 
     /**

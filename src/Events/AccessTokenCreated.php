@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Events;
 
-class NewAccessTokenCreated
+class AccessTokenCreated
 {
     /**
      * The newly created token ID.
