@@ -67,9 +67,11 @@ class RouteRegistrar
      */
     public function forAccessTokens()
     {
+        $middleware = Passport::$respondWithCookie ? ['throttle', 'attach-secret', 'add-cookie'] : 'throttle';
+
         $this->router->post('/oauth/token', [
             'uses' => 'AccessTokenController@issueToken',
-            'middleware' => 'throttle'
+            'middleware' => $middleware,
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
