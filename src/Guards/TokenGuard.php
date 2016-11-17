@@ -161,12 +161,15 @@ class TokenGuard
             return;
         }
 
-        // We will compare the CSRF token in the decoded API token against the CSRF header
-        // sent with the request. If the two don't match then this request is sent from
-        // a valid source and we won't authenticate the request for further handling.
-        if (! $this->validCsrf($token, $request) ||
-            time() >= $token['expiry']) {
-            return;
+        if ($this->hasNoAudience($token)) {
+            // We will compare the CSRF token in the decoded API token against the CSRF header
+            // sent with the request. If the two don't match then this request is sent from
+            // a valid source and we won't authenticate the request for further handling.
+            if (!$this->validCsrf($token, $request) ||
+                time() >= $token['expiry']
+            ) {
+                return;
+            }
         }
 
         // If this user exists, we will return this user and attach a "transient" token to
@@ -185,10 +188,28 @@ class TokenGuard
      */
     protected function decodeJwtTokenCookie($request)
     {
+        if (Passport::$respondWithSecureCookie) {
+            return (array) JWT::decode(
+                $this->encrypter->decrypt($request->cookie(Passport::cookie())),
+                'file://'.Passport::keyPath('oauth-public.key'), ['RS256']
+            );
+        }
+
         return (array) JWT::decode(
             $this->encrypter->decrypt($request->cookie(Passport::cookie())),
             $this->encrypter->getKey(), ['HS256']
         );
+    }
+
+    /**
+     * Determine if the token does not have an audience attached to it.
+     *
+     * @param  array  $token
+     * @return bool
+     */
+    protected function hasNoAudience(array $token)
+    {
+        return !isset($token['aud']);
     }
 
     /**

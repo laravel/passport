@@ -5,6 +5,7 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Carbon\Carbon;
 use Laravel\Passport\Passport;
+use Illuminate\Encryption\Encrypter;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Config\Repository as Config;
@@ -19,14 +20,23 @@ class AddsPasswordGrantCookie
     protected $config;
 
     /**
+     * The encrypter implementation.
+     *
+     * @var \Illuminate\Encryption\Encrypter
+     */
+    protected $encrypter;
+
+    /**
      * Create a new middleware instance.
      *
-     * @param \Illuminate\Contracts\Config\Repository $config
+     * @param  \Illuminate\Contracts\Config\Repository $config
+     * @param  \Illuminate\Encryption\Encrypter $encrypter
      * @return void
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, Encrypter $encrypter)
     {
         $this->config = $config;
+        $this->encrypter = $encrypter;
     }
 
     /**
@@ -62,7 +72,7 @@ class AddsPasswordGrantCookie
 
         return new Cookie(
             Passport::cookie(),
-            $token['access_token'],
+            $this->encrypter->encrypt($token['access_token']),
             $expiration,
             $config['path'],
             $config['domain'],
