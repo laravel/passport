@@ -54,6 +54,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * If implicit flow grant type is enabled.
+     *
+     * @var boolean|null
+     */
+    public static $enableImplicitFlow;
+
+    /**
      * The name for API token cookies.
      *
      * @var string
@@ -282,6 +289,18 @@ class Passport
     public static function ignoreMigrations()
     {
         static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Enable implicit flow grant type.
+     *
+     * @return static
+     */
+    public static function enableImplicitFlow()
+    {
+        static::$enableImplicitFlow = true;
 
         return new static;
     }

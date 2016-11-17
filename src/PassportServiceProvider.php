@@ -14,6 +14,7 @@ use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
+use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -95,6 +96,12 @@ class PassportServiceProvider extends ServiceProvider
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
 
+                if (Passport::$enableImplicitFlow) {
+                    $server->enableGrantType(
+                        $this->makeImplicitGrant(), Passport::tokensExpireIn()
+                    );
+                }
+
                 $server->enableGrantType(
                     $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
                 );
@@ -137,6 +144,28 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\AuthCodeRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class),
             new DateInterval('PT10M')
+        );
+    }
+
+    /**
+     * Create and configure an instance of the Implicit grant.
+     *
+     * @return ImplicitGrant
+     */
+    protected function makeImplicitGrant()
+    {
+        return $this->buildImplicitGrant();
+    }
+
+    /**
+     * Build the Implicit grant instance.
+     *
+     * @return ImplicitGrant
+     */
+    protected function buildImplicitGrant()
+    {
+        return new ImplicitGrant(
+            Passport::tokensExpireIn()
         );
     }
 
