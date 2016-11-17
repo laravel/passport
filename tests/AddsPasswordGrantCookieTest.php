@@ -25,7 +25,7 @@ class AddsPasswordGrantCookieTest extends PHPUnit_Framework_TestCase
             'secure' => true,
         ]);
 
-        $request = Request::create('/');
+        $request = Request::create('/', 'POST', ['grant_type' => 'password']);
         $expiry = Carbon::now()->addMinutes(10)->getTimestamp();
         $encrypter = new Encrypter(str_repeat('a', 16));
 

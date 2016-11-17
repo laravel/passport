@@ -50,7 +50,9 @@ class AddsPasswordGrantCookie
     {
         $response = $next($request);
 
-        $response->headers->setCookie($this->make($response));
+        if ($request->grant_type === 'password') {
+            $response->headers->setCookie($this->make($response));
+        }
 
         return $response;
     }
