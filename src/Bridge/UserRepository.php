@@ -46,7 +46,7 @@ class UserRepository implements UserRepositoryInterface
         if (! $user ) {
             return;
         } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {
-            if (!$user->validateForPassportPasswordGrant($password)) {
+            if (! $user->validateForPassportPasswordGrant($password)) {
                 return;
             }
         } elseif (! $this->hasher->check($password, $user->password)) {
