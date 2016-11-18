@@ -187,7 +187,7 @@ class TokenGuard
      */
     protected function decodeJwtTokenCookie($request)
     {
-        if (Passport::$respondWithSecureCookie) {
+        if (Passport::$respondWithCookie) {
             return (array) JWT::decode(
                 $this->encrypter->decrypt($request->cookie(Passport::cookie()))['access_token'],
                 'file://'.Passport::keyPath('oauth-public.key'), ['RS256']
