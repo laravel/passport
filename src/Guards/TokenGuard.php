@@ -166,8 +166,7 @@ class TokenGuard
             // sent with the request. If the two don't match then this request is sent from
             // a valid source and we won't authenticate the request for further handling.
             if (!$this->validCsrf($token, $request) ||
-                time() >= $token['expiry']
-            ) {
+                time() >= $token['expiry']) {
                 return;
             }
         }
@@ -190,7 +189,7 @@ class TokenGuard
     {
         if (Passport::$respondWithSecureCookie) {
             return (array) JWT::decode(
-                $this->encrypter->decrypt($request->cookie(Passport::cookie())),
+                $this->encrypter->decrypt($request->cookie(Passport::cookie()))['access_token'],
                 'file://'.Passport::keyPath('oauth-public.key'), ['RS256']
             );
         }

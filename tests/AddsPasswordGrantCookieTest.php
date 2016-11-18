@@ -38,11 +38,18 @@ class AddsPasswordGrantCookieTest extends PHPUnit_Framework_TestCase
             ], str_repeat('a', 16));
             $expiry = Carbon::now()->addMinutes(10)->getTimestamp();
 
-            return (new Response())->setContent(json_encode(['expires_in' => $expiry, 'access_token' => $token]));
+            return (new Response())->setContent(json_encode([
+                'expires_in' => $expiry,
+                'access_token' => $token,
+                'refresh_token' => 'refresh',
+            ]));
         });
 
         $cookie = $response->headers->getCookies()[0];
-        $decoded = JWT::decode($encrypter->decrypt($cookie->getValue()), str_repeat('a', 16), ['HS256']);
+        $decoded = JWT::decode(
+            $encrypter->decrypt($cookie->getValue())['access_token'],
+            str_repeat('a', 16), ['HS256']
+        );
 
         $this->assertEquals(1, $decoded->sub);
         $this->assertTrue($cookie->isSecure());
