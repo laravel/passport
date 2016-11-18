@@ -96,12 +96,6 @@ class PassportServiceProvider extends ServiceProvider
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
 
-                if (Passport::$enableImplicitFlow) {
-                    $server->enableGrantType(
-                        $this->makeImplicitGrant(), Passport::tokensExpireIn()
-                    );
-                }
-
                 $server->enableGrantType(
                     $this->makeRefreshTokenGrant(), Passport::tokensExpireIn()
                 );
@@ -117,6 +111,12 @@ class PassportServiceProvider extends ServiceProvider
                 $server->enableGrantType(
                     new ClientCredentialsGrant, Passport::tokensExpireIn()
                 );
+
+                if (Passport::$implicitGrantEnabled) {
+                    $server->enableGrantType(
+                        $this->makeImplicitGrant(), Passport::tokensExpireIn()
+                    );
+                }
             });
         });
     }
@@ -144,28 +144,6 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\AuthCodeRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class),
             new DateInterval('PT10M')
-        );
-    }
-
-    /**
-     * Create and configure an instance of the Implicit grant.
-     *
-     * @return ImplicitGrant
-     */
-    protected function makeImplicitGrant()
-    {
-        return $this->buildImplicitGrant();
-    }
-
-    /**
-     * Build the Implicit grant instance.
-     *
-     * @return ImplicitGrant
-     */
-    protected function buildImplicitGrant()
-    {
-        return new ImplicitGrant(
-            Passport::tokensExpireIn()
         );
     }
 
@@ -198,6 +176,16 @@ class PassportServiceProvider extends ServiceProvider
         $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
 
         return $grant;
+    }
+
+    /**
+     * Create and configure an instance of the Implicit grant.
+     *
+     * @return ImplicitGrant
+     */
+    protected function makeImplicitGrant()
+    {
+        return new ImplicitGrant(Passport::tokensExpireIn());
     }
 
     /**
