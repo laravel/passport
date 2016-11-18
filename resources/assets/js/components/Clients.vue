@@ -31,11 +31,13 @@
 
                 <table class="table table-borderless m-b-none" v-if="clients.length > 0">
                     <thead>
-                        <th>Client ID</th>
-                        <th>Name</th>
-                        <th>Secret</th>
-                        <th></th>
-                        <th></th>
+                        <tr>
+                            <th>Client ID</th>
+                            <th>Name</th>
+                            <th>Secret</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
                     </thead>
 
                     <tbody>
@@ -236,21 +238,35 @@
         },
 
         /**
-         * Prepare the component.
+         * Prepare the component (Vue 1.x).
          */
         ready() {
-            this.getClients();
+            this.prepareComponent();
+        },
 
-            $('#modal-create-client').on('shown.bs.modal', () => {
-                $('#create-client-name').focus();
-            });
-
-            $('#modal-edit-client').on('shown.bs.modal', () => {
-                $('#edit-client-name').focus();
-            });
+        /**
+         * Prepare the component (Vue 2.x).
+         */
+        mounted() {
+            this.prepareComponent();
         },
 
         methods: {
+            /**
+             * Prepare the component.
+             */
+            prepareComponent() {
+                this.getClients();
+
+                $('#modal-create-client').on('shown.bs.modal', () => {
+                    $('#create-client-name').focus();
+                });
+
+                $('#modal-edit-client').on('shown.bs.modal', () => {
+                    $('#edit-client-name').focus();
+                });
+            },
+
             /**
              * Get all of the OAuth clients for the user.
              */

@@ -16,7 +16,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
         $client->shouldReceive('makeVisible')->with('secret')->andReturn($client);
 
         $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('user')->andReturn((object) ['id' => 1]);
+        $request->shouldReceive('user')->andReturn(new ClientControllerFakeUser);
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
             $clients, Mockery::mock('Illuminate\Contracts\Validation\Factory')
@@ -31,7 +31,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(function () {
-            return (object) ['id' => 1];
+            return new ClientControllerFakeUser;
         });
 
         $clients->shouldReceive('create')->once()->with(1, 'client name', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
@@ -171,5 +171,14 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals(404, $controller->destroy($request, 1)->status());
+    }
+}
+
+class ClientControllerFakeUser
+{
+    public $id = 1;
+    public function getKey()
+    {
+        return $this->id;
     }
 }

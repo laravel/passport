@@ -4,6 +4,8 @@ namespace Laravel\Passport\Bridge;
 
 use DateTime;
 use Laravel\Passport\TokenRepository;
+use Illuminate\Contracts\Events\Dispatcher;
+use Laravel\Passport\Events\AccessTokenCreated;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -13,20 +15,29 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The database connection.
+     * The token repository instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var TokenRepository
      */
     protected $tokenRepository;
 
     /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Events\Dispatcher
+     */
+    private $events;
+
+    /**
      * Create a new repository instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
+     * @param  TokenRepository  $tokenRepository
+     * @param  \Illuminate\Events\Dispatcher  $events
      * @return void
      */
-    public function __construct(TokenRepository $tokenRepository)
+    public function __construct(TokenRepository $tokenRepository, Dispatcher $events)
     {
+        $this->events = $events;
         $this->tokenRepository = $tokenRepository;
     }
 
@@ -53,6 +64,12 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
+
+        $this->events->fire(new AccessTokenCreated(
+            $accessTokenEntity->getIdentifier(),
+            $accessTokenEntity->getUserIdentifier(),
+            $accessTokenEntity->getClient()->getIdentifier()
+        ));
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Laravel\Passport\Bridge;
 
 use Illuminate\Database\Connection;
+use Illuminate\Contracts\Events\Dispatcher;
+use Laravel\Passport\Events\RefreshTokenCreated;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
@@ -16,13 +18,21 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     protected $database;
 
     /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Events\Dispatcher
+     */
+    private $events;
+
+    /**
      * Create a new repository instance.
      *
      * @param  \Illuminate\Database\Connection  $database
      * @return void
      */
-    public function __construct(Connection $database)
+    public function __construct(Connection $database, Dispatcher $events)
     {
+        $this->events = $events;
         $this->database = $database;
     }
 
@@ -40,11 +50,13 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
         $this->database->table('oauth_refresh_tokens')->insert([
-            'id' => $refreshTokenEntity->getIdentifier(),
-            'access_token_id' => $refreshTokenEntity->getAccessToken()->getIdentifier(),
+            'id' => $id = $refreshTokenEntity->getIdentifier(),
+            'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),
             'revoked' => false,
             'expires_at' => $refreshTokenEntity->getExpiryDateTime(),
         ]);
+
+        $this->events->fire(new RefreshTokenCreated($id, $accessTokenId));
     }
 
     /**

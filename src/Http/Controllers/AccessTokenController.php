@@ -59,37 +59,8 @@ class AccessTokenController
      */
     public function issueToken(ServerRequestInterface $request)
     {
-        $response = $this->withErrorHandling(function () use ($request) {
+        return $this->withErrorHandling(function () use ($request) {
             return $this->server->respondToAccessTokenRequest($request, new Psr7Response);
         });
-
-        if ($response->getStatusCode() < 200 || $response->getStatusCode() > 299) {
-            return $response;
-        }
-
-        $payload = json_decode($response->getBody()->__toString(), true);
-
-        if (isset($payload['access_token'])) {
-            $this->revokeOtherAccessTokens($payload);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Revoke the user's other access tokens for the client.
-     *
-     * @param  array  $payload
-     * @return void
-     */
-    protected function revokeOtherAccessTokens(array $payload)
-    {
-        $token = $this->tokens->find(
-            $tokenId = $this->jwt->parse($payload['access_token'])->getClaim('jti')
-        );
-
-        $this->tokens->revokeOtherAccessTokens(
-            $token->client_id, $token->user_id, $tokenId, Passport::$pruneRevokedTokens
-        );
     }
 }
