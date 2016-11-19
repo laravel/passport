@@ -122,7 +122,7 @@ class Passport
     }
 
     /**
-     * Instruct Passport to respond with a secure cookie when issuing an access token.
+     * Instruct Passport to respond with a cookie when issuing an access token.
      *
      * @return static
      */

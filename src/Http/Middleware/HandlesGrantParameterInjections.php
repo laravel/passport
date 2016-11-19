@@ -28,8 +28,8 @@ class HandlesGrantParameterInjections
     /**
      * Create a new middleware instance.
      *
-     * @param  \Laravel\Passport\ClientRepository $clients
-     * @param  \Illuminate\Encryption\Encrypter $encrypter
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Illuminate\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(ClientRepository $clients, Encrypter $encrypter)

@@ -16,7 +16,7 @@ class AddsPasswordGrantCookie
     /**
      * The configuration repository implementation.
      *
-     * @var Config
+     * @var \Illuminate\Contracts\Config\Repository
      */
     protected $config;
 
@@ -30,8 +30,8 @@ class AddsPasswordGrantCookie
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Config\Repository $config
-     * @param  \Illuminate\Encryption\Encrypter $encrypter
+     * @param  \Illuminate\Contracts\Config\Repository  $config
+     * @param  \Illuminate\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(Config $config, Encrypter $encrypter)
@@ -61,7 +61,7 @@ class AddsPasswordGrantCookie
     /**
      * Create a new API token cookie.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response $response
+     * @param  \Symfony\Component\HttpFoundation\Response  $response
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
     protected function make(Response $response)
@@ -91,7 +91,7 @@ class AddsPasswordGrantCookie
     /**
      * Determine if the request contains a valid grant type.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
     protected function containsValidGrantType(Request $request)
