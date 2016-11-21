@@ -2,6 +2,9 @@
 
 namespace Laravel\Passport;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+
 class TokenRepository
 {
     /**
@@ -24,6 +27,22 @@ class TokenRepository
     public function save($token)
     {
         $token->save();
+    }
+
+    /**
+     * Store the given token instance.
+     *
+     * @param  Model  $userId
+     * @param  Client  $client
+     * @return Token|null
+     */
+    public function getValidToken($user, $client)
+    {
+        return $client->tokens()
+                      ->whereUserId($user->id)
+                      ->whereRevoked(0)
+                      ->where('expires_at', '>', Carbon::now()->toDateTimeString())
+                      ->first();
     }
 
     /**

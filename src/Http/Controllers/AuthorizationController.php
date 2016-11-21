@@ -2,10 +2,16 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laravel\Passport\Passport;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Laravel\Passport\Passport;
+use Laravel\Passport\Bridge\User;
+use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
@@ -50,18 +56,29 @@ class AuthorizationController
      */
     public function authorize(ServerRequestInterface $psrRequest,
                               Request $request,
-                              ClientRepository $clients)
+                              ClientRepository $clients,
+                              TokenRepository $tokens)
     {
-        return $this->withErrorHandling(function () use ($psrRequest, $request, $clients) {
-            $request->session()->put(
-                'authRequest', $authRequest = $this->server->validateAuthorizationRequest($psrRequest)
-            );
+        return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
+            $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
             $scopes = $this->parseScopes($authRequest);
 
+            $client = $clients->find($authRequest->getClient()->getIdentifier());
+
+            $user = $request->user();
+
+            $token = $tokens->getValidToken($user, $client);
+
+            if ($token && Passport::scopesFor($token->scopes) == $scopes) {
+                return $this->approveRequest($authRequest, $user);
+            }
+
+            $request->session()->put('authRequest', $authRequest);
+
             return $this->response->view('passport::authorize', [
-                'client' => $clients->find($authRequest->getClient()->getIdentifier()),
-                'user' => $request->user(),
+                'client' => $client,
+                'user' => $user,
                 'scopes' => $scopes,
                 'request' => $request,
             ]);
@@ -80,6 +97,24 @@ class AuthorizationController
             collect($authRequest->getScopes())->map(function ($scope) {
                 return $scope->getIdentifier();
             })->all()
+        );
+    }
+
+    /**
+     * Approve the authorization request.
+     *
+     * @param  AuthorizationRequest  $authRequest
+     * @param  Model  $user
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    private function approveRequest($authRequest, $user)
+    {
+        $authRequest->setUser(new User($user->getKey()));
+
+        $authRequest->setAuthorizationApproved(true);
+
+        return $this->server->completeAuthorizationRequest(
+            $authRequest, new Psr7Response
         );
     }
 }
