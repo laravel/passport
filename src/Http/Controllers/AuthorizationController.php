@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
