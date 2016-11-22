@@ -41,7 +41,7 @@ class TokenRepository
         return $client->tokens()
                       ->whereUserId($user->id)
                       ->whereRevoked(0)
-                      ->where('expires_at', '>', Carbon::now()->toDateTimeString())
+                      ->where('expires_at', '>', Carbon::now())
                       ->first();
     }
 
