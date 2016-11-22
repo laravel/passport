@@ -30,18 +30,19 @@ class TokenRepository
     }
 
     /**
-     * Store the given token instance.
+     * Find a valid token for the given user and client.
      *
      * @param  Model  $userId
      * @param  Client  $client
      * @return Token|null
      */
-    public function getValidToken($user, $client)
+    public function findValidToken($user, $client)
     {
         return $client->tokens()
                       ->whereUserId($user->id)
                       ->whereRevoked(0)
                       ->where('expires_at', '>', Carbon::now())
+                      ->latest('expires_at')
                       ->first();
     }
 

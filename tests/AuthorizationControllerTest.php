@@ -44,7 +44,7 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $tokens->shouldReceive('getValidToken')->with('user', 'client')->andReturnNull();
+        $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
 
         $this->assertEquals('view', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
@@ -74,6 +74,9 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
         )->getOriginalContent());
     }
 
+    /**
+     * @group shithead
+     */
     public function test_request_is_approved_if_valid_token_exists()
     {
         Laravel\Passport\Passport::tokensCan([
@@ -102,7 +105,7 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $tokens->shouldReceive('getValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('Laravel\Passport\Token'));
+        $tokens->shouldReceive('findValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('Laravel\Passport\Token'));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
         $this->assertEquals('approved', $controller->authorize(

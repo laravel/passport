@@ -2,17 +2,17 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationController
 {
@@ -63,13 +63,12 @@ class AuthorizationController
 
             $scopes = $this->parseScopes($authRequest);
 
-            $client = $clients->find($authRequest->getClient()->getIdentifier());
+            $token = $tokens->findValidToken(
+                $user = $request->user(),
+                $client = $clients->find($authRequest->getClient()->getIdentifier())
+            );
 
-            $user = $request->user();
-
-            $token = $tokens->getValidToken($user, $client);
-
-            if ($token && Passport::scopesFor($token->scopes) == $scopes) {
+            if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
                 return $this->approveRequest($authRequest, $user);
             }
 
