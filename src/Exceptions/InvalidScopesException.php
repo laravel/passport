@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Exceptions;
 
-use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 
-class InvalidScopesException extends Exception
+class InvalidScopesException extends AuthorizationException
 {
     /**
      * The scope(s) that failed authorization.
