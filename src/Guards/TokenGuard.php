@@ -88,7 +88,7 @@ class TokenGuard
     {
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
-        } elseif ($request->cookie(Passport::cookie())) {
+        } elseif ($this->getToken($request)) {
             return $this->authenticateViaCookie($request);
         }
     }
@@ -186,7 +186,7 @@ class TokenGuard
     protected function decodeJwtTokenCookie($request)
     {
         return (array) JWT::decode(
-            $this->encrypter->decrypt($request->cookie(Passport::cookie())),
+            $this->encrypter->decrypt($this->getToken($request)),
             $this->encrypter->getKey(), ['HS256']
         );
     }
@@ -203,5 +203,16 @@ class TokenGuard
         return isset($token['csrf']) && hash_equals(
             $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
         );
+    }
+
+    /**
+     * Token getter
+     *
+     * @param Request $request
+     * @return string
+     */
+    protected function getToken(Request $request)
+    {
+        return $request->cookie(Passport::cookie());
     }
 }
