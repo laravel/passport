@@ -82,6 +82,20 @@ class Passport
     public static $runsMigrations = true;
 
     /**
+     * The max attempts for the throttle middleware.
+     *
+     * @var int
+     */
+    public static $maxAttempts = 60;
+
+    /**
+     * The decay minutes for the throttle middleware.
+     *
+     * @var int
+     */
+    public static $decayMinutes = 1;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -301,6 +315,40 @@ class Passport
     public static function ignoreMigrations()
     {
         static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Get or set the max attempts for the throttle middleware.
+     *
+     * @param  int|null  $maxAttempts
+     * @return int|static
+     */
+    public static function maxAttempts($maxAttempts = null)
+    {
+        if (is_null($maxAttempts)) {
+            return static::$maxAttempts;
+        } else {
+            static::$maxAttempts = $maxAttempts;
+        }
+
+        return new static;
+    }
+
+    /**
+     * Get or set the decay minutes for the throttle middleware.
+     *
+     * @param  int|null  $decayMinutes
+     * @return int|static
+     */
+    public static function decayMinutes($decayMinutes = null)
+    {
+        if (is_null($decayMinutes)) {
+            return static::$decayMinutes;
+        } else {
+            static::$decayMinutes = $decayMinutes;
+        }
 
         return new static;
     }
