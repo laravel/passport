@@ -71,7 +71,7 @@ class AuthorizationController
     /**
      * Transform the authorization requests's scopes into Scope instances.
      *
-     * @param  AuthRequest  $request
+     * @param  AuthRequest  $authRequest
      * @return array
      */
     protected function parseScopes($authRequest)
