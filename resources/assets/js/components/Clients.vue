@@ -271,7 +271,7 @@
              * Get all of the OAuth clients for the user.
              */
             getClients() {
-                this.$http.get('/oauth/clients')
+                axios.get('/oauth/clients')
                         .then(response => {
                             this.clients = response.data;
                         });
@@ -321,7 +321,7 @@
             persistClient(method, uri, form, modal) {
                 form.errors = [];
 
-                this.$http[method](uri, form)
+                axios[method](uri, form)
                     .then(response => {
                         this.getClients();
 
@@ -344,7 +344,7 @@
              * Destroy the given client.
              */
             destroy(client) {
-                this.$http.delete('/oauth/clients/' + client.id)
+                axios.delete('/oauth/clients/' + client.id)
                         .then(response => {
                             this.getClients();
                         });
