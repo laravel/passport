@@ -8,6 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class TokenRepository
 {
     /**
+     * Creates a new Access Token
+     *
+     * @param  array  $attributes
+     * @return Token
+     */
+    public function create($attributes)
+    {
+        return Token::create($attributes);
+    }
+
+    /**
      * Get a token by the given ID.
      *
      * @param  string  $id
@@ -24,7 +35,7 @@ class TokenRepository
      * @param  Token  $token
      * @return void
      */
-    public function save($token)
+    public function save(Token $token)
     {
         $token->save();
     }
