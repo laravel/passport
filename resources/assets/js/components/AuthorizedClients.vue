@@ -16,7 +16,7 @@
 
                 <div class="panel-body">
                     <!-- No Tokens Notice -->
-                    <p class="m-b-none" v-if="Object.keys(tokens).length === 0 || tokens.length === 0">
+                    <p class="m-b-none" v-if="tokens.length === 0">
                         You have not authorized any applications.
                     </p>
 
