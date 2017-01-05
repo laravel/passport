@@ -17,6 +17,13 @@ class Passport
     public static $implicitGrantEnabled = false;
 
     /**
+     * Indicates if Passport should respond with a cookie when issuing access tokens.
+     *
+     * @var bool
+     */
+    public static $respondWithCookie = false;
+
+    /**
      * Indicates if Passport should revoke existing tokens when issuing a new one.
      *
      * @var bool
@@ -112,6 +119,18 @@ class Passport
         Route::group($options, function ($router) use ($callback) {
             $callback(new RouteRegistrar($router));
         });
+    }
+
+    /**
+     * Instruct Passport to respond with a cookie when issuing an access token.
+     *
+     * @return static
+     */
+    public static function respondWithCookie()
+    {
+        static::$respondWithCookie = true;
+
+        return new static;
     }
 
     /**
