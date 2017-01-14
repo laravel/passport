@@ -106,7 +106,7 @@
                                                     @click="toggleScope(scope.id)"
                                                     :checked="scopeIsAssigned(scope.id)">
 
-                                                    {{ scope.id }}
+                                                    {{ scope.description }}
                                             </label>
                                         </div>
                                     </div>
