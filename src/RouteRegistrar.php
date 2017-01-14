@@ -69,7 +69,7 @@ class RouteRegistrar
     {
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
-            'middleware' => 'throttle'
+            'middleware' => 'throttle:'.Passport::maxAttempts().','.Passport::decayMinutes(),
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
