@@ -28,7 +28,7 @@ class BridgeAccessTokenRepositoryTest extends PHPUnit_Framework_TestCase
             $this->assertEquals($expiration, $array['expires_at']);
         });
 
-        $events->shouldReceive('fire')->once();
+        $events->shouldReceive('dispatch')->once();
 
         $accessToken = new Laravel\Passport\Bridge\AccessToken(2, [new Laravel\Passport\Bridge\Scope('scopes')]);
         $accessToken->setIdentifier(1);

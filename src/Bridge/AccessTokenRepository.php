@@ -64,7 +64,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
 
-        $this->events->fire(new AccessTokenCreated($id, $userId, $clientId));
+        $this->events->dispatch(new AccessTokenCreated($id, $userId, $clientId));
     }
 
     /**
