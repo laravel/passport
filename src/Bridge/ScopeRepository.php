@@ -25,11 +25,20 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes, $grantType,
         ClientEntityInterface $clientEntity, $userIdentifier = null)
     {
+        $client_repository = new ClientRepository();
+
         if ($grantType !== 'password') {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
         }
+
+        $client_id = collect($clientEntity)->values()->last();
+
+        //remove scopes that are not assigned to this client
+        $scopes = collect($scopes)->reject(function ($scope) use ($client_id, $client_repository) {
+                return !$client_repository->hasScope($client_id, trim($scope->getIdentifier()));
+            })->values()->all();
 
         return collect($scopes)->filter(function ($scope) {
             return Passport::hasScope($scope->getIdentifier());
