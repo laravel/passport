@@ -2,6 +2,9 @@
 
 namespace Laravel\Passport;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+
 class TokenRepository
 {
     /**
@@ -38,25 +41,20 @@ class TokenRepository
     }
 
     /**
-     * Revoke an access token.
+     * Find a valid token for the given user and client.
      *
-     * @param string $id
+     * @param  Model  $userId
+     * @param  Client  $client
+     * @return Token|null
      */
-    public function revokeAccessToken($id)
+    public function findValidToken($user, $client)
     {
-        return $this->find($id)->update(['revoked' => true]);
-    }
-
-    /**
-     * Check if the access token has been revoked.
-     *
-     * @param string $id
-     *
-     * @return bool Return true if this token has been revoked
-     */
-    public function isAccessTokenRevoked($id)
-    {
-        return Token::where('id', $id)->where('revoked', true)->exists();
+        return $client->tokens()
+                      ->whereUserId($user->id)
+                      ->whereRevoked(0)
+                      ->where('expires_at', '>', Carbon::now())
+                      ->latest('expires_at')
+                      ->first();
     }
 
     /**
