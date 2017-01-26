@@ -60,7 +60,6 @@ class TokenRepository
             return $token->revoked;
         }
 
-        // If does not exists, so asume revoked
         return true;
     }
 
