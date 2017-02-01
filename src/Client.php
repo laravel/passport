@@ -69,4 +69,14 @@ class Client extends Model
     {
         return $this->personal_access_client || $this->password_client;
     }
+
+    /**
+     * Determine if the client is a personal token client.
+     *
+     * @return bool
+     */
+    public function personal()
+    {
+        return $this->personal_access_client;
+    }
 }
