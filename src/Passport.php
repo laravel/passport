@@ -304,4 +304,25 @@ class Passport
 
         return new static;
     }
+
+    /**
+     * Set the current user for the application with the given scopes.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array $scopes
+     */
+    public static function actingAs($user, $scopes = [])
+    {
+        $token = \Mockery::mock(Token::class)->shouldIgnoreMissing(false);
+
+        foreach ($scopes as $scope) {
+            $token->shouldReceive('can')->with($scope)->andReturn(true);
+        }
+
+        $user->withAccessToken($token);
+
+        App::make('auth')->guard('api')->setUser($user);
+
+        App::make('auth')->shouldUse('api');
+    }
 }
