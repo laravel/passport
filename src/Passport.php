@@ -309,7 +309,7 @@ class Passport
      * Set the current user for the application with the given scopes.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  array $scopes
+     * @param  array  $scopes
      */
     public static function actingAs($user, $scopes = [])
     {
