@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Mockery;
 use DateInterval;
 use Carbon\Carbon;
 use DateTimeInterface;
@@ -268,6 +269,29 @@ class Passport
     }
 
     /**
+     * Set the current user for the application with the given scopes.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array  $scopes
+     * @param  string  $guard
+     * @return void
+     */
+    public static function actingAs($user, $scopes = [], $guard = 'api')
+    {
+        $token = Mockery::mock(Token::class)->shouldIgnoreMissing(false);
+
+        foreach ($scopes as $scope) {
+            $token->shouldReceive('can')->with($scope)->andReturn(true);
+        }
+
+        $user->withAccessToken($token);
+
+        app('auth')->guard($guard)->setUser($user);
+
+        app('auth')->shouldUse($guard);
+    }
+
+    /**
      * Set the storage location of the encryption keys.
      *
      * @param  string  $path
@@ -303,26 +327,5 @@ class Passport
         static::$runsMigrations = false;
 
         return new static;
-    }
-
-    /**
-     * Set the current user for the application with the given scopes.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  array  $scopes
-     */
-    public static function actingAs($user, $scopes = [])
-    {
-        $token = \Mockery::mock(Token::class)->shouldIgnoreMissing(false);
-
-        foreach ($scopes as $scope) {
-            $token->shouldReceive('can')->with($scope)->andReturn(true);
-        }
-
-        $user->withAccessToken($token);
-
-        App::make('auth')->guard('api')->setUser($user);
-
-        App::make('auth')->shouldUse('api');
     }
 }
