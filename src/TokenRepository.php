@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Carbon\Carbon;
+
 class TokenRepository
 {
     /**
@@ -57,6 +59,22 @@ class TokenRepository
     public function isAccessTokenRevoked($id)
     {
         return Token::where('id', $id)->where('revoked', true)->exists();
+    }
+    
+    /**
+     * Store the given token instance.
+     *
+     * @param  Model  $userId
+     * @param  Client  $client
+     * @return Token|null
+     */
+    public function getValidToken($user, $client)
+    {
+        return $client->tokens()
+            ->whereUserId($user->id)
+            ->whereRevoked(0)
+            ->where('expires_at', '>', Carbon::now())
+            ->first();
     }
 
     /**
