@@ -105,9 +105,12 @@ class Passport
             $router->all();
         };
 
-        $options = array_merge($options, [
+        $defaultOptions = [
+            'prefix' => 'oauth',
             'namespace' => '\Laravel\Passport\Http\Controllers',
-        ]);
+        ];
+
+        $options = array_merge($defaultOptions, $options);
 
         Route::group($options, function ($router) use ($callback) {
             $callback(new RouteRegistrar($router));
