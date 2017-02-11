@@ -2,12 +2,15 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\TokenRepository;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Zend\Diactoros\Response as Psr7Response;
 
 class AuthorizationController
 {
@@ -49,15 +52,27 @@ class AuthorizationController
      * @return Response
      */
     public function authorize(ServerRequestInterface $psrRequest,
-                              Request $request,
-                              ClientRepository $clients)
+        Request $request,
+        ClientRepository $clients,
+        TokenRepository $tokens)
     {
-        return $this->withErrorHandling(function () use ($psrRequest, $request, $clients) {
+        return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
+            $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
+
+            $scopes = $this->parseScopes($authRequest);
+
+            $token = $tokens->getValidToken(
+                $user = $request->user(),
+                $client = $clients->find($authRequest->getClient()->getIdentifier())
+            );
+
+            if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
+                return $this->approveRequest($authRequest, $user);
+            }
+
             $request->session()->put(
                 'authRequest', $authRequest = $this->server->validateAuthorizationRequest($psrRequest)
             );
-
-            $scopes = $this->parseScopes($authRequest);
 
             return $this->response->view('passport::authorize', [
                 'client' => $clients->find($authRequest->getClient()->getIdentifier()),
@@ -82,4 +97,21 @@ class AuthorizationController
             })->all()
         );
     }
+
+    /**
+     * Approve the authorization request.
+     *
+     * @param  AuthorizationRequest  $authRequest
+     * @param  Model  $user
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    private function approveRequest($authRequest, $user)
+    {
+        $authRequest->setUser(new User($user->getKey()));
+        $authRequest->setAuthorizationApproved(true);
+        return $this->server->completeAuthorizationRequest(
+            $authRequest, new Psr7Response
+        );
+    }
+
 }
