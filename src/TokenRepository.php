@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Carbon\Carbon;
+
 class TokenRepository
 {
     /**
@@ -24,6 +26,22 @@ class TokenRepository
     public function find($id)
     {
         return Token::find($id);
+    }
+
+    /**
+     * Get a valid token instance for the given user and client.
+     *
+     * @param  Model  $userId
+     * @param  Client  $client
+     * @return Token|null
+     */
+    public function getValidToken($user, $client)
+    {
+        return $client->tokens()
+                    ->whereUserId($user->id)
+                    ->whereRevoked(0)
+                    ->where('expires_at', '>', Carbon::now())
+                    ->first();
     }
 
     /**

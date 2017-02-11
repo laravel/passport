@@ -43,8 +43,11 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens->shouldReceive('getValidToken')->andReturn([]);
+
         $this->assertEquals('view', $controller->authorize(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients
+            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         ));
     }
 
@@ -64,8 +67,11 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
 
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
 
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens->shouldReceive('getValidToken')->andReturn([]);
+
         $this->assertEquals('whoops', $controller->authorize(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients
+            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         )->getOriginalContent());
     }
 }
