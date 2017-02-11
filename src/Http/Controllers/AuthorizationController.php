@@ -2,15 +2,15 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laravel\Passport\Bridge\User;
-use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
+use Laravel\Passport\Passport;
+use Laravel\Passport\Bridge\User;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\TokenRepository;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Zend\Diactoros\Response as Psr7Response;
 
 class AuthorizationController
 {
@@ -49,12 +49,13 @@ class AuthorizationController
      * @param  ServerRequestInterface  $psrRequest
      * @param  Request  $request
      * @param  ClientRepository  $clients
+     * @param  TokenRepository  $tokens
      * @return Response
      */
     public function authorize(ServerRequestInterface $psrRequest,
-        Request $request,
-        ClientRepository $clients,
-        TokenRepository $tokens)
+                              Request $request,
+                              ClientRepository $clients,
+                              TokenRepository $tokens)
     {
         return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
@@ -105,10 +106,12 @@ class AuthorizationController
      * @param  Model  $user
      * @return \Psr\Http\Message\ResponseInterface
      */
-    private function approveRequest($authRequest, $user)
+    protected function approveRequest($authRequest, $user)
     {
         $authRequest->setUser(new User($user->getKey()));
+
         $authRequest->setAuthorizationApproved(true);
+
         return $this->server->completeAuthorizationRequest(
             $authRequest, new Psr7Response
         );
