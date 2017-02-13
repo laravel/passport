@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class TokenRepository
 {
@@ -81,18 +82,20 @@ class TokenRepository
         return true;
     }
 
-    /**
-     * Revoke all of the access tokens for a given user and client.
+        /**
+     * Find a valid token for the given user and client.
      *
-     * @deprecated since 1.0. Listen to Passport events on token creation instead.
-     *
-     * @param  mixed  $clientId
-     * @param  mixed  $userId
-     * @param  bool  $prune
-     * @return void
+     * @param  Model  $userId
+     * @param  Client  $client
+     * @return Token|null
      */
-    public function revokeOtherAccessTokens($clientId, $userId, $except = null, $prune = false)
+    public function findValidToken($user, $client)
     {
-        //
+        return $client->tokens()
+                      ->whereUserId($user->id)
+                      ->whereRevoked(0)
+                      ->where('expires_at', '>', Carbon::now())
+                      ->latest('expires_at')
+                      ->first();
     }
 }
