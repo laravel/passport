@@ -85,7 +85,7 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $this->assertNull($guard->user($request));
     }
 
-    public function test_users_may_be_retrieved_from_cookies()
+    public function test_users_may_be_retrieved_from_cookies_with_valid_csrf_header()
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
@@ -111,7 +111,33 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedUser, $user);
     }
 
-    public function test_cookie_xsrf_is_verified_against_header()
+    public function test_users_may_be_retrieved_from_cookies_with_valid_xsrf_header()
+    {
+        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+
+        $request = Request::create('/');
+        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token'));
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(JWT::encode([
+                'sub' => 1, 'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16)))
+        );
+
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
+
+        $user = $guard->user($request);
+
+        $this->assertEquals($expectedUser, $user);
+    }
+
+    public function test_cookie_csrf_is_verified_against_csrf_header()
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
@@ -135,7 +161,31 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $this->assertNull($guard->user($request));
     }
 
-    public function test_expired_cookies_may_not_be_used()
+    public function test_cookie_csrf_is_verified_against_xsrf_header()
+    {
+        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+
+        $request = Request::create('/');
+        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('wrong_token'));
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(JWT::encode([
+                'sub' => 1, 'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16)))
+        );
+
+        $userProvider->shouldReceive('retrieveById')->never();
+
+        $this->assertNull($guard->user($request));
+    }
+
+    public function test_expired_cookies_may_not_be_used_using_csrf_header()
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
@@ -147,6 +197,30 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(JWT::encode([
+                'sub' => 1, 'csrf' => 'token',
+                'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16)))
+        );
+
+        $userProvider->shouldReceive('retrieveById')->never();
+
+        $this->assertNull($guard->user($request));
+    }
+
+    public function test_expired_cookies_may_not_be_used_using_xsrf_header()
+    {
+        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+
+        $request = Request::create('/');
+        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token'));
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1, 'csrf' => 'token',
