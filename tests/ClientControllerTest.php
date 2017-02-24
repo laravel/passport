@@ -42,7 +42,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
             'redirect' => 'http://localhost',
         ], [
             'name' => 'required|max:255',
-            'redirect' => 'required|url',
+            'redirect' => 'url',
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
@@ -80,7 +80,7 @@ class ClientControllerTest extends PHPUnit_Framework_TestCase
             'redirect' => 'http://localhost',
         ], [
             'name' => 'required|max:255',
-            'redirect' => 'required|url',
+            'redirect' => 'url',
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
