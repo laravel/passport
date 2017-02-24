@@ -32,6 +32,13 @@ class Passport
     public static $pruneRevokedTokens = false;
 
     /**
+     * Indicates if * scope is allowed.
+     *
+     * @var bool
+     */
+    public static $allowStarScope = true;
+
+    /**
      * The personal access token client ID.
      *
      * @var int
@@ -143,6 +150,18 @@ class Passport
     }
 
     /**
+     * Instruct Passport to disallow the use of * scope.
+     *
+     * @return static
+     */
+    public static function disallowStarScope()
+    {
+        static::$allowStarScope = false;
+
+        return new static;
+    }
+
+    /**
      * Set the client ID that should be used to issue personal access tokens.
      *
      * @param  int  $clientId
@@ -173,7 +192,8 @@ class Passport
      */
     public static function hasScope($id)
     {
-        return $id === '*' || array_key_exists($id, static::$scopes);
+        return (static::$allowStarScope && $id === '*') ||
+               array_key_exists($id, static::$scopes);
     }
 
     /**

@@ -83,7 +83,7 @@ class Token extends Model
      */
     public function can($scope)
     {
-        return in_array('*', $this->scopes) ||
+        return (Passport::$allowStarScope && in_array('*', $this->scopes)) ||
                array_key_exists($scope, array_flip($this->scopes));
     }
 
