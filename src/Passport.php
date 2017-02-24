@@ -95,10 +95,10 @@ class Passport
     }
 
     /**
-     * Binds routes.
+     * Binds the Passport routes into the controller.
      *
-     * @param  callable|null $callback Callable that binds routes, it will take a RouteRegister as its only parameter
-     * @param  array         $options  A list of options for the Route group
+     * @param  callable|null  $callback
+     * @param  array  $options
      * @return void
      */
     public static function routes($callback = null, array $options = [])
