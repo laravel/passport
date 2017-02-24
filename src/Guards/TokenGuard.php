@@ -200,8 +200,16 @@ class TokenGuard
      */
     protected function validCsrf($token, $request)
     {
-        return isset($token['csrf']) && hash_equals(
-            $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
-        );
+        $csrfToken = $request->header('X-CSRF-TOKEN');
+
+        if (! $csrfToken && $header = $request->header('X-XSRF-TOKEN')) {
+            $csrfToken = $this->encrypter->decrypt($header);
+        }
+
+        if (! is_string($csrfToken) || ! isset($token['csrf'])) {
+            return false;
+        }
+
+        return hash_equals($token['csrf'], (string) $csrfToken);
     }
 }
