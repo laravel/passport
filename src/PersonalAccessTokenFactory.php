@@ -46,11 +46,12 @@ class PersonalAccessTokenFactory
      * @param  JwtParser  $jwt
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                ClientRepository $clients,
-                                TokenRepository $tokens,
-                                JwtParser $jwt)
-    {
+    public function __construct(
+        AuthorizationServer $server,
+        ClientRepository $clients,
+        TokenRepository $tokens,
+        JwtParser $jwt
+    ) {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
