@@ -52,7 +52,7 @@ class AuthorizationController
      * @param  Request  $request
      * @param  ClientRepository  $clients
      * @param  TokenRepository  $tokens
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function authorize(ServerRequestInterface $psrRequest,
                               Request $request,
@@ -87,7 +87,7 @@ class AuthorizationController
     /**
      * Transform the authorization requests's scopes into Scope instances.
      *
-     * @param  AuthRequest  $request
+     * @param  AuthorizationRequest  $authRequest
      * @return array
      */
     protected function parseScopes($authRequest)
