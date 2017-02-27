@@ -90,7 +90,7 @@ class AccessTokenController
      */
     protected function overwritePasswordGrantUserRepository(ServerRequestInterface $request, string $provider)
     {
-        $grant_type = $request->getParsedBody()['grant_type'] ?? null;
+        $grant_type = isset($request->getParsedBody()['grant_type']) ? $request->getParsedBody()['grant_type'] : null;
 
         if($grant_type == 'password'){
 
