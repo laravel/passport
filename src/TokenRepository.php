@@ -32,7 +32,7 @@ class TokenRepository
     /**
      * Get a valid token instance for the given user and client.
      *
-     * @param  Model  $userId
+     * @param  Model  $user
      * @param  Client  $client
      * @return Token|null
      */
