@@ -17,6 +17,13 @@ class UserRepository implements UserRepositoryInterface
     protected $hasher;
 
     /**
+     * The user provider
+     *
+     * @var string
+     */
+    protected $provider;
+
+    /**
      * Create a new repository instance.
      *
      * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
@@ -24,6 +31,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function __construct(Hasher $hasher)
     {
+        $this->provider = 'users';
         $this->hasher = $hasher;
     }
 
@@ -32,7 +40,7 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
-        $provider = config('auth.guards.api.provider');
+        $provider = $this->getProvider();
 
         if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
             throw new RuntimeException('Unable to determine authentication model from configuration.');
@@ -56,5 +64,29 @@ class UserRepository implements UserRepositoryInterface
         }
 
         return new User($user->getAuthIdentifier());
+    }
+
+    /**
+     * Checks that the provider which has been set is also set in the auth config
+     *
+     * @param $provider
+     */
+    public function setProvider($provider)
+    {
+        $providers = array_keys(config('auth.providers'));
+
+        if(!in_array($this->provider, $providers)){
+            throw new RuntimeException('Provider was set to a value not present in the config');
+        }
+
+        $this->provider = $provider;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProvider()
+    {
+        return $this->provider;
     }
 }

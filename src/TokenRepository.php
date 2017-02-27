@@ -38,8 +38,11 @@ class TokenRepository
      */
     public function getValidToken($user, $client)
     {
+        $provider = $this->getProviderFromUserInstance($user);
+
         return $client->tokens()
                     ->whereUserId($user->id)
+                    ->whereProvider($provider)
                     ->whereRevoked(0)
                     ->where('expires_at', '>', Carbon::now())
                     ->first();
@@ -60,6 +63,7 @@ class TokenRepository
      * Revoke an access token.
      *
      * @param string $id
+     * @return bool
      */
     public function revokeAccessToken($id)
     {
@@ -85,17 +89,38 @@ class TokenRepository
         /**
      * Find a valid token for the given user and client.
      *
-     * @param  Model  $userId
+     * @param  Model  $user
      * @param  Client  $client
      * @return Token|null
      */
     public function findValidToken($user, $client)
     {
+        $provider = $this->getProviderFromUserInstance($user);
+
         return $client->tokens()
                       ->whereUserId($user->id)
+                      ->whereProvider($provider)
                       ->whereRevoked(0)
                       ->where('expires_at', '>', Carbon::now())
                       ->latest('expires_at')
                       ->first();
+    }
+
+    /**
+     * Identifies the user model and finds the corresponding eloquent provider,
+     * defaulting to "users"
+     * @param $user
+     * @return string
+     */
+    public function getProviderFromUserInstance($user)
+    {
+        $providers = config('auth.providers');
+
+        foreach($providers as $provider => $config){
+            if($config['driver'] == 'eloquent' &&  isset($config['model']) && get_class($user) == $config['model'] ){
+                return $provider;
+            }
+        }
+        return 'users';
     }
 }
