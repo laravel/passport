@@ -34,7 +34,14 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->deleteCookieOnLogout();
 
+        $config = __DIR__.'/../config/passport.php';
+
         if ($this->app->runningInConsole()) {
+
+            $this->publishes([
+                $config => config_path('passport.php')
+            ]);
+
             $this->registerMigrations();
 
             $this->publishes([
@@ -51,6 +58,8 @@ class PassportServiceProvider extends ServiceProvider
                 Console\KeysCommand::class,
             ]);
         }
+
+        $this->mergeConfigFrom($config, 'passport');
     }
 
     /**
