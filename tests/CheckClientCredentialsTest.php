@@ -17,7 +17,8 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-
+        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['*']);
+        
         $middleware = new CheckClientCredentials($resourceServer);
 
         $request = Request::create('/');
