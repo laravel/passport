@@ -37,7 +37,7 @@ class ClientRepository
     public function forUser($userId)
     {
         return Client::where('user_id', $userId)
-                        ->orderBy('name', 'desc')->get();
+                        ->orderBy('name', 'asc')->get();
     }
 
     /**
