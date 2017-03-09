@@ -47,16 +47,30 @@ class CheckClientCredentials
             throw new AuthenticationException;
         }
 
-        $tokenScopes = $psr->getAttribute('oauth_scopes');
-        
-        if (!in_array('*', $tokenScopes)) {
-            foreach ($scopes as $scope) {
-               if (!in_array($scope,$tokenScopes)) {
-                 throw new AuthenticationException;
-               }
-             }
-        }
+        $this->validateScopes($psr, $scopes);
 
         return $next($request);
+    }
+
+    /**
+     * Validate the scopes on the incoming request.
+     *
+     * @param  \Psr\Http\Message\ResponseInterface
+     * @param  array  $scopes
+     * @return void
+     *
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    protected function validateScopes($psr, $scopes)
+    {
+        if (in_array('*', $tokenScopes = $psr->getAttribute('oauth_scopes'))) {
+            return;
+        }
+
+        foreach ($scopes as $scope) {
+            if (! in_array($scope, $tokenScopes)) {
+                throw new AuthenticationException;
+            }
+        }
     }
 }
