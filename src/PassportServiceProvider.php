@@ -34,6 +34,8 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->deleteCookieOnLogout();
 
+        $this->publishResources();
+
         if ($this->app->runningInConsole()) {
             $this->registerMigrations();
 
@@ -70,12 +72,34 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
+     * Publish Passport's resource files.
+     *
+     * @return void
+     */
+    public function publishResources()
+    {
+        $this->publishes([__DIR__.'/Config/passport.php' => config_path('passport.php')], 'config');
+    }
+
+    /**
+     * Prepare Passport's resource files.
+     *
+     * @return void
+     */
+    protected function prepareResources()
+    {
+        $this->mergeConfigFrom(realpath(__DIR__.'/Config/passport.php'), 'passport');
+    }
+
+    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
+        $this->prepareResources();
+
         $this->registerAuthorizationServer();
 
         $this->registerResourceServer();
