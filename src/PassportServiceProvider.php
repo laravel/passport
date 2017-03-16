@@ -6,7 +6,6 @@ use DateInterval;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
