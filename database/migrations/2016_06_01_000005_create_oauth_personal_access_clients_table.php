@@ -13,7 +13,7 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
+        Schema::create(config('passport.prefix').'personal_access_clients', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('client_id')->index();
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateOauthPersonalAccessClientsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('oauth_personal_access_clients');
+        Schema::drop(config('passport.prefix').'personal_access_clients');
     }
 }

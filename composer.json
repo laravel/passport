@@ -35,6 +35,11 @@
             "Laravel\\Passport\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "": "tests/files"
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"

@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class PersonalAccessClient extends Model
 {
@@ -11,7 +12,7 @@ class PersonalAccessClient extends Model
      *
      * @var string
      */
-    protected $table = 'oauth_personal_access_clients';
+    protected $table = 'personal_access_clients';
 
     /**
      * The guarded attributes on the model.
@@ -19,6 +20,17 @@ class PersonalAccessClient extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * Creates a new PersonalAccessClient instance and sets its table name.
+     *
+     * @param  array  $attributes
+     * @return \Laravel\Passport\PersonalAccessClient
+     */
+    public function __construct(array $attributes = []) {
+        parent::__construct($attributes);
+        $this->table = config('passport.prefix').$this->table;
+    }
 
     /**
      * Get all of the authentication codes for the client.

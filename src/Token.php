@@ -11,7 +11,7 @@ class Token extends Model
      *
      * @var string
      */
-    protected $table = 'oauth_access_tokens';
+    protected $table = 'access_tokens';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -52,6 +52,17 @@ class Token extends Model
      * @var bool
      */
     public $timestamps = false;
+
+	/**
+	 * Creates a new Token instance and sets its table name.
+	 *
+	 * @param  array  $attributes
+	 * @return \Laravel\Passport\Token
+	 */
+	public function __construct(array $attributes = []) {
+		parent::__construct($attributes);
+		$this->table = config('passport.prefix').$this->table;
+	}
 
     /**
      * Get the client that the token belongs to.

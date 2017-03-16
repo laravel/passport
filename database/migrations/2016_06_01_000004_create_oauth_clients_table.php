@@ -13,7 +13,7 @@ class CreateOauthClientsTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_clients', function (Blueprint $table) {
+        Schema::create(config('passport.prefix').'clients', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->index()->nullable();
             $table->string('name');
@@ -33,6 +33,6 @@ class CreateOauthClientsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('oauth_clients');
+        Schema::drop(config('passport.prefix').'clients');
     }
 }
