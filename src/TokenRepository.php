@@ -32,11 +32,11 @@ class TokenRepository
     /**
      * Get a valid token instance for the given user and client.
      *
-     * @param  Model  $userId
+     * @param  Model  $user
      * @param  Client  $client
      * @return Token|null
      */
-    public function getValidToken($user, $client)
+    public function getValidToken(Model $user, $client)
     {
         return $client->tokens()
                     ->whereUserId($user->id)
@@ -85,11 +85,11 @@ class TokenRepository
         /**
      * Find a valid token for the given user and client.
      *
-     * @param  Model  $userId
+     * @param  Model  $user
      * @param  Client  $client
      * @return Token|null
      */
-    public function findValidToken($user, $client)
+    public function findValidToken(Model $user, $client)
     {
         return $client->tokens()
                       ->whereUserId($user->id)
