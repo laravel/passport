@@ -47,6 +47,12 @@ class ClientRepository implements ClientRepositoryInterface
             $clientIdentifier, $record->name, $record->redirect
         );
 
+        // Attach a user to the client if user_id is set
+        if (property_exists($record, 'user_id') &&$record->user_id) {
+            $user = new User($record->user_id);
+            $client->setUser($user);
+        }
+
         if ($mustValidateSecret &&
             ! hash_equals($record->secret, (string) $clientSecret)) {
             return;

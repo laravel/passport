@@ -18,8 +18,8 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
+use Laravel\Passport\Bridge\ClientCredentialsGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
-use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 
 class PassportServiceProvider extends ServiceProvider
 {
