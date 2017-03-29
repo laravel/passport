@@ -23,6 +23,7 @@ class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $client);
         $this->assertNull($repository->getClientEntity(1, 'authorization_code', 'wrong-secret', true));
         $this->assertNull($repository->getClientEntity(1, 'client_credentials', 'wrong-secret', true));
+        $this->assertNull($client->getUser());
     }
 
     public function test_can_get_client_for_client_credentials_grant()
