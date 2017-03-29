@@ -1,5 +1,7 @@
 <?php
 
+use Laravel\Passport\Client;
+use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Bridge\ClientRepository;
 
 class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
@@ -34,15 +36,40 @@ class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $repository->getClientEntity(1, 'client_credentials', 'secret', true));
         $this->assertNull($repository->getClientEntity(1, 'authorization_code', 'secret', true));
     }
+
+    public function test_can_get_client_with_user_id()
+    {
+        $userId = 1;
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $client = new BridgeClientRepositoryTestClientStub;
+        $client->user_id = $userId;
+        $clients->shouldReceive('findActive')->with(1)->andReturn($client);
+        $repository = new ClientRepository($clients);
+
+        $client = $repository->getClientEntity(1, 'client_credentials', 'secret', true);
+
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $client);
+        $this->assertInstanceOf(User::class, $client->getUser());
+        $this->assertEquals($userId, $client->getUser()->getIdentifier());
+    }
 }
 
-class BridgeClientRepositoryTestClientStub
+class BridgeClientRepositoryTestClientStub extends Client
 {
-    public $name = 'Client';
-    public $redirect = 'http://localhost';
-    public $secret = 'secret';
-    public $personal_access_client = false;
-    public $password_client = false;
+    public function __construct(array $attributes = [])
+    {
+        $attributes = array_merge([
+            'name' => 'Client',
+            'redirect' => 'http://localhost',
+            'secret' => 'secret',
+            'personal_access_client' => false,
+            'password_client' => false,
+            'user_id' => null,
+        ], $attributes);
+
+        parent::__construct($attributes);
+    }
+
     public function firstParty()
     {
         return $this->personal_access_client || $this->password_client;
