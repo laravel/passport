@@ -30,6 +30,29 @@ class TokenRepository
     }
 
     /**
+     * Get a token by the given ID.
+     *
+     * @param  string  $id
+     * @param  int     $userId
+     * @return Token|null
+     */
+    public function findForUser($id, $userId)
+    {
+        return Token::where('id', $id)->where('user_id', $userId)->first();
+    }
+
+    /**
+     * Get the token instances for the given user ID.
+     *
+     * @param  mixed  $userId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function forUser($userId)
+    {
+        return Token::where('user_id', $userId)->get();
+    }
+
+    /**
      * Get a valid token instance for the given user and client.
      *
      * @param  Model  $userId
@@ -39,7 +62,7 @@ class TokenRepository
     public function getValidToken($user, $client)
     {
         return $client->tokens()
-                    ->whereUserId($user->id)
+                    ->whereUserId($user->getKey())
                     ->whereRevoked(0)
                     ->where('expires_at', '>', Carbon::now())
                     ->first();
@@ -92,7 +115,7 @@ class TokenRepository
     public function findValidToken($user, $client)
     {
         return $client->tokens()
-                      ->whereUserId($user->id)
+                      ->whereUserId($user->getKey())
                       ->whereRevoked(0)
                       ->where('expires_at', '>', Carbon::now())
                       ->latest('expires_at')
