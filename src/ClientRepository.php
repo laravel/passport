@@ -41,6 +41,20 @@ class ClientRepository
     }
 
     /**
+     * Get the client instances for the given user ID.
+     *
+     * @param  int  $clientId
+     * @param  mixed  $userId
+     * @return Client|null
+     */
+    public function findForUser($clientId, $userId)
+    {
+        return Client::where('user_id', $userId)
+                      ->where('id', $clientId)
+                      ->first();
+    }
+
+    /**
      * Get the active client instances for the given user ID.
      *
      * @param  mixed  $userId
