@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
+use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -59,7 +60,7 @@ class CheckClientCredentials
      * @param  array  $scopes
      * @return void
      *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     protected function validateScopes($psr, $scopes)
     {
@@ -69,7 +70,7 @@ class CheckClientCredentials
 
         foreach ($scopes as $scope) {
             if (! in_array($scope, $tokenScopes)) {
-                throw new AuthenticationException;
+                throw new MissingScopeException($scope);
             }
         }
     }
