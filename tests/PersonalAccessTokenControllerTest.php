@@ -36,7 +36,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator, $tokenRepository);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(1, count($controller->forUser($request)));
         $this->assertEquals($token1, $controller->forUser($request)[0]);
@@ -69,7 +69,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         $validator->shouldReceive('validate')->once();
 
         $tokenRepository = Mockery::mock(TokenRepository::class);
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator, $tokenRepository);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals('response', $controller->store($request));
     }
@@ -93,7 +93,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator, $tokenRepository);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $controller->destroy($request, 1);
     }
@@ -113,7 +113,7 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator, $tokenRepository);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(404, $controller->destroy($request, 3)->status());
     }
