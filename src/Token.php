@@ -70,9 +70,9 @@ class Token extends Model
      */
     public function user()
     {
-        $provider = config('auth.guards.api.provider');
+        $provider = $this->provider ? $this->provider : 'users';
 
-        return $this->belongsTo(config('auth.providers.'.$provider.'.model'));
+        return $this->belongsTo(config('auth.providers.'.$provider.'.model'), 'user_id');
     }
 
     /**

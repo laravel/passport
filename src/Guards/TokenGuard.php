@@ -127,6 +127,8 @@ class TokenGuard
                 $psr->getAttribute('oauth_access_token_id')
             );
 
+            $this->validateUserProvider($token);
+
             $clientId = $psr->getAttribute('oauth_client_id');
 
             // Finally, we will verify if the client that issued this token is still valid and
@@ -203,5 +205,32 @@ class TokenGuard
         return isset($token['csrf']) && hash_equals(
             $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
         );
+    }
+
+    /**
+     * Checks that the user provider for this guard instance
+     * matches the user provider of the token. This prevents
+     * ID collisions with multi-auth.
+     *
+     * @param $token
+     * @throws OAuthServerException
+     */
+    protected function validateUserProvider($token)
+    {
+        // check that user provider matches the user currently being authed
+
+        $current_provider = !is_null($token->provider) ? $token->provider : 'users';
+
+        $permitted_providers = array_keys(config('auth.providers'));
+
+        if(!in_array($current_provider, $permitted_providers)){
+            throw new \RuntimeException('Provider was set to a value not present in the config');
+        }
+
+        $provider_model = config('auth.providers.'.$current_provider.".model");
+
+        if($provider_model != $this->provider->getModel()){
+            throw OAuthServerException::invalidCredentials();
+        }
     }
 }
