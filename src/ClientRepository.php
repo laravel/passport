@@ -29,6 +29,20 @@ class ClientRepository
     }
 
     /**
+     * Get a client instance for the given ID and user ID.
+     *
+     * @param  int  $clientId
+     * @param  mixed  $userId
+     * @return Client|null
+     */
+    public function findForUser($clientId, $userId)
+    {
+        return Client::where('id', $clientId)
+                     ->where('user_id', $userId)
+                     ->first();
+    }
+
+    /**
      * Get the client instances for the given user ID.
      *
      * @param  mixed  $userId
@@ -38,20 +52,6 @@ class ClientRepository
     {
         return Client::where('user_id', $userId)
                         ->orderBy('name', 'asc')->get();
-    }
-
-    /**
-     * Get the client instances for the given user ID.
-     *
-     * @param  int  $clientId
-     * @param  mixed  $userId
-     * @return Client|null
-     */
-    public function findForUser($clientId, $userId)
-    {
-        return Client::where('user_id', $userId)
-                      ->where('id', $clientId)
-                      ->first();
     }
 
     /**

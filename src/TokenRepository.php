@@ -30,10 +30,10 @@ class TokenRepository
     }
 
     /**
-     * Get a token by the given ID.
+     * Get a token by the given user ID and token ID.
      *
      * @param  string  $id
-     * @param  int     $userId
+     * @param  int  $userId
      * @return Token|null
      */
     public function findForUser($id, $userId)
