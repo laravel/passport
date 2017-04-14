@@ -26,6 +26,7 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         ));
 
         $authRequest->shouldReceive('setUser')->once();
+        $authRequest->shouldReceive('getGrantTypeId')->andReturn('implicit');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
         $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
 
@@ -33,7 +34,7 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
             return $url;
         });
 
-        $this->assertEquals('http://localhost?error=access_denied&state=state', $controller->deny($request));
+        $this->assertEquals('http://localhost#error=access_denied&state=state', $controller->deny($request));
     }
 }
 
