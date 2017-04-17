@@ -37,12 +37,12 @@ class DenyAuthorizationController
     {
         $authRequest = $this->getAuthRequestFromSession($request);
 
-        $redirect = $authRequest->getClient()->getRedirectUri();
+        $uri = $authRequest->getClient()->getRedirectUri();
+
         $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : '?';
 
-
         return $this->response->redirectTo(
-            $redirect.$separator.'error=access_denied&state='.$request->input('state')
+            $uri.$separator.'error=access_denied&state='.$request->input('state')
         );
     }
 }
