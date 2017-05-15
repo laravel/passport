@@ -4,7 +4,6 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
-use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
 use Illuminate\Container\Container;
