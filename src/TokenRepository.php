@@ -26,7 +26,8 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        //MongoDB Access token has been revoked fix
+        return Token::where('id', $id)->first();
     }
 
     /**
