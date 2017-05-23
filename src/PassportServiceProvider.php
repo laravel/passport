@@ -30,6 +30,8 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+		$this->registerGuard();
+		
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
 
         $this->deleteCookieOnLogout();
@@ -79,8 +81,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerAuthorizationServer();
 
         $this->registerResourceServer();
-
-        $this->registerGuard();
     }
 
     /**
