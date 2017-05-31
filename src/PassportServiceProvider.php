@@ -45,6 +45,10 @@ class PassportServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/passport'),
             ], 'passport-components');
 
+            $this->publishes([
+                __DIR__.'/../config/passport.php' => config_path('passport.php'),
+            ], 'passport-config');
+
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
@@ -76,11 +80,23 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->registerConfig();
+
         $this->registerAuthorizationServer();
 
         $this->registerResourceServer();
 
         $this->registerGuard();
+    }
+
+    /**
+     * Register the configuration file.
+     *
+     * @return void
+     */
+    protected function registerConfig()
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
     }
 
     /**

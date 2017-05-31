@@ -49,7 +49,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
     {
-        $this->database->table('oauth_refresh_tokens')->insert([
+        $this->database->table(config('passport.prefix').'refresh_tokens')->insert([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
             'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),
             'revoked' => false,
@@ -64,7 +64,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function revokeRefreshToken($tokenId)
     {
-        $this->database->table('oauth_refresh_tokens')
+        $this->database->table(config('passport.prefix').'refresh_tokens')
                     ->where('id', $tokenId)->update(['revoked' => true]);
     }
 
@@ -73,7 +73,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        return $this->database->table('oauth_refresh_tokens')
+        return $this->database->table(config('passport.prefix').'refresh_tokens')
                     ->where('id', $tokenId)->where('revoked', true)->exists();
     }
 }

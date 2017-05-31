@@ -11,7 +11,7 @@ class AuthCode extends Model
      *
      * @var string
      */
-    protected $table = 'oauth_auth_codes';
+    protected $table = 'auth_codes';
 
     /**
      * The guarded attributes on the model.
@@ -37,6 +37,17 @@ class AuthCode extends Model
     protected $dates = [
         'expires_at',
     ];
+
+    /**
+     * Creates a new AuthCode instance and sets its table name.
+     *
+     * @param  array  $attributes
+     * @return \Laravel\Passport\AuthCode
+     */
+    public function __construct(array $attributes = []) {
+        parent::__construct($attributes);
+        $this->table = config('passport.prefix').$this->table;
+    }
 
     /**
      * Get the client that owns the authentication code.
