@@ -176,7 +176,7 @@ class ClientRepository
     {
         $client = Client::find($id);
 
-        return $client === null || $client->revoked;
+        return is_null($client) || $client->revoked;
     }
 
     /**
