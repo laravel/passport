@@ -25,15 +25,25 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     private $events;
 
     /**
+     * The access token repository instance.
+     *
+     * @var \Laravel\Passport\Bridge\AccessTokenRepository
+     */
+    private $tokenRepository;
+
+    /**
      * Create a new repository instance.
      *
      * @param  \Illuminate\Database\Connection  $database
+     * @param  \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  \Laravel\Passport\Bridge\AccessTokenRepository $tokenRepository
      * @return void
      */
-    public function __construct(Connection $database, Dispatcher $events)
+    public function __construct(Connection $database, Dispatcher $events, AccessTokenRepository $tokenRepository)
     {
         $this->events = $events;
         $this->database = $database;
+        $this->tokenRepository = $tokenRepository;
     }
 
     /**
@@ -73,7 +83,21 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        return $this->database->table('oauth_refresh_tokens')
-                    ->where('id', $tokenId)->where('revoked', true)->exists();
+        $refreshToken = $this->database->table('oauth_refresh_tokens')
+                    ->where('id', $tokenId)->first();
+        if ($refreshToken === null) {
+            // Refresh Token has been deleted from the database.
+            return true;
+        }
+        if ($refreshToken->revoked) {
+            // Refresh Token has been revoked.
+            return true;
+        }
+        if ($this->tokenRepository->isAccessTokenRevoked($refreshToken->access_token_id)) {
+            // Associated Access Token has been revoked.
+            return true;
+        }
+
+        return false;
     }
 }
