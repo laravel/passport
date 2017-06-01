@@ -11,6 +11,13 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
+     * The access token repository instance.
+     *
+     * @var \Laravel\Passport\Bridge\AccessTokenRepository
+     */
+    protected $tokens;
+
+    /**
      * The database connection.
      *
      * @var \Illuminate\Database\Connection
@@ -22,28 +29,23 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      *
      * @var \Illuminate\Events\Dispatcher
      */
-    private $events;
-
-    /**
-     * The access token repository instance.
-     *
-     * @var \Laravel\Passport\Bridge\AccessTokenRepository
-     */
-    private $tokenRepository;
+    protected $events;
 
     /**
      * Create a new repository instance.
      *
+     * @param  \Laravel\Passport\Bridge\AccessTokenRepository $tokens
      * @param  \Illuminate\Database\Connection  $database
      * @param  \Illuminate\Contracts\Events\Dispatcher $events
-     * @param  \Laravel\Passport\Bridge\AccessTokenRepository $tokenRepository
      * @return void
      */
-    public function __construct(Connection $database, Dispatcher $events, AccessTokenRepository $tokenRepository)
+    public function __construct(AccessTokenRepository $tokens,
+                                Connection $database,
+                                Dispatcher $events)
     {
         $this->events = $events;
+        $this->tokens = $tokens;
         $this->database = $database;
-        $this->tokenRepository = $tokenRepository;
     }
 
     /**
@@ -85,19 +87,13 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     {
         $refreshToken = $this->database->table('oauth_refresh_tokens')
                     ->where('id', $tokenId)->first();
-        if ($refreshToken === null) {
-            // Refresh Token has been deleted from the database.
-            return true;
-        }
-        if ($refreshToken->revoked) {
-            // Refresh Token has been revoked.
-            return true;
-        }
-        if ($this->tokenRepository->isAccessTokenRevoked($refreshToken->access_token_id)) {
-            // Associated Access Token has been revoked.
+
+        if ($refreshToken === null || $refreshToken->revoked) {
             return true;
         }
 
-        return false;
+        return $this->tokens->isAccessTokenRevoked(
+            $refreshToken->access_token_id
+        );
     }
 }
