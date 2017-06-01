@@ -61,7 +61,8 @@ class ClientCommand extends Command
             null, $name, 'http://localhost'
         );
 
-        $accessClient = new PersonalAccessClient();
+        $personalAccessClientClass = '\\'.ltrim(config('passport.clients.personal_access_client'), '\\');
+        $accessClient = new $personalAccessClientClass();
         $accessClient->client_id = $client->id;
         $accessClient->save();
 
