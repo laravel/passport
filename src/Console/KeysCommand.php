@@ -32,10 +32,8 @@ class KeysCommand extends Command
     {
         $keys = $rsa->createKey(4096);
 
-        [$privateKey, $publicKey] = [
-            Passport::keyPath('oauth-public.key'),
-            Passport::keyPath('oauth-private.key'),
-        ];
+        $privateKey = Passport::keyPath('oauth-private.key');
+        $publicKey  = Passport::keyPath('oauth-public.key');
 
         if ((file_exists($publicKey) || file_exists($privateKey)) && ! $this->option('force')) {
             return $this->error("Encryption keys already exist. Use the --force option to overwrite them.");
