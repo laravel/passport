@@ -13,7 +13,7 @@ class KeysCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:keys {--force}';
+    protected $signature = 'passport:keys {--force : Overwrite keys they already exist}';
 
     /**
      * The console command description.
@@ -32,16 +32,17 @@ class KeysCommand extends Command
     {
         $keys = $rsa->createKey(4096);
 
-        $oauth_private = Passport::keyPath('oauth-private.key');
-        $oauth_public  = Passport::keyPath('oauth-public.key');
+        [$privateKey, $publicKey] = [
+            Passport::keyPath('oauth-public.key'),
+            Passport::keyPath('oauth-private.key'),
+        ];
 
-        if((file_exists($oauth_private) || file_exists($oauth_public)) && !$this->option('force')) {
-            $this->error("You already have keys. Please use the force to overwrite them");
-            return false;
+        if ((file_exists($publicKey) || file_exists($privateKey)) && ! $this->option('force')) {
+            return $this->error("Encryption keys already exist. Use the --force option to overwrite them.");
         }
 
-        file_put_contents($oauth_private, array_get($keys, 'privatekey'));
-        file_put_contents($oauth_public, array_get($keys, 'publickey'));
+        file_put_contents($publicKey, array_get($keys, 'publickey'));
+        file_put_contents($privateKey, array_get($keys, 'privatekey'));
 
         $this->info('Encryption keys generated successfully.');
     }
