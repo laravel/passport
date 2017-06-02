@@ -32,7 +32,7 @@ class KeysCommand extends Command
     {
         $keys = $rsa->createKey(4096);
 
-        list($privateKey, $publicKey) = [
+        list($publicKey, $privateKey) = [
             Passport::keyPath('oauth-public.key'),
             Passport::keyPath('oauth-private.key'),
         ];
