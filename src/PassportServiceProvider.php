@@ -226,7 +226,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerGuard()
     {
-        Auth::extend('passport', function ($app, $name, array $config) {
+        $this->app['auth']->extend('passport', function ($app, $name, array $config) {
             return tap($this->makeGuard($config), function ($guard) {
                 $this->app->refresh('request', $guard, 'setRequest');
             });
@@ -244,7 +244,7 @@ class PassportServiceProvider extends ServiceProvider
         return new RequestGuard(function ($request) use ($config) {
             return (new TokenGuard(
                 $this->app->make(ResourceServer::class),
-                Auth::createUserProvider($config['provider']),
+                $this->app['auth']->createUserProvider($config['provider']),
                 new TokenRepository,
                 $this->app->make(ClientRepository::class),
                 $this->app->make('encrypter')
@@ -259,7 +259,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function deleteCookieOnLogout()
     {
-        Event::listen(Logout::class, function () {
+        $this->app['events']->listen(Logout::class, function () {
             if (Request::hasCookie(Passport::cookie())) {
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }
