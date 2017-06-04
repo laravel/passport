@@ -3,7 +3,7 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Passport;
 use Laravel\Passport\ApiTokenCookieFactory;
 
@@ -78,7 +78,7 @@ class CreateFreshApiToken
      */
     protected function requestShouldReceiveFreshToken($request)
     {
-        return $request->isMethod('GET') && $request->user($this->guard);
+        return in_array($request->getMethod(), array('GET', 'POST', 'PUT')) && $request->user($this->guard);
     }
 
     /**
