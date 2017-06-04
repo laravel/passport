@@ -187,8 +187,6 @@ class ClientRepository
      */
     public function delete(Client $client)
     {
-        $client->tokens()->update(['revoked' => true]);
-
         $client->forceFill(['revoked' => true])->save();
     }
 }
