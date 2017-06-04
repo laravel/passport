@@ -6,9 +6,9 @@ use League\OAuth2\Server\Entities\Traits\ClientTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
-class Client implements ClientEntityInterface
+class Client implements ClientEntityInterface, UserAwareInterface
 {
-    use ClientTrait, EntityTrait;
+    use ClientTrait, EntityTrait, UserAwareTrait;
 
     /**
      * Create a new client instance.

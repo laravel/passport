@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Laravel\Passport\Client as PassportClient;
 use Laravel\Passport\ClientRepository as ClientModelRepository;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
@@ -46,6 +47,12 @@ class ClientRepository implements ClientRepositoryInterface
         $client = new Client(
             $clientIdentifier, $record->name, $record->redirect
         );
+
+        // Attach a user to the client if user_id is set
+        if ($record instanceof PassportClient && $record->getAttribute('user_id')) {
+            $user = new User($record->getAttribute('user_id'));
+            $client->setUser($user);
+        }
 
         if ($mustValidateSecret &&
             ! hash_equals($record->secret, (string) $clientSecret)) {
