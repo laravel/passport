@@ -169,7 +169,7 @@ class PassportServiceProvider extends ServiceProvider
     protected function makePasswordGrant()
     {
         $grant = new PasswordGrant(
-            $this->app->make(Bridge\UserRepository::class),
+            $this->app->make(config('auth.providers.user.repository', Bridge\UserRepository::class)),
             $this->app->make(Bridge\RefreshTokenRepository::class)
         );
 
