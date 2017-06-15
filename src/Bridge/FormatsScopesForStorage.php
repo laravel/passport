@@ -18,7 +18,7 @@ trait FormatsScopesForStorage
     /**
      * Get an array of scope identifiers for storage.
      *
-     * @param array $scopes
+     * @param  array  $scopes
      * @return array
      */
     public function scopesToArray(array $scopes)

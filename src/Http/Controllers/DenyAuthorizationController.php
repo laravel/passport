@@ -19,7 +19,7 @@ class DenyAuthorizationController
     /**
      * Create a new controller instance.
      *
-     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
+     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
      * @return void
      */
     public function __construct(ResponseFactory $response)
@@ -31,7 +31,7 @@ class DenyAuthorizationController
      * Deny the authorization request.
      *
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deny(Request $request)

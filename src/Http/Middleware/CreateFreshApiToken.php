@@ -26,7 +26,7 @@ class CreateFreshApiToken
     /**
      * Create a new middleware instance.
      *
-     * @param \Laravel\Passport\ApiTokenCookieFactory $cookieFactory
+     * @param  \Laravel\Passport\ApiTokenCookieFactory  $cookieFactory
      * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory)
@@ -60,8 +60,8 @@ class CreateFreshApiToken
     /**
      * Determine if the given request should receive a fresh token.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Illuminate\Http\Response $response
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Response  $response
      * @return bool
      */
     protected function shouldReceiveFreshToken($request, $response)

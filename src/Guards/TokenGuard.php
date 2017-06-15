@@ -57,11 +57,11 @@ class TokenGuard
     /**
      * Create a new token guard instance.
      *
-     * @param \League\OAuth2\Server\ResourceServer $server
-     * @param \Illuminate\Contracts\Auth\UserProvider $provider
-     * @param \Laravel\Passport\TokenRepository $tokens
-     * @param \Laravel\Passport\ClientRepository $clients
-     * @param \Illuminate\Contracts\Encryption\Encrypter $encrypter
+     * @param  \League\OAuth2\Server\ResourceServer  $server
+     * @param  \Illuminate\Contracts\Auth\UserProvider  $provider
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(ResourceServer $server,
@@ -80,7 +80,7 @@ class TokenGuard
     /**
      * Get the user for the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  Request  $request
      * @return mixed
      */
@@ -96,7 +96,7 @@ class TokenGuard
     /**
      * Authenticate the incoming request via the Bearer token.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
     protected function authenticateViaBearerToken($request)

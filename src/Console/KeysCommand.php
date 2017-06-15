@@ -25,7 +25,7 @@ class KeysCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param \phpseclib\Crypt\RSA $rsa
+     * @param  \phpseclib\Crypt\RSA  $rsa
      * @return mixed
      */
     public function handle(RSA $rsa)

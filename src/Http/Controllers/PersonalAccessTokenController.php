@@ -28,8 +28,8 @@ class PersonalAccessTokenController
     /**
      * Create a controller instance.
      *
-     * @param \Laravel\Passport\TokenRepository $tokenRepository
-     * @param \Illuminate\Contracts\Validation\Factory $validation
+     * @param  \Laravel\Passport\TokenRepository  $tokenRepository
+     * @param  \Illuminate\Contracts\Validation\Factory  $validation
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository, ValidationFactory $validation)
@@ -41,7 +41,7 @@ class PersonalAccessTokenController
     /**
      * Get all of the personal access tokens for the authenticated user.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function forUser(Request $request)
@@ -56,7 +56,7 @@ class PersonalAccessTokenController
     /**
      * Create a new personal access token for the user.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
     public function store(Request $request)

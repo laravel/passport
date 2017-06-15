@@ -34,9 +34,9 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * Create a new repository instance.
      *
-     * @param  \Laravel\Passport\Bridge\AccessTokenRepository $tokens
+     * @param  \Laravel\Passport\Bridge\AccessTokenRepository  $tokens
      * @param  \Illuminate\Database\Connection  $database
-     * @param  \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
     public function __construct(AccessTokenRepository $tokens,

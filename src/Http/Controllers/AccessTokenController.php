@@ -36,9 +36,9 @@ class AccessTokenController
     /**
      * Create a new controller instance.
      *
-     * @param \League\OAuth2\Server\AuthorizationServer $server
-     * @param \Laravel\Passport\TokenRepository $tokens
-     * @param \Lcobucci\JWT\Parser $jwt
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
@@ -53,7 +53,7 @@ class AccessTokenController
     /**
      * Authorize a client to access the user's account.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param  \Psr\Http\Message\ServerRequestInterface  $request
      * @return \Illuminate\Http\Response
      */
     public function issueToken(ServerRequestInterface $request)

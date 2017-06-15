@@ -10,9 +10,9 @@ class CheckScopes
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @param array ...$scopes
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  mixed  ...$scopes
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Auth\AuthenticationException
      * @throws \Laravel\Passport\Exceptions\MissingScopeException

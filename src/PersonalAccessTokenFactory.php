@@ -40,10 +40,10 @@ class PersonalAccessTokenFactory
     /**
      * Create a new personal access token factory instance.
      *
-     * @param \League\OAuth2\Server\AuthorizationServer $server
-     * @param \Laravel\Passport\ClientRepository $clients
-     * @param \Laravel\Passport\TokenRepository $tokens
-     * @param \Lcobucci\JWT\Parser $jwt
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,

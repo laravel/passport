@@ -18,7 +18,7 @@ class AuthorizedAccessTokenController
     /**
      * Create a new controller instance.
      *
-     * @param \Laravel\Passport\TokenRepository $tokenRepository
+     * @param  \Laravel\Passport\TokenRepository  $tokenRepository
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository)
@@ -29,7 +29,7 @@ class AuthorizedAccessTokenController
     /**
      * Get all of the authorized tokens for the authenticated user.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  Request  $request
      * @return \Illuminate\Http\Response
      */
