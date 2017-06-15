@@ -14,14 +14,14 @@ class CheckClientCredentials
     /**
      * The Resource Server instance.
      *
-     * @var ResourceServer
+     * @var \League\OAuth2\Server\ResourceServer
      */
     private $server;
 
     /**
      * Create a new middleware instance.
      *
-     * @param  ResourceServer  $server
+     * @param  \League\OAuth2\Server\ResourceServer  $server
      * @return void
      */
     public function __construct(ResourceServer $server)
@@ -32,10 +32,10 @@ class CheckClientCredentials
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  mixed  ...$scopes
      * @return mixed
-     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$scopes)
@@ -56,8 +56,7 @@ class CheckClientCredentials
     /**
      * Validate the scopes on the incoming request.
      *
-     * @param  \Psr\Http\Message\ResponseInterface
-     * @param  array  $scopes
+     * @param  \Psr\Http\Message\ResponseInterface  * @param  array  $scopes
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException

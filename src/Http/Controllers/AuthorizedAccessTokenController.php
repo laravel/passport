@@ -11,14 +11,14 @@ class AuthorizedAccessTokenController
     /**
      * The token repository implementation.
      *
-     * @var TokenRepository
+     * @var \Laravel\Passport\TokenRepository
      */
     protected $tokenRepository;
 
     /**
      * Create a new controller instance.
      *
-     * @param TokenRepository $tokenRepository
+     * @param  \Laravel\Passport\TokenRepository  $tokenRepository
      * @return void
      */
     public function __construct(TokenRepository $tokenRepository)
@@ -29,8 +29,9 @@ class AuthorizedAccessTokenController
     /**
      * Get all of the authorized tokens for the authenticated user.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function forUser(Request $request)
     {
@@ -44,9 +45,9 @@ class AuthorizedAccessTokenController
     /**
      * Delete the given token.
      *
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $tokenId
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $tokenId)
     {

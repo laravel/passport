@@ -12,22 +12,22 @@ class ClientController
     /**
      * The client repository instance.
      *
-     * @var ClientRepository
+     * @var \Laravel\Passport\ClientRepository
      */
     protected $clients;
 
     /**
      * The validation factory implementation.
      *
-     * @var ValidationFactory
+     * @var \Illuminate\Contracts\Validation\Factory
      */
     protected $validation;
 
     /**
      * Create a client controller instance.
      *
-     * @param  ClientRepository  $clients
-     * @param  ValidationFactory  $validation
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Illuminate\Contracts\Validation\Factory  $validation
      * @return void
      */
     public function __construct(ClientRepository $clients,
@@ -40,8 +40,8 @@ class ClientController
     /**
      * Get all of the clients for the authenticated user.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function forUser(Request $request)
     {
@@ -53,8 +53,8 @@ class ClientController
     /**
      * Store a new client.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -71,9 +71,9 @@ class ClientController
     /**
      * Update the given client.
      *
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $clientId
-     * @return Response
+     * @return \Illuminate\Http\Response|\Laravel\Passport\Client
      */
     public function update(Request $request, $clientId)
     {

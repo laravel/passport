@@ -11,7 +11,7 @@ class TokenRepository
      * Creates a new Access Token.
      *
      * @param  array  $attributes
-     * @return Token
+     * @return \Laravel\Passport\Token
      */
     public function create($attributes)
     {
@@ -22,7 +22,7 @@ class TokenRepository
      * Get a token by the given ID.
      *
      * @param  string  $id
-     * @return Token
+     * @return \Laravel\Passport\Token
      */
     public function find($id)
     {
@@ -34,7 +34,7 @@ class TokenRepository
      *
      * @param  string  $id
      * @param  int  $userId
-     * @return Token|null
+     * @return \Laravel\Passport\Token|null
      */
     public function findForUser($id, $userId)
     {
@@ -55,9 +55,9 @@ class TokenRepository
     /**
      * Get a valid token instance for the given user and client.
      *
-     * @param  Model  $userId
-     * @param  Client  $client
-     * @return Token|null
+     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Laravel\Passport\Client  $client
+     * @return \Laravel\Passport\Token|null
      */
     public function getValidToken($user, $client)
     {
@@ -71,7 +71,7 @@ class TokenRepository
     /**
      * Store the given token instance.
      *
-     * @param  Token  $token
+     * @param  \Laravel\Passport\Token  $token
      * @return void
      */
     public function save(Token $token)
@@ -82,7 +82,8 @@ class TokenRepository
     /**
      * Revoke an access token.
      *
-     * @param string $id
+     * @param  string  $id
+     * @return mixed
      */
     public function revokeAccessToken($id)
     {
@@ -92,7 +93,7 @@ class TokenRepository
     /**
      * Check if the access token has been revoked.
      *
-     * @param string $id
+     * @param  string  $id
      *
      * @return bool Return true if this token has been revoked
      */
@@ -108,9 +109,9 @@ class TokenRepository
     /**
      * Find a valid token for the given user and client.
      *
-     * @param  Model  $user
-     * @param  Client  $client
-     * @return Token|null
+     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Laravel\Passport\Client  $client
+     * @return \Laravel\Passport\Token|null
      */
     public function findValidToken($user, $client)
     {

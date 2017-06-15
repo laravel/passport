@@ -124,7 +124,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create and configure an instance of the Auth Code grant.
      *
-     * @return AuthCodeGrant
+     * @return \League\OAuth2\Server\Grant\AuthCodeGrant
      */
     protected function makeAuthCodeGrant()
     {
@@ -136,7 +136,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Build the Auth Code grant instance.
      *
-     * @return AuthCodeGrant
+     * @return \League\OAuth2\Server\Grant\AuthCodeGrant
      */
     protected function buildAuthCodeGrant()
     {
@@ -150,7 +150,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create and configure a Refresh Token grant instance.
      *
-     * @return RefreshTokenGrant
+     * @return \League\OAuth2\Server\Grant\RefreshTokenGrant
      */
     protected function makeRefreshTokenGrant()
     {
@@ -164,7 +164,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create and configure a Password grant instance.
      *
-     * @return PasswordGrant
+     * @return \League\OAuth2\Server\Grant\PasswordGrant
      */
     protected function makePasswordGrant()
     {
@@ -181,7 +181,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create and configure an instance of the Implicit grant.
      *
-     * @return ImplicitGrant
+     * @return \League\OAuth2\Server\Grant\ImplicitGrant
      */
     protected function makeImplicitGrant()
     {
@@ -191,7 +191,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Make the authorization service instance.
      *
-     * @return AuthorizationServer
+     * @return \League\OAuth2\Server\AuthorizationServer
      */
     public function makeAuthorizationServer()
     {
@@ -237,7 +237,7 @@ class PassportServiceProvider extends ServiceProvider
      * Make an instance of the token guard.
      *
      * @param  array  $config
-     * @return RequestGuard
+     * @return \Illuminate\Auth\RequestGuard
      */
     protected function makeGuard(array $config)
     {

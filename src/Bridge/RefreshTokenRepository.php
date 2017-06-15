@@ -27,16 +27,16 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * The event dispatcher instance.
      *
-     * @var \Illuminate\Events\Dispatcher
+     * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $events;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Laravel\Passport\Bridge\AccessTokenRepository $tokens
+     * @param  \Laravel\Passport\Bridge\AccessTokenRepository  $tokens
      * @param  \Illuminate\Database\Connection  $database
-     * @param  \Illuminate\Contracts\Events\Dispatcher $events
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
     public function __construct(AccessTokenRepository $tokens,

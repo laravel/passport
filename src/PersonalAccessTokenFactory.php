@@ -12,38 +12,38 @@ class PersonalAccessTokenFactory
     /**
      * The authorization server instance.
      *
-     * @var AuthorizationServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
      * The client repository instance.
      *
-     * @var ClientRepository
+     * @var \Laravel\Passport\ClientRepository
      */
     protected $clients;
 
     /**
      * The token repository instance.
      *
-     * @var TokenRepository
+     * @var \Laravel\Passport\TokenRepository
      */
     protected $tokens;
 
     /**
      * The JWT token parser instance.
      *
-     * @var JwtParser
+     * @var \Lcobucci\JWT\Parser
      */
     protected $jwt;
 
     /**
      * Create a new personal access token factory instance.
      *
-     * @param  AuthorizationServer  $server
-     * @param  ClientRepository  $clients
-     * @param  TokenRepository  $tokens
-     * @param  JwtParser  $jwt
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
@@ -63,7 +63,7 @@ class PersonalAccessTokenFactory
      * @param  mixed  $userId
      * @param  string  $name
      * @param  array  $scopes
-     * @return PersonalAccessTokenResult
+     * @return \Laravel\Passport\PersonalAccessTokenResult
      */
     public function make($userId, $name, array $scopes = [])
     {
@@ -86,10 +86,10 @@ class PersonalAccessTokenFactory
     /**
      * Create a request instance for the given client.
      *
-     * @param  Client  $client
+     * @param  \Laravel\Passport\Client  $client
      * @param  mixed  $userId
      * @param  array  $scopes
-     * @return ServerRequest
+     * @return \Zend\Diactoros\ServerRequest
      */
     protected function createRequest($client, $userId, array $scopes)
     {
@@ -105,7 +105,7 @@ class PersonalAccessTokenFactory
     /**
      * Dispatch the given request to the authorization server.
      *
-     * @param  ServerRequest  $request
+     * @param  \Zend\Diactoros\ServerRequest  $request
      * @return array
      */
     protected function dispatchRequestToAuthorizationServer(ServerRequest $request)

@@ -12,14 +12,14 @@ class DenyAuthorizationController
     /**
      * The response factory implementation.
      *
-     * @var ResponseFactory
+     * @var \Illuminate\Contracts\Routing\ResponseFactory
      */
     protected $response;
 
     /**
      * Create a new controller instance.
      *
-     * @param  ResponseFactory  $response
+     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
      * @return void
      */
     public function __construct(ResponseFactory $response)
@@ -30,8 +30,9 @@ class DenyAuthorizationController
     /**
      * Deny the authorization request.
      *
-     * @param  Request  $request
-     * @return Response
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function deny(Request $request)
     {
