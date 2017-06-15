@@ -12,7 +12,7 @@ class CreateFreshApiToken
     /**
      * The API token cookie factory instance.
      *
-     * @var ApiTokenCookieFactory
+     * @var \Laravel\Passport\ApiTokenCookieFactory
      */
     protected $cookieFactory;
 
@@ -26,7 +26,7 @@ class CreateFreshApiToken
     /**
      * Create a new middleware instance.
      *
-     * @param  ApiTokenCookieFactory  $cookieFactory
+     * @param \Laravel\Passport\ApiTokenCookieFactory $cookieFactory
      * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory)
