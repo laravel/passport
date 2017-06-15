@@ -44,7 +44,6 @@ class UserRepository implements UserRepositoryInterface
             $user = (new $model)->where('email', $username)->first();
         }
 
-
         if (! $user) {
             return;
         } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TokenRepository
 {
     /**
-     * Creates a new Access Token
+     * Creates a new Access Token.
      *
      * @param  array  $attributes
      * @return Token
