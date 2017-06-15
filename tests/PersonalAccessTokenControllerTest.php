@@ -1,7 +1,7 @@
 <?php
 
-use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
+use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 
 class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase

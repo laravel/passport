@@ -1,7 +1,7 @@
 <?php
 
-use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 use Illuminate\Http\Request;
+use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 
 class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,6 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals('response', $response);
-
     }
 
     /**
@@ -50,7 +49,6 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $middleware->handle($request, function () {
             return 'response';
         });
-
     }
 
     /**
@@ -72,8 +70,6 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
 
         $response = $middleware->handle($request, function () {
             return 'response';
-        },'foo', 'bar');
-
+        }, 'foo', 'bar');
     }
-
 }

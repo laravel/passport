@@ -4,8 +4,8 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
-use Zend\Diactoros\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 
 class AccessTokenController
