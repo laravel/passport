@@ -3,9 +3,9 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
-use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\AuthenticationException;
+use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
@@ -42,7 +42,7 @@ class CheckClientCredentials
     {
         $psr = (new DiactorosFactory)->createRequest($request);
 
-        try{
+        try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
         } catch (OAuthServerException $e) {
             throw new AuthenticationException;

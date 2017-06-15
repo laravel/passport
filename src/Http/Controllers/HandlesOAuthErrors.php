@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Throwable;
 use Exception;
+use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Container\Container;
 use Zend\Diactoros\Response as Psr7Response;
