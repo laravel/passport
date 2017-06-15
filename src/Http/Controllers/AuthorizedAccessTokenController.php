@@ -30,7 +30,7 @@ class AuthorizedAccessTokenController
      * Get all of the authorized tokens for the authenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function forUser(Request $request)
