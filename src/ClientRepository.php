@@ -76,7 +76,7 @@ class ClientRepository
     public function personalAccessClient()
     {
         if (Passport::$personalAccessClient) {
-            return Client::find(Passport::$personalAccessClient);
+            return $this->find(Passport::$personalAccessClient);
         } else {
             return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
         }
@@ -175,7 +175,7 @@ class ClientRepository
      */
     public function revoked($id)
     {
-        $client = Client::find($id);
+        $client = $this->find($id);
 
         return is_null($client) || $client->revoked;
     }
