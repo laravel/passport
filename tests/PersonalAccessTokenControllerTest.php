@@ -1,7 +1,8 @@
 <?php
 
-use Laravel\Passport\Passport;
 use Illuminate\Http\Request;
+use Laravel\Passport\Passport;
+use Laravel\Passport\TokenRepository;
 
 class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
 {
@@ -17,21 +18,25 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         $token1 = new Laravel\Passport\Token;
         $token2 = new Laravel\Passport\Token;
 
+        $userTokens = Mockery::mock();
+        $token1->client = (object) ['personal_access_client' => true];
+        $token2->client = (object) ['personal_access_client' => false];
+        $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
+            $token1, $token2,
+        ]));
+
+        $tokenRepository = Mockery::mock(TokenRepository::class);
+        $tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
+
         $request->setUserResolver(function () use ($token1, $token2) {
             $user = Mockery::mock();
-            $user->id = 1;
-            $user->tokens = Mockery::mock();
-            $token1->client = (object) ['personal_access_client' => true];
-            $token2->client = (object) ['personal_access_client' => false];
-            $user->tokens->shouldReceive('load')->with('client')->andReturn(collect([
-                $token1, $token2,
-            ]));
+            $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(1, count($controller->forUser($request)));
         $this->assertEquals($token1, $controller->forUser($request)[0]);
@@ -63,9 +68,8 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController(
-            $validator
-        );
+        $tokenRepository = Mockery::mock(TokenRepository::class);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals('response', $controller->store($request));
     }
@@ -77,20 +81,19 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
         $token1 = Mockery::mock(Laravel\Passport\Token::class.'[revoke]');
         $token1->id = 1;
         $token1->shouldReceive('revoke')->once();
-        $token2 = Mockery::mock(Laravel\Passport\Token::class.'[revoke]');
-        $token2->id = 2;
-        $token2->shouldReceive('revoke')->never();
 
-        $request->setUserResolver(function () use ($token1, $token2) {
+        $tokenRepository = Mockery::mock(TokenRepository::class);
+        $tokenRepository->shouldReceive('findForUser')->andReturn($token1);
+
+        $request->setUserResolver(function () {
             $user = Mockery::mock();
-            $user->id = 1;
-            $user->tokens = new Illuminate\Database\Eloquent\Collection([$token1, $token2]);
+            $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $controller->destroy($request, 1);
     }
@@ -99,23 +102,18 @@ class PersonalAccessTokenControllerTest extends PHPUnit_Framework_TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $token1 = Mockery::mock(Laravel\Passport\Token::class.'[revoke]');
-        $token1->id = 1;
-        $token1->shouldReceive('revoke')->never();
-        $token2 = Mockery::mock(Laravel\Passport\Token::class.'[revoke]');
-        $token2->id = 2;
-        $token2->shouldReceive('revoke')->never();
+        $tokenRepository = Mockery::mock(TokenRepository::class);
+        $tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
 
-        $request->setUserResolver(function () use ($token1, $token2) {
+        $request->setUserResolver(function () {
             $user = Mockery::mock();
-            $user->id = 1;
-            $user->tokens = new Illuminate\Database\Eloquent\Collection([$token1, $token2]);
+            $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($validator);
+        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(404, $controller->destroy($request, 3)->status());
     }

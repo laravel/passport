@@ -2,7 +2,7 @@
 
 function storage_path($file = null)
 {
-    return __DIR__ . DIRECTORY_SEPARATOR . $file;
+    return __DIR__.DIRECTORY_SEPARATOR.$file;
 }
 
 function custom_path($file = null)

@@ -4,9 +4,7 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class ClientController
@@ -14,22 +12,22 @@ class ClientController
     /**
      * The client repository instance.
      *
-     * @var ClientRepository
+     * @var \Laravel\Passport\ClientRepository
      */
     protected $clients;
 
     /**
      * The validation factory implementation.
      *
-     * @var ValidationFactory
+     * @var \Illuminate\Contracts\Validation\Factory
      */
     protected $validation;
 
     /**
      * Create a client controller instance.
      *
-     * @param  ClientRepository  $clients
-     * @param  ValidationFactory  $validation
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Illuminate\Contracts\Validation\Factory  $validation
      * @return void
      */
     public function __construct(ClientRepository $clients,
@@ -42,8 +40,8 @@ class ClientController
     /**
      * Get all of the clients for the authenticated user.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function forUser(Request $request)
     {
@@ -55,8 +53,8 @@ class ClientController
     /**
      * Store a new client.
      *
-     * @param  Request  $request
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -73,13 +71,15 @@ class ClientController
     /**
      * Update the given client.
      *
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $clientId
-     * @return Response
+     * @return \Illuminate\Http\Response|\Laravel\Passport\Client
      */
     public function update(Request $request, $clientId)
     {
-        if (! $request->user()->clients->find($clientId)) {
+        $client = $this->clients->findForUser($clientId, $request->user()->getKey());
+
+        if (! $client) {
             return new Response('', 404);
         }
 
@@ -89,8 +89,7 @@ class ClientController
         ])->validate();
 
         return $this->clients->update(
-            $request->user()->clients->find($clientId),
-            $request->name, $request->redirect
+            $client, $request->name, $request->redirect
         );
     }
 
@@ -103,12 +102,14 @@ class ClientController
      */
     public function destroy(Request $request, $clientId)
     {
-        if (! $request->user()->clients->find($clientId)) {
+        $client = $this->clients->findForUser($clientId, $request->user()->getKey());
+
+        if (! $client) {
             return new Response('', 404);
         }
 
         $this->clients->delete(
-            $request->user()->clients->find($clientId)
+            $client
         );
     }
 }

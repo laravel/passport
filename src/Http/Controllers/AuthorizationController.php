@@ -5,12 +5,14 @@ namespace Laravel\Passport\Http\Controllers;
 use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Bridge\User;
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\TokenRepository;
+use Laravel\Passport\ClientRepository;
+use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 class AuthorizationController
 {
@@ -19,22 +21,22 @@ class AuthorizationController
     /**
      * The authorization server.
      *
-     * @var AuthorizationServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
      * The response factory implementation.
      *
-     * @var ResponseFactory
+     * @var \Illuminate\Contracts\Routing\ResponseFactory
      */
     protected $response;
 
     /**
      * Create a new controller instance.
      *
-     * @param  AuthorizationServer  $server
-     * @param  ResponseFactory  $response
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
      * @return void
      */
     public function __construct(AuthorizationServer $server, ResponseFactory $response)
@@ -46,11 +48,11 @@ class AuthorizationController
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  ServerRequestInterface  $psrRequest
-     * @param  Request  $request
-     * @param  ClientRepository  $clients
-     * @param  TokenRepository  $tokens
-     * @return Response
+     * @param  \Psr\Http\Message\ServerRequestInterface  $psrRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @return \Illuminate\Http\Response
      */
     public function authorize(ServerRequestInterface $psrRequest,
                               Request $request,
@@ -62,7 +64,7 @@ class AuthorizationController
 
             $scopes = $this->parseScopes($authRequest);
 
-            $token = $tokens->getValidToken(
+            $token = $tokens->findValidToken(
                 $user = $request->user(),
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
             );
@@ -71,13 +73,11 @@ class AuthorizationController
                 return $this->approveRequest($authRequest, $user);
             }
 
-            $request->session()->put(
-                'authRequest', $authRequest = $this->server->validateAuthorizationRequest($psrRequest)
-            );
+            $request->session()->put('authRequest', $authRequest);
 
             return $this->response->view('passport::authorize', [
-                'client' => $clients->find($authRequest->getClient()->getIdentifier()),
-                'user' => $request->user(),
+                'client' => $client,
+                'user' => $user,
                 'scopes' => $scopes,
                 'request' => $request,
             ]);
@@ -87,7 +87,7 @@ class AuthorizationController
     /**
      * Transform the authorization requests's scopes into Scope instances.
      *
-     * @param  AuthRequest  $request
+     * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
      * @return array
      */
     protected function parseScopes($authRequest)
@@ -102,8 +102,8 @@ class AuthorizationController
     /**
      * Approve the authorization request.
      *
-     * @param  AuthorizationRequest  $authRequest
-     * @param  Model  $user
+     * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
+     * @param  \Illuminate\Database\Eloquent\Model  $user
      * @return \Psr\Http\Message\ResponseInterface
      */
     protected function approveRequest($authRequest, $user)
@@ -116,5 +116,4 @@ class AuthorizationController
             $authRequest, new Psr7Response
         );
     }
-
 }

@@ -3,7 +3,7 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException;
+use Laravel\Passport\Exceptions\MissingScopeException;
 
 class CheckScopes
 {
@@ -12,8 +12,10 @@ class CheckScopes
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
-     * @param  array  $scopes
+     * @param  mixed  ...$scopes
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     public function handle($request, $next, ...$scopes)
     {
@@ -23,7 +25,7 @@ class CheckScopes
 
         foreach ($scopes as $scope) {
             if (! $request->user()->tokenCan($scope)) {
-                throw new AuthorizationException;
+                throw new MissingScopeException($scope);
             }
         }
 

@@ -13,22 +13,22 @@ class ApiTokenCookieFactory
     /**
      * The configuration repository implementation.
      *
-     * @var Config
+     * @var \Illuminate\Contracts\Config\Repository
      */
     protected $config;
 
     /**
      * The encrypter implementation.
      *
-     * @var Encrypter
+     * @var \Illuminate\Contracts\Encryption\Encrypter
      */
     protected $encrypter;
 
     /**
      * Create an API token cookie factory instance.
      *
-     * @param  Config  $config
-     * @param  Encrypter  $encrypter
+     * @param  \Illuminate\Contracts\Config\Repository  $config
+     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(Config $config, Encrypter $encrypter)
@@ -42,7 +42,7 @@ class ApiTokenCookieFactory
      *
      * @param  mixed  $userId
      * @param  string  $csrfToken
-     * @return Cookie
+     * @return \Symfony\Component\HttpFoundation\Cookie
      */
     public function make($userId, $csrfToken)
     {
@@ -66,7 +66,7 @@ class ApiTokenCookieFactory
      *
      * @param  mixed  $userId
      * @param  string  $csrfToken
-     * @param  Carbon  $expiration
+     * @param  \Carbon\Carbon  $expiration
      * @return string
      */
     protected function createToken($userId, $csrfToken, Carbon $expiration)

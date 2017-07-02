@@ -1,7 +1,7 @@
 <?php
 
-use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 use Illuminate\Http\Request;
+use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 
 class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
 {
@@ -17,6 +17,7 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['*']);
 
         $middleware = new CheckClientCredentials($resourceServer);
 
@@ -28,7 +29,6 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         });
 
         $this->assertEquals('response', $response);
-
     }
 
     /**
@@ -49,11 +49,10 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $middleware->handle($request, function () {
             return 'response';
         });
-
     }
 
     /**
-     * @expectedException Illuminate\Auth\AuthenticationException
+     * @expectedException \Laravel\Passport\Exceptions\MissingScopeException
      */
     public function test_exception_is_thrown_if_token_does_not_have_required_scopes()
     {
@@ -62,7 +61,7 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['foo','notbar']);
+        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['foo', 'notbar']);
 
         $middleware = new CheckClientCredentials($resourceServer);
 
@@ -71,8 +70,6 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
 
         $response = $middleware->handle($request, function () {
             return 'response';
-        },'foo', 'bar');
-
+        }, 'foo', 'bar');
     }
-
 }

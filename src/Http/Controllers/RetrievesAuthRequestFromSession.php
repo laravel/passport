@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\User;
 
@@ -12,8 +11,9 @@ trait RetrievesAuthRequestFromSession
     /**
      * Get the authorization request from the session.
      *
-     * @param  Request  $request
-     * @return AuthorizationRequest
+     * @param  \Illuminate\Http\Request  $request
+     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest
+     * @throws \Exception
      */
     protected function getAuthRequestFromSession(Request $request)
     {
