@@ -3,6 +3,10 @@
     "description": "Laravel Passport provides OAuth2 server support to Laravel.",
     "keywords": ["laravel", "passport", "oauth"],
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/laravel/passport/issues",
+        "source": "https://github.com/laravel/passport"
+    },
     "authors": [
         {
             "name": "Taylor Otwell",
@@ -22,9 +26,9 @@
         "illuminate/http": "~5.4",
         "illuminate/support": "~5.4",
         "league/oauth2-server": "^6.0",
+        "phpseclib/phpseclib": "^2.0",
         "symfony/psr-http-message-bridge": "~1.0",
-        "zendframework/zend-diactoros": "~1.0",
-        "phpseclib/phpseclib": "^2.0"
+        "zendframework/zend-diactoros": "~1.0"
     },
     "require-dev": {
         "mockery/mockery": "~0.9",
@@ -44,6 +48,9 @@
                 "Laravel\\Passport\\PassportServiceProvider"
             ]
         }
+    },
+    "config": {
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
