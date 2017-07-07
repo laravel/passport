@@ -17,4 +17,4 @@ Documentation for Passport can be found on the [Laravel website](http://laravel.
 
 ## License
 
-Laravel Passport is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Laravel Passport is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
