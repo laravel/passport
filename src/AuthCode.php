@@ -3,8 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Vinelab\NeoEloquent\EloquentModel as NeoEloquent;
 
-class AuthCode extends Model
+class AuthCode extends NeoEloquent
 {
     /**
      * The database table used by the model.
