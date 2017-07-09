@@ -3,7 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
-use Vinelab\NeoEloquent\EloquentModel as NeoEloquent;
+use Vinelab\NeoEloquent\Eloquent\Model as NeoEloquent;
 
 class Token extends NeoEloquent
 {
