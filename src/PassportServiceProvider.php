@@ -92,6 +92,8 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->app->singleton(AuthorizationServer::class, function () {
             return tap($this->makeAuthorizationServer(), function ($server) {
+                $server->setEncryptionKey(env('APP_KEY'));
+
                 $server->enableGrantType(
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
