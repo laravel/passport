@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Throwable;
 use Exception;
+use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Container\Container;
 use Zend\Diactoros\Response as Psr7Response;
@@ -17,7 +17,7 @@ trait HandlesOAuthErrors
      * Perform the given callback with exception handling.
      *
      * @param  \Closure  $callback
-     * @return Response
+     * @return \Illuminate\Http\Response|\Psr\Http\Message\ResponseInterface
      */
     protected function withErrorHandling($callback)
     {

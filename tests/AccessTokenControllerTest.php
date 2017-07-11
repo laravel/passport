@@ -43,7 +43,9 @@ class AccessTokenControllerTest extends PHPUnit_Framework_TestCase
         $server = Mockery::mock('League\OAuth2\Server\AuthorizationServer');
         $server->shouldReceive('respondToAccessTokenRequest')->with(
             Mockery::type('Psr\Http\Message\ServerRequestInterface'), Mockery::type('Psr\Http\Message\ResponseInterface')
-        )->andReturnUsing(function () { throw new Exception('whoops'); });
+        )->andReturnUsing(function () {
+            throw new Exception('whoops');
+        });
 
         $controller = new Laravel\Passport\Http\Controllers\AccessTokenController($server, $tokens, $jwt);
 

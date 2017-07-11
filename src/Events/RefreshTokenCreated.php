@@ -21,9 +21,8 @@ class RefreshTokenCreated
     /**
      * Create a new event instance.
      *
-     * @param  string  $tokenId
-     * @param  string  $userId
-     * @param  string  $clientId
+     * @param  string  $refreshTokenId
+     * @param  string  $accessTokenId
      * @return void
      */
     public function __construct($refreshTokenId, $accessTokenId)

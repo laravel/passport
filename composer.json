@@ -38,6 +38,11 @@
     "extra": {
         "branch-alias": {
             "dev-master": "3.0-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Laravel\\Passport\\PassportServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",

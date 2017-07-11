@@ -13,7 +13,7 @@ class Passport
     /**
      * Indicates if the implicit grant type is enabled.
      *
-     * @var boolean|null
+     * @var bool|null
      */
     public static $implicitGrantEnabled = false;
 
@@ -314,10 +314,10 @@ class Passport
      */
     public static function keyPath($file)
     {
-        $file = ltrim($file, "/\\");
+        $file = ltrim($file, '/\\');
 
         return static::$keyPath
-            ? rtrim(static::$keyPath, "/\\").DIRECTORY_SEPARATOR.$file
+            ? rtrim(static::$keyPath, '/\\').DIRECTORY_SEPARATOR.$file
             : storage_path($file);
     }
 

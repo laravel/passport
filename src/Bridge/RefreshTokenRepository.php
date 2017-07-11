@@ -11,6 +11,13 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
+     * The access token repository instance.
+     *
+     * @var \Laravel\Passport\Bridge\AccessTokenRepository
+     */
+    protected $tokens;
+
+    /**
      * The database connection.
      *
      * @var \Illuminate\Database\Connection
@@ -20,19 +27,24 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * The event dispatcher instance.
      *
-     * @var \Illuminate\Events\Dispatcher
+     * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    private $events;
+    protected $events;
 
     /**
      * Create a new repository instance.
      *
+     * @param  \Laravel\Passport\Bridge\AccessTokenRepository  $tokens
      * @param  \Illuminate\Database\Connection  $database
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
-    public function __construct(Connection $database, Dispatcher $events)
+    public function __construct(AccessTokenRepository $tokens,
+                                Connection $database,
+                                Dispatcher $events)
     {
         $this->events = $events;
+        $this->tokens = $tokens;
         $this->database = $database;
     }
 
@@ -73,7 +85,15 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-        return $this->database->table('oauth_refresh_tokens')
-                    ->where('id', $tokenId)->where('revoked', true)->exists();
+        $refreshToken = $this->database->table('oauth_refresh_tokens')
+                    ->where('id', $tokenId)->first();
+
+        if ($refreshToken === null || $refreshToken->revoked) {
+            return true;
+        }
+
+        return $this->tokens->isAccessTokenRevoked(
+            $refreshToken->access_token_id
+        );
     }
 }

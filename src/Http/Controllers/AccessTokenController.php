@@ -2,11 +2,10 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
-use Zend\Diactoros\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 
 class AccessTokenController
@@ -16,30 +15,30 @@ class AccessTokenController
     /**
      * The authorization server.
      *
-     * @var AuthorizationServer
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
 
     /**
      * The token repository instance.
      *
-     * @var TokenRepository
+     * @var \Laravel\Passport\TokenRepository
      */
     protected $tokens;
 
     /**
      * The JWT parser instance.
      *
-     * @var JwtParser
+     * @var \Lcobucci\JWT\Parser
      */
     protected $jwt;
 
     /**
      * Create a new controller instance.
      *
-     * @param  AuthorizationServer  $server
-     * @param  TokenRepository  $tokens
-     * @param  JwtParser  $jwt
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
@@ -54,8 +53,8 @@ class AccessTokenController
     /**
      * Authorize a client to access the user's account.
      *
-     * @param  ServerRequestInterface  $request
-     * @return Response
+     * @param  \Psr\Http\Message\ServerRequestInterface  $request
+     * @return \Illuminate\Http\Response
      */
     public function issueToken(ServerRequestInterface $request)
     {

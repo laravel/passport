@@ -2,9 +2,7 @@
 
 namespace Laravel\Passport\Console;
 
-use DateTime;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessClient;
 
