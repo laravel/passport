@@ -7,6 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class TokenRepository
 {
+    use RepositoryTrait;
+
+    /**
+     * Model instance
+     *
+     * @var \Illuminate\Database\Eloquent\Model $model
+     */
+    protected $model;
+
+    /**
+     * TokenRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->model = config('passport.tokens.model');
+    }
+
     /**
      * Creates a new Access Token.
      *
@@ -15,7 +32,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
-        return Token::create($attributes);
+        return $this->modelInstance()->create($attributes);
     }
 
     /**
@@ -26,7 +43,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        return $this->modelInstance()->where('id', $id)->first();
     }
 
     /**
@@ -38,7 +55,7 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return Token::where('id', $id)->where('user_id', $userId)->first();
+        return $this->modelInstance()->where('id', $id)->where('user_id', $userId)->first();
     }
 
     /**
@@ -49,7 +66,7 @@ class TokenRepository
      */
     public function forUser($userId)
     {
-        return Token::where('user_id', $userId)->get();
+        return $this->modelInstance()->where('user_id', $userId)->get();
     }
 
     /**
@@ -87,7 +104,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
-        return Token::where('id', $id)->update(['revoked' => true]);
+        return $this->find($id)->update(['revoked' => true]);
     }
 
     /**

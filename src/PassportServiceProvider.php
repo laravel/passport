@@ -34,6 +34,8 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->deleteCookieOnLogout();
 
+        $this->publishResources();
+
         if ($this->app->runningInConsole()) {
             $this->registerMigrations();
 
@@ -70,12 +72,34 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
+     * Publish Passport's resource files.
+     *
+     * @return void
+     */
+    public function publishResources()
+    {
+        $this->publishes([__DIR__.'/Config/passport.php' => config_path('passport.php')], 'config');
+    }
+
+    /**
+     * Prepare Passport's resource files.
+     *
+     * @return void
+     */
+    protected function prepareResources()
+    {
+        $this->mergeConfigFrom(realpath(__DIR__.'/Config/passport.php'), 'passport');
+    }
+
+    /**
      * Register the service provider.
      *
      * @return void
      */
     public function register()
     {
+        $this->prepareResources();
+
         $this->registerAuthorizationServer();
 
         $this->registerResourceServer();
@@ -195,13 +219,17 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function makeAuthorizationServer()
     {
-        return new AuthorizationServer(
+        $authorizationServer =  new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             'file://'.Passport::keyPath('oauth-private.key'),
             'file://'.Passport::keyPath('oauth-public.key')
         );
+
+        $authorizationServer->setEncryptionKey(env('APP_KEY'));
+
+        return $authorizationServer;
     }
 
     /**

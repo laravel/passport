@@ -4,6 +4,23 @@ namespace Laravel\Passport;
 
 class ClientRepository
 {
+    use RepositoryTrait;
+
+    /**
+     * Model instance
+     *
+     * @var \Illuminate\Database\Eloquent\Model $model
+     */
+    protected $model;
+
+    /**
+     * ClientRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->model = config('passport.clients.model');
+    }
+
     /**
      * Get a client by the given ID.
      *
@@ -13,7 +30,7 @@ class ClientRepository
 
     public function find($id)
     {
-        return Client::find($id);
+        return $this->modelInstance()->find($id);
     }
 
     /**
@@ -51,8 +68,10 @@ class ClientRepository
      */
     public function forUser($userId)
     {
-        return Client::where('user_id', $userId)
-                        ->orderBy('name', 'asc')->get();
+        return  $this->modelInstance()
+                ->  where('user_id', $userId)
+                ->  orderBy('name', 'asc')
+                ->  get();
     }
 
     /**
@@ -78,7 +97,7 @@ class ClientRepository
         if (Passport::$personalAccessClient) {
             return $this->find(Passport::$personalAccessClient);
         } else {
-            return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+            return $this->makeModel(config('passport.clients.personal_access_client'))->orderBy('id', 'desc')->first()->client;
         }
     }
 
@@ -94,7 +113,7 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = (new Client)->forceFill([
+        $client = $this->modelInstance()->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
