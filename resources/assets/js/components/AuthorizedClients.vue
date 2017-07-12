@@ -10,13 +10,17 @@
 
 <template>
     <div>
-        <div v-if="tokens.length > 0">
+        <div>
             <div class="panel panel-default">
                 <div class="panel-heading">Authorized Applications</div>
 
                 <div class="panel-body">
                     <!-- Authorized Tokens -->
-                    <table class="table table-borderless m-b-none">
+                    <p class="m-b-none" v-if="tokens.length === 0">
+                        You have not authorized any applications.
+                    </p>
+
+                    <table class="table table-borderless m-b-none" v-if="tokens.length > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
