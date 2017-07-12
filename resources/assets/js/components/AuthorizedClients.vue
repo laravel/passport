@@ -17,8 +17,9 @@
                 <div class="panel-body">
                     <!-- Authorized Tokens -->
                     <p class="m-b-none" v-if="tokens.length === 0">
-                        You have not authorized any application.
+                        You have not authorized any applications.
                     </p>
+
                     <table class="table table-borderless m-b-none" v-if="tokens.length > 0">
                         <thead>
                             <tr>
