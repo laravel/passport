@@ -204,6 +204,7 @@ class PassportServiceProvider extends ServiceProvider
         );
         
         $server->setEncryptionKey(app('encrypter')->getKey());
+
         return $server;
     }
 
