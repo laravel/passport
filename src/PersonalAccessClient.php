@@ -3,8 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Vinelab\NeoEloquent\Eloquent\Model as NeoEloquent;
 
-class PersonalAccessClient extends Model
+class PersonalAccessClient extends NeoEloquent
 {
     /**
      * The database table used by the model.
