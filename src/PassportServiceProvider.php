@@ -190,21 +190,6 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Create a CryptKey instance without permissions check
-     *
-     * @param string $key
-     * @return \League\OAuth2\Server\CryptKey
-     */
-    protected function makeCryptKey($key)
-    {
-        return new CryptKey(
-            'file://'.Passport::keyPath($key),
-            null,
-            false
-        );
-    }
-
-    /**
      * Make the authorization service instance.
      *
      * @return \League\OAuth2\Server\AuthorizationServer
@@ -233,6 +218,21 @@ class PassportServiceProvider extends ServiceProvider
                 $this->makeCryptKey('oauth-public.key')
             );
         });
+    }
+
+    /**
+     * Create a CryptKey instance without permissions check
+     *
+     * @param string $key
+     * @return \League\OAuth2\Server\CryptKey
+     */
+    protected function makeCryptKey($key)
+    {
+        return new CryptKey(
+            'file://'.Passport::keyPath($key),
+            null,
+            false
+        );
     }
 
     /**
