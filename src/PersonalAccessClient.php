@@ -21,6 +21,19 @@ class PersonalAccessClient extends Model
     protected $guarded = [];
 
     /**
+     * Set database connection.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->connection = config('auth.guards.api.connection', config('database.default'));
+    }
+
+    /**
      * Get all of the authentication codes for the client.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

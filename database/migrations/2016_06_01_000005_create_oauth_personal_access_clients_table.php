@@ -7,6 +7,16 @@ use Illuminate\Database\Migrations\Migration;
 class CreateOauthPersonalAccessClientsTable extends Migration
 {
     /**
+     * Set database connection.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->connection = config('auth.guards.api.connection', config('database.default'));
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void
