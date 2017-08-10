@@ -39,6 +39,19 @@ class AuthCode extends Model
     ];
 
     /**
+     * Set database connection.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->connection = config('auth.guards.api.connection', config('database.default'));
+    }
+
+    /**
      * Get the client that owns the authentication code.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

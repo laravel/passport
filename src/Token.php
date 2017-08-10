@@ -54,6 +54,19 @@ class Token extends Model
     public $timestamps = false;
 
     /**
+     * Set database connection.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->connection = config('auth.guards.api.connection', config('database.default'));
+    }
+
+    /**
      * Get the client that the token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
