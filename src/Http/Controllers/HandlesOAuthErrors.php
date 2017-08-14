@@ -17,7 +17,7 @@ trait HandlesOAuthErrors
      * Perform the given callback with exception handling.
      *
      * @param  \Closure  $callback
-     * @return \Illuminate\Http\Response|\Psr\Http\Message\ResponseInterface
+     * @return \Illuminate\Http\Response
      */
     protected function withErrorHandling($callback)
     {
@@ -25,8 +25,13 @@ trait HandlesOAuthErrors
             return $callback();
         } catch (OAuthServerException $e) {
             $this->exceptionHandler()->report($e);
+            $psr7Response = $e->generateHttpResponse(new Psr7Response);
 
-            return $e->generateHttpResponse(new Psr7Response);
+            return new Response(
+                $psr7Response->getBody(),
+                $psr7Response->getStatusCode(),
+                $psr7Response->getHeaders()
+            );
         } catch (Exception $e) {
             $this->exceptionHandler()->report($e);
 
