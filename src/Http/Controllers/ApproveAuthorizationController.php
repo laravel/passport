@@ -39,8 +39,8 @@ class ApproveAuthorizationController
         return $this->withErrorHandling(function () use ($request) {
             $authRequest = $this->getAuthRequestFromSession($request);
 
-            return $this->server->completeAuthorizationRequest(
-                $authRequest, new Psr7Response
+            return $this->convertResponse(
+                $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
             );
         });
     }
