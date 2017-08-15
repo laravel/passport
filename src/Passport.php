@@ -229,9 +229,9 @@ class Passport
             return static::$tokensExpireAt
                             ? Carbon::now()->diff(static::$tokensExpireAt)
                             : new DateInterval('P1Y');
-        } else {
-            static::$tokensExpireAt = $date;
         }
+
+        static::$tokensExpireAt = $date;
 
         return new static;
     }
@@ -248,9 +248,9 @@ class Passport
             return static::$refreshTokensExpireAt
                             ? Carbon::now()->diff(static::$refreshTokensExpireAt)
                             : new DateInterval('P1Y');
-        } else {
-            static::$refreshTokensExpireAt = $date;
         }
+
+        static::$refreshTokensExpireAt = $date;
 
         return new static;
     }
@@ -265,9 +265,9 @@ class Passport
     {
         if (is_null($cookie)) {
             return static::$cookie;
-        } else {
-            static::$cookie = $cookie;
         }
+
+        static::$cookie = $cookie;
 
         return new static;
     }
