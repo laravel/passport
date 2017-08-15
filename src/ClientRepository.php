@@ -10,7 +10,6 @@ class ClientRepository
      * @param  int  $id
      * @return \Laravel\Passport\Client|null
      */
-
     public function find($id)
     {
         return Client::find($id);
