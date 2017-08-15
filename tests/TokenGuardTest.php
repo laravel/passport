@@ -58,9 +58,9 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturnUsing(function () {
-            throw new League\OAuth2\Server\Exception\OAuthServerException('message', 500, 'error type');
-        });
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
+            new League\OAuth2\Server\Exception\OAuthServerException('message', 500, 'error type')
+        );
 
         $this->assertNull($guard->user($request));
     }
