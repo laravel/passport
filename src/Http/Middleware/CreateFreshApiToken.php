@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use Laravel\Passport\ApiTokenCookieFactory;
 
@@ -89,8 +88,7 @@ class CreateFreshApiToken
      */
     protected function responseShouldReceiveFreshToken($response)
     {
-        return $response instanceof Response &&
-                    ! $this->alreadyContainsToken($response);
+        return $this->alreadyContainsToken($response);
     }
 
     /**
