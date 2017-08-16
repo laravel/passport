@@ -84,7 +84,7 @@ class CreateFreshApiToken
     /**
      * Determine if the response should receive a fresh token.
      *
-     * @param  \Illuminate\Http\Response  $request
+     * @param  \Illuminate\Http\Response  $response
      * @return bool
      */
     protected function responseShouldReceiveFreshToken($response)

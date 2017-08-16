@@ -10,7 +10,6 @@ class ClientRepository
      * @param  int  $id
      * @return \Laravel\Passport\Client|null
      */
-
     public function find($id)
     {
         return Client::find($id);
@@ -77,9 +76,9 @@ class ClientRepository
     {
         if (Passport::$personalAccessClient) {
             return $this->find(Passport::$personalAccessClient);
-        } else {
-            return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
         }
+
+        return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
     }
 
     /**
