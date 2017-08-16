@@ -23,6 +23,6 @@ class Client implements ClientEntityInterface
         $this->setIdentifier($identifier);
 
         $this->name = $name;
-        $this->redirectUri = $redirectUri;
+        $this->redirectUri = explode(',', $redirectUri);
     }
 }
