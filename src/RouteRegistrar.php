@@ -45,7 +45,7 @@ class RouteRegistrar
      */
     public function forAuthorization()
     {
-        $this->router->group(['middleware' => ['web', 'student']], function ($router) {
+        $this->router->group(['middleware' => ['web', 'family']], function ($router) {
             $router->get('/authorize', [
                 'uses' => 'AuthorizationController@authorize',
             ]);
@@ -72,7 +72,7 @@ class RouteRegistrar
             'middleware' => 'throttle',
         ]);
 
-        $this->router->group(['middleware' => ['web', 'student']], function ($router) {
+        $this->router->group(['middleware' => ['web', 'family']], function ($router) {
             $router->get('/tokens', [
                 'uses' => 'AuthorizedAccessTokenController@forUser',
             ]);
@@ -91,7 +91,7 @@ class RouteRegistrar
     public function forTransientTokens()
     {
         $this->router->post('/token/refresh', [
-            'middleware' => ['web', 'student'],
+            'middleware' => ['web', 'family'],
             'uses' => 'TransientTokenController@refresh',
         ]);
     }
@@ -103,7 +103,7 @@ class RouteRegistrar
      */
     public function forClients()
     {
-        $this->router->group(['middleware' => ['web', 'student']], function ($router) {
+        $this->router->group(['middleware' => ['web', 'family']], function ($router) {
             $router->get('/clients', [
                 'uses' => 'ClientController@forUser',
             ]);
@@ -129,7 +129,7 @@ class RouteRegistrar
      */
     public function forPersonalAccessTokens()
     {
-        $this->router->group(['middleware' => ['web', 'student']], function ($router) {
+        $this->router->group(['middleware' => ['web', 'family']], function ($router) {
             $router->get('/scopes', [
                 'uses' => 'ScopeController@all',
             ]);
