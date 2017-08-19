@@ -72,10 +72,13 @@ class ClientRepository
      *
      * @return \Laravel\Passport\Client
      */
-    public function personalAccessClient()
+    public function personalAccessClient($clientId = false)
     {
-        if (Passport::$personalAccessClient) {
-            return $this->find(Passport::$personalAccessClient);
+        if (!$clientId) {
+			$clientId = Passport::$personalAccessClient;
+		}
+        if ($clientId) {
+            return $this->find($clientId);
         }
 
         return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
