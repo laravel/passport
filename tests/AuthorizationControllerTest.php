@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Container\Container;
 use League\OAuth2\Server\AuthorizationServer;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Routing\ResponseFactory;
 
 class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
@@ -53,14 +55,15 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
 
     public function test_authorization_exceptions_are_handled()
     {
+        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = Mockery::mock());
+        $exceptions->shouldReceive('report')->once();
+
         $server = Mockery::mock(AuthorizationServer::class);
         $response = Mockery::mock(ResponseFactory::class);
 
         $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
 
-        $server->shouldReceive('validateAuthorizationRequest')->andReturnUsing(function () {
-            throw new Exception('whoops');
-        });
+        $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('session')->andReturn($session = Mockery::mock());
@@ -71,7 +74,7 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('whoops', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
-        )->getOriginalContent());
+        )->getContent());
     }
 
     /**
@@ -87,9 +90,10 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $response = Mockery::mock(ResponseFactory::class);
 
         $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
-
+        $psrResponse = new Zend\Diactoros\Response();
+        $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
-        $server->shouldReceive('completeAuthorizationRequest')->with($authRequest, Mockery::type('Psr\Http\Message\ResponseInterface'))->andReturn('approved');
+        $server->shouldReceive('completeAuthorizationRequest')->with($authRequest, Mockery::type('Psr\Http\Message\ResponseInterface'))->andReturn($psrResponse);
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('user')->once()->andReturn($user = Mockery::mock());
@@ -110,6 +114,6 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('approved', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
-        ));
+        )->getContent());
     }
 }
