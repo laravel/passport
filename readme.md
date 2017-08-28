@@ -1,10 +1,11 @@
-# Laravel Passport
+<p align="center"><img src="https://laravel.com/assets/img/components/logo-passport.svg"></p>
 
-[![Build Status](https://travis-ci.org/laravel/passport.svg)](https://travis-ci.org/laravel/passport)
-[![Total Downloads](https://poser.pugx.org/laravel/passport/d/total.svg)](https://packagist.org/packages/laravel/passport)
-[![Latest Stable Version](https://poser.pugx.org/laravel/passport/v/stable.svg)](https://packagist.org/packages/laravel/passport)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/passport/v/unstable.svg)](https://packagist.org/packages/laravel/passport)
-[![License](https://poser.pugx.org/laravel/passport/license.svg)](https://packagist.org/packages/laravel/passport)
+<p align="center">
+<a href="https://travis-ci.org/laravel/passport"><img src="https://travis-ci.org/laravel/passport.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/passport"><img src="https://poser.pugx.org/laravel/passport/d/total.svg" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/passport"><img src="https://poser.pugx.org/laravel/passport/v/stable.svg" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/passport"><img src="https://poser.pugx.org/laravel/passport/license.svg" alt="License"></a>
+</p>
 
 ## Introduction
 
@@ -16,4 +17,4 @@ Documentation for Passport can be found on the [Laravel website](http://laravel.
 
 ## License
 
-Laravel Passport is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Laravel Passport is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
