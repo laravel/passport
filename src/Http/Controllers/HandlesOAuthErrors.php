@@ -30,7 +30,7 @@ trait HandlesOAuthErrors
         } catch (Exception $e) {
             $this->exceptionHandler()->report($e);
 
-            return $this->exceptionHandler()->render(request(), $e);
+            return $this->exceptionHandler()->render(\request(), $e);
         } catch (Throwable $e) {
             $this->exceptionHandler()->report(new FatalThrowableError($e));
 
