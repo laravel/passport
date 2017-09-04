@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=5.6.4",
-        "firebase/php-jwt": "~3.0|~4.0",
+        "firebase/php-jwt": "~3.0|~4.0|~5.0",
         "guzzlehttp/guzzle": "~6.0",
         "illuminate/auth": "~5.4",
         "illuminate/console": "~5.4",
