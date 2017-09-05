@@ -31,6 +31,27 @@ class CheckClientCredentialsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('response', $response);
     }
 
+    public function test_request_is_passed_along_if_token_and_scope_are_valid()
+    {
+        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Mockery::mock());
+        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['see-profile']);
+
+        $middleware = new CheckClientCredentials($resourceServer);
+
+        $request = Request::create('/');
+        $request->headers->set('Authorization', 'Bearer token');
+
+        $response = $middleware->handle($request, function () {
+            return 'response';
+        });
+
+        $this->assertEquals('response', $response);
+    }
+
     /**
      * @expectedException Illuminate\Auth\AuthenticationException
      */
