@@ -92,6 +92,29 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('http://localhost#error=access_denied&state=state', $controller->deny($request));
     }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Authorization request was not present in the session.
+     */
+    public function test_auth_request_should_exist()
+    {
+        $response = Mockery::mock(ResponseFactory::class);
+
+        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+
+        $request = Mockery::mock('Illuminate\Http\Request');
+
+        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('user')->never();
+        $request->shouldReceive('input')->never();
+
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturnNull();
+
+        $response->shouldReceive('redirectTo')->never();
+
+        $controller->deny($request);
+    }
 }
 
 class DenyAuthorizationControllerFakeUser
