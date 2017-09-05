@@ -66,7 +66,7 @@ class HandlesOAuthErrorsTest extends PHPUnit_Framework_TestCase
 
         $handler->shouldReceive('report')
             ->once()
-            ->with(Mockery::type(Symfony\Component\Debug\Exception\FatalThrowableError::class));
+            ->with(Mockery::type(Exception::class));
 
         $result = $controller->test(function () use ($exception) {
             throw $exception;
