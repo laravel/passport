@@ -13,6 +13,7 @@ use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Odyssey;
 
 class AuthorizationController
 {
@@ -65,7 +66,7 @@ class AuthorizationController
             $scopes = $this->parseScopes($authRequest);
 
             $token = $tokens->findValidToken(
-                $user = $request->user(),
+                $user = Odyssey::check(),
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
             );
 
