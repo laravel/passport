@@ -252,7 +252,7 @@
                         })
                         .catch(error => {
                             if (typeof error.response.data === 'object') {
-                                this.form.errors = _.flatten(_.toArray(error.response.data));
+                                this.form.errors = _.flatten(_.toArray(error.response.data.errors));
                             } else {
                                 this.form.errors = ['Something went wrong. Please try again.'];
                             }
