@@ -88,7 +88,8 @@ class CreateFreshApiToken
      */
     protected function responseShouldReceiveFreshToken($response)
     {
-        return ! $this->alreadyContainsToken($response);
+        return method_exists($response, 'withCookie') &&
+               ! $this->alreadyContainsToken($response);
     }
 
     /**
