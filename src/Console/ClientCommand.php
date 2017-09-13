@@ -101,7 +101,8 @@ class ClientCommand extends Command
     protected function createAuthCodeClient(ClientRepository $clients)
     {
         $userId = $this->ask(
-            'Which user ID should the client be assigned to?'
+            'Which user ID should the client be assigned to?',
+            'null'
         );
 
         $name = $this->option('name') ?: $this->ask(
@@ -112,6 +113,8 @@ class ClientCommand extends Command
             'Where should we redirect the request after authorization?',
             url('/auth/callback')
         );
+        
+        if ($userId == 'null') $userId = null;
 
         $client = $clients->create(
             $userId, $name, $redirect
