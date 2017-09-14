@@ -13,7 +13,7 @@ class KeysCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:keys {--force : Overwrite keys they already exist}';
+    protected $signature = 'passport:keys {--force : Overwrite keys if they already exist}';
 
     /**
      * The console command description.
