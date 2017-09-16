@@ -11,7 +11,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:install {--force : Overwrite keys they already exist}';
+    protected $signature = 'passport:install {--force : Overwrite keys if they already exist}';
 
     /**
      * The console command description.
