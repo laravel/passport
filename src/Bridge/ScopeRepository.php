@@ -25,7 +25,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes, $grantType,
         ClientEntityInterface $clientEntity, $userIdentifier = null)
     {
-        if (! in_array($grantType, ['password', 'personal_access'])) {
+        if (! in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
