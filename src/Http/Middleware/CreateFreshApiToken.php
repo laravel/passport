@@ -89,7 +89,7 @@ class CreateFreshApiToken
      */
     protected function responseShouldReceiveFreshToken($response)
     {
-        return $response instanceof Response && !$this->alreadyContainsToken($response);
+        return $response instanceof Response && ! $this->alreadyContainsToken($response);
     }
 
     /**
