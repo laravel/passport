@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use DateInterval;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
@@ -242,9 +243,11 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerGuard()
     {
-        Auth::extend('passport', function ($app, $name, array $config) {
-            return tap($this->makeGuard($config), function ($guard) {
-                $this->app->refresh('request', $guard, 'setRequest');
+        $this->app->resolving(AuthManager::class, function (AuthManager $auth) {
+            $auth->extend('passport', function ($app, $name, array $config) {
+                return tap($this->makeGuard($config), function ($guard) {
+                    $this->app->refresh('request', $guard, 'setRequest');
+                });
             });
         });
     }
