@@ -69,7 +69,7 @@ class AuthorizationController
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
             );
 
-            if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
+            if (($token && $token->scopes === collect($scopes)->pluck('id')->all()) || $client->trusted) {
                 return $this->approveRequest($authRequest, $user);
             }
 

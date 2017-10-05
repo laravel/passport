@@ -38,6 +38,7 @@ class Client extends Model
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
         'revoked' => 'bool',
+        'trusted' => 'bool',
     ];
 
     /**
