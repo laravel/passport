@@ -116,4 +116,37 @@ class AuthorizationControllerTest extends PHPUnit_Framework_TestCase
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         )->getContent());
     }
+
+    public function test_request_is_approved_if_client_is_trusted()
+    {
+        $server = Mockery::mock(AuthorizationServer::class);
+        $response = Mockery::mock(ResponseFactory::class);
+
+        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $psrResponse = new Zend\Diactoros\Response();
+        $psrResponse->getBody()->write('approved');
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
+        $server->shouldReceive('completeAuthorizationRequest')->with($authRequest, Mockery::type('Psr\Http\Message\ResponseInterface'))->andReturn($psrResponse);
+
+        $request = Mockery::mock('Illuminate\Http\Request');
+        $request->shouldReceive('user')->once()->andReturn($user = Mockery::mock());
+        $user->shouldReceive('getKey')->andReturn(1);
+        $request->shouldNotReceive('session');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturnNull();
+        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
+        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients->shouldReceive('find')->with(1)->andReturn($client = Mockery::mock('Laravel\Passport\Client'));
+        $client->shouldReceive('getAttribute')->with('trusted')->andReturn(true);
+
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
+
+        $this->assertEquals('approved', $controller->authorize(
+            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+        )->getContent());
+    }
 }
