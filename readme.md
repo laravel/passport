@@ -15,6 +15,12 @@ Laravel Passport is an OAuth2 server and API authentication package that is simp
 
 Documentation for Passport can be found on the [Laravel website](http://laravel.com/docs/master/passport).
 
+For Multi Guards usage
+* Add guard name to your client on "guard_name" column.
+* Using different guard you should send it on request as well as setting it up
+ 
+    request()->route()->middleware('guardName');
+ 
 ## License
 
 Laravel Passport is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).

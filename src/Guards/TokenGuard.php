@@ -5,6 +5,8 @@ namespace Laravel\Passport\Guards;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Passport\Client;
 use Laravel\Passport\Passport;
 use Illuminate\Container\Container;
 use Laravel\Passport\TransientToken;
@@ -109,9 +111,15 @@ class TokenGuard
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
 
-            // If the access token is valid we will retrieve the user according to the user ID
+            // If the access token is valid we will retrieve the user according to the user ID, using Custom guard if available
             // associated with the token. We will use the provider implementation which may
             // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
+            $guard = Client::find($psr->getAttribute('oauth_client_id'))->guard_name;
+            $middlewares = $request->route()->middleware();
+            if($guard == end($middlewares))
+                $this->provider = Auth::createUserProvider(config('auth.guards.'.$guard.'.provider'));
+            else
+                return;
             $user = $this->provider->retrieveById(
                 $psr->getAttribute('oauth_user_id')
             );
