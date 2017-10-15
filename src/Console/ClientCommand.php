@@ -58,7 +58,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            null, $name, config('app.url')
         );
 
         $accessClient = new PersonalAccessClient();
@@ -84,7 +84,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost'
+            null, $name, config('app.url')
         );
 
         $this->info('Password grant client created successfully.');
