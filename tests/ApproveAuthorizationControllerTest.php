@@ -1,8 +1,9 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use League\OAuth2\Server\AuthorizationServer;
 
-class ApproveAuthorizationControllerTest extends PHPUnit_Framework_TestCase
+class ApproveAuthorizationControllerTest extends TestCase
 {
     public function tearDown()
     {

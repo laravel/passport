@@ -1,8 +1,9 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 
-class HasApiTokensTest extends PHPUnit_Framework_TestCase
+class HasApiTokensTest extends TestCase
 {
     public function tearDown()
     {
