@@ -1,11 +1,12 @@
 <?php
 
 use Laravel\Passport\Passport;
+use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ScopeRepository;
 
-class BridgeScopeRepositoryTest extends PHPUnit_Framework_TestCase
+class BridgeScopeRepositoryTest extends TestCase
 {
     public function test_invalid_scopes_are_removed()
     {

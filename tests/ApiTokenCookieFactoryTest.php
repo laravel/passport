@@ -1,9 +1,10 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
 
-class ApiTokenCookieFactoryTest extends PHPUnit_Framework_TestCase
+class ApiTokenCookieFactoryTest extends TestCase
 {
     public function tearDown()
     {

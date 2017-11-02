@@ -1,6 +1,8 @@
 <?php
 
-class PersonalAccessTokenFactoryTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PersonalAccessTokenFactoryTest extends TestCase
 {
     public function tearDown()
     {

@@ -1,8 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use PHPUnit\Framework\TestCase;
 
-class BridgeAccessTokenRepositoryTest extends PHPUnit_Framework_TestCase
+class BridgeAccessTokenRepositoryTest extends TestCase
 {
     public function tearDown()
     {

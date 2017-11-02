@@ -1,8 +1,9 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 
-class TransientTokenControllerTest extends PHPUnit_Framework_TestCase
+class TransientTokenControllerTest extends TestCase
 {
     public function tearDown()
     {
