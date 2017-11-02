@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use PHPUnit\Framework\TestCase;
 
-class ClientControllerTest extends PHPUnit_Framework_TestCase
+class ClientControllerTest extends TestCase
 {
     public function tearDown()
     {

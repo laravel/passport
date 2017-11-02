@@ -1,6 +1,8 @@
 <?php
 
-class TokenTest extends PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class TokenTest extends TestCase
 {
     public function test_token_can_determine_if_it_has_scopes()
     {
