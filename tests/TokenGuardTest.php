@@ -3,10 +3,11 @@
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
+use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Laravel\Passport\Guards\TokenGuard;
 
-class TokenGuardTest extends PHPUnit_Framework_TestCase
+class TokenGuardTest extends TestCase
 {
     public function tearDown()
     {
