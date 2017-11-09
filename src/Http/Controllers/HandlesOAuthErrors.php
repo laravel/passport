@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Exception;
+use Illuminate\Contracts\Config\Repository;
 use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Container\Container;
@@ -34,12 +35,22 @@ trait HandlesOAuthErrors
         } catch (Exception $e) {
             $this->exceptionHandler()->report($e);
 
-            return new Response(config('app.debug') ? $e->getMessage() : 'error', 500);
+            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'error', 500);
         } catch (Throwable $e) {
             $this->exceptionHandler()->report(new FatalThrowableError($e));
 
-            return new Response(config('app.debug') ? $e->getMessage() : 'error', 500);
+            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'error', 500);
         }
+    }
+
+    /**
+     * Get the configuration repository instance.
+     *
+     * @return \Illuminate\Contracts\Config\Repository
+     */
+    protected function configuration()
+    {
+        return Container::getInstance()->make(Repository::class);
     }
 
     /**
