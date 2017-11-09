@@ -3,10 +3,10 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Exception;
-use Illuminate\Contracts\Config\Repository;
 use Throwable;
 use Illuminate\Http\Response;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Config\Repository;
 use Zend\Diactoros\Response as Psr7Response;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
