@@ -148,9 +148,9 @@ class TokenGuard
                 return;
             }
 
-            if($user->withAccessToken($token)) {
+            if($token) {
                 $this->events->dispatch(new Authenticated($token->id, $user, $clientId));
-                return $token;
+                return $user->withAccessToken($token);
             }
 
             return null;
