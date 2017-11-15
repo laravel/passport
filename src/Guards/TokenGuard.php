@@ -16,6 +16,8 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Illuminate\Contracts\Events\Dispatcher;
+use Laravel\Passport\Events\Authenticated;
 
 class TokenGuard
 {
@@ -55,6 +57,13 @@ class TokenGuard
     protected $encrypter;
 
     /**
+     * The event dispatcher instance.
+     *
+     * @var \Illuminate\Contracts\Events\Dispatcher
+     */
+    private $events;
+
+    /**
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
@@ -62,19 +71,22 @@ class TokenGuard
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
+     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
     public function __construct(ResourceServer $server,
                                 UserProvider $provider,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
-                                Encrypter $encrypter)
+                                Encrypter $encrypter,
+                                Dispatcher $events)
     {
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
         $this->provider = $provider;
         $this->encrypter = $encrypter;
+        $this->events = $events;
     }
 
     /**
@@ -136,7 +148,12 @@ class TokenGuard
                 return;
             }
 
-            return $token ? $user->withAccessToken($token) : null;
+            if($token) {
+                $this->events->dispatch(new Authenticated($token->id, $user, $clientId));
+                return $user->withAccessToken($token);
+            }
+
+            return null;
         } catch (OAuthServerException $e) {
             return Container::getInstance()->make(
                 ExceptionHandler::class
