@@ -98,10 +98,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            JWT::encode([
                 'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16))
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
@@ -124,10 +124,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            JWT::encode([
                 'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16))
         );
 
         $userProvider->shouldReceive('retrieveById')->never();
@@ -148,10 +148,10 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            JWT::encode([
                 'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16))
         );
 
         $userProvider->shouldReceive('retrieveById')->never();
