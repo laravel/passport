@@ -215,6 +215,8 @@
 </template>
 
 <script>
+    var axios = require('axios');
+    var _ = require('underscore');
     export default {
         /*
          * The component's data.
