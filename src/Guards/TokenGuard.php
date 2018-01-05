@@ -138,7 +138,7 @@ class TokenGuard
 
             return $token ? $user->withAccessToken($token) : null;
         } catch (OAuthServerException $e) {
-            return Container::getInstance()->make(
+            Container::getInstance()->make(
                 ExceptionHandler::class
             )->report($e);
         }
