@@ -9,7 +9,7 @@ php:
 sudo: false
 
 before_install:
-  - if [[ $TRAVIS_PHP_VERSION != 7.2 ]] ; then phpenv config-rm xdebug.ini; fi
+  - phpenv config-rm xdebug.ini || true
 
 install: travis_retry composer install --no-interaction --prefer-dist --no-suggest
 
