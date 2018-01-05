@@ -39,13 +39,13 @@
 </head>
 <body class="passport-authorize">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-default">
+                    <div class="card-header">
                         Authorization Request
                     </div>
-                    <div class="panel-body">
+                    <div class="card-body">
                         <!-- Introduction -->
                         <p><strong>{{ $client->name }}</strong> is requesting permission to access your account.</p>
 

@@ -2,21 +2,17 @@
     .action-link {
         cursor: pointer;
     }
-
-    .m-b-none {
-        margin-bottom: 0;
-    }
 </style>
 
 <template>
     <div>
         <div v-if="tokens.length > 0">
-            <div class="panel panel-default">
-                <div class="panel-heading">Authorized Applications</div>
+            <div class="card card-default">
+                <div class="card-header">Authorized Applications</div>
 
-                <div class="panel-body">
+                <div class="card-body">
                     <!-- Authorized Tokens -->
-                    <table class="table table-borderless m-b-none">
+                    <table class="table table-borderless mb-0">
                         <thead>
                             <tr>
                                 <th>Name</th>

@@ -2,17 +2,13 @@
     .action-link {
         cursor: pointer;
     }
-
-    .m-b-none {
-        margin-bottom: 0;
-    }
 </style>
 
 <template>
     <div>
         <div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
+            <div class="card card-default">
+                <div class="card-header">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>
                             Personal Access Tokens
@@ -24,14 +20,14 @@
                     </div>
                 </div>
 
-                <div class="panel-body">
+                <div class="card-body">
                     <!-- No Tokens Notice -->
-                    <p class="m-b-none" v-if="tokens.length === 0">
+                    <p class="mb-0" v-if="tokens.length === 0">
                         You have not created any personal access tokens.
                     </p>
 
                     <!-- Personal Access Tokens -->
-                    <table class="table table-borderless m-b-none" v-if="tokens.length > 0">
+                    <table class="table table-borderless mb-0" v-if="tokens.length > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -64,17 +60,17 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
                         <h4 class="modal-title">
                             Create Token
                         </h4>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
 
                     <div class="modal-body">
                         <!-- Form Errors -->
                         <div class="alert alert-danger" v-if="form.errors.length > 0">
-                            <p><strong>Whoops!</strong> Something went wrong!</p>
+                            <p class="mb-0"><strong>Whoops!</strong> Something went wrong!</p>
                             <br>
                             <ul>
                                 <li v-for="error in form.errors">
@@ -84,10 +80,10 @@
                         </div>
 
                         <!-- Create Token Form -->
-                        <form class="form-horizontal" role="form" @submit.prevent="store">
+                        <form role="form" @submit.prevent="store">
                             <!-- Name -->
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">Name</label>
+                            <div class="form-group row">
+                                <label class="col-md-4 col-form-label">Name</label>
 
                                 <div class="col-md-6">
                                     <input id="create-token-name" type="text" class="form-control" name="name" v-model="form.name">
@@ -96,7 +92,7 @@
 
                             <!-- Scopes -->
                             <div class="form-group" v-if="scopes.length > 0">
-                                <label class="col-md-4 control-label">Scopes</label>
+                                <label class="col-md-4 col-form-label">Scopes</label>
 
                                 <div class="col-md-6">
                                     <div v-for="scope in scopes">
@@ -132,11 +128,11 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
                         <h4 class="modal-title">
                             Personal Access Token
                         </h4>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
 
                     <div class="modal-body">
