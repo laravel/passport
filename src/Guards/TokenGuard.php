@@ -141,8 +141,6 @@ class TokenGuard
             Container::getInstance()->make(
                 ExceptionHandler::class
             )->report($e);
-
-            return null;
         }
     }
 
