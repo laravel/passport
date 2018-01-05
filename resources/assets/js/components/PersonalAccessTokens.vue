@@ -14,7 +14,7 @@
                             Personal Access Tokens
                         </span>
 
-                        <a class="action-link" @click="showCreateTokenForm">
+                        <a class="action-link" tabindex="-1" @click="showCreateTokenForm">
                             Create New Token
                         </a>
                     </div>
@@ -113,7 +113,7 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
                         <button type="button" class="btn btn-primary" @click="store">
                             Create
@@ -141,12 +141,12 @@
                             You may now use this token to make API requests.
                         </p>
 
-                        <pre><code>{{ accessToken }}</code></pre>
+                        <textarea class="form-control" rows="10">{{ accessToken }}</textarea>
                     </div>
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

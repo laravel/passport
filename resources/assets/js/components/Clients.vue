@@ -13,7 +13,7 @@
                         OAuth Clients
                     </span>
 
-                    <a class="action-link" @click="showCreateClientForm">
+                    <a class="action-link" tabindex="-1" @click="showCreateClientForm">
                         Create New Client
                     </a>
                 </div>
@@ -55,7 +55,7 @@
 
                             <!-- Edit Button -->
                             <td style="vertical-align: middle;">
-                                <a class="action-link" @click="edit(client)">
+                                <a class="action-link" tabindex="-1" @click="edit(client)">
                                     Edit
                                 </a>
                             </td>
@@ -130,7 +130,7 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
                         <button type="button" class="btn btn-primary" @click="store">
                             Create
@@ -198,7 +198,7 @@
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
                         <button type="button" class="btn btn-primary" @click="update">
                             Save Changes
