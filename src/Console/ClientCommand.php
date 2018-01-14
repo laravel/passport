@@ -34,14 +34,12 @@ class ClientCommand extends Command
     public function handle(ClientRepository $clients)
     {
         if ($this->option('personal')) {
-            return $this->createPersonalClient($clients);
+            $this->createPersonalClient($clients);
+        } elseif ($this->option('password')) {
+            $this->createPasswordClient($clients);
+        } else {
+            $this->createAuthCodeClient($clients);
         }
-
-        if ($this->option('password')) {
-            return $this->createPasswordClient($clients);
-        }
-
-        $this->createAuthCodeClient($clients);
     }
 
     /**
