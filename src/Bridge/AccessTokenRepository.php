@@ -54,7 +54,10 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        if (($user_id = $accessTokenEntity->getUserIdentifier()) && !is_numeric($user_id)) {
+        // We'll get the user id from the accessTokenEntity. If it's numeric, assume it's a primary key.
+        // If it's not numeric, we'll have to find it using findForPassport,
+        // and then get the id from the returned model
+        if (($userId = $accessTokenEntity->getUserIdentifier()) && !is_numeric($userId)) {
             $provider = config('auth.guards.api.provider');
 
             if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
@@ -65,14 +68,14 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
                 $user = (new $model)->findForPassport($accessTokenEntity->getUserIdentifier());
 
                 if ($user) {
-                    $user_id = $user->getKey();
+                    $userId = $user->getKey();
                 }
             }
         }
 
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
-            'user_id' => $user_id,
+            'user_id' => $userId,
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
