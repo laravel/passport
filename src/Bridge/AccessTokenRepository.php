@@ -54,21 +54,25 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        $provider = config('auth.guards.api.provider');
+        if (($user_id = $accessTokenEntity->getUserIdentifier()) && !is_numeric($user_id)) {
+            $provider = config('auth.guards.api.provider');
 
-        if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
-            throw new RuntimeException('Unable to determine authentication model from configuration.');
-        }
+            if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
+                throw new RuntimeException('Unable to determine authentication model from configuration.');
+            }
 
-        if (method_exists($model, 'findForPassport')) {
-            $user = (new $model)->findForPassport($accessTokenEntity->getUserIdentifier());
-        } else {
-            $user = (new $model)->find($accessTokenEntity->getUserIdentifier());
+            if (method_exists($model, 'findForPassport')) {
+                $user = (new $model)->findForPassport($accessTokenEntity->getUserIdentifier());
+
+                if ($user) {
+                    $user_id = $user->getKey();
+                }
+            }
         }
 
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
-            'user_id' => $user->getKey(),
+            'user_id' => $user_id,
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
