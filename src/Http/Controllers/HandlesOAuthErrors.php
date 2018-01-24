@@ -24,23 +24,11 @@ trait HandlesOAuthErrors
      */
     protected function withErrorHandling($callback)
     {
-        try {
-            return $callback();
-        } catch (OAuthServerException $e) {
-            $this->exceptionHandler()->report($e);
-
-            return $this->convertResponse(
-                $e->generateHttpResponse(new Psr7Response)
-            );
-        } catch (Exception $e) {
-            $this->exceptionHandler()->report($e);
-
-            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'Error.', 500);
-        } catch (Throwable $e) {
-            $this->exceptionHandler()->report(new FatalThrowableError($e));
-
-            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'Error.', 500);
-        }
+        $response = $this->getResponse($callback);
+        if(method_exists($this->exceptionHandler(), 'renderForApi'))
+            return $this->exceptionHandler()->renderForApi($response);
+        else
+            return $response;
     }
 
     /**
@@ -61,5 +49,31 @@ trait HandlesOAuthErrors
     protected function exceptionHandler()
     {
         return Container::getInstance()->make(ExceptionHandler::class);
+    }
+
+    /**
+     * Get the response from the given callback with exception handling
+     *
+     * @param \Closure  $callback
+     * @return \Illuminate\Http\Response
+     */
+    protected function getResponse($callback) {
+        try {
+            return $callback();
+        } catch (OAuthServerException $e) {
+            $this->exceptionHandler()->report($e);
+
+            return $this->convertResponse(
+                $e->generateHttpResponse(new Psr7Response)
+            );
+        } catch (Exception $e) {
+            $this->exceptionHandler()->report($e);
+
+            return new Response($e->getMessage(), 500);
+        } catch (Throwable $e) {
+            $this->exceptionHandler()->report(new FatalThrowableError($e));
+
+            return new Response($e->getMessage(), 500);
+        }
     }
 }
