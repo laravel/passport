@@ -56,7 +56,7 @@ class CheckClientCredentials
     /**
      * Validate the scopes on the incoming request.
      *
-     * @param  \Psr\Http\Message\ResponseInterface $psr
+     * @param  \Psr\Http\Message\ServerRequestInterface $psr
      * @param  array  $scopes
      * @return void
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
