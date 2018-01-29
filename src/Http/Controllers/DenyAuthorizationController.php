@@ -38,12 +38,10 @@ class DenyAuthorizationController
     {
         $authRequest = $this->getAuthRequestFromSession($request);
 
-        $uri = $authRequest->getRedirectUri();
-        $client_uris = $authRequest->getClient()->getRedirectUri();
-        $client_uris = is_array($client_uris) ? $client_uris : array($client_uris);
+        $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
 
-        if (!in_array($uri, $client_uris)) {
-            $uri = Arr::first($client_uris);
+        if (! in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
+            $uri = Arr::first($clientUris);
         }
 
         $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : '?';
