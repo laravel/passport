@@ -81,7 +81,6 @@ class TokenGuard
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Request  $request
      * @return mixed
      */
     public function user(Request $request)
