@@ -28,6 +28,7 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $authRequest->shouldReceive('setUser')->once();
         $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
         $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
 
         $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
@@ -56,7 +57,8 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $authRequest->shouldReceive('setUser')->once();
         $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn(['http://localhost']);
+        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
+        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn(['http://localhost.localdomain','http://localhost']);
 
         $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
             return $url;
@@ -84,6 +86,7 @@ class DenyAuthorizationControllerTest extends PHPUnit_Framework_TestCase
         $authRequest->shouldReceive('setUser')->once();
         $authRequest->shouldReceive('getGrantTypeId')->andReturn('implicit');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
         $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
 
         $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
