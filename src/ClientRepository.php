@@ -5,6 +5,28 @@ namespace Laravel\Passport;
 class ClientRepository
 {
     /**
+     * Time in minutes for cache to invalidate.
+     * @var int
+     */
+    protected $cacheExpires = 1;
+
+    /**
+     * Build cache key.
+     * @param $id
+     * @param string $extra
+     * @return string
+     */
+    protected function cacheKey($id, $extra = '')
+    {
+        return "token_$id$extra";
+    }
+
+    protected function forgetCache($id)
+    {
+        return Cache::forget($this->cacheKey($id));
+    }
+
+    /**
      * Get a client by the given ID.
      *
      * @param  int  $id
@@ -12,7 +34,9 @@ class ClientRepository
      */
     public function find($id)
     {
-        return Client::find($id);
+        return Cache::remember($this->cacheKey($id), $this->cacheExpires, function () use ($id) {
+            return Client::find($id);
+        });
     }
 
     /**
@@ -37,9 +61,11 @@ class ClientRepository
      */
     public function findForUser($clientId, $userId)
     {
-        return Client::where('id', $clientId)
-                     ->where('user_id', $userId)
-                     ->first();
+        return Cache::remember($this->cacheKey($clientId, "_user_$userId"), $this->cacheExpires, function () use ($clientId, $userId) {
+            return Client::where('id', $clientId)
+                ->where('user_id', $userId)
+                ->first();
+        });
     }
 
     /**
@@ -144,6 +170,8 @@ class ClientRepository
      */
     public function update(Client $client, $name, $redirect)
     {
+        $this->forgetCache($client->id);
+
         $client->forceFill([
             'name' => $name, 'redirect' => $redirect,
         ])->save();
@@ -159,6 +187,8 @@ class ClientRepository
      */
     public function regenerateSecret(Client $client)
     {
+        $this->forgetCache($client->id);
+
         $client->forceFill([
             'secret' => str_random(40),
         ])->save();
@@ -187,6 +217,8 @@ class ClientRepository
      */
     public function delete(Client $client)
     {
+        $this->forgetCache($client->id);
+
         $client->tokens()->update(['revoked' => true]);
 
         $client->forceFill(['revoked' => true])->save();
