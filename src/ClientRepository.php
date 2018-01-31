@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Support\Facades\Cache;
+
 class ClientRepository
 {
     /**
