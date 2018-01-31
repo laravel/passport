@@ -4,9 +4,32 @@ namespace Laravel\Passport;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class TokenRepository
 {
+    /**
+     * Time in minutes for cache to invalidate.
+     * @var int
+     */
+    protected $cacheExpires = 1;
+
+    /**
+     * Build cache key.
+     * @param $id
+     * @param string $extra
+     * @return string
+     */
+    protected function cacheKey($id, $extra = '')
+    {
+        return "token_$id$extra";
+    }
+
+    protected function forgetCache($id)
+    {
+        return Cache::forget($this->cacheKey($id));
+    }
+
     /**
      * Creates a new Access Token.
      *
@@ -26,7 +49,9 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Token::find($id);
+        return Cache::remember($this->cacheKey($id), $this->cacheExpires, function () use ($id) {
+            return Token::find($id);
+        });
     }
 
     /**
@@ -38,7 +63,9 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return Token::where('id', $id)->where('user_id', $userId)->first();
+        return Cache::remember($this->cacheKey($id, "_user_$userId"), $this->cacheExpires, function () use ($id, $userId) {
+            return Token::where('id', $id)->where('user_id', $userId)->first();
+        });
     }
 
     /**
