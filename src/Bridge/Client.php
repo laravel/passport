@@ -18,11 +18,11 @@ class Client implements ClientEntityInterface
      * @param  string  $redirectUri
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri)
+    public function __construct($identifier, $name, array $redirectUri)
     {
         $this->setIdentifier((string) $identifier);
 
         $this->name = $name;
-        $this->redirectUri = explode(',', $redirectUri);
+        $this->redirectUri = $redirectUri;
     }
 }

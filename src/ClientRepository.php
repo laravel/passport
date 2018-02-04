@@ -86,12 +86,12 @@ class ClientRepository
      *
      * @param  int  $userId
      * @param  string  $name
-     * @param  string  $redirect
+     * @param  array  $redirect
      * @param  bool  $personalAccess
      * @param  bool  $password
      * @return \Laravel\Passport\Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
+    public function create($userId, $name, array $redirect, $personalAccess = false, $password = false)
     {
         $client = (new Client)->forceFill([
             'user_id' => $userId,
@@ -113,10 +113,10 @@ class ClientRepository
      *
      * @param  int  $userId
      * @param  string  $name
-     * @param  string  $redirect
+     * @param  array  $redirect
      * @return \Laravel\Passport\Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect)
+    public function createPersonalAccessClient($userId, $name, array $redirect)
     {
         return $this->create($userId, $name, $redirect, true);
     }
@@ -126,10 +126,10 @@ class ClientRepository
      *
      * @param  int  $userId
      * @param  string  $name
-     * @param  string  $redirect
+     * @param  array  $redirect
      * @return \Laravel\Passport\Client
      */
-    public function createPasswordGrantClient($userId, $name, $redirect)
+    public function createPasswordGrantClient($userId, $name, array $redirect)
     {
         return $this->create($userId, $name, $redirect, false, true);
     }
@@ -139,10 +139,10 @@ class ClientRepository
      *
      * @param  Client  $client
      * @param  string  $name
-     * @param  string  $redirect
+     * @param  array  $redirect
      * @return \Laravel\Passport\Client
      */
-    public function update(Client $client, $name, $redirect)
+    public function update(Client $client, $name, array $redirect)
     {
         $client->forceFill([
             'name' => $name, 'redirect' => $redirect,
