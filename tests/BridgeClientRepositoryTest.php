@@ -39,7 +39,7 @@ class BridgeClientRepositoryTest extends PHPUnit_Framework_TestCase
 class BridgeClientRepositoryTestClientStub
 {
     public $name = 'Client';
-    public $redirect = 'http://localhost';
+    public $redirect = ['http://localhost'];
     public $secret = 'secret';
     public $personal_access_client = false;
     public $password_client = false;

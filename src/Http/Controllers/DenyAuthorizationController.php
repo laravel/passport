@@ -38,7 +38,7 @@ class DenyAuthorizationController
     {
         $authRequest = $this->getAuthRequestFromSession($request);
 
-        $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
+        $clientUris = $authRequest->getClient()->getRedirectUri();
 
         if (! in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
             $uri = Arr::first($clientUris);

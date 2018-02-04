@@ -6,6 +6,21 @@
     .m-b-none {
         margin-bottom: 0;
     }
+
+    .redirect-urls > .redirect-url {
+        margin-bottom: 5px;
+    }
+    .redirect-urls > .redirect-url .input-group {
+        width: 100%;
+    }
+
+    .redirect-urls > .redirect-url .input-group .form-control:first-child {
+        border-radius: 4px;
+    }
+    .redirect-urls > .redirect-url ~ .redirect-url .input-group .form-control:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
 </style>
 
 <template>
@@ -90,14 +105,10 @@
 
                     <div class="modal-body">
                         <!-- Form Errors -->
-                        <div class="alert alert-danger" v-if="createForm.errors.length > 0">
+                        <div class="alert alert-danger" v-if="createForm.errors.message">
                             <p><strong>Whoops!</strong> Something went wrong!</p>
                             <br>
-                            <ul>
-                                <li v-for="error in createForm.errors">
-                                    {{ error }}
-                                </li>
-                            </ul>
+                            {{ createForm.errors.message }}
                         </div>
 
                         <!-- Create Client Form -->
@@ -108,7 +119,15 @@
 
                                 <div class="col-md-7">
                                     <input id="create-client-name" type="text" class="form-control"
-                                                                @keyup.enter="store" v-model="createForm.name">
+                                                                @keyup.enter="store" v-model="createForm.fields.name">
+
+                                    <div class="alert alert-danger" v-if="createForm.errors.errors && createForm.errors.errors.name">
+                                        <ul>
+                                            <li v-for="error in createForm.errors.errors.name">
+                                                {{ error }}
+                                            </li>
+                                        </ul>
+                                    </div>
 
                                     <span class="help-block">
                                         Something your users will recognize and trust.
@@ -116,17 +135,36 @@
                                 </div>
                             </div>
 
-                            <!-- Redirect URL -->
+                            <!-- Redirect URLs -->
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Redirect URL</label>
+                                <label class="col-md-3 control-label">Redirect URL(s)</label>
 
-                                <div class="col-md-7">
-                                    <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="store" v-model="createForm.redirect">
+                                <div class="col-md-7 redirect-urls">
+                                    <div class="redirect-url" v-for="(url, index) in createForm.fields.redirect">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control"
+                                                            @keyup.enter="store" v-model="createForm.fields.redirect[index]"/>
+
+                                            <div class="input-group-btn" v-if="index > 0">
+                                                <button class="btn btn-danger" 
+                                                            @click.stop.prevent="removeRedirectUrl(createForm, index)">X</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="alert alert-danger" v-if="createForm.errors.errors && createForm.errors.errors['redirect.'+index]">
+                                            <ul>
+                                                <li v-for="error in createForm.errors.errors['redirect.'+index]">
+                                                    {{ error }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
 
                                     <span class="help-block">
-                                        Your application's authorization callback URL.
+                                        Your application's authorization callback URL(s).
                                     </span>
+
+                                    <button class="btn btn-success" @click.stop.prevent="addRedirectUrl(createForm)">Add Redirect URL</button>
                                 </div>
                             </div>
                         </form>
@@ -176,7 +214,15 @@
 
                                 <div class="col-md-7">
                                     <input id="edit-client-name" type="text" class="form-control"
-                                                                @keyup.enter="update" v-model="editForm.name">
+                                                                @keyup.enter="update" v-model="editForm.fields.name">
+
+                                    <div class="alert alert-danger" v-if="editForm.errors.errors && editForm.errors.errors.name">
+                                        <ul>
+                                            <li v-for="error in editForm.errors.errors.name">
+                                                {{ error }}
+                                            </li>
+                                        </ul>
+                                    </div>
 
                                     <span class="help-block">
                                         Something your users will recognize and trust.
@@ -184,17 +230,36 @@
                                 </div>
                             </div>
 
-                            <!-- Redirect URL -->
+                            <!-- Redirect URLs -->
                             <div class="form-group">
-                                <label class="col-md-3 control-label">Redirect URL</label>
+                                <label class="col-md-3 control-label">Redirect URL(s)</label>
 
-                                <div class="col-md-7">
-                                    <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="update" v-model="editForm.redirect">
+                                <div class="col-md-7 redirect-urls">
+                                    <div class="redirect-url" v-for="(url, index) in editForm.fields.redirect">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control"
+                                                            @keyup.enter="store" v-model="editForm.fields.redirect[index]"/>
+
+                                            <div class="input-group-btn" v-if="index > 0">
+                                                <button class="btn btn-danger" 
+                                                            @click.stop.prevent="removeRedirectUrl(editForm, index)">X</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="alert alert-danger" v-if="editForm.errors.errors && editForm.errors.errors['redirect.'+index]">
+                                            <ul>
+                                                <li v-for="error in editForm.errors.errors['redirect.'+index]">
+                                                    {{ error }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
 
                                     <span class="help-block">
-                                        Your application's authorization callback URL.
+                                        Your application's authorization callback URL(s).
                                     </span>
+
+                                    <button class="btn btn-success" @click.stop.prevent="addRedirectUrl(editForm)">Add Redirect URL</button>
                                 </div>
                             </div>
                         </form>
@@ -225,14 +290,19 @@
 
                 createForm: {
                     errors: [],
-                    name: '',
-                    redirect: ''
+                    fields: {
+                        name: '',
+                        redirect: ['']
+                    }
                 },
 
                 editForm: {
+                    id: '',
                     errors: [],
-                    name: '',
-                    redirect: ''
+                    fields: {
+                        name: '',
+                        redirect: ['']
+                    }
                 }
             };
         },
@@ -268,6 +338,22 @@
             },
 
             /**
+             * Add redirect url to form
+             */
+            addRedirectUrl(form) {
+                form.fields.redirect.push('');
+            },
+
+            /**
+             * Remove specified redirect url from form
+             */
+            removeRedirectUrl(form, index) {
+                if (index > 0) {
+                    form.fields.redirect.splice(index, 1);
+                }
+            },
+
+            /**
              * Get all of the OAuth clients for the user.
              */
             getClients() {
@@ -299,8 +385,8 @@
              */
             edit(client) {
                 this.editForm.id = client.id;
-                this.editForm.name = client.name;
-                this.editForm.redirect = client.redirect;
+                this.editForm.fields.name = client.name;
+                this.editForm.fields.redirect = client.redirect;
 
                 $('#modal-edit-client').modal('show');
             },
@@ -321,21 +407,24 @@
             persistClient(method, uri, form, modal) {
                 form.errors = [];
 
-                axios[method](uri, form)
+                axios[method](uri, form.fields)
                     .then(response => {
                         this.getClients();
 
-                        form.name = '';
-                        form.redirect = '';
+                        form.fields.name = '';
+                        form.fields.redirect = [''];
                         form.errors = [];
+                        if (form.id) {
+                            form.id = '';
+                        }
 
                         $(modal).modal('hide');
                     })
                     .catch(error => {
                         if (typeof error.response.data === 'object') {
-                            form.errors = _.flatten(_.toArray(error.response.data));
+                            form.errors = error.response.data;
                         } else {
-                            form.errors = ['Something went wrong. Please try again.'];
+                            form.errors = {'message': 'Something went wrong. Please try again.'};
                         }
                     });
             },
