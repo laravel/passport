@@ -278,7 +278,7 @@ class Passport
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array  $scopes
      * @param  string  $guard
-     * @return void
+     * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
@@ -293,6 +293,8 @@ class Passport
         app('auth')->guard($guard)->setUser($user);
 
         app('auth')->shouldUse($guard);
+
+        return $user;
     }
 
     /**
