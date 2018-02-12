@@ -55,6 +55,13 @@ class TokenGuard
     protected $encrypter;
 
     /**
+     * The failed authentication flag.
+     *
+     * @var boolean
+     */
+    static $failed;
+
+    /**
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
@@ -85,6 +92,13 @@ class TokenGuard
      */
     public function user(Request $request)
     {
+        // If the authentication process failed, we should'nt try to
+        // get the user. This avoids an infinite recursion caused by
+        // the error handler trying to get the user to store context.
+        if (static::$failed) {
+            return;
+        }
+
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
         } elseif ($request->cookie(Passport::cookie())) {
@@ -137,6 +151,8 @@ class TokenGuard
 
             return $token ? $user->withAccessToken($token) : null;
         } catch (OAuthServerException $e) {
+            static::$failed = true;
+
             Container::getInstance()->make(
                 ExceptionHandler::class
             )->report($e);
