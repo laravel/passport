@@ -64,6 +64,13 @@ class TokenGuardTest extends TestCase
         );
 
         $this->assertNull($guard->user($request));
+
+        // This assert that the second call after failed doesn't
+        // call the `validateAuthenticatedRequest` again.
+        $this->assertNull($guard->user($request));
+
+        // Avoids this test from interfering on other tests
+        TokenGuard::$failed = false;
     }
 
     public function test_null_is_returned_if_no_user_is_found()
