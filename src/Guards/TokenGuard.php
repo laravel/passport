@@ -161,7 +161,7 @@ class TokenGuard
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
-        // sent with the request. If the two don't match then this request is sent from
+        // sent with the request. If the two don't match then this request is not sent from
         // a valid source and we won't authenticate the request for further handling.
         if (! $this->validCsrf($token, $request) ||
             time() >= $token['expiry']) {
@@ -191,6 +191,23 @@ class TokenGuard
     }
 
     /**
+     * Get the CSRF token from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function getTokenFromRequest($request)
+    {
+        $token = $request->header('X-CSRF-TOKEN');
+
+        if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
+            $token = $this->encrypter->decrypt($header);
+        }
+
+        return (string) $token;
+    }
+
+    /**
      * Determine if the CSRF / header are valid and match.
      *
      * @param  array  $token
@@ -200,7 +217,7 @@ class TokenGuard
     protected function validCsrf($token, $request)
     {
         return isset($token['csrf']) && hash_equals(
-            $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
+            $token['csrf'], $this->getTokenFromRequest($request)
         );
     }
 }
