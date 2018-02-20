@@ -40,9 +40,9 @@ class AccessTokenControllerTest extends TestCase
     public function test_exceptions_are_handled()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $exceptions = Mockery::mock());
-        Container::getInstance()->instance(Repository::class, $config = Mockery::mock());
+        //Container::getInstance()->instance(Repository::class, $config = Mockery::mock());
         $exceptions->shouldReceive('report')->once();
-        $config->shouldReceive('get')->once()->andReturn(true);
+        //$config->shouldReceive('get')->once()->andReturn(true);
 
         $tokens = Mockery::mock(Laravel\Passport\TokenRepository::class);
         $jwt = Mockery::mock(Lcobucci\JWT\Parser::class);
