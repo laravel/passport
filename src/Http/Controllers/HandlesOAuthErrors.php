@@ -24,10 +24,11 @@ trait HandlesOAuthErrors
      */
     protected function withErrorHandling($callback)
     {
+        $response = $this->getResponse($callback);
         try {
             return $this->exceptionHandler()->renderForApi($response);
         } catch(Exception $e) {
-            return $this->getResponse($callback);
+            return $response;
         }
     }
 
