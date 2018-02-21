@@ -17,31 +17,46 @@ trait HandlesOAuthErrors
     use ConvertsPsrResponses;
 
     /**
-     * Perform the given callback with exception handling.
+     * Perform the exception handling.
      *
      * @param  \Closure  $callback
      * @return \Illuminate\Http\Response
      */
     protected function withErrorHandling($callback)
     {
+        $response = $this->getResponse($callback);
         try {
-            return $callback();
-        } catch (OAuthServerException $e) {
-            $this->exceptionHandler()->report($e);
-
-            return $this->convertResponse(
-                $e->generateHttpResponse(new Psr7Response)
-            );
-        } catch (Exception $e) {
-            $this->exceptionHandler()->report($e);
-
-            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'Error.', 500);
-        } catch (Throwable $e) {
-            $this->exceptionHandler()->report(new FatalThrowableError($e));
-
-            return new Response($this->configuration()->get('app.debug') ? $e->getMessage() : 'Error.', 500);
+            return $this->exceptionHandler()->renderForApi($response);
+        } catch(Exception $e) {
+            return $response;
         }
     }
+
+    /** 
+     * Get the response from the given callback with exception handling 
+     * 
+     * @param \Closure  $callback 
+     * @return \Illuminate\Http\Response 
+     */ 
+    protected function getResponse($callback) { 
+        try { 
+            return $callback(); 
+        } catch (OAuthServerException $e) { 
+            $this->exceptionHandler()->report($e); 
+ 
+            return $this->convertResponse( 
+                $e->generateHttpResponse(new Psr7Response) 
+            ); 
+        } catch (Exception $e) { 
+            $this->exceptionHandler()->report($e); 
+ 
+            return new Response($e->getMessage(), 500); 
+        } catch (Throwable $e) { 
+            $this->exceptionHandler()->report(new FatalThrowableError($e)); 
+ 
+            return new Response($e->getMessage(), 500); 
+        } 
+    } 
 
     /**
      * Get the configuration repository instance.
