@@ -43,11 +43,6 @@ class TokenGuardTest extends TestCase
 
     public function test_oauth_throws_exception_when_authenticated_request_validation_not_passed()
     {
-        $container = new Container;
-        Container::setInstance($container);
-        $container->instance('Illuminate\Contracts\Debug\ExceptionHandler', $handler = Mockery::mock());
-        $handler->shouldReceive('report')->once()->with(Mockery::type('League\OAuth2\Server\Exception\OAuthServerException'));
-
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
