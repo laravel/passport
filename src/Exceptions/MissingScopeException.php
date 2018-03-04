@@ -24,7 +24,7 @@ class MissingScopeException extends AuthorizationException
     {
         parent::__construct($message);
 
-        $this->scopes = is_array($scopes) ? $scopes : [$scopes];
+        $this->scopes = array_wrap($scopes);
     }
 
     /**
