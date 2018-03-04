@@ -41,7 +41,7 @@ class TokenGuardTest extends TestCase
         $this->assertEquals($token, $user->token());
     }
 
-    public function test_no_user_is_returned_when_oauth_throws_exception()
+    public function test_oauth_throws_exception_when_authenticated_request_validation_not_passed()
     {
         $container = new Container;
         Container::setInstance($container);
@@ -62,8 +62,6 @@ class TokenGuardTest extends TestCase
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
             new League\OAuth2\Server\Exception\OAuthServerException('message', 500, 'error type')
         );
-
-        $this->assertNull($guard->user($request));
     }
 
     public function test_null_is_returned_if_no_user_is_found()
