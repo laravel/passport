@@ -36,7 +36,7 @@ class HasApiTokensTest extends TestCase
 class HasApiTokensTestStub
 {
     use Laravel\Passport\HasApiTokens;
-    public function getKey()
+    public function getAuthIdentifier()
     {
         return 1;
     }

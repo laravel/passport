@@ -64,7 +64,7 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes
+            $this->getAuthIdentifier(), $name, $scopes
         );
     }
 

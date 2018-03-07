@@ -31,7 +31,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () use ($token1, $token2) {
             $user = Mockery::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -88,7 +88,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = Mockery::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -108,7 +108,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = Mockery::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });

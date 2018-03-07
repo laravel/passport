@@ -98,7 +98,7 @@ class AuthorizationControllerTest extends TestCase
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('user')->once()->andReturn($user = Mockery::mock());
-        $user->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);

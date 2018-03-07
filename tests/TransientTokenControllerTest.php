@@ -17,7 +17,7 @@ class TransientTokenControllerTest extends TestCase
 
         $request = Mockery::mock(Illuminate\Http\Request::class);
         $request->shouldReceive('user')->andReturn($user = Mockery::mock());
-        $user->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldReceive('session->token')->andReturn('token');
 
         $controller = new Laravel\Passport\Http\Controllers\TransientTokenController($cookieFactory);
