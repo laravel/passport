@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Console;
 
+use Laravel\Passport\Passport;
 use Illuminate\Console\Command;
 
 class InstallCommand extends Command
@@ -29,7 +30,9 @@ class InstallCommand extends Command
     {
         $this->call('passport:keys', ['--force' => $this->option('force')]);
 
-        $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
-        $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client']);
+        if (Passport::$runsMigrations) {
+            $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
+            $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client']);
+        }
     }
 }
