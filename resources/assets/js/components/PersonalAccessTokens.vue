@@ -91,7 +91,7 @@
                             </div>
 
                             <!-- Scopes -->
-                            <div class="form-group" v-if="scopes.length > 0">
+                            <div class="form-group row" v-if="scopes.length > 0">
                                 <label class="col-md-4 col-form-label">Scopes</label>
 
                                 <div class="col-md-6">
