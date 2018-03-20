@@ -44,7 +44,10 @@ class Passport
      * @var array
      */
     public static $scopes = [
-        //
+		'all' => [],
+		'authorization_code' => [],
+		'password' => [],
+        'client_credentials' => [],
     ];
 
     /**
@@ -192,13 +195,14 @@ class Passport
     /**
      * Get all of the scopes matching the given IDs.
      *
+     * @param  string  $grantTypeId
      * @param  array  $ids
      * @return array
      */
-    public static function scopesFor(array $ids)
+    public static function scopesFor($grantTypeId, array $ids)
     {
         return collect($ids)->map(function ($id) {
-            if (isset(static::$scopes[$id])) {
+            if (isset(static::$scopes['all'][$id]) || isset(static::$scopes[$grantTypeId][$id])) {
                 return new Scope($id, static::$scopes[$id]);
             }
 
@@ -212,9 +216,42 @@ class Passport
      * @param  array  $scopes
      * @return void
      */
-    public static function tokensCan(array $scopes)
+    public static function tokensCan(array $scopes, $grantTypeId = 'all')
     {
-        static::$scopes = $scopes;
+        static::$scopes[$grantTypeId] = $scopes;
+    }
+
+    /**
+     * Define the scopes for code authorization application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function codeTokensCan(array $scopes)
+    {
+        static::$scopes['authorization_code'] = $scopes;
+    }
+
+    /**
+     * Define the scopes for password authorization application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function passwordTokensCan(array $scopes)
+    {
+        static::$scopes['password'] = $scopes;
+    }
+
+    /**
+     * Define the scopes for client credential application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function clientTokensCan(array $scopes)
+    {
+        static::$scopes['client_credentials'] = $scopes;
     }
 
     /**

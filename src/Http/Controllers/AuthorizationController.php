@@ -63,7 +63,6 @@ class AuthorizationController
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
             $scopes = $this->parseScopes($authRequest);
-
             $token = $tokens->findValidToken(
                 $user = $request->user(),
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
@@ -93,6 +92,7 @@ class AuthorizationController
     protected function parseScopes($authRequest)
     {
         return Passport::scopesFor(
+			$authRequest->grantTypeId,
             collect($authRequest->getScopes())->map(function ($scope) {
                 return $scope->getIdentifier();
             })->all()
