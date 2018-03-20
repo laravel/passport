@@ -89,15 +89,16 @@ class AuthorizationController
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
      * @return array
      */
-    protected function parseScopes($authRequest)
+	protected function parseScopes($authRequest)
     {
-        return Passport::scopesFor(
-			$authRequest->grantTypeId,
-            collect($authRequest->getScopes())->map(function ($scope) {
-                return $scope->getIdentifier();
-            })->all()
-        );
-    }
+		return Passport::scopesFor(
+			collect($authRequest->getScopes())->map(function ($scope) {
+				return $scope->getIdentifier();
+			})->all(),
+			$authRequest->getGrantTypeId(),
+			$authRequest->getRedirectUri()
+		);
+	}
 
     /**
      * Approve the authorization request.
