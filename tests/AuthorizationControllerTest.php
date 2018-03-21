@@ -49,6 +49,9 @@ class AuthorizationControllerTest extends TestCase
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
 
+		$authRequest->shouldReceive('getGrantTypeId')->once();
+		$authRequest->shouldReceive('getRedirectUri')->once();
+
         $this->assertEquals('view', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         ));
@@ -112,6 +115,9 @@ class AuthorizationControllerTest extends TestCase
         $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
         $tokens->shouldReceive('findValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('Laravel\Passport\Token'));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
+
+		$authRequest->shouldReceive('getGrantTypeId')->once();
+		$authRequest->shouldReceive('getRedirectUri')->once();
 
         $this->assertEquals('approved', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
