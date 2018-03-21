@@ -63,7 +63,6 @@ class AuthorizationController
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
             $scopes = $this->parseScopes($authRequest);
-
             $token = $tokens->findValidToken(
                 $user = $request->user(),
                 $client = $clients->find($authRequest->getClient()->getIdentifier())
@@ -90,14 +89,16 @@ class AuthorizationController
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
      * @return array
      */
-    protected function parseScopes($authRequest)
+	protected function parseScopes($authRequest)
     {
-        return Passport::scopesFor(
-            collect($authRequest->getScopes())->map(function ($scope) {
-                return $scope->getIdentifier();
-            })->all()
-        );
-    }
+		return Passport::scopesFor(
+			collect($authRequest->getScopes())->map(function ($scope) {
+				return $scope->getIdentifier();
+			})->all(),
+			$authRequest->getGrantTypeId(),
+			$authRequest->getRedirectUri()
+		);
+	}
 
     /**
      * Approve the authorization request.

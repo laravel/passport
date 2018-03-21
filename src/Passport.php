@@ -7,6 +7,7 @@ use DateInterval;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 class Passport
 {
@@ -44,8 +45,15 @@ class Passport
      * @var array
      */
     public static $scopes = [
-        //
+		//
     ];
+
+	public static $repartedScopes = [
+		'all' => [],
+		'authorization_code' => [],
+		'password' => [],
+        'client_credentials' => [],
+	];
 
     /**
      * The date when access tokens expire.
@@ -193,16 +201,18 @@ class Passport
      * Get all of the scopes matching the given IDs.
      *
      * @param  array  $ids
+	 * @param  string $grant
+	 * @param  string $redirectUri
      * @return array
      */
-    public static function scopesFor(array $ids)
+    public static function scopesFor(array $ids, $grantTypeId, $redirectUri = null)
     {
-        return collect($ids)->map(function ($id) {
-            if (isset(static::$scopes[$id])) {
+        return collect($ids)->map(function ($id) use ($grantTypeId, $redirectUri) {
+            if (isset(static::$repartedScopes['all'][$id]) || isset(static::$repartedScopes[$grantTypeId][$id])) {
                 return new Scope($id, static::$scopes[$id]);
             }
 
-            return;
+            throw OAuthServerException::invalidScope($id, $redirectUri);
         })->filter()->values()->all();
     }
 
@@ -212,9 +222,46 @@ class Passport
      * @param  array  $scopes
      * @return void
      */
-    public static function tokensCan(array $scopes)
+    public static function tokensCan(array $scopes, $grantTypeId = 'all')
     {
-        static::$scopes = $scopes;
+		static::$repartedScopes[$grantTypeId] = $scopes;
+
+		static::$scopes = [];
+		foreach (static::$repartedScopes as $scopes)
+			static::$scopes = array_merge(static::$scopes, $scopes);
+    }
+
+    /**
+     * Define the scopes for code authorization application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function codeTokensCan(array $scopes)
+    {
+        static::tokensCan($scopes, 'authorization_code');
+    }
+
+    /**
+     * Define the scopes for password authorization application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function passwordTokensCan(array $scopes)
+    {
+        static::tokensCan($scopes, 'password');
+    }
+
+    /**
+     * Define the scopes for client credential application.
+     *
+     * @param  array  $scopes
+     * @return void
+     */
+    public static function clientTokensCan(array $scopes)
+    {
+		static::tokensCan($scopes, 'client_credentials');
     }
 
     /**
