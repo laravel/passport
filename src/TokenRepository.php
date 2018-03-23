@@ -123,6 +123,11 @@ class TokenRepository
                       ->first();
     }
 
+    /**
+     * Return a new instance of the token model.
+     *
+     * @return \Laravel\Passport\Token|null
+     */
     public function newTokenInstance()
     {
         return config('passport.token.model', Laravel\Passport\Token::class);
