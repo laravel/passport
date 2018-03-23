@@ -15,7 +15,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
-        return config('passport.token.model', Laravel\Passport\Token::class)::create($attributes);
+        return $this->newTokenInstance()::create($attributes);
     }
 
     /**
@@ -26,7 +26,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return config('passport.token.model', Laravel\Passport\Token::class)::find($id);
+        return $this->newTokenInstance()::find($id);
     }
 
     /**
@@ -38,7 +38,7 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return config('passport.token.model', Laravel\Passport\Token::class)::where('id', $id)->where('user_id', $userId)->first();
+        return $this->newTokenInstance()::where('id', $id)->where('user_id', $userId)->first();
     }
 
     /**
@@ -49,7 +49,7 @@ class TokenRepository
      */
     public function forUser($userId)
     {
-        return config('passport.token.model', Laravel\Passport\Token::class)::where('user_id', $userId)->get();
+        return $this->newTokenInstance()::where('user_id', $userId)->get();
     }
 
     /**
@@ -87,7 +87,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
-        return config('passport.token.model', Laravel\Passport\Token::class)::where('id', $id)->update(['revoked' => true]);
+        return $this->newTokenInstance()::where('id', $id)->update(['revoked' => true]);
     }
 
     /**
@@ -121,5 +121,10 @@ class TokenRepository
                       ->where('expires_at', '>', Carbon::now())
                       ->latest('expires_at')
                       ->first();
+    }
+
+    public function newTokenInstance()
+    {
+        return config('passport.token.model', Laravel\Passport\Token::class);
     }
 }
