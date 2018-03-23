@@ -57,7 +57,7 @@ class Client extends Model
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class, 'client_id');
+        return $this->hasMany(config('passport.token.model', Laravel\Passport\Token::class), 'client_id');
     }
 
     /**
