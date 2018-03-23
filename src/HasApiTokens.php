@@ -30,7 +30,7 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class, 'user_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(config('passport.token.model', Laravel\Passport\Token::class), 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
