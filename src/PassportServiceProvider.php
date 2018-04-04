@@ -7,6 +7,7 @@ use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
@@ -200,7 +201,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
-            $this->makeCryptKey('oauth-private.key'),
+            $this->makeCryptKey('private'),
             app('encrypter')->getKey()
         );
     }
@@ -215,7 +216,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, function () {
             return new ResourceServer(
                 $this->app->make(Bridge\AccessTokenRepository::class),
-                $this->makeCryptKey('oauth-public.key')
+                $this->makeCryptKey('public')
             );
         });
     }
@@ -226,13 +227,12 @@ class PassportServiceProvider extends ServiceProvider
      * @param string $key
      * @return \League\OAuth2\Server\CryptKey
      */
-    protected function makeCryptKey($key)
+    protected function makeCryptKey($type)
     {
-        return new CryptKey(
-            'file://'.Passport::keyPath($key),
-            null,
-            false
-        );
+        $key = Config::get('passport.'.$type.'_key') ?? 'file://'.Passport::keyPath('oauth-'.$type.'.key');
+        $key = str_replace('\\n', "\n", $key);
+
+        return new CryptKey($key, null, false);
     }
 
     /**
