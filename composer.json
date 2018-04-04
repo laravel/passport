@@ -25,7 +25,7 @@
         "illuminate/encryption": "~5.6",
         "illuminate/http": "~5.6",
         "illuminate/support": "~5.6",
-        "league/oauth2-server": "^6.0",
+        "league/oauth2-server": "^7.0",
         "phpseclib/phpseclib": "^2.0",
         "symfony/psr-http-message-bridge": "~1.0",
         "zendframework/zend-diactoros": "~1.0"
