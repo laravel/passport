@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Exceptions;
 
+use Illuminate\Support\Arr;
 use Illuminate\Auth\Access\AuthorizationException;
 
 class MissingScopeException extends AuthorizationException
@@ -24,7 +25,7 @@ class MissingScopeException extends AuthorizationException
     {
         parent::__construct($message);
 
-        $this->scopes = is_array($scopes) ? $scopes : [$scopes];
+        $this->scopes = Arr::wrap($scopes);
     }
 
     /**

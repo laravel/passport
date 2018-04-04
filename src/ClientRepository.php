@@ -118,7 +118,11 @@ class ClientRepository
      */
     public function createPersonalAccessClient($userId, $name, $redirect)
     {
-        return $this->create($userId, $name, $redirect, true);
+        return tap($this->create($userId, $name, $redirect, true), function ($client) {
+            $accessClient = new PersonalAccessClient;
+            $accessClient->client_id = $client->id;
+            $accessClient->save();
+        });
     }
 
     /**
