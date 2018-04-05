@@ -7,13 +7,13 @@ use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Guards\TokenGuard;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\ResourceServer;
+use Illuminate\Config\Repository as Config;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
@@ -231,8 +231,11 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeCryptKey($type)
     {
-        $key = Config::get('passport.'.$type.'_key') ?? 'file://'.Passport::keyPath('oauth-'.$type.'.key');
-        $key = str_replace('\\n', "\n", $key);
+        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.'.$type.'_key'));
+
+        if (!$key) {
+            $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
+        }
 
         return new CryptKey($key, null, false);
     }
