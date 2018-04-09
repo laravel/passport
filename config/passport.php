@@ -7,9 +7,9 @@ return [
     | Encryption Keys
     |--------------------------------------------------------------------------
     |
-    | Passport uses encryption keys when generating secure access tokens.
-    | By default these keys are stored as local files, but can also be
-    | set using the following environment variables.
+    | Passport uses encryption keys while generating secure access tokens for
+    | your application. By default, the keys are stored as local files but
+    | can be set via environment variables when that is more convenient.
     |
     */
 

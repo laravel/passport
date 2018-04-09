@@ -233,7 +233,7 @@ class PassportServiceProvider extends ServiceProvider
     {
         $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.'.$type.'_key'));
 
-        if (!$key) {
+        if (! $key) {
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
         }
 
