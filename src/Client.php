@@ -78,6 +78,6 @@ class Client extends Model
      */
     public function getScopesAttribute($scopes)
     {
-        return json_decode($scopes, true);
+        return json_decode($scopes, true) ?: [];
     }
 }
