@@ -44,6 +44,7 @@ class BridgeClientRepositoryTestClientStub
     public $secret = 'secret';
     public $personal_access_client = false;
     public $password_client = false;
+    public $scopes = [];
     public function firstParty()
     {
         return $this->personal_access_client || $this->password_client;

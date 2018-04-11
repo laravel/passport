@@ -69,4 +69,15 @@ class Client extends Model
     {
         return $this->personal_access_client || $this->password_client;
     }
+
+    /**
+     * Get the Client Scopes as an array
+     *
+     * @param string $scopes
+     * @return array
+     */
+    public function getScopesAttribute($scopes)
+    {
+        return json_decode($scopes, true);
+    }
 }

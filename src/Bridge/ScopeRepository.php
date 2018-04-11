@@ -31,6 +31,12 @@ class ScopeRepository implements ScopeRepositoryInterface
             })->values()->all();
         }
 
+        if (true === Passport::$useClientScopes) {
+            $scopes = collect($scopes)->reject(function ($scope) use ($clientEntity) {
+                return !$clientEntity->hasScope($scope->getIdentifier());
+            })->values()->all();
+        }
+
         return collect($scopes)->filter(function ($scope) {
             return Passport::hasScope($scope->getIdentifier());
         })->values()->all();

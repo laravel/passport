@@ -32,6 +32,13 @@ class Passport
     public static $pruneRevokedTokens = false;
 
     /**
+     * Indicates if Passport should use Client Scopes on Authorization.
+     *
+     * @var bool|array
+     */
+    public static $useClientScopes = false;
+
+    /**
      * The personal access token client ID.
      *
      * @var int
@@ -140,6 +147,17 @@ class Passport
      */
     public static function pruneRevokedTokens()
     {
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to use Client Scopes when authorizing.
+     *
+     * @return static
+     */
+    public static function useClientScopes()
+    {
+        static::$useClientScopes = true;
         return new static;
     }
 

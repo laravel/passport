@@ -47,6 +47,10 @@ class ClientRepository implements ClientRepositoryInterface
             $clientIdentifier, $record->name, $record->redirect
         );
 
+        foreach ($record->scopes as $scope){
+            $client->addScope(new Scope($scope));
+        }
+
         if ($mustValidateSecret &&
             ! hash_equals($record->secret, (string) $clientSecret)) {
             return;
