@@ -63,6 +63,9 @@ class TokenGuardTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertNull($guard->user($request));
+
+        // Assert that `validateAuthenticatedRequest` isn't called twice on failure.
+        $this->assertNull($guard->user($request));
     }
 
     public function test_null_is_returned_if_no_user_is_found()
