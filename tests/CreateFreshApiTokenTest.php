@@ -105,7 +105,7 @@ class CreateFreshApiTokenTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($this->hasPassportCookie($response));
     }
 
-    private function hasPassportCookie($response)
+    protected function hasPassportCookie($response)
     {
         foreach ($response->headers->getCookies() as $cookie) {
             if ($cookie->getName() === Passport::cookie()) {

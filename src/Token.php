@@ -101,11 +101,11 @@ class Token extends Model
     /**
      * Revoke the token instance.
      *
-     * @return void
+     * @return bool
      */
     public function revoke()
     {
-        $this->forceFill(['revoked' => true])->save();
+        return $this->forceFill(['revoked' => true])->save();
     }
 
     /**

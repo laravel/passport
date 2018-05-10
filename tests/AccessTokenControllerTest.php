@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
 class AccessTokenControllerTest extends PHPUnit_Framework_TestCase
@@ -38,7 +39,9 @@ class AccessTokenControllerTest extends PHPUnit_Framework_TestCase
     public function test_exceptions_are_handled()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $exceptions = Mockery::mock());
+        Container::getInstance()->instance(Repository::class, $config = Mockery::mock());
         $exceptions->shouldReceive('report')->once();
+        $config->shouldReceive('get')->once()->andReturn(true);
 
         $tokens = Mockery::mock(Laravel\Passport\TokenRepository::class);
         $jwt = Mockery::mock(Lcobucci\JWT\Parser::class);
