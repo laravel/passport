@@ -47,7 +47,7 @@ class Client extends Model
      */
     public function authCodes()
     {
-        return $this->hasMany(AuthCode::class, 'client_id');
+        return $this->hasMany(Passport::authCodeModel(), 'client_id');
     }
 
     /**
@@ -57,7 +57,7 @@ class Client extends Model
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class, 'client_id');
+        return $this->hasMany(Passport::tokenModel(), 'client_id');
     }
 
     /**
