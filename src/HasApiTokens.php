@@ -20,7 +20,7 @@ trait HasApiTokens
      */
     public function clients()
     {
-        return $this->hasMany(Client::class, 'user_id');
+        return $this->hasMany(Passport::clientModel(), 'user_id');
     }
 
     /**
@@ -30,7 +30,7 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class, 'user_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
     }
 
     /**
