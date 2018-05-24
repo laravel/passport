@@ -410,7 +410,7 @@ class Passport
      */
     public static function client()
     {
-        return new static::$client;
+        return new static::$clientModel;
     }
 
     /**
