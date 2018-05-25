@@ -369,7 +369,7 @@ class Passport
      */
     public static function authCodeModel()
     {
-        return static::$authCode;
+        return static::$authCodeModel;
     }
 
     /**
@@ -379,7 +379,7 @@ class Passport
      */
     public static function authCode()
     {
-        return new static::$authCode;
+        return new static::$authCodeModel;
     }
 
     /**
@@ -410,7 +410,7 @@ class Passport
      */
     public static function client()
     {
-        return new static::$client;
+        return new static::$clientModel;
     }
 
     /**
