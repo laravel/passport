@@ -37,24 +37,56 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'secret', true));
     }
 
-    public function test_password_only_client_is_permitted()
+    public function test_password_grant_is_permitted()
     {
         $client = $this->clientModelRepository->findActive(1);
         $client->password_client = true;
-        $client->grants = ['password'];
 
-        $client = $this->repository->getClientEntity(1, 'password', 'secret');
-        $this->assertEquals('Client', $client->getName());
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'password', 'secret'));
     }
 
-    public function test_password_only_client_is_prevented()
+    public function test_password_grant_is_prevented()
+    {
+        $this->assertNull($this->repository->getClientEntity(1, 'password', 'secret'));
+    }
+
+    public function test_authorization_code_grant_is_permitted()
+    {
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'authorization_code', 'secret'));
+    }
+
+    public function test_authorization_code_grant_is_prevented()
     {
         $client = $this->clientModelRepository->findActive(1);
         $client->password_client = true;
-        $client->grant_types = ['password'];
 
-        $client = $this->repository->getClientEntity(1, 'client_credentials', 'secret');
-        $this->assertNull($client);
+        $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'secret'));
+    }
+
+    public function test_personal_access_grant_is_permitted()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->personal_access_client = true;
+
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'personal_access', 'secret'));
+    }
+
+    public function test_personal_access_grant_is_prevented()
+    {
+        $this->assertNull($this->repository->getClientEntity(1, 'personal_access', 'secret'));
+    }
+
+    public function test_client_credentials_grant_is_permitted()
+    {
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+    }
+
+    public function test_client_credentials_grant_is_prevented()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->secret = null;
+
+        $this->assertNull($this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
 }
 
