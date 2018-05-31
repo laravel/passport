@@ -88,6 +88,22 @@ class BridgeClientRepositoryTest extends TestCase
 
         $this->assertNull($this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
+
+    public function test_grant_types_allows_request()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->grant_types = ['client_credentials'];
+
+        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+    }
+
+    public function test_grant_types_disallows_request()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->grant_types = ['client_credentials'];
+
+        $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'secret'));
+    }
 }
 
 class BridgeClientRepositoryTestClientStub
