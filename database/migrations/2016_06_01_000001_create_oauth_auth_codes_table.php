@@ -30,6 +30,6 @@ class CreateOauthAuthCodesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('oauth_auth_codes');
+        Schema::dropIfExists('oauth_auth_codes');
     }
 }
