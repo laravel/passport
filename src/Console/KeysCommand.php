@@ -30,7 +30,10 @@ class KeysCommand extends Command
      */
     public function handle(RSA $rsa)
     {
-        $keyLenght = config("passport.private_key_length")?  config("passport.private_key_length") : 4096 ; 
+        $keyLenght = 4096 ; 
+        if(function_exists('config') && config("passport.private_key_length") ){
+            $keyLenght = config("passport.private_key_length") ; 
+        }
         
         $keys = $rsa->createKey($keyLenght);
         
