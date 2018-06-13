@@ -26,7 +26,7 @@ trait HasApiTokens
     /**
      * Get all of the access tokens for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function tokens()
     {
