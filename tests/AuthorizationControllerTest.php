@@ -15,14 +15,14 @@ class AuthorizationControllerTest extends TestCase
 
     public function test_authorization_view_is_presented()
     {
-        Laravel\Passport\Passport::tokensCan([
+        ROMaster2\Passport\Passport::tokensCan([
             'scope-1' => 'description',
         ]);
 
         $server = Mockery::mock(AuthorizationServer::class);
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $controller = new ROMaster2\Passport\Http\Controllers\AuthorizationController($server, $response);
 
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock());
 
@@ -32,7 +32,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('user')->andReturn('user');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->andReturn([new Laravel\Passport\Bridge\Scope('scope-1')]);
+        $authRequest->shouldReceive('getScopes')->andReturn([new ROMaster2\Passport\Bridge\Scope('scope-1')]);
 
         $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($authRequest) {
             $this->assertEquals('passport::authorize', $view);
@@ -43,10 +43,10 @@ class AuthorizationControllerTest extends TestCase
             return 'view';
         });
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
         $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
 
         $this->assertEquals('view', $controller->authorize(
@@ -62,16 +62,16 @@ class AuthorizationControllerTest extends TestCase
         $server = Mockery::mock(AuthorizationServer::class);
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $controller = new ROMaster2\Passport\Http\Controllers\AuthorizationController($server, $response);
 
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('session')->andReturn($session = Mockery::mock());
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
 
         $this->assertEquals('whoops', $controller->authorize(
             Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
@@ -83,14 +83,14 @@ class AuthorizationControllerTest extends TestCase
      */
     public function test_request_is_approved_if_valid_token_exists()
     {
-        Laravel\Passport\Passport::tokensCan([
+        ROMaster2\Passport\Passport::tokensCan([
             'scope-1' => 'description',
         ]);
 
         $server = Mockery::mock(AuthorizationServer::class);
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $controller = new ROMaster2\Passport\Http\Controllers\AuthorizationController($server, $response);
         $psrResponse = new Zend\Diactoros\Response();
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
@@ -102,15 +102,15 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldNotReceive('session');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Laravel\Passport\Bridge\Scope('scope-1')]);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new ROMaster2\Passport\Bridge\Scope('scope-1')]);
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $tokens->shouldReceive('findValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('Laravel\Passport\Token'));
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $tokens->shouldReceive('findValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('ROMaster2\Passport\Token'));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
         $this->assertEquals('approved', $controller->authorize(

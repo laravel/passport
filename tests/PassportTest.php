@@ -1,10 +1,10 @@
 <?php
 
-use Laravel\Passport\AuthCode;
-use Laravel\Passport\Client;
-use Laravel\Passport\Passport;
-use Laravel\Passport\PersonalAccessClient;
-use Laravel\Passport\Token;
+use ROMaster2\Passport\AuthCode;
+use ROMaster2\Passport\Client;
+use ROMaster2\Passport\Passport;
+use ROMaster2\Passport\PersonalAccessClient;
+use ROMaster2\Passport\Token;
 use PHPUnit\Framework\TestCase;
 
 class PassportTest extends TestCase

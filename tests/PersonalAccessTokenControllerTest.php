@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
+use ROMaster2\Passport\Passport;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\TokenRepository;
+use ROMaster2\Passport\TokenRepository;
 
 class PersonalAccessTokenControllerTest extends TestCase
 {
@@ -16,8 +16,8 @@ class PersonalAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $token1 = new Laravel\Passport\Token;
-        $token2 = new Laravel\Passport\Token;
+        $token1 = new ROMaster2\Passport\Token;
+        $token2 = new ROMaster2\Passport\Token;
 
         $userTokens = Mockery::mock();
         $token1->client = (object) ['personal_access_client' => true];
@@ -37,7 +37,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
+        $controller = new ROMaster2\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(1, count($controller->forUser($request)));
         $this->assertEquals($token1, $controller->forUser($request)[0]);
@@ -70,7 +70,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $validator->shouldReceive('validate')->once();
 
         $tokenRepository = Mockery::mock(TokenRepository::class);
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
+        $controller = new ROMaster2\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals('response', $controller->store($request));
     }
@@ -79,7 +79,7 @@ class PersonalAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $token1 = Mockery::mock(Laravel\Passport\Token::class.'[revoke]');
+        $token1 = Mockery::mock(ROMaster2\Passport\Token::class.'[revoke]');
         $token1->id = 1;
         $token1->shouldReceive('revoke')->once();
 
@@ -94,7 +94,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
+        $controller = new ROMaster2\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $controller->destroy($request, 1);
     }
@@ -114,7 +114,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         });
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
-        $controller = new Laravel\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
+        $controller = new ROMaster2\Passport\Http\Controllers\PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(404, $controller->destroy($request, 3)->status());
     }

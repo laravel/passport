@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Carbon\Carbon;
 use Firebase\JWT\JWT;

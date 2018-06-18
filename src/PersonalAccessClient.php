@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -14,7 +14,7 @@ class ApproveAuthorizationControllerTest extends TestCase
     {
         $server = Mockery::mock(AuthorizationServer::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\ApproveAuthorizationController($server);
+        $controller = new ROMaster2\Passport\Http\Controllers\ApproveAuthorizationController($server);
 
         $request = Mockery::mock('Illuminate\Http\Request');
         $request->shouldReceive('session')->andReturn($session = Mockery::mock());

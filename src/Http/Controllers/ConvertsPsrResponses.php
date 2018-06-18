@@ -1,5 +1,5 @@
 <?php
-namespace Laravel\Passport\Http\Controllers;
+namespace ROMaster2\Passport\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Psr\Http\Message\ResponseInterface;

@@ -5,7 +5,7 @@ use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
-use Laravel\Passport\Guards\TokenGuard;
+use ROMaster2\Passport\Guards\TokenGuard;
 
 class TokenGuardTest extends TestCase
 {
@@ -18,8 +18,8 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -50,8 +50,8 @@ class TokenGuardTest extends TestCase
 
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -73,8 +73,8 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = Mockery::mock('Illuminate\Contracts\Encryption\Encrypter');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -93,8 +93,8 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -119,8 +119,8 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -143,8 +143,8 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
         $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
         $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -166,5 +166,5 @@ class TokenGuardTest extends TestCase
 
 class TokenGuardTestUser
 {
-    use Laravel\Passport\HasApiTokens;
+    use ROMaster2\Passport\HasApiTokens;
 }

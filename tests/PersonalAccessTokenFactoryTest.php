@@ -12,11 +12,11 @@ class PersonalAccessTokenFactoryTest extends TestCase
     public function test_access_token_can_be_created()
     {
         $server = Mockery::mock('League\OAuth2\Server\AuthorizationServer');
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $clients = Mockery::mock('ROMaster2\Passport\ClientRepository');
+        $tokens = Mockery::mock('ROMaster2\Passport\TokenRepository');
         $jwt = Mockery::mock('Lcobucci\JWT\Parser');
 
-        $factory = new Laravel\Passport\PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
+        $factory = new ROMaster2\Passport\PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
 
         $clients->shouldReceive('personalAccessClient')->andReturn($client = new PersonalAccessTokenFactoryTestClientStub);
         $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = Mockery::mock());
@@ -31,7 +31,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
 
         $result = $factory->make(1, 'token', ['scopes']);
 
-        $this->assertInstanceOf('Laravel\Passport\PersonalAccessTokenResult', $result);
+        $this->assertInstanceOf('ROMaster2\Passport\PersonalAccessTokenResult', $result);
     }
 }
 
@@ -41,7 +41,7 @@ class PersonalAccessTokenFactoryTestClientStub
     public $secret = 'something';
 }
 
-class PersonalAccessTokenFactoryTestModelStub extends Laravel\Passport\Token
+class PersonalAccessTokenFactoryTestModelStub extends ROMaster2\Passport\Token
 {
     public $id = 1;
     public $secret = 'something';

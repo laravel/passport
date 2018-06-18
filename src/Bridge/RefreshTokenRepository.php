@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Passport\Bridge;
+namespace ROMaster2\Passport\Bridge;
 
 use Illuminate\Database\Connection;
 use Illuminate\Contracts\Events\Dispatcher;
-use Laravel\Passport\Events\RefreshTokenCreated;
+use ROMaster2\Passport\Events\RefreshTokenCreated;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
@@ -13,7 +13,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * The access token repository instance.
      *
-     * @var \Laravel\Passport\Bridge\AccessTokenRepository
+     * @var \ROMaster2\Passport\Bridge\AccessTokenRepository
      */
     protected $tokens;
 
@@ -34,7 +34,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * Create a new repository instance.
      *
-     * @param  \Laravel\Passport\Bridge\AccessTokenRepository  $tokens
+     * @param  \ROMaster2\Passport\Bridge\AccessTokenRepository  $tokens
      * @param  \Illuminate\Database\Connection  $database
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void

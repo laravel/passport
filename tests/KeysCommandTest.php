@@ -26,7 +26,7 @@ class KeysCommandTest extends TestCase
 
     public function testPrivateAndPublicKeysAreGenerated()
     {
-        $command = Mockery::mock(Laravel\Passport\Console\KeysCommand::class)
+        $command = Mockery::mock(ROMaster2\Passport\Console\KeysCommand::class)
             ->makePartial()
             ->shouldReceive('info')
             ->with('Encryption keys generated successfully.')
@@ -42,9 +42,9 @@ class KeysCommandTest extends TestCase
 
     public function testPrivateAndPublicKeysAreGeneratedInCustomPath()
     {
-        \Laravel\Passport\Passport::loadKeysFrom(custom_path());
+        \ROMaster2\Passport\Passport::loadKeysFrom(custom_path());
 
-        $command = Mockery::mock(Laravel\Passport\Console\KeysCommand::class)
+        $command = Mockery::mock(ROMaster2\Passport\Console\KeysCommand::class)
             ->makePartial()
             ->shouldReceive('info')
             ->with('Encryption keys generated successfully.')

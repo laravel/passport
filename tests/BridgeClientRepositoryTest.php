@@ -1,17 +1,17 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Bridge\ClientRepository;
+use ROMaster2\Passport\Bridge\ClientRepository;
 
 class BridgeClientRepositoryTest extends TestCase
 {
     public function setUp()
     {
-        $clientModelRepository = Mockery::mock(Laravel\Passport\ClientRepository::class);
+        $clientModelRepository = Mockery::mock(ROMaster2\Passport\ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')->with(1)->andReturn(new BridgeClientRepositoryTestClientStub);
 
         $this->clientModelRepository = $clientModelRepository;
-        $this->repository = new Laravel\Passport\Bridge\ClientRepository($clientModelRepository);
+        $this->repository = new ROMaster2\Passport\Bridge\ClientRepository($clientModelRepository);
     }
 
     public function tearDown()
@@ -23,7 +23,7 @@ class BridgeClientRepositoryTest extends TestCase
     {
         $client = $this->repository->getClientEntity(1, 'authorization_code', 'secret', true);
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $client);
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $client);
         $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'wrong-secret', true));
         $this->assertNull($this->repository->getClientEntity(1, 'client_credentials', 'wrong-secret', true));
     }
@@ -33,7 +33,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->personal_access_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret', true));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret', true));
         $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'secret', true));
     }
 
@@ -42,7 +42,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->password_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'password', 'secret'));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'password', 'secret'));
     }
 
     public function test_password_grant_is_prevented()
@@ -52,7 +52,7 @@ class BridgeClientRepositoryTest extends TestCase
 
     public function test_authorization_code_grant_is_permitted()
     {
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'authorization_code', 'secret'));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'authorization_code', 'secret'));
     }
 
     public function test_authorization_code_grant_is_prevented()
@@ -68,7 +68,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->personal_access_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'personal_access', 'secret'));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'personal_access', 'secret'));
     }
 
     public function test_personal_access_grant_is_prevented()
@@ -78,7 +78,7 @@ class BridgeClientRepositoryTest extends TestCase
 
     public function test_client_credentials_grant_is_permitted()
     {
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
 
     public function test_client_credentials_grant_is_prevented()
@@ -94,7 +94,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->grant_types = ['client_credentials'];
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+        $this->assertInstanceOf('ROMaster2\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
 
     public function test_grant_types_disallows_request()

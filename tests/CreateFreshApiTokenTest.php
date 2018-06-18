@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
-use Laravel\Passport\Passport;
+use ROMaster2\Passport\Http\Middleware\CreateFreshApiToken;
+use ROMaster2\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 
 class CreateFreshApiTokenTest extends TestCase
@@ -15,7 +15,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldReceiveAFreshToken()
     {
-        $cookieFactory = Mockery::mock(\Laravel\Passport\ApiTokenCookieFactory::class);
+        $cookieFactory = Mockery::mock(\ROMaster2\Passport\ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Mockery::mock(Request::class)->makePartial();
@@ -48,7 +48,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForOtherHttpVerbs()
     {
-        $cookieFactory = Mockery::mock(\Laravel\Passport\ApiTokenCookieFactory::class);
+        $cookieFactory = Mockery::mock(\ROMaster2\Passport\ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'POST');
@@ -64,7 +64,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForAnInvalidUser()
     {
-        $cookieFactory = Mockery::mock(\Laravel\Passport\ApiTokenCookieFactory::class);
+        $cookieFactory = Mockery::mock(\ROMaster2\Passport\ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'GET');
@@ -82,7 +82,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForResponseThatAlreadyHasToken()
     {
-        $cookieFactory = Mockery::mock(\Laravel\Passport\ApiTokenCookieFactory::class);
+        $cookieFactory = Mockery::mock(\ROMaster2\Passport\ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'GET');

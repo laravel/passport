@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\Passport\Http\Middleware;
+namespace ROMaster2\Passport\Http\Middleware;
 
 use Illuminate\Auth\AuthenticationException;
-use Laravel\Passport\Exceptions\MissingScopeException;
+use ROMaster2\Passport\Exceptions\MissingScopeException;
 
 class CheckForAnyScope
 {
@@ -14,7 +14,7 @@ class CheckForAnyScope
      * @param  \Closure  $next
      * @param  mixed  ...$scopes
      * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Auth\AuthenticationException|\Laravel\Passport\Exceptions\MissingScopeException
+     * @throws \Illuminate\Auth\AuthenticationException|\ROMaster2\Passport\Exceptions\MissingScopeException
      */
     public function handle($request, $next, ...$scopes)
     {
