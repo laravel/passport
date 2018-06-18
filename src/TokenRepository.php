@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -11,22 +11,22 @@ class TokenRepository
      * Creates a new Access Token.
      *
      * @param  array  $attributes
-     * @return \Laravel\Passport\Token
+     * @return \ROMaster2\Passport\Token
      */
     public function create($attributes)
     {
-        return Token::create($attributes);
+        return Passport::token()->create($attributes);
     }
 
     /**
      * Get a token by the given ID.
      *
      * @param  string  $id
-     * @return \Laravel\Passport\Token
+     * @return \ROMaster2\Passport\Token
      */
     public function find($id)
     {
-        return Token::find($id);
+        return Passport::token()->where('id', $id)->first();
     }
 
     /**
@@ -34,11 +34,11 @@ class TokenRepository
      *
      * @param  string  $id
      * @param  int  $userId
-     * @return \Laravel\Passport\Token|null
+     * @return \ROMaster2\Passport\Token|null
      */
     public function findForUser($id, $userId)
     {
-        return Token::where('id', $id)->where('user_id', $userId)->first();
+        return Passport::token()->where('id', $id)->where('user_id', $userId)->first();
     }
 
     /**
@@ -49,15 +49,15 @@ class TokenRepository
      */
     public function forUser($userId)
     {
-        return Token::where('user_id', $userId)->get();
+        return Passport::token()->where('user_id', $userId)->get();
     }
 
     /**
      * Get a valid token instance for the given user and client.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Token|null
+     * @param  \ROMaster2\Passport\Client  $client
+     * @return \ROMaster2\Passport\Token|null
      */
     public function getValidToken($user, $client)
     {
@@ -71,7 +71,7 @@ class TokenRepository
     /**
      * Store the given token instance.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \ROMaster2\Passport\Token  $token
      * @return void
      */
     public function save(Token $token)
@@ -87,7 +87,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
-        return Token::where('id', $id)->update(['revoked' => true]);
+        return Passport::token()->where('id', $id)->update(['revoked' => true]);
     }
 
     /**
@@ -110,8 +110,8 @@ class TokenRepository
      * Find a valid token for the given user and client.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $user
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Token|null
+     * @param  \ROMaster2\Passport\Client  $client
+     * @return \ROMaster2\Passport\Token|null
      */
     public function findValidToken($user, $client)
     {

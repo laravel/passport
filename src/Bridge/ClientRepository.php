@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\Passport\Bridge;
+namespace ROMaster2\Passport\Bridge;
 
-use Laravel\Passport\ClientRepository as ClientModelRepository;
+use ROMaster2\Passport\ClientRepository as ClientModelRepository;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
 class ClientRepository implements ClientRepositoryInterface
@@ -10,14 +10,14 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * The client model repository.
      *
-     * @var \Laravel\Passport\ClientRepository
+     * @var \ROMaster2\Passport\ClientRepository
      */
     protected $clients;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \ROMaster2\Passport\ClientRepository  $clients
      * @return void
      */
     public function __construct(ClientModelRepository $clients)
@@ -58,12 +58,16 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * Determine if the given client can handle the given grant type.
      *
-     * @param  \Laravel\Passport\Client  $record
+     * @param  \ROMaster2\Passport\Client  $record
      * @param  string  $grantType
      * @return bool
      */
     protected function handlesGrant($record, $grantType)
     {
+        if (is_array($record->grant_types) && ! in_array($grantType, $record->grant_types)) {
+            return false;
+        }
+
         switch ($grantType) {
             case 'authorization_code':
                 return ! $record->firstParty();
@@ -71,6 +75,8 @@ class ClientRepository implements ClientRepositoryInterface
                 return $record->personal_access_client;
             case 'password':
                 return $record->password_client;
+            case 'client_credentials':
+                return ! empty($record->secret);
             default:
                 return true;
         }

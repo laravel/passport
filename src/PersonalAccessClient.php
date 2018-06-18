@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +11,7 @@ class PersonalAccessClient extends Model
      *
      * @var string
      */
-    protected $table = 'oauth_personal_access_clients';
+    protected $table = 'personal_access_client';
 
     /**
      * The guarded attributes on the model.
@@ -27,6 +27,6 @@ class PersonalAccessClient extends Model
      */
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Passport::clientModel());
     }
 }

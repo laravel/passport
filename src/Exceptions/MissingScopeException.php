@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport\Exceptions;
+namespace ROMaster2\Passport\Exceptions;
 
 use Illuminate\Support\Arr;
 use Illuminate\Auth\Access\AuthorizationException;

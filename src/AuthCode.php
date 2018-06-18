@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,6 +45,6 @@ class AuthCode extends Model
      */
     public function client()
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(Passport::clientModel());
     }
 }

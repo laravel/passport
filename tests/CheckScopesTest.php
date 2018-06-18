@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Http\Middleware\CheckScopes;
+use ROMaster2\Passport\Http\Middleware\CheckScopes;
 
 class CheckScopesTest extends TestCase
 {
@@ -27,7 +27,7 @@ class CheckScopesTest extends TestCase
     }
 
     /**
-     * @expectedException Laravel\Passport\Exceptions\MissingScopeException
+     * @expectedException ROMaster2\Passport\Exceptions\MissingScopeException
      */
     public function test_exception_is_thrown_if_token_doesnt_have_scope()
     {

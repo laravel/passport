@@ -1,12 +1,12 @@
 <?php
 
-namespace Laravel\Passport\Http\Controllers;
+namespace ROMaster2\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
-use Laravel\Passport\Bridge\User;
-use Laravel\Passport\TokenRepository;
-use Laravel\Passport\ClientRepository;
+use ROMaster2\Passport\Passport;
+use ROMaster2\Passport\Bridge\User;
+use ROMaster2\Passport\TokenRepository;
+use ROMaster2\Passport\ClientRepository;
 use Illuminate\Database\Eloquent\Model;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response as Psr7Response;
@@ -50,8 +50,8 @@ class AuthorizationController
      *
      * @param  \Psr\Http\Message\ServerRequestInterface  $psrRequest
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \ROMaster2\Passport\ClientRepository  $clients
+     * @param  \ROMaster2\Passport\TokenRepository  $tokens
      * @return \Illuminate\Http\Response
      */
     public function authorize(ServerRequestInterface $psrRequest,

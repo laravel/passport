@@ -1,10 +1,10 @@
 <?php
 
-use Laravel\Passport\Passport;
+use ROMaster2\Passport\Passport;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Bridge\Scope;
-use Laravel\Passport\Bridge\Client;
-use Laravel\Passport\Bridge\ScopeRepository;
+use ROMaster2\Passport\Bridge\Scope;
+use ROMaster2\Passport\Bridge\Client;
+use ROMaster2\Passport\Bridge\ScopeRepository;
 
 class BridgeScopeRepositoryTest extends TestCase
 {

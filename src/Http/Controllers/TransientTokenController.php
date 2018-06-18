@@ -1,24 +1,24 @@
 <?php
 
-namespace Laravel\Passport\Http\Controllers;
+namespace ROMaster2\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Passport\ApiTokenCookieFactory;
+use ROMaster2\Passport\ApiTokenCookieFactory;
 
 class TransientTokenController
 {
     /**
      * The cookie factory instance.
      *
-     * @var \Laravel\Passport\ApiTokenCookieFactory
+     * @var \ROMaster2\Passport\ApiTokenCookieFactory
      */
     protected $cookieFactory;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \Laravel\Passport\ApiTokenCookieFactory  $cookieFactory
+     * @param  \ROMaster2\Passport\ApiTokenCookieFactory  $cookieFactory
      * @return void
      */
     public function __construct(ApiTokenCookieFactory $cookieFactory)

@@ -12,7 +12,7 @@ class TransientTokenControllerTest extends TestCase
 
     public function test_token_can_be_refreshed()
     {
-        $cookieFactory = Mockery::mock('Laravel\Passport\ApiTokenCookieFactory');
+        $cookieFactory = Mockery::mock('ROMaster2\Passport\ApiTokenCookieFactory');
         $cookieFactory->shouldReceive('make')->once()->with(1, 'token')->andReturn(new Cookie('cookie'));
 
         $request = Mockery::mock(Illuminate\Http\Request::class);
@@ -20,7 +20,7 @@ class TransientTokenControllerTest extends TestCase
         $user->shouldReceive('getKey')->andReturn(1);
         $request->shouldReceive('session->token')->andReturn('token');
 
-        $controller = new Laravel\Passport\Http\Controllers\TransientTokenController($cookieFactory);
+        $controller = new ROMaster2\Passport\Http\Controllers\TransientTokenController($cookieFactory);
 
         $response = $controller->refresh($request);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 class ClientRepository
 {
@@ -8,18 +8,18 @@ class ClientRepository
      * Get a client by the given ID.
      *
      * @param  int  $id
-     * @return \Laravel\Passport\Client|null
+     * @return \ROMaster2\Passport\Client|null
      */
     public function find($id)
     {
-        return Client::find($id);
+        return Passport::client()->where('id', $id)->first();
     }
 
     /**
      * Get an active client by the given ID.
      *
      * @param  int  $id
-     * @return \Laravel\Passport\Client|null
+     * @return \ROMaster2\Passport\Client|null
      */
     public function findActive($id)
     {
@@ -33,13 +33,14 @@ class ClientRepository
      *
      * @param  int  $clientId
      * @param  mixed  $userId
-     * @return \Laravel\Passport\Client|null
+     * @return \ROMaster2\Passport\Client|null
      */
     public function findForUser($clientId, $userId)
     {
-        return Client::where('id', $clientId)
-                     ->where('user_id', $userId)
-                     ->first();
+        return Passport::client()
+                    ->where('id', $clientId)
+                    ->where('user_id', $userId)
+                    ->first();
     }
 
     /**
@@ -50,8 +51,9 @@ class ClientRepository
      */
     public function forUser($userId)
     {
-        return Client::where('user_id', $userId)
-                        ->orderBy('name', 'asc')->get();
+        return Passport::client()
+                    ->where('user_id', $userId)
+                    ->orderBy('name', 'asc')->get();
     }
 
     /**
@@ -70,15 +72,15 @@ class ClientRepository
     /**
      * Get the personal access token client for the application.
      *
-     * @return \Laravel\Passport\Client
+     * @return \ROMaster2\Passport\Client
      */
     public function personalAccessClient()
     {
-        if (Passport::$personalAccessClient) {
-            return $this->find(Passport::$personalAccessClient);
+        if (Passport::$personalAccessClientId) {
+            return $this->find(Passport::$personalAccessClientId);
         }
 
-        return PersonalAccessClient::orderBy('id', 'desc')->first()->client;
+        return Passport::personalAccessClient()->orderBy('id', 'desc')->first()->client;
     }
 
     /**
@@ -89,11 +91,11 @@ class ClientRepository
      * @param  string  $redirect
      * @param  bool  $personalAccess
      * @param  bool  $password
-     * @return \Laravel\Passport\Client
+     * @return \ROMaster2\Passport\Client
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = (new Client)->forceFill([
+        $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -114,12 +116,12 @@ class ClientRepository
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Laravel\Passport\Client
+     * @return \ROMaster2\Passport\Client
      */
     public function createPersonalAccessClient($userId, $name, $redirect)
     {
         return tap($this->create($userId, $name, $redirect, true), function ($client) {
-            $accessClient = new PersonalAccessClient;
+            $accessClient = Passport::personalAccessClient();
             $accessClient->client_id = $client->id;
             $accessClient->save();
         });
@@ -131,7 +133,7 @@ class ClientRepository
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Laravel\Passport\Client
+     * @return \ROMaster2\Passport\Client
      */
     public function createPasswordGrantClient($userId, $name, $redirect)
     {
@@ -144,7 +146,7 @@ class ClientRepository
      * @param  Client  $client
      * @param  string  $name
      * @param  string  $redirect
-     * @return \Laravel\Passport\Client
+     * @return \ROMaster2\Passport\Client
      */
     public function update(Client $client, $name, $redirect)
     {
@@ -158,8 +160,8 @@ class ClientRepository
     /**
      * Regenerate the client secret.
      *
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Client
+     * @param  \ROMaster2\Passport\Client  $client
+     * @return \ROMaster2\Passport\Client
      */
     public function regenerateSecret(Client $client)
     {
@@ -186,7 +188,7 @@ class ClientRepository
     /**
      * Delete the given client.
      *
-     * @param  \Laravel\Passport\Client  $client
+     * @param  \ROMaster2\Passport\Client  $client
      * @return void
      */
     public function delete(Client $client)

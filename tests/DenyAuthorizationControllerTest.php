@@ -14,7 +14,7 @@ class DenyAuthorizationControllerTest extends TestCase
     {
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new ROMaster2\Passport\Http\Controllers\DenyAuthorizationController($response);
 
         $request = Mockery::mock('Illuminate\Http\Request');
 
@@ -43,7 +43,7 @@ class DenyAuthorizationControllerTest extends TestCase
     {
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new ROMaster2\Passport\Http\Controllers\DenyAuthorizationController($response);
 
         $request = Mockery::mock('Illuminate\Http\Request');
 
@@ -72,7 +72,7 @@ class DenyAuthorizationControllerTest extends TestCase
     {
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new ROMaster2\Passport\Http\Controllers\DenyAuthorizationController($response);
 
         $request = Mockery::mock('Illuminate\Http\Request');
 
@@ -105,7 +105,7 @@ class DenyAuthorizationControllerTest extends TestCase
     {
         $response = Mockery::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new ROMaster2\Passport\Http\Controllers\DenyAuthorizationController($response);
 
         $request = Mockery::mock('Illuminate\Http\Request');
 

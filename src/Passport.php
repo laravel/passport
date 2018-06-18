@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Mockery;
 use DateInterval;
@@ -36,7 +36,7 @@ class Passport
      *
      * @var int
      */
-    public static $personalAccessClient;
+    public static $personalAccessClientId;
 
     /**
      * All of the scopes defined for the application.
@@ -76,6 +76,34 @@ class Passport
     public static $keyPath;
 
     /**
+     * The auth code model class name.
+     *
+     * @var string
+     */
+    public static $authCodeModel = 'ROMaster2\Passport\AuthCode';
+
+    /**
+     * The client model class name.
+     *
+     * @var string
+     */
+    public static $clientModel = 'ROMaster2\Passport\Client';
+
+    /**
+     * The personal access client model class name.
+     *
+     * @var string
+     */
+    public static $personalAccessClientModel = 'ROMaster2\Passport\PersonalAccessClient';
+
+    /**
+     * The token model class name.
+     *
+     * @var string
+     */
+    public static $tokenModel = 'ROMaster2\Passport\Token';
+
+    /**
      * Indicates if Passport migrations will be run.
      *
      * @var bool
@@ -109,7 +137,7 @@ class Passport
 
         $defaultOptions = [
             'prefix' => 'oauth',
-            'namespace' => '\Laravel\Passport\Http\Controllers',
+            'namespace' => '\ROMaster2\Passport\Http\Controllers',
         ];
 
         $options = array_merge($defaultOptions, $options);
@@ -149,9 +177,9 @@ class Passport
      * @param  int  $clientId
      * @return static
      */
-    public static function personalAccessClient($clientId)
+    public static function personalAccessClientId($clientId)
     {
-        static::$personalAccessClient = $clientId;
+        static::$personalAccessClientId = $clientId;
 
         return new static;
     }
@@ -282,7 +310,7 @@ class Passport
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
-        $token = Mockery::mock(Token::class)->shouldIgnoreMissing(false);
+        $token = Mockery::mock(Passport::tokenModel())->shouldIgnoreMissing(false);
 
         foreach ($scopes as $scope) {
             $token->shouldReceive('can')->with($scope)->andReturn(true);
@@ -321,6 +349,130 @@ class Passport
         return static::$keyPath
             ? rtrim(static::$keyPath, '/\\').DIRECTORY_SEPARATOR.$file
             : storage_path($file);
+    }
+
+    /**
+     * Set the auth code model class name.
+     *
+     * @param  string  $authCodeModel
+     * @return void
+     */
+    public static function useAuthCodeModel($authCodeModel)
+    {
+        static::$authCodeModel = $authCodeModel;
+    }
+
+    /**
+     * Get the auth code model class name.
+     *
+     * @return string
+     */
+    public static function authCodeModel()
+    {
+        return static::$authCodeModel;
+    }
+
+    /**
+     * Get a new auth code model instance.
+     *
+     * @return \ROMaster2\Passport\AuthCode
+     */
+    public static function authCode()
+    {
+        return new static::$authCodeModel;
+    }
+
+    /**
+     * Set the client model class name.
+     *
+     * @param  string  $clientModel
+     * @return void
+     */
+    public static function useClientModel($clientModel)
+    {
+        static::$clientModel = $clientModel;
+    }
+
+    /**
+     * Get the client model class name.
+     *
+     * @return string
+     */
+    public static function clientModel()
+    {
+        return static::$clientModel;
+    }
+
+    /**
+     * Get a new client model instance.
+     *
+     * @return \ROMaster2\Passport\Client
+     */
+    public static function client()
+    {
+        return new static::$clientModel;
+    }
+
+    /**
+     * Set the personal access client model class name.
+     *
+     * @param  string  $clientModel
+     * @return void
+     */
+    public static function usePersonalAccessClientModel($clientModel)
+    {
+        static::$personalAccessClientModel = $clientModel;
+    }
+
+    /**
+     * Get the personal access client model class name.
+     *
+     * @return string
+     */
+    public static function personalAccessClientModel()
+    {
+        return static::$personalAccessClientModel;
+    }
+
+    /**
+     * Get a new personal access client model instance.
+     *
+     * @return \ROMaster2\Passport\PersonalAccessClient
+     */
+    public static function personalAccessClient()
+    {
+        return new static::$personalAccessClientModel;
+    }
+
+    /**
+     * Set the token model class name.
+     *
+     * @param  string  $tokenModel
+     * @return void
+     */
+    public static function useTokenModel($tokenModel)
+    {
+        static::$tokenModel = $tokenModel;
+    }
+
+    /**
+     * Get the token model class name.
+     *
+     * @return string
+     */
+    public static function tokenModel()
+    {
+        return static::$tokenModel;
+    }
+
+    /**
+     * Get a new personal access client model instance.
+     *
+     * @return \ROMaster2\Passport\Token
+     */
+    public static function token()
+    {
+        return new static::$tokenModel;
     }
 
     /**

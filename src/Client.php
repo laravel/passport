@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport;
+namespace ROMaster2\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,6 +35,7 @@ class Client extends Model
      * @var array
      */
     protected $casts = [
+        'grant_types' => 'array',
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
         'revoked' => 'bool',
@@ -47,7 +48,7 @@ class Client extends Model
      */
     public function authCodes()
     {
-        return $this->hasMany(AuthCode::class, 'client_id');
+        return $this->hasMany(Passport::authCodeModel(), 'client_id');
     }
 
     /**
@@ -57,7 +58,7 @@ class Client extends Model
      */
     public function tokens()
     {
-        return $this->hasMany(Token::class, 'client_id');
+        return $this->hasMany(Passport::tokenModel(), 'client_id');
     }
 
     /**

@@ -1,9 +1,9 @@
 <?php
 
-use Laravel\Passport\Passport;
+use ROMaster2\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Config\Repository as Config;
-use Laravel\Passport\PassportServiceProvider;
+use ROMaster2\Passport\PassportServiceProvider;
 use Illuminate\Contracts\Foundation\Application as App;
 
 class PassportServiceProviderTest extends TestCase
