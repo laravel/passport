@@ -13,7 +13,7 @@ class KeysCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:keys {--force : Overwrite keys they already exist}';
+    protected $signature = 'passport:keys {length?} {--force : Overwrite keys they already exist}';
 
     /**
      * The console command description.
@@ -30,12 +30,12 @@ class KeysCommand extends Command
      */
     public function handle(RSA $rsa)
     {
-        $keyLenght = 4096 ; 
-        if(function_exists('config') && config("passport.private_key_length") ){
-            $keyLenght = config("passport.private_key_length") ; 
+        $keyLength = 4096 ; 
+        if($this->argument('length')){
+            $keyLength = (int)$this->argument('length') ; 
         }
         
-        $keys = $rsa->createKey($keyLenght);
+        $keys = $rsa->createKey($keyLength);
         
         list($publicKey, $privateKey) = [
             Passport::keyPath('oauth-public.key'),
