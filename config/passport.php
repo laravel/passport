@@ -16,7 +16,5 @@ return [
     'private_key' => env('PASSPORT_PRIVATE_KEY'),
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
-    
-    'private_key_length' => env('PASSPORT_PRIVATE_KEY_LENGTH') ? (int)env('PASSPORT_PRIVATE_KEY_LENGTH') : 4096  , 
 
 ];
