@@ -96,6 +96,35 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $this->assertEquals('http://localhost#error=access_denied&state=state', $controller->deny($request));
     }
+    
+    public function test_authorization_can_be_denied_with_existing_query_string()
+    {
+        $response = Mockery::mock(ResponseFactory::class);
+
+        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+
+        $request = Mockery::mock('Illuminate\Http\Request');
+
+        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
+        $request->shouldReceive('input')->with('state')->andReturn('state');
+
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
+            'League\OAuth2\Server\RequestTypes\AuthorizationRequest'
+        ));
+
+        $authRequest->shouldReceive('setUser')->once();
+        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
+        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost?action=some_action');
+        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost?action=some_action');
+
+        $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
+            return $url;
+        });
+
+        $this->assertEquals('http://localhost?action=some_action&error=access_denied&state=state', $controller->deny($request));
+    }
 
     /**
      * @expectedException Exception
