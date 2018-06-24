@@ -5,12 +5,18 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\AuthenticationException;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
 class CheckClientCredentials
 {
+    /**
+     * @var type ClientRepository
+     */
+    protected $clients;
+
     /**
      * The Resource Server instance.
      *
@@ -22,11 +28,13 @@ class CheckClientCredentials
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
+     * @param ClientRepository
      * @return void
      */
-    public function __construct(ResourceServer $server)
+    public function __construct(ResourceServer $server, ClientRepository $clients)
     {
         $this->server = $server;
+        $this->clients = $clients;
     }
 
     /**
@@ -45,6 +53,12 @@ class CheckClientCredentials
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
         } catch (OAuthServerException $e) {
+            throw new AuthenticationException;
+        }
+
+        $client = $this->clients->findActive($psr->getAttribute('oauth_client_id'));
+
+        if (!$client || $client->firstParty()) {
             throw new AuthenticationException;
         }
 
