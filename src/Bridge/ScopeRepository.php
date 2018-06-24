@@ -9,8 +9,14 @@ use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
+    /**
+     * @var ClientRepository 
+     */
     protected $clients;
 
+    /**
+     * @param ClientRepository $clients
+     */
     public function __construct(ClientRepository $clients)
     {
         $this->clients = $clients;

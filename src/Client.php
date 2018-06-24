@@ -52,6 +52,12 @@ class Client extends Model
         return $this->hasMany(Passport::authCodeModel(), 'client_id');
     }
 
+    /**
+     * Determine if the client has the given scope.
+     *
+     * @param  string  $id
+     * @return bool
+     */
     public function hasScope($id)
     {
         return ! is_array($this->scopes) || empty($this->scopes) || array_key_exists($id, $this->scopes);
