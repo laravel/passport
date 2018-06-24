@@ -5,6 +5,8 @@ use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ScopeRepository;
+use Laravel\Passport\Client as ClientModel;
+use Laravel\Passport\ClientRepository;
 
 class BridgeScopeRepositoryTest extends TestCase
 {
@@ -14,7 +16,13 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $repository = new ScopeRepository;
+        $client = Mockery::mock(ClientModel::class);
+        $client->shouldReceive('hasScope')->andReturn(true);
+
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+
+        $repository = new ScopeRepository($clients);
 
         $scopes = $repository->finalizeScopes(
             [$scope1 = new Scope('scope-1'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
@@ -29,10 +37,35 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $repository = new ScopeRepository;
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')->withAnyArgs();
+
+        $repository = new ScopeRepository($clients);
 
         $scopes = $repository->finalizeScopes(
             [$scope1 = new Scope('*')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
+        );
+
+        $this->assertEquals([], $scopes);
+    }
+
+    public function test_scopes_which_client_cant_issue_are_removed()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+            'scope-2' => 'description',
+        ]);
+
+        $client = Mockery::mock(ClientModel::class)->makePartial();
+        $client->scopes = ['scope-1'];
+
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+
+        $repository = new ScopeRepository($clients);
+
+        $scopes = $repository->finalizeScopes(
+            [$scope1 = new Scope('scope-1')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
         );
 
         $this->assertEquals([], $scopes);
