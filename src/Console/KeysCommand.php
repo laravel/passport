@@ -15,7 +15,7 @@ class KeysCommand extends Command
      */
     protected $signature = 'passport:keys
                                       {--force : Overwrite keys they already exist}
-                                      {--length=4096 :  The Length of The generated private key}';
+                                      {--length=4096 : The length of the private key}';
 
     /**
      * The console command description.
@@ -32,18 +32,13 @@ class KeysCommand extends Command
      */
     public function handle(RSA $rsa)
     {
-        $keyLength = 4096 ; 
-        
-        if($this->input && $this->option('length')){
-            $keyLength = (int)$this->option('length') ; 
-        }
-        
-        $keys = $rsa->createKey($keyLength);
-        
+        $keys = $rsa->createKey($this->option('length') ?? 4096);
+
         list($publicKey, $privateKey) = [
             Passport::keyPath('oauth-public.key'),
             Passport::keyPath('oauth-private.key'),
         ];
+
         if ((file_exists($publicKey) || file_exists($privateKey)) && ! $this->option('force')) {
             return $this->error('Encryption keys already exist. Use the --force option to overwrite them.');
         }
