@@ -32,7 +32,7 @@ class KeysCommand extends Command
      */
     public function handle(RSA $rsa)
     {
-        $keys = $rsa->createKey($this->input ? $this->option('length') : 4096);
+        $keys = $rsa->createKey($this->input ? (int) $this->option('length') : 4096);
 
         list($publicKey, $privateKey) = [
             Passport::keyPath('oauth-public.key'),
