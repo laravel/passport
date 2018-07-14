@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use function Couchbase\defaultDecoder;
+
 class ClientRepository
 {
     /**
@@ -12,9 +14,19 @@ class ClientRepository
      */
     public function find($id)
     {
-        $client = Passport::client();
+        $client = \Illuminate\Support\Facades\Redis::hget('clients',$id);
 
-        return $client->where($client->getKeyName(), $id)->first();
+        if ($client)
+        {
+            return json_decode($client);
+        }else
+        {
+            $client = Passport::client();
+
+            return $client->where($client->getKeyName(), $id)->first();
+        }
+
+
     }
 
     /**
@@ -101,7 +113,7 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
     {
-        $client = Passport::client()->forceFill([
+        $clientModel =[
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
@@ -109,9 +121,12 @@ class ClientRepository
             'personal_access_client' => $personalAccess,
             'password_client' => $password,
             'revoked' => false,
-        ]);
+        ];
+
+        $client = Passport::client()->forceFill($clientModel);
 
         $client->save();
+        \Illuminate\Support\Facades\Redis::hset('clients',$client->id,json_encode($clientModel));
 
         return $client;
     }

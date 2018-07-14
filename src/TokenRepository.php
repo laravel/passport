@@ -15,6 +15,7 @@ class TokenRepository
      */
     public function create($attributes)
     {
+        \Illuminate\Support\Facades\Redis::hset('tokens',$attributes['id'],json_encode($attributes));
         return Passport::token()->create($attributes);
     }
 
@@ -26,7 +27,11 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Passport::token()->where('id', $id)->first();
+        $token = \Illuminate\Support\Facades\Redis::hset('tokens',$id,json_encode($attributes));
+        if ($token)
+            return json_decode($token);
+        else
+            Passport::token()->where('id', $id)->first();
     }
 
     /**
@@ -87,6 +92,8 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
+        $token = \Illuminate\Support\Facades\Redis::hdel('tokens',$id);
+
         return Passport::token()->where('id', $id)->update(['revoked' => true]);
     }
 
