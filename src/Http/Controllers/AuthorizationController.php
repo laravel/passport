@@ -95,7 +95,7 @@ class AuthorizationController
         return Passport::scopesFor(
             collect($authRequest->getScopes())->map(function ($scope) {
                 return $scope->getIdentifier();
-            })->all()
+            })->unique()->all()
         );
     }
 
