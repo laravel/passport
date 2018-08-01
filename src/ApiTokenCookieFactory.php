@@ -59,7 +59,7 @@ class ApiTokenCookieFactory
             $config['secure'],
             true,
             false,
-            $config['same_site']
+            $config['same_site'] ?? null
         );
     }
 
