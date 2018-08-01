@@ -19,6 +19,7 @@ class ApiTokenCookieFactoryTest extends TestCase
             'path' => '/',
             'domain' => null,
             'secure' => true,
+            'same_site' => 'lax',
         ]);
         $encrypter = new Encrypter(str_repeat('a', 16));
         $factory = new ApiTokenCookieFactory($config, $encrypter);
