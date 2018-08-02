@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Laravel\Passport\Guards\TokenGuard;
+use Laravel\Passport\Passport;
 
 class TokenGuardTest extends TestCase
 {
@@ -161,6 +162,33 @@ class TokenGuardTest extends TestCase
         $userProvider->shouldReceive('retrieveById')->never();
 
         $this->assertNull($guard->user($request));
+    }
+
+    public function test_csrf_check_can_be_disabled()
+    {
+        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $userProvider = Mockery::mock('Illuminate\Contracts\Auth\UserProvider');
+        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $encrypter = new Illuminate\Encryption\Encrypter(str_repeat('a', 16));
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
+
+        Passport::checkCsrfToken(false);
+
+        $request = Request::create('/');
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(JWT::encode([
+                'sub' => 1,
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16)))
+        );
+
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
+
+        $user = $guard->user($request);
+
+        $this->assertEquals($expectedUser, $user);
     }
 }
 
