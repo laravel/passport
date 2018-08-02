@@ -69,11 +69,11 @@ class Passport
     public static $cookie = 'laravel_token';
 
     /**
-     * Indicates if Passport should check the CSRF header.
+     * Indicates if Passport should ignore incoming CSRF tokens.
      *
      * @var bool
      */
-    public static $checkCsrfToken = true;
+    public static $ignoreCsrfToken = false;
 
     /**
      * The storage location of the encryption keys.
@@ -308,18 +308,14 @@ class Passport
     }
 
     /**
-     * Enable or disable checking the CRSF token.
+     * Indicate that Passport should ignore incoming CSRF tokens.
      *
-     * @param  boolean|null  $checkCsrfToken
+     * @param  boolean|null  $ignoreCsrfToken
      * @return boolean|static
      */
-    public static function checkCsrfToken($checkCsrfToken = null)
+    public static function ignoreCsrfToken($ignoreCsrfToken = true)
     {
-        if (is_null($checkCsrfToken)) {
-            return static::$checkCsrfToken;
-        }
-
-        static::$checkCsrfToken = $checkCsrfToken;
+        static::$ignoreCsrfToken = $ignoreCsrfToken;
 
         return new static;
     }

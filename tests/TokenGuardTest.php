@@ -174,7 +174,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        Passport::checkCsrfToken(false);
+        Passport::ignoreCsrfToken();
 
         $request = Request::create('/');
         $request->cookies->set('laravel_token',
