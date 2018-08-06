@@ -189,7 +189,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeImplicitGrant()
     {
-        return new ImplicitGrant(Passport::tokensExpireIn());
+        return new ImplicitGrant(Passport::tokensExpireIn(), '?');
     }
 
     /**
