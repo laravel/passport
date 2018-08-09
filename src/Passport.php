@@ -118,6 +118,13 @@ class Passport
     public static $runsMigrations = true;
 
     /**
+     * Indicates if Passport should unserializes cookies.
+     *
+     * @var bool
+     */
+    public static $unserializesCookies = true;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -503,6 +510,18 @@ class Passport
     public static function ignoreMigrations()
     {
         static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Configure Passport to stop unserializing cookies.
+     *
+     * @return static
+     */
+    public static function dontUnserializeCookies()
+    {
+        static::$unserializesCookies = false;
 
         return new static;
     }
