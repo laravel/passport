@@ -515,11 +515,11 @@ class Passport
     }
 
     /**
-     * Configure Passport to stop unserializing cookies.
+     * Instruct Passport to disable cookie serialization.
      *
      * @return static
      */
-    public static function dontUnserializeCookies()
+    public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
 
