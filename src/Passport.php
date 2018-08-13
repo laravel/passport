@@ -515,6 +515,18 @@ class Passport
     }
 
     /**
+     * Instruct Passport to enable cookie serialization.
+     *
+     * @return static
+     */
+    public static function withCookieSerialization()
+    {
+        static::$unserializesCookies = true;
+
+        return new static;
+    }
+
+    /**
      * Instruct Passport to disable cookie serialization.
      *
      * @return static
