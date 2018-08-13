@@ -122,7 +122,7 @@ class Passport
      *
      * @var bool
      */
-    public static $unserializesCookies = true;
+    public static $unserializesCookies = false;
 
     /**
      * Enable the implicit grant type.
