@@ -39,6 +39,13 @@ class AuthCode extends Model
     ];
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * Get the client that owns the authentication code.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
