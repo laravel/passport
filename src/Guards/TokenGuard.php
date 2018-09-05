@@ -81,13 +81,15 @@ class TokenGuard
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function user(Request $request)
     {
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
-        } elseif ($request->cookie(Passport::cookie())) {
+        }
+
+        if ($request->cookie(Passport::cookie())) {
             return $this->authenticateViaCookie($request);
         }
     }
@@ -96,7 +98,7 @@ class TokenGuard
      * Authenticate the incoming request via the Bearer token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     protected function authenticateViaBearerToken($request)
     {
@@ -116,7 +118,7 @@ class TokenGuard
             );
 
             if (! $user) {
-                return;
+                return null;
             }
 
             // Next, we will assign a token instance to this user which the developers may use
@@ -132,7 +134,7 @@ class TokenGuard
             // its tokens may still be used. If not, we will bail out since we don't want a
             // user to be able to send access tokens for deleted or revoked applications.
             if ($this->clients->revoked($clientId)) {
-                return;
+                return null;
             }
 
             return $token ? $user->withAccessToken($token) : null;
@@ -143,13 +145,15 @@ class TokenGuard
                 ExceptionHandler::class
             )->report($e);
         }
+
+        return null;
     }
 
     /**
      * Authenticate the incoming request via the token cookie.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     protected function authenticateViaCookie($request)
     {
@@ -159,7 +163,7 @@ class TokenGuard
         try {
             $token = $this->decodeJwtTokenCookie($request);
         } catch (Exception $e) {
-            return;
+            return null;
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
@@ -167,7 +171,7 @@ class TokenGuard
         // a valid source and we won't authenticate the request for further handling.
         if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
             time() >= $token['expiry'])) {
-            return;
+            return null;
         }
 
         // If this user exists, we will return this user and attach a "transient" token to
@@ -176,6 +180,8 @@ class TokenGuard
         if ($user = $this->provider->retrieveById($token['sub'])) {
             return $user->withAccessToken(new TransientToken);
         }
+
+        return null;
     }
 
     /**
