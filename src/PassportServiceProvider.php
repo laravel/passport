@@ -44,7 +44,7 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-views');
 
             $this->publishes([
-                __DIR__.'/../resources/assets/js/components' => base_path('resources/assets/js/components/passport'),
+                __DIR__.'/../resources/js/components' => base_path('resources/js/components/passport'),
             ], 'passport-components');
 
             $this->commands([
