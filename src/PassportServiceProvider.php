@@ -3,6 +3,8 @@
 namespace Laravel\Passport;
 
 use DateInterval;
+use Defuse\Crypto\Key as EncryptionKey;
+use Defuse\Crypto\Encoding as EncryptionEncoding;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
@@ -204,7 +206,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            app('encrypter')->getKey()
+            $this->makeEncryptionKey(app('encrypter')->getKey())
         );
     }
 
@@ -238,6 +240,27 @@ class PassportServiceProvider extends ServiceProvider
         }
 
         return new CryptKey($key, null, false);
+    }
+
+    /**
+     * Create a Key instance for encrypting the refresh token
+     *
+     * @param string $keyBytes
+     * @return \Defuse\Crypto\Key
+     */
+    protected function makeEncryptionKey($keyBytes)
+    {
+        // First, we will encode Laravel's encryption key into a format that the Defuse\Crypto\Key class can use,
+        // so we can instantiate a new Key object. We need to do this as the Key class has a private constructor method
+        // which means we cannot directly instantiate the class based on our Laravel encryption key.
+        $encryptionKeyAscii = EncryptionEncoding::saveBytesToChecksummedAsciiSafeString(
+            EncryptionKey::KEY_CURRENT_VERSION,
+            $keyBytes
+        );
+
+        // Instantiate a Key object so we can take advantage of significantly faster encryption/decryption
+        // from https://github.com/thephpleague/oauth2-server/pull/814. The improvement is 200x-300x faster.
+        return EncryptionKey::loadFromAsciiSafeString($encryptionKeyAscii);
     }
 
     /**
