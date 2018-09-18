@@ -60,7 +60,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     public function revokeAuthCode($codeId)
     {
         $this->database->table('oauth_auth_codes')
-                    ->where('id', $codeId)->update(['revoked' => true]);
+                        ->where('id', $codeId)->update(['revoked' => true]);
     }
 
     /**

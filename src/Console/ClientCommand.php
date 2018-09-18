@@ -4,7 +4,6 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\PersonalAccessClient;
 
 class ClientCommand extends Command
 {
@@ -66,9 +65,10 @@ class ClientCommand extends Command
             null, $name, 'http://localhost'
         );
 
-        $this->info('Personal access client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+        $this->reportCommandLog(
+            'Personal access client created successfully.',
+            $client->id,
+            $client->secret);
     }
 
     /**
@@ -88,9 +88,10 @@ class ClientCommand extends Command
             null, $name, 'http://localhost'
         );
 
-        $this->info('Password grant client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+        $this->reportCommandLog(
+            'Password grant client created successfully.',
+            $client->id,
+            $client->secret);
     }
 
     /**
@@ -118,9 +119,7 @@ class ClientCommand extends Command
             $userId, $name, $redirect
         );
 
-        $this->info('New client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+        $this->reportCommandLog('New client created successfully.', $client->id, $client->secret);
     }
 
     /**
@@ -139,8 +138,18 @@ class ClientCommand extends Command
             null, $name, ''
         );
 
-        $this->info('New client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+        $this->reportCommandLog('New client created successfully.', $client->id, $client->secret);
+    }
+
+    /**
+     * @param string $message
+     * @param int $clientId
+     * @param string $clientSecret
+     */
+    protected function reportCommandLog(string $message, int $clientId, string $clientSecret)
+    {
+        $this->info($message);
+        $this->line('<comment>Client ID:</comment> '.$clientId);
+        $this->line('<comment>Client secret:</comment> '.$clientSecret);
     }
 }

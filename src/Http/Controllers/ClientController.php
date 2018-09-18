@@ -2,8 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\{ Request, Response };
 use Laravel\Passport\ClientRepository;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
@@ -41,7 +40,7 @@ class ClientController
      * Get all of the clients for the authenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection;
      */
     public function forUser(Request $request)
     {
@@ -54,7 +53,7 @@ class ClientController
      * Store a new client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Laravel\Passport\Client
      */
     public function store(Request $request)
     {
