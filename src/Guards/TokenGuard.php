@@ -5,11 +5,8 @@ namespace Laravel\Passport\Guards;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
+use Laravel\Passport\{ Passport, TransientToken, TokenRepository, ClientRepository };
 use Illuminate\Container\Container;
-use Laravel\Passport\TransientToken;
-use Laravel\Passport\TokenRepository;
-use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -116,7 +113,7 @@ class TokenGuard
             );
 
             if (! $user) {
-                return;
+                return null;
             }
 
             // Next, we will assign a token instance to this user which the developers may use
@@ -132,7 +129,7 @@ class TokenGuard
             // its tokens may still be used. If not, we will bail out since we don't want a
             // user to be able to send access tokens for deleted or revoked applications.
             if ($this->clients->revoked($clientId)) {
-                return;
+                return null;
             }
 
             return $token ? $user->withAccessToken($token) : null;
@@ -159,7 +156,7 @@ class TokenGuard
         try {
             $token = $this->decodeJwtTokenCookie($request);
         } catch (Exception $e) {
-            return;
+            return null;
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
@@ -167,7 +164,7 @@ class TokenGuard
         // a valid source and we won't authenticate the request for further handling.
         if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
             time() >= $token['expiry'])) {
-            return;
+            return null;
         }
 
         // If this user exists, we will return this user and attach a "transient" token to

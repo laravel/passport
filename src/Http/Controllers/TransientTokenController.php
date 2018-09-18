@@ -2,8 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\{ Request, Response };
 use Laravel\Passport\ApiTokenCookieFactory;
 
 class TransientTokenController

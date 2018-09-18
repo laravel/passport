@@ -33,7 +33,7 @@ class AccessTokenCreated
      * @param  string  $clientId
      * @return void
      */
-    public function __construct($tokenId, $userId, $clientId)
+    public function __construct(string $tokenId, string $userId, string $clientId)
     {
         $this->userId = $userId;
         $this->tokenId = $tokenId;

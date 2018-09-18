@@ -37,7 +37,7 @@ class ClientRepository implements ClientRepositoryInterface
         $record = $this->clients->findActive($clientIdentifier);
 
         if (! $record || ! $this->handlesGrant($record, $grantType)) {
-            return;
+            return null;
         }
 
         // Once we have an existing client record we will create this actual client instance
@@ -49,7 +49,7 @@ class ClientRepository implements ClientRepositoryInterface
 
         if ($mustValidateSecret &&
             ! hash_equals($record->secret, (string) $clientSecret)) {
-            return;
+            return null;
         }
 
         return $client;
@@ -62,7 +62,7 @@ class ClientRepository implements ClientRepositoryInterface
      * @param  string  $grantType
      * @return bool
      */
-    protected function handlesGrant($record, $grantType)
+    protected function handlesGrant($record, string $grantType)
     {
         if (is_array($record->grant_types) && ! in_array($grantType, $record->grant_types)) {
             return false;

@@ -2,11 +2,8 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Laravel\Passport\Passport;
-use Laravel\Passport\TokenRepository;
-use Laravel\Passport\PersonalAccessTokenResult;
+use Illuminate\Http\{ Request, Response};
+use Laravel\Passport\{ Passport, TokenRepository };
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 
 class PersonalAccessTokenController
@@ -42,7 +39,7 @@ class PersonalAccessTokenController
      * Get all of the personal access tokens for the authenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Database\Eloquent\Collection;
      */
     public function forUser(Request $request)
     {

@@ -2,8 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
-use League\OAuth2\Server\Entities\Traits\ClientTrait;
-use League\OAuth2\Server\Entities\Traits\EntityTrait;
+use League\OAuth2\Server\Entities\Traits\{ ClientTrait, EntityTrait };
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
 class Client implements ClientEntityInterface
@@ -18,7 +17,7 @@ class Client implements ClientEntityInterface
      * @param  string  $redirectUri
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri)
+    public function __construct(string $identifier, string $name, string $redirectUri)
     {
         $this->setIdentifier((string) $identifier);
 
