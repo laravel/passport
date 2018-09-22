@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Laravel\Passport\Exceptions\MissingPersonalAccessClientException;
+
 class ClientRepository
 {
     /**
@@ -77,6 +79,7 @@ class ClientRepository
      * Get the personal access token client for the application.
      *
      * @return \Laravel\Passport\Client
+     * @throws \Laravel\Passport\Exceptions\MissingPersonalAccessClientException
      */
     public function personalAccessClient()
     {
@@ -85,6 +88,10 @@ class ClientRepository
         }
 
         $client = Passport::personalAccessClient();
+
+        if (! $client->exists()) {
+            throw new MissingPersonalAccessClientException('Personal access client not found. Please create one first.');
+        }
 
         return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
     }
