@@ -79,7 +79,8 @@ class ClientRepository
      * Get the personal access token client for the application.
      *
      * @return \Laravel\Passport\Client
-     * @throws RuntimeException
+     *
+     * @throws \RuntimeException
      */
     public function personalAccessClient()
     {
@@ -90,7 +91,7 @@ class ClientRepository
         $client = Passport::personalAccessClient();
 
         if (! $client->exists()) {
-            throw new RuntimeException('Personal access client not found. Please create one first.');
+            throw new RuntimeException('Personal access client not found. Please create one.');
         }
 
         return $client->orderBy($client->getKeyName(), 'desc')->first()->client;

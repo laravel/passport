@@ -106,7 +106,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1, 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
@@ -181,7 +181,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
