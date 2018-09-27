@@ -40,6 +40,10 @@ class PassportServiceProvider extends ServiceProvider
             $this->registerMigrations();
 
             $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations'),
+            ], 'passport-migrations');
+
+            $this->publishes([
                 __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
             ], 'passport-views');
 
@@ -65,10 +69,6 @@ class PassportServiceProvider extends ServiceProvider
         if (Passport::$runsMigrations) {
             return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
-
-        $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ], 'passport-migrations');
     }
 
     /**
