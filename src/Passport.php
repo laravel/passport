@@ -351,6 +351,30 @@ class Passport
 
         return $user;
     }
+    
+    /**
+     * Ignore checking client credentials
+     * While setting the current user for the application with the given scopes.
+     *
+     * @uses Passport::actingAs()
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array  $scopes
+     * @param  string  $guard
+     * @return \Illuminate\Contracts\Auth\Authenticatable
+     */
+    public static function actingAsClient($user, $scopes = [], $guard = 'api')
+    {
+        $middleware = Http\Middleware\CheckClientCredentials::class;
+
+        app()->instance($middleware, new class {
+            public function handle($request, $next)
+            {
+                return $next($request);
+            }
+        });
+
+        return Passport::actingAs($user, $scopes, $guard);
+    }
 
     /**
      * Set the storage location of the encryption keys.
