@@ -48,17 +48,17 @@ class RouteRegistrar
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
             $router->get('/authorize', [
                 'uses' => 'AuthorizationController@authorize',
-                'as' => 'oauth.authorizations.authorize',
+                'as' => 'passport.authorizations.authorize',
             ]);
 
             $router->post('/authorize', [
                 'uses' => 'ApproveAuthorizationController@approve',
-                'as' => 'oauth.authorizations.approve',
+                'as' => 'passport.authorizations.approve',
             ]);
 
             $router->delete('/authorize', [
                 'uses' => 'DenyAuthorizationController@deny',
-                'as' => 'oauth.authorizations.deny',
+                'as' => 'passport.authorizations.deny',
             ]);
         });
     }
@@ -72,19 +72,19 @@ class RouteRegistrar
     {
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
-            'as' => 'oauth.token',
+            'as' => 'passport.token',
             'middleware' => 'throttle',
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
             $router->get('/tokens', [
                 'uses' => 'AuthorizedAccessTokenController@forUser',
-                'as' => 'oauth.tokens.index',
+                'as' => 'passport.tokens.index',
             ]);
 
             $router->delete('/tokens/{token_id}', [
                 'uses' => 'AuthorizedAccessTokenController@destroy',
-                'as' => 'oauth.tokens.destroy',
+                'as' => 'passport.tokens.destroy',
             ]);
         });
     }
@@ -99,7 +99,7 @@ class RouteRegistrar
         $this->router->post('/token/refresh', [
             'middleware' => ['web', 'auth'],
             'uses' => 'TransientTokenController@refresh',
-            'as' => 'oauth.token.refresh',
+            'as' => 'passport.token.refresh',
         ]);
     }
 
@@ -113,22 +113,22 @@ class RouteRegistrar
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
             $router->get('/clients', [
                 'uses' => 'ClientController@forUser',
-                'as' => 'oauth.clients.index',
+                'as' => 'passport.clients.index',
             ]);
 
             $router->post('/clients', [
                 'uses' => 'ClientController@store',
-                'as' => 'oauth.clients.store',
+                'as' => 'passport.clients.store',
             ]);
 
             $router->put('/clients/{client_id}', [
                 'uses' => 'ClientController@update',
-                'as' => 'oauth.clients.update',
+                'as' => 'passport.clients.update',
             ]);
 
             $router->delete('/clients/{client_id}', [
                 'uses' => 'ClientController@destroy',
-                'as' => 'oauth.clients.destroy',
+                'as' => 'passport.clients.destroy',
             ]);
         });
     }
@@ -143,22 +143,22 @@ class RouteRegistrar
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
             $router->get('/scopes', [
                 'uses' => 'ScopeController@all',
-                'as' => 'oauth.scopes.index',
+                'as' => 'passport.scopes.index',
             ]);
 
             $router->get('/personal-access-tokens', [
                 'uses' => 'PersonalAccessTokenController@forUser',
-                'as' => 'oauth.personal.tokens.index',
+                'as' => 'passport.personal.tokens.index',
             ]);
 
             $router->post('/personal-access-tokens', [
                 'uses' => 'PersonalAccessTokenController@store',
-                'as' => 'oauth.personal.tokens.store',
+                'as' => 'passport.personal.tokens.store',
             ]);
 
             $router->delete('/personal-access-tokens/{token_id}', [
                 'uses' => 'PersonalAccessTokenController@destroy',
-                'as' => 'oauth.personal.tokens.destroy',
+                'as' => 'passport.personal.tokens.destroy',
             ]);
         });
     }
