@@ -3,9 +3,19 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\Bridge\User;
+use Laravel\Passport\Bridge\UserRepository;
 
 class Client extends Model
 {
+
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+    }
+
     /**
      * The database table used by the model.
      *
@@ -69,5 +79,17 @@ class Client extends Model
     public function firstParty()
     {
         return $this->personal_access_client || $this->password_client;
+    }
+
+    /**
+     * Return the user associated with the client.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        $provider = config('auth.guards.api.provider');
+
+        return $this->belongsTo(config('auth.providers.'.$provider.'.model'));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Lcobucci\JWT\Parser;
+
 class ClientRepository
 {
     /**
@@ -45,6 +47,20 @@ class ClientRepository
                     ->where($client->getKeyName(), $clientId)
                     ->where('user_id', $userId)
                     ->first();
+    }
+
+
+    /**
+     * Get a client instance for the given bearer token.
+     *
+     * @param $bearerToken
+     * @return \Laravel\Passport\Client|null
+     */
+    public function findByToken($bearerToken)
+    {
+        $clientId = (new Parser())->parse($bearerToken)->getClaim('aud');
+
+        return $this->find($clientId);
     }
 
     /**
