@@ -62,6 +62,18 @@ class Client extends Model
     }
 
     /**
+     * Get the user that the client belongs to.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        $provider = config('auth.guards.api.provider');
+
+        return $this->belongsTo(config('auth.providers.'.$provider.'.model'));
+    }
+
+    /**
      * Determine if the client is a "first party" client.
      *
      * @return bool
