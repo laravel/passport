@@ -3,18 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Passport\Bridge\User;
-use Laravel\Passport\Bridge\UserRepository;
 
 class Client extends Model
 {
-
-
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-    }
 
     /**
      * The database table used by the model.
