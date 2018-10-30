@@ -131,7 +131,7 @@ class TokenGuard
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
         $user = $this->provider->retrieveById(
-            $psr->getAttribute('oauth_user_id')
+            $psr->getAttribute('oauth_user_id')?:null
         );
 
         if (! $user) {
