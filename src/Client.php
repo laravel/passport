@@ -49,7 +49,7 @@ class Client extends Model
     public function user()
     {
         return $this->belongsTo(
-            config('auth.providers.'.config('auth.guards.api.provider').'.model')
+            config('auth.providers.' . config('auth.guards.api.provider') . '.model')
         );
     }
 
@@ -62,6 +62,7 @@ class Client extends Model
     {
         return $this->hasMany(Passport::authCodeModel(), 'client_id');
     }
+
 
     /**
      * Get all of the tokens that belong to the client.
