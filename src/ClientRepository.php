@@ -29,7 +29,7 @@ class ClientRepository
     {
         $client = $this->find($id);
 
-        return $client && ! $client->revoked ? $client : null;
+        return $client && !$client->revoked ? $client : null;
     }
 
     /**
@@ -44,9 +44,9 @@ class ClientRepository
         $client = Passport::client();
 
         return $client
-                    ->where($client->getKeyName(), $clientId)
-                    ->where('user_id', $userId)
-                    ->first();
+            ->where($client->getKeyName(), $clientId)
+            ->where('user_id', $userId)
+            ->first();
     }
 
     /**
@@ -58,8 +58,8 @@ class ClientRepository
     public function forUser($userId)
     {
         return Passport::client()
-                    ->where('user_id', $userId)
-                    ->orderBy('name', 'asc')->get();
+            ->where('user_id', $userId)
+            ->orderBy('name', 'asc')->get();
     }
 
     /**
@@ -90,7 +90,7 @@ class ClientRepository
 
         $client = Passport::personalAccessClient();
 
-        if (! $client->exists()) {
+        if (!$client->exists()) {
             throw new RuntimeException('Personal access client not found. Please create one.');
         }
 
@@ -107,12 +107,15 @@ class ClientRepository
      * @param  bool  $password
      * @return \Laravel\Passport\Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
+    public function create($userId, $name, $redirect, $client_avatar = '', $personalAccess = false, $password = false)
     {
+
+
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'secret' => str_random(40),
+            'client_avatar' => $client_avatar,
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
             'password_client' => $password,

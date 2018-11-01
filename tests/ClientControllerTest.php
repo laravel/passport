@@ -20,7 +20,8 @@ class ClientControllerTest extends TestCase
         $request->shouldReceive('user')->andReturn(new ClientControllerFakeUser);
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, Mockery::mock('Illuminate\Contracts\Validation\Factory')
+            $clients,
+            Mockery::mock('Illuminate\Contracts\Validation\Factory')
         );
 
         $this->assertEquals($client, $controller->forUser($request));
@@ -28,6 +29,7 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_stored()
     {
+
         $clients = Mockery::mock('Laravel\Passport\ClientRepository');
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -35,7 +37,7 @@ class ClientControllerTest extends TestCase
             return new ClientControllerFakeUser;
         });
 
-        $clients->shouldReceive('create')->once()->with(1, 'client name', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
+        $clients->shouldReceive('create')->once()->with(1, 'client name', '', 'http://localhost')->andReturn($client = new Laravel\Passport\Client);
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
         $validator->shouldReceive('make')->once()->with([
@@ -48,7 +50,8 @@ class ClientControllerTest extends TestCase
         $validator->shouldReceive('validate')->once();
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, $validator
+            $clients,
+            $validator
         );
 
         $this->assertEquals($client, $controller->store($request));
@@ -70,7 +73,9 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('update')->once()->with(
-            Mockery::type('Laravel\Passport\Client'), 'client name', 'http://localhost'
+            Mockery::type('Laravel\Passport\Client'),
+            'client name',
+            'http://localhost'
         )->andReturn('response');
 
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
@@ -84,7 +89,8 @@ class ClientControllerTest extends TestCase
         $validator->shouldReceive('validate')->once();
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, $validator
+            $clients,
+            $validator
         );
 
         $this->assertEquals('response', $controller->update($request, 1));
@@ -109,7 +115,8 @@ class ClientControllerTest extends TestCase
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, $validator
+            $clients,
+            $validator
         );
 
         $this->assertEquals(404, $controller->update($request, 1)->status());
@@ -137,7 +144,8 @@ class ClientControllerTest extends TestCase
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, $validator
+            $clients,
+            $validator
         );
 
         $controller->destroy($request, 1);
@@ -162,7 +170,8 @@ class ClientControllerTest extends TestCase
         $validator = Mockery::mock('Illuminate\Contracts\Validation\Factory');
 
         $controller = new Laravel\Passport\Http\Controllers\ClientController(
-            $clients, $validator
+            $clients,
+            $validator
         );
 
         $this->assertEquals(404, $controller->destroy($request, 1)->status());
