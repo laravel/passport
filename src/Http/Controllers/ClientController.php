@@ -30,9 +30,10 @@ class ClientController
      * @param  \Illuminate\Contracts\Validation\Factory  $validation
      * @return void
      */
-    public function __construct(ClientRepository $clients,
-                                ValidationFactory $validation)
-    {
+    public function __construct(
+        ClientRepository $clients,
+        ValidationFactory $validation
+    ) {
         $this->clients = $clients;
         $this->validation = $validation;
     }
@@ -58,13 +59,17 @@ class ClientController
      */
     public function store(Request $request)
     {
+
         $this->validation->make($request->all(), [
             'name' => 'required|max:255',
             'redirect' => 'required|url',
         ])->validate();
 
         return $this->clients->create(
-            $request->user()->getKey(), $request->name, $request->redirect
+            $request->user()->getKey(),
+            $request->name,
+            $request->redirect,
+            $request->client_avatar
         )->makeVisible('secret');
     }
 
@@ -79,7 +84,7 @@ class ClientController
     {
         $client = $this->clients->findForUser($clientId, $request->user()->getKey());
 
-        if (! $client) {
+        if (!$client) {
             return new Response('', 404);
         }
 
@@ -89,7 +94,10 @@ class ClientController
         ])->validate();
 
         return $this->clients->update(
-            $client, $request->name, $request->redirect
+            $client,
+            $request->name,
+            $request->redirect,
+            $request->client_avatar
         );
     }
 
@@ -104,7 +112,7 @@ class ClientController
     {
         $client = $this->clients->findForUser($clientId, $request->user()->getKey());
 
-        if (! $client) {
+        if (!$client) {
             return new Response('', 404);
         }
 

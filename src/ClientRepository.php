@@ -109,8 +109,6 @@ class ClientRepository
      */
     public function create($userId, $name, $redirect, $client_avatar = '', $personalAccess = false, $password = false)
     {
-
-
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
@@ -121,7 +119,6 @@ class ClientRepository
             'password_client' => $password,
             'revoked' => false,
         ]);
-
         $client->save();
 
         return $client;
@@ -137,6 +134,7 @@ class ClientRepository
      */
     public function createPersonalAccessClient($userId, $name, $redirect)
     {
+
         return tap($this->create($userId, $name, $redirect, true), function ($client) {
             $accessClient = Passport::personalAccessClient();
             $accessClient->client_id = $client->id;
@@ -165,10 +163,10 @@ class ClientRepository
      * @param  string  $redirect
      * @return \Laravel\Passport\Client
      */
-    public function update(Client $client, $name, $redirect)
+    public function update(Client $client, $name, $redirect, $client_avatar)
     {
         $client->forceFill([
-            'name' => $name, 'redirect' => $redirect,
+            'name' => $name, 'redirect' => $redirect, $request->client_avatar
         ])->save();
 
         return $client;
