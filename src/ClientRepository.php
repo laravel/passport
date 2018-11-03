@@ -152,7 +152,7 @@ class ClientRepository
      */
     public function createPasswordGrantClient($userId, $name, $redirect)
     {
-        return $this->create($userId, $name, $redirect, false, true);
+        return $this->create($userId, $name, $redirect, '', false, true);
     }
 
     /**
