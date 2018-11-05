@@ -166,7 +166,7 @@ class ClientRepository
     public function update(Client $client, $name, $redirect, $client_avatar)
     {
         $client->forceFill([
-            'name' => $name, 'redirect' => $redirect, $request->client_avatar
+            'name' => $name, 'redirect' => $redirect, 'client_avatar' => $client_avatar
         ])->save();
 
         return $client;
