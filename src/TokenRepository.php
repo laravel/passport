@@ -38,7 +38,7 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return Passport::token()->where('id', $id)->where('user_id', $userId)->first();
+        return Passport::token()->where('id', $id)->whereUserId($userId)->first();
     }
 
     /**
@@ -49,7 +49,7 @@ class TokenRepository
      */
     public function forUser($userId)
     {
-        return Passport::token()->where('user_id', $userId)->get();
+        return Passport::token()->whereUserId($userId)->get();
     }
 
     /**

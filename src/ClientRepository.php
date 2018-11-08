@@ -45,7 +45,7 @@ class ClientRepository
 
         return $client
                     ->where($client->getKeyName(), $clientId)
-                    ->where('user_id', $userId)
+                    ->whereUserId($userId)
                     ->first();
     }
 
@@ -58,7 +58,7 @@ class ClientRepository
     public function forUser($userId)
     {
         return Passport::client()
-                    ->where('user_id', $userId)
+                    ->whereUserId($userId)
                     ->orderBy('name', 'asc')->get();
     }
 
