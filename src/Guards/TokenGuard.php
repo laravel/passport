@@ -127,15 +127,18 @@ class TokenGuard
             return;
         }
 
-        // If the access token is valid we will retrieve the user according to the user ID
-        // associated with the token. We will use the provider implementation which may
+        // If the access token is valid and has a user associated
+        // with it we will retrieve the user according to the user ID
+        // We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->provider->retrieveById(
-            $psr->getAttribute('oauth_user_id') ?: null
-        );
+        $userId = $psr->getAttribute('oauth_user_id') ?: null;
 
-        if (! $user) {
-            return;
+        if ($userId) {
+            $user = $this->provider->retrieveById($userId);
+
+            if (! $user) {
+                return;
+            }
         }
 
         // Next, we will assign a token instance to this user which the developers may use
