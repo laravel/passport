@@ -39,6 +39,13 @@ class Passport
     public static $personalAccessClientId;
 
     /**
+     * The default scope.
+     *
+     * @var string
+     */
+    public static $defaultScope;
+
+    /**
      * All of the scopes defined for the application.
      *
      * @var array
@@ -46,13 +53,6 @@ class Passport
     public static $scopes = [
         //
     ];
-
-    /**
-     * The default scope given to a token when no scope was requested
-     *
-     * @var string
-     */
-    public static $defaultScope;
 
     /**
      * The date when access tokens expire.
@@ -206,6 +206,17 @@ class Passport
     }
 
     /**
+     * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
+     *
+     * @param  array|string  $scope
+     * @return void
+     */
+    public static function setDefaultScope($scope)
+    {
+        static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
+    }
+
+    /**
      * Get all of the defined scope IDs.
      *
      * @return array
@@ -264,17 +275,6 @@ class Passport
     public static function tokensCan(array $scopes)
     {
         static::$scopes = $scopes;
-    }
-
-    /**
-     * set the default scope as a space delimited list
-     *
-     * @param array|string $scope
-     * @return void
-     */
-    public static function setDefaultScope($scope)
-    {
-        static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
     }
 
     /**
