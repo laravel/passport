@@ -48,6 +48,13 @@ class Passport
     ];
 
     /**
+     * The default scope given to a token when no scope was requested
+     *
+     * @var string
+     */
+    public static $defaultScope;
+
+    /**
      * The date when access tokens expire.
      *
      * @var \DateTimeInterface|null
@@ -257,6 +264,17 @@ class Passport
     public static function tokensCan(array $scopes)
     {
         static::$scopes = $scopes;
+    }
+
+    /**
+     * set the default scope as a space delimited list
+     *
+     * @param array|string $scope
+     * @return void
+     */
+    public static function setDefaultScope($scope)
+    {
+        static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
     }
 
     /**
