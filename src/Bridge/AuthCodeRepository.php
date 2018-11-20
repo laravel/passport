@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Laravel\Passport\Passport;
 use Illuminate\Database\Connection;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
@@ -41,14 +42,16 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        $this->database->table('oauth_auth_codes')->insert([
+        $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
             'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
-        ]);
+        ];
+
+        Passport::authCode()->setRawAttributes($attributes)->save();
     }
 
     /**
@@ -56,7 +59,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-        $this->database->table('oauth_auth_codes')
+        $this->database->table(Passport::authCode()->getTable())
                     ->where('id', $codeId)->update(['revoked' => true]);
     }
 
@@ -65,7 +68,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return $this->database->table('oauth_auth_codes')
+        return $this->database->table(Passport::authCode()->getTable())
                     ->where('id', $codeId)->where('revoked', 1)->exists();
     }
 }

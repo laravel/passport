@@ -39,6 +39,13 @@ class Passport
     public static $personalAccessClientId;
 
     /**
+     * The default scope.
+     *
+     * @var string
+     */
+    public static $defaultScope;
+
+    /**
      * All of the scopes defined for the application.
      *
      * @var array
@@ -196,6 +203,17 @@ class Passport
         static::$personalAccessClientId = $clientId;
 
         return new static;
+    }
+
+    /**
+     * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
+     *
+     * @param  array|string  $scope
+     * @return void
+     */
+    public static function setDefaultScope($scope)
+    {
+        static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
     }
 
     /**

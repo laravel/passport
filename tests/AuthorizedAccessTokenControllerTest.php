@@ -61,7 +61,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $tokens = $this->controller->forUser($request);
 
-        $this->assertEquals(1, count($tokens));
+        $this->assertCount(1, $tokens);
         $this->assertEquals($token2, $tokens[0]);
     }
 
