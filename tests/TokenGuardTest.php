@@ -11,6 +11,11 @@ use Laravel\Passport\Passport;
 
 class TokenGuardTest extends TestCase
 {
+    public function setUp()
+    {
+        Passport::ignoreCsrfToken(false);
+    }
+
     public function tearDown()
     {
         Mockery::close();
@@ -160,8 +165,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        $oldIgnore = Passport::$ignoreCsrfToken;
-        Passport::ignoreCsrfToken(true);
+        Passport::ignoreCsrfToken();
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
         $request->cookies->set('laravel_token', $this->createAuthToken($encrypter));
@@ -171,11 +175,11 @@ class TokenGuardTest extends TestCase
         $user = $guard->user($request);
 
         $this->assertEquals($expectedUser, $user);
-        Passport::ignoreCsrfToken($oldIgnore);
     }
 
 
-    public function createAuthToken($encrypter, $lifetime=120) {
+    public function createAuthToken($encrypter, $lifetime=120)
+    {
         $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $config->shouldReceive('get')->with('session')->andReturn([
             'lifetime' => $lifetime,
