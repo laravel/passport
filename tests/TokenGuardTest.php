@@ -101,10 +101,9 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
-        $request->cookies->set('laravel_token', $authToken );
+        $request->cookies->set('laravel_token', $this->createAuthToken($encrypter));
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
@@ -123,10 +122,9 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
-        $request->cookies->set('laravel_token', $authToken);
+        $request->cookies->set('laravel_token', $this->createAuthToken($encrypter));
 
         $userProvider->shouldReceive('retrieveById')->never();
 
@@ -143,10 +141,9 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        $authToken = $this->createAuthToken($encrypter, ['lifetime'=>-20]);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
-        $request->cookies->set('laravel_token', $authToken);
+        $request->cookies->set('laravel_token', $this->createAuthToken($encrypter, -20));
 
         $userProvider->shouldReceive('retrieveById')->never();
 
@@ -165,10 +162,9 @@ class TokenGuardTest extends TestCase
 
         $oldIgnore = Passport::$ignoreCsrfToken;
         Passport::ignoreCsrfToken(true);
-        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
-        $request->cookies->set('laravel_token', $authToken);
+        $request->cookies->set('laravel_token', $this->createAuthToken($encrypter));
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
@@ -179,9 +175,7 @@ class TokenGuardTest extends TestCase
     }
 
 
-    public function createAuthToken($encrypter, $options=[]) {
-        $options = array_merge(['csrfToken'=>'token', 'lifetime'=>120], $options);
-        extract($options);
+    public function createAuthToken($encrypter, $lifetime=120) {
         $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
         $config->shouldReceive('get')->with('session')->andReturn([
             'lifetime' => $lifetime,
@@ -191,7 +185,7 @@ class TokenGuardTest extends TestCase
             'same_site' => 'lax',
         ]);
         $factory = new ApiTokenCookieFactory($config, $encrypter);
-        $token = $factory->make(1, $csrfToken);
+        $token = $factory->make(1, 'token');
         return $token->getValue();
     }
 }
