@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Laravel\Passport\Guards\TokenGuard;
+use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Passport;
 
 class TokenGuardTest extends TestCase
@@ -100,14 +101,10 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
-        $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
-        );
+        $request->cookies->set('laravel_token', $authToken );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
@@ -126,14 +123,10 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
-        $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
-        );
+        $request->cookies->set('laravel_token', $authToken);
 
         $userProvider->shouldReceive('retrieveById')->never();
 
@@ -150,14 +143,10 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $authToken = $this->createAuthToken($encrypter, ['lifetime'=>-20]);
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
-        $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
-                'sub' => 1, 'csrf' => 'token',
-                'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
-        );
+        $request->cookies->set('laravel_token', $authToken);
 
         $userProvider->shouldReceive('retrieveById')->never();
 
@@ -174,21 +163,36 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
-        Passport::ignoreCsrfToken();
-
+        $oldIgnore = Passport::$ignoreCsrfToken;
+        Passport::ignoreCsrfToken(true);
+        $authToken = $this->createAuthToken($encrypter);
         $request = Request::create('/');
-        $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
-                'sub' => 1,
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
-        );
+        $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
+        $request->cookies->set('laravel_token', $authToken);
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
         $user = $guard->user($request);
 
         $this->assertEquals($expectedUser, $user);
+        Passport::ignoreCsrfToken($oldIgnore);
+    }
+
+
+    public function createAuthToken($encrypter, $options=[]) {
+        $options = array_merge(['csrfToken'=>'token', 'lifetime'=>120], $options);
+        extract($options);
+        $config = Mockery::mock('Illuminate\Contracts\Config\Repository');
+        $config->shouldReceive('get')->with('session')->andReturn([
+            'lifetime' => $lifetime,
+            'path' => '/',
+            'domain' => null,
+            'secure' => true,
+            'same_site' => 'lax',
+        ]);
+        $factory = new ApiTokenCookieFactory($config, $encrypter);
+        $token = $factory->make(1, $csrfToken);
+        return $token->getValue();
     }
 }
 
