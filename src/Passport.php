@@ -335,8 +335,8 @@ class Passport
     /**
      * Indicate that Passport should ignore incoming CSRF tokens.
      *
-     * @param  boolean|null  $ignoreCsrfToken
-     * @return boolean|static
+     * @param  bool  $ignoreCsrfToken
+     * @return static
      */
     public static function ignoreCsrfToken($ignoreCsrfToken = true)
     {
@@ -348,7 +348,7 @@ class Passport
     /**
      * Set the current user for the application with the given scopes.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|\Laravel\Passport\HasApiTokens  $user
      * @param  array  $scopes
      * @param  string  $guard
      * @return \Illuminate\Contracts\Auth\Authenticatable
