@@ -3,8 +3,8 @@
 namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\PersonalAccessClient;
 
 class ClientCommand extends Command
 {
@@ -35,18 +35,14 @@ class ClientCommand extends Command
     public function handle(ClientRepository $clients)
     {
         if ($this->option('personal')) {
-            return $this->createPersonalClient($clients);
+            $this->createPersonalClient($clients);
+        } elseif ($this->option('password')) {
+            $this->createPasswordClient($clients);
+        } elseif ($this->option('client')) {
+            $this->createClientCredentialsClient($clients);
+        } else {
+            $this->createAuthCodeClient($clients);
         }
-
-        if ($this->option('password')) {
-            return $this->createPasswordClient($clients);
-        }
-
-        if ($this->option('client')) {
-            return $this->createClientCredentialsClient($clients);
-        }
-
-        $this->createAuthCodeClient($clients);
     }
 
     /**
@@ -67,8 +63,8 @@ class ClientCommand extends Command
         );
 
         $this->info('Personal access client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
     }
 
     /**
@@ -89,8 +85,29 @@ class ClientCommand extends Command
         );
 
         $this->info('Password grant client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
+     * Create a client credentials grant client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function createClientCredentialsClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the client?'
+        );
+
+        $client = $clients->create(
+            null, $name, ''
+        );
+
+        $this->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
     }
 
     /**
@@ -119,27 +136,18 @@ class ClientCommand extends Command
         );
 
         $this->info('New client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
     }
 
     /**
-     * Create a client credentials grant client.
+     * Output the client's ID and secret key.
      *
-     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\Client  $client
      * @return void
      */
-    protected function createClientCredentialsClient(ClientRepository $clients)
+    protected function outputClientDetails(Client $client)
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
-        );
-
-        $client = $clients->create(
-            null, $name, ''
-        );
-
-        $this->info('New client created successfully.');
         $this->line('<comment>Client ID:</comment> '.$client->id);
         $this->line('<comment>Client secret:</comment> '.$client->secret);
     }
