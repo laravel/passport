@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessClient;
 
@@ -67,8 +68,8 @@ class ClientCommand extends Command
         );
 
         $this->info('Personal access client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
     }
 
     /**
@@ -89,8 +90,8 @@ class ClientCommand extends Command
         );
 
         $this->info('Password grant client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client Secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
     }
 
     /**
@@ -119,8 +120,8 @@ class ClientCommand extends Command
         );
 
         $this->info('New client created successfully.');
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+
+        $this->outputClientDetails($client);
     }
 
     /**
@@ -140,6 +141,18 @@ class ClientCommand extends Command
         );
 
         $this->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
+     * Output the client's ID and secret key.
+     *
+     * @param  \Laravel\Passport\Client  $client
+     * @return void
+     */
+    protected function outputClientDetails(Client $client)
+    {
         $this->line('<comment>Client ID:</comment> '.$client->id);
         $this->line('<comment>Client secret:</comment> '.$client->secret);
     }
