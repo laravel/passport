@@ -90,6 +90,27 @@ class ClientCommand extends Command
     }
 
     /**
+     * Create a client credentials grant client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function createClientCredentialsClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the client?'
+        );
+
+        $client = $clients->create(
+            null, $name, ''
+        );
+
+        $this->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
      * Create a authorization code client.
      *
      * @param  \Laravel\Passport\ClientRepository  $clients
@@ -112,27 +133,6 @@ class ClientCommand extends Command
 
         $client = $clients->create(
             $userId, $name, $redirect
-        );
-
-        $this->info('New client created successfully.');
-
-        $this->outputClientDetails($client);
-    }
-
-    /**
-     * Create a client credentials grant client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
-     */
-    protected function createClientCredentialsClient(ClientRepository $clients)
-    {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
-        );
-
-        $client = $clients->create(
-            null, $name, ''
         );
 
         $this->info('New client created successfully.');
