@@ -41,7 +41,7 @@ class ClientController
      * Get all of the clients for the authenticated user.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Illuminate\Database\Eloquent\Collection
      */
     public function forUser(Request $request)
     {
@@ -54,7 +54,7 @@ class ClientController
      * Store a new client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|\Laravel\Passport\Client
      */
     public function store(Request $request)
     {
