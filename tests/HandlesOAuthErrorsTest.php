@@ -1,15 +1,23 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Error;
+use Exception;
+use Mockery as m;
+use RuntimeException;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
 
 class HandlesOAuthErrorsTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function testShouldReturnCallbackResultIfNoErrorIsThrown()
@@ -26,10 +34,10 @@ class HandlesOAuthErrorsTest extends TestCase
 
     public function testShouldHandleOAuthServerException()
     {
-        Container::getInstance()->instance(ExceptionHandler::class, $handler = Mockery::mock());
+        Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
-        $exception = new \League\OAuth2\Server\Exception\OAuthServerException('Error', 1, 'fatal');
+        $exception = new OAuthServerException('Error', 1, 'fatal');
 
         $handler->shouldReceive('report')->once()->with($exception);
 
@@ -43,7 +51,7 @@ class HandlesOAuthErrorsTest extends TestCase
 
     public function testShouldHandleOtherExceptions()
     {
-        Container::getInstance()->instance(ExceptionHandler::class, $handler = Mockery::mock());
+        Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
         $exception = new RuntimeException('Exception occurred', 1);
@@ -60,14 +68,14 @@ class HandlesOAuthErrorsTest extends TestCase
 
     public function testShouldHandleThrowables()
     {
-        Container::getInstance()->instance(ExceptionHandler::class, $handler = Mockery::mock());
+        Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
         $exception = new Error('Fatal Error', 1);
 
         $handler->shouldReceive('report')
             ->once()
-            ->with(Mockery::type(Exception::class));
+            ->with(m::type(Exception::class));
 
         $result = $controller->test(function () use ($exception) {
             throw $exception;
@@ -80,7 +88,7 @@ class HandlesOAuthErrorsTest extends TestCase
 
 class HandlesOAuthErrorsStubController
 {
-    use \Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
+    use HandlesOAuthErrors;
 
     public function test($callback)
     {

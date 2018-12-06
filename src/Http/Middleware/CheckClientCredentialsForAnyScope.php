@@ -36,7 +36,7 @@ class CheckClientCredentialsForAnyScope
      * @param  \Closure  $next
      * @param  mixed  ...$scopes
      * @return mixed
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Illuminate\Auth\AuthenticationException|\Laravel\Passport\Exceptions\MissingScopeException
      */
     public function handle($request, Closure $next, ...$scopes)
     {
@@ -58,10 +58,9 @@ class CheckClientCredentialsForAnyScope
     /**
      * Validate the scopes on the incoming request.
      *
-     * @param  \Psr\Http\Message\ResponseInterface $psr
+     * @param  \Psr\Http\Message\ServerRequestInterface $psr
      * @param  array  $scopes
      * @return bool
-     * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     protected function validateScopes($psr, $scopes)
     {

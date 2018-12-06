@@ -2,7 +2,6 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Psr\Http\Message\ResponseInterface;
 
 trait ConvertsPsrResponses
 {

@@ -1,5 +1,9 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Mockery as m;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials;
@@ -8,13 +12,13 @@ class CheckClientCredentialsTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_request_is_passed_along_if_token_is_valid()
     {
-        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Mockery::mock());
+        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -34,8 +38,8 @@ class CheckClientCredentialsTest extends TestCase
 
     public function test_request_is_passed_along_if_token_and_scope_are_valid()
     {
-        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Mockery::mock());
+        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -54,13 +58,13 @@ class CheckClientCredentialsTest extends TestCase
     }
 
     /**
-     * @expectedException Illuminate\Auth\AuthenticationException
+     * @expectedException \Illuminate\Auth\AuthenticationException
      */
     public function test_exception_is_thrown_when_oauth_throws_exception()
     {
-        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
+        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
-            new League\OAuth2\Server\Exception\OAuthServerException('message', 500, 'error type')
+            new OAuthServerException('message', 500, 'error type')
         );
 
         $middleware = new CheckClientCredentials($resourceServer);
@@ -78,8 +82,8 @@ class CheckClientCredentialsTest extends TestCase
      */
     public function test_exception_is_thrown_if_token_does_not_have_required_scopes()
     {
-        $resourceServer = Mockery::mock('League\OAuth2\Server\ResourceServer');
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Mockery::mock());
+        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');

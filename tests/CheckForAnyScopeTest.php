@@ -1,5 +1,8 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as CheckScopes;
 
@@ -7,15 +10,15 @@ class CheckForAnyScopesTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_request_is_passed_along_if_scopes_are_present_on_token()
     {
         $middleware = new CheckScopes;
-        $request = Mockery::mock();
-        $request->shouldReceive('user')->andReturn($user = Mockery::mock());
-        $user->shouldReceive('token')->andReturn($token = Mockery::mock());
+        $request = m::mock();
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock());
         $user->shouldReceive('tokenCan')->with('foo')->andReturn(true);
         $user->shouldReceive('tokenCan')->with('bar')->andReturn(false);
 
@@ -27,14 +30,14 @@ class CheckForAnyScopesTest extends TestCase
     }
 
     /**
-     * @expectedException Laravel\Passport\Exceptions\MissingScopeException
+     * @expectedException \Laravel\Passport\Exceptions\MissingScopeException
      */
     public function test_exception_is_thrown_if_token_doesnt_have_scope()
     {
         $middleware = new CheckScopes;
-        $request = Mockery::mock();
-        $request->shouldReceive('user')->andReturn($user = Mockery::mock());
-        $user->shouldReceive('token')->andReturn($token = Mockery::mock());
+        $request = m::mock();
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock());
         $user->shouldReceive('tokenCan')->with('foo')->andReturn(false);
         $user->shouldReceive('tokenCan')->with('bar')->andReturn(false);
 
@@ -44,12 +47,12 @@ class CheckForAnyScopesTest extends TestCase
     }
 
     /**
-     * @expectedException Illuminate\Auth\AuthenticationException
+     * @expectedException \Illuminate\Auth\AuthenticationException
      */
     public function test_exception_is_thrown_if_no_authenticated_user()
     {
         $middleware = new CheckScopes;
-        $request = Mockery::mock();
+        $request = m::mock();
         $request->shouldReceive('user')->once()->andReturn(null);
 
         $middleware->handle($request, function () {
@@ -58,13 +61,13 @@ class CheckForAnyScopesTest extends TestCase
     }
 
     /**
-     * @expectedException Illuminate\Auth\AuthenticationException
+     * @expectedException \Illuminate\Auth\AuthenticationException
      */
     public function test_exception_is_thrown_if_no_token()
     {
         $middleware = new CheckScopes;
-        $request = Mockery::mock();
-        $request->shouldReceive('user')->andReturn($user = Mockery::mock());
+        $request = m::mock();
+        $request->shouldReceive('user')->andReturn($user = m::mock());
         $user->shouldReceive('token')->andReturn(null);
 
         $middleware->handle($request, function () {

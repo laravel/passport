@@ -1,29 +1,34 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
 
 class DenyAuthorizationControllerTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_authorization_can_be_denied()
     {
-        $response = Mockery::mock(ResponseFactory::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($response);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $request = m::mock('Illuminate\Http\Request');
 
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
 
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
-            'League\OAuth2\Server\RequestTypes\AuthorizationRequest'
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
+            AuthorizationRequest::class
         ));
 
         $authRequest->shouldReceive('setUser')->once();
@@ -41,18 +46,18 @@ class DenyAuthorizationControllerTest extends TestCase
 
     public function test_authorization_can_be_denied_with_multiple_redirect_uris()
     {
-        $response = Mockery::mock(ResponseFactory::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($response);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $request = m::mock('Illuminate\Http\Request');
 
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
 
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
-            'League\OAuth2\Server\RequestTypes\AuthorizationRequest'
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
+            AuthorizationRequest::class
         ));
 
         $authRequest->shouldReceive('setUser')->once();
@@ -70,18 +75,18 @@ class DenyAuthorizationControllerTest extends TestCase
 
     public function test_authorization_can_be_denied_implicit()
     {
-        $response = Mockery::mock(ResponseFactory::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($response);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $request = m::mock('Illuminate\Http\Request');
 
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
 
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
-            'League\OAuth2\Server\RequestTypes\AuthorizationRequest'
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
+            AuthorizationRequest::class
         ));
 
         $authRequest->shouldReceive('setUser')->once();
@@ -99,18 +104,18 @@ class DenyAuthorizationControllerTest extends TestCase
     
     public function test_authorization_can_be_denied_with_existing_query_string()
     {
-        $response = Mockery::mock(ResponseFactory::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($response);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $request = m::mock('Illuminate\Http\Request');
 
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
 
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = Mockery::mock(
-            'League\OAuth2\Server\RequestTypes\AuthorizationRequest'
+        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
+            AuthorizationRequest::class
         ));
 
         $authRequest->shouldReceive('setUser')->once();
@@ -127,18 +132,18 @@ class DenyAuthorizationControllerTest extends TestCase
     }
 
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      * @expectedExceptionMessage Authorization request was not present in the session.
      */
     public function test_auth_request_should_exist()
     {
-        $response = Mockery::mock(ResponseFactory::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($response);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $request = m::mock('Illuminate\Http\Request');
 
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
 
@@ -153,6 +158,7 @@ class DenyAuthorizationControllerTest extends TestCase
 class DenyAuthorizationControllerFakeUser
 {
     public $id = 1;
+
     public function getKey()
     {
         return $this->id;
