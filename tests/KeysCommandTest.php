@@ -1,11 +1,12 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Laravel\Passport\Tests;
 
-function storage_path($file = null)
-{
-    return __DIR__.DIRECTORY_SEPARATOR.$file;
-}
+use Mockery as m;
+use phpseclib\Crypt\RSA;
+use Laravel\Passport\Passport;
+use PHPUnit\Framework\TestCase;
+use Laravel\Passport\Console\KeysCommand;
 
 function custom_path($file = null)
 {
@@ -16,7 +17,7 @@ class KeysCommandTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
 
         @unlink(storage_path('oauth-private.key'));
         @unlink(storage_path('oauth-public.key'));
@@ -26,13 +27,13 @@ class KeysCommandTest extends TestCase
 
     public function testPrivateAndPublicKeysAreGenerated()
     {
-        $command = Mockery::mock(Laravel\Passport\Console\KeysCommand::class)
+        $command = m::mock(KeysCommand::class)
             ->makePartial()
             ->shouldReceive('info')
             ->with('Encryption keys generated successfully.')
             ->getMock();
 
-        $rsa = new phpseclib\Crypt\RSA();
+        $rsa = new RSA();
 
         $command->handle($rsa);
 
@@ -42,15 +43,15 @@ class KeysCommandTest extends TestCase
 
     public function testPrivateAndPublicKeysAreGeneratedInCustomPath()
     {
-        \Laravel\Passport\Passport::loadKeysFrom(custom_path());
+        Passport::loadKeysFrom(custom_path());
 
-        $command = Mockery::mock(Laravel\Passport\Console\KeysCommand::class)
+        $command = m::mock(KeysCommand::class)
             ->makePartial()
             ->shouldReceive('info')
             ->with('Encryption keys generated successfully.')
             ->getMock();
 
-        $command->handle(new phpseclib\Crypt\RSA);
+        $command->handle(new RSA);
 
         $this->assertFileExists(custom_path('oauth-private.key'));
         $this->assertFileExists(custom_path('oauth-public.key'));
@@ -70,6 +71,6 @@ class KeysCommandTest extends TestCase
         $command->shouldReceive('error')
             ->with('Encryption keys already exist. Use the --force option to overwrite them.');
 
-        $command->handle(new phpseclib\Crypt\RSA);
+        $command->handle(new RSA);
     }
 }

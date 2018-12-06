@@ -1,38 +1,46 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Exception;
+use Mockery as m;
+use Zend\Diactoros\Response;
+use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
+use Laravel\Passport\Bridge\Scope;
 use Illuminate\Container\Container;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Laravel\Passport\Http\Controllers\AuthorizationController;
 
 class AuthorizationControllerTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_authorization_view_is_presented()
     {
-        Laravel\Passport\Passport::tokensCan([
+        Passport::tokensCan([
             'scope-1' => 'description',
         ]);
 
-        $server = Mockery::mock(AuthorizationServer::class);
-        $response = Mockery::mock(ResponseFactory::class);
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $controller = new AuthorizationController($server, $response);
 
-        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock());
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
 
-        $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request = m::mock('Illuminate\Http\Request');
+        $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $request->shouldReceive('user')->andReturn('user');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->andReturn([new Laravel\Passport\Bridge\Scope('scope-1')]);
+        $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
 
         $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($authRequest) {
             $this->assertEquals('passport::authorize', $view);
@@ -43,38 +51,38 @@ class AuthorizationControllerTest extends TestCase
             return 'view';
         });
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock('Laravel\Passport\ClientRepository');
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens = m::mock('Laravel\Passport\TokenRepository');
         $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
 
         $this->assertEquals('view', $controller->authorize(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         ));
     }
 
     public function test_authorization_exceptions_are_handled()
     {
-        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = Mockery::mock());
+        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = m::mock());
         $exceptions->shouldReceive('report')->once();
 
-        $server = Mockery::mock(AuthorizationServer::class);
-        $response = Mockery::mock(ResponseFactory::class);
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
+        $controller = new AuthorizationController($server, $response);
 
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
 
-        $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('session')->andReturn($session = Mockery::mock());
+        $request = m::mock('Illuminate\Http\Request');
+        $request->shouldReceive('session')->andReturn($session = m::mock());
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock('Laravel\Passport\ClientRepository');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
+        $tokens = m::mock('Laravel\Passport\TokenRepository');
 
         $this->assertEquals('whoops', $controller->authorize(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         )->getContent());
     }
 
@@ -83,38 +91,43 @@ class AuthorizationControllerTest extends TestCase
      */
     public function test_request_is_approved_if_valid_token_exists()
     {
-        Laravel\Passport\Passport::tokensCan([
+        Passport::tokensCan([
             'scope-1' => 'description',
         ]);
 
-        $server = Mockery::mock(AuthorizationServer::class);
-        $response = Mockery::mock(ResponseFactory::class);
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
 
-        $controller = new Laravel\Passport\Http\Controllers\AuthorizationController($server, $response);
-        $psrResponse = new Zend\Diactoros\Response();
+        $controller = new AuthorizationController($server, $response);
+        $psrResponse = new Response();
         $psrResponse->getBody()->write('approved');
-        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = Mockery::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
-        $server->shouldReceive('completeAuthorizationRequest')->with($authRequest, Mockery::type('Psr\Http\Message\ResponseInterface'))->andReturn($psrResponse);
+        $server->shouldReceive('validateAuthorizationRequest')
+            ->andReturn($authRequest = m::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
+        $server->shouldReceive('completeAuthorizationRequest')
+            ->with($authRequest, m::type('Psr\Http\Message\ResponseInterface'))
+            ->andReturn($psrResponse);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('user')->once()->andReturn($user = Mockery::mock());
+        $request = m::mock('Illuminate\Http\Request');
+        $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getKey')->andReturn(1);
         $request->shouldNotReceive('session');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Laravel\Passport\Bridge\Scope('scope-1')]);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
-        $clients = Mockery::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock('Laravel\Passport\ClientRepository');
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = Mockery::mock('Laravel\Passport\TokenRepository');
-        $tokens->shouldReceive('findValidToken')->with($user, 'client')->andReturn($token = Mockery::mock('Laravel\Passport\Token'));
+        $tokens = m::mock('Laravel\Passport\TokenRepository');
+        $tokens->shouldReceive('findValidToken')
+            ->with($user, 'client')
+            ->andReturn($token = m::mock('Laravel\Passport\Token'));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
         $this->assertEquals('approved', $controller->authorize(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
         )->getContent());
     }
 }

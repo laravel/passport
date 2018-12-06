@@ -1,5 +1,8 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Mockery as m;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Config\Repository as Config;
@@ -10,14 +13,14 @@ class PassportServiceProviderTest extends TestCase
 {
     public function test_can_use_crypto_keys_from_config()
     {
-        $config = Mockery::mock(Config::class, function ($config) {
+        $config = m::mock(Config::class, function ($config) {
             $config->shouldReceive('get')
                 ->with('passport.private_key')
                 ->andReturn('-----BEGIN RSA PRIVATE KEY-----\nconfig\n-----END RSA PRIVATE KEY-----');
         });
 
         $provider = new PassportServiceProvider(
-            Mockery::mock(App::class, ['make' => $config])
+            m::mock(App::class, ['make' => $config])
         );
 
         // Call protected makeCryptKey method
@@ -40,12 +43,12 @@ class PassportServiceProviderTest extends TestCase
             "-----BEGIN RSA PRIVATE KEY-----\ndisk\n-----END RSA PRIVATE KEY-----"
         );
 
-        $config = Mockery::mock(Config::class, function ($config) {
+        $config = m::mock(Config::class, function ($config) {
             $config->shouldReceive('get')->with('passport.private_key')->andReturn(null);
         });
 
         $provider = new PassportServiceProvider(
-            Mockery::mock(App::class, ['make' => $config])
+            m::mock(App::class, ['make' => $config])
         );
 
         // Call protected makeCryptKey method
