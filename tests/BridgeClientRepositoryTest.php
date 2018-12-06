@@ -1,22 +1,38 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Bridge\ClientRepository;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 
 class BridgeClientRepositoryTest extends TestCase
 {
+    /**
+     * @var \Laravel\Passport\ClientRepository
+     */
+    private $clientModelRepository;
+
+    /**
+     * @var \Laravel\Passport\Bridge\ClientRepository
+     */
+    private $repository;
+
     public function setUp()
     {
-        $clientModelRepository = Mockery::mock(Laravel\Passport\ClientRepository::class);
-        $clientModelRepository->shouldReceive('findActive')->with(1)->andReturn(new BridgeClientRepositoryTestClientStub);
+        $clientModelRepository = m::mock(ClientRepository::class);
+        $clientModelRepository->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new BridgeClientRepositoryTestClientStub);
 
         $this->clientModelRepository = $clientModelRepository;
-        $this->repository = new Laravel\Passport\Bridge\ClientRepository($clientModelRepository);
+        $this->repository = new BridgeClientRepository($clientModelRepository);
     }
 
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_can_get_client_for_auth_code_grant()
@@ -109,10 +125,15 @@ class BridgeClientRepositoryTest extends TestCase
 class BridgeClientRepositoryTestClientStub
 {
     public $name = 'Client';
+
     public $redirect = 'http://localhost';
+
     public $secret = 'secret';
+
     public $personal_access_client = false;
+
     public $password_client = false;
+
     public $grant_types;
 
     public function firstParty()

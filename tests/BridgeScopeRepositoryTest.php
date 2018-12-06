@@ -1,5 +1,7 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Bridge\Scope;

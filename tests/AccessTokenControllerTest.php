@@ -1,65 +1,74 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
+use Exception;
+use Mockery as m;
+use Lcobucci\JWT\Parser;
+use Zend\Diactoros\Response;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
+use Laravel\Passport\TokenRepository;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Laravel\Passport\Http\Controllers\AccessTokenController;
 
 class AccessTokenControllerTest extends TestCase
 {
     public function tearDown()
     {
-        Mockery::close();
+        m::close();
     }
 
     public function test_a_token_can_be_issued()
     {
-        $server = Mockery::mock('League\OAuth2\Server\AuthorizationServer');
-        $tokens = Mockery::mock(Laravel\Passport\TokenRepository::class);
+        $server = m::mock('League\OAuth2\Server\AuthorizationServer');
+        $tokens = m::mock(TokenRepository::class);
 
-        $psrResponse = new Zend\Diactoros\Response();
+        $psrResponse = new Response();
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
 
         $server->shouldReceive('respondToAccessTokenRequest')->with(
-            Mockery::type('Psr\Http\Message\ServerRequestInterface'), Mockery::type('Psr\Http\Message\ResponseInterface')
+            m::type('Psr\Http\Message\ServerRequestInterface'), m::type('Psr\Http\Message\ResponseInterface')
         )->andReturn($psrResponse);
 
-        $jwt = Mockery::mock(Lcobucci\JWT\Parser::class);
+        $jwt = m::mock(Parser::class);
         // $jwt->shouldReceive('parse->getClaim')->andReturn('token-id');
 
         // $tokens->shouldReceive('find')->once()->with('token-id')->andReturn(new AccessTokenControllerTestStubToken);
         // $tokens->shouldReceive('revokeOtherAccessTokens')->once()->with(1, 2, 'token-id', false);
 
-        $controller = new Laravel\Passport\Http\Controllers\AccessTokenController($server, $tokens, $jwt);
+        $controller = new AccessTokenController($server, $tokens, $jwt);
 
         $this->assertEquals('{"access_token":"access-token"}', $controller->issueToken(
-            Mockery::mock('Psr\Http\Message\ServerRequestInterface')
+            m::mock('Psr\Http\Message\ServerRequestInterface')
         )->getContent());
     }
 
     public function test_exceptions_are_handled()
     {
-        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = Mockery::mock());
-        Container::getInstance()->instance(Repository::class, $config = Mockery::mock());
+        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = m::mock());
+        Container::getInstance()->instance(Repository::class, $config = m::mock());
         $exceptions->shouldReceive('report')->once();
         $config->shouldReceive('get')->once()->andReturn(true);
 
-        $tokens = Mockery::mock(Laravel\Passport\TokenRepository::class);
-        $jwt = Mockery::mock(Lcobucci\JWT\Parser::class);
+        $tokens = m::mock(TokenRepository::class);
+        $jwt = m::mock(Parser::class);
 
-        $server = Mockery::mock('League\OAuth2\Server\AuthorizationServer');
+        $server = m::mock('League\OAuth2\Server\AuthorizationServer');
         $server->shouldReceive('respondToAccessTokenRequest')->with(
-            Mockery::type('Psr\Http\Message\ServerRequestInterface'), Mockery::type('Psr\Http\Message\ResponseInterface')
+            m::type('Psr\Http\Message\ServerRequestInterface'), m::type('Psr\Http\Message\ResponseInterface')
         )->andThrow(new Exception('whoops'));
 
-        $controller = new Laravel\Passport\Http\Controllers\AccessTokenController($server, $tokens, $jwt);
+        $controller = new AccessTokenController($server, $tokens, $jwt);
 
-        $this->assertEquals('whoops', $controller->issueToken(Mockery::mock('Psr\Http\Message\ServerRequestInterface'))->getOriginalContent());
+        $this->assertEquals('whoops', $controller->issueToken(m::mock('Psr\Http\Message\ServerRequestInterface'))->getOriginalContent());
     }
 }
 
 class AccessTokenControllerTestStubToken
 {
     public $client_id = 1;
+
     public $user_id = 2;
 }
