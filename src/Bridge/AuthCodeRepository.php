@@ -2,8 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
-use Laravel\Passport\Passport;
-use Illuminate\Database\Connection;
+use Laravel\Passport\AuthCodeRepository as CodeRepository;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
@@ -12,21 +11,21 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The database connection.
+     * The token repository instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var \Laravel\Passport\AuthCodeRepository
      */
-    protected $database;
+    protected $codeRepository;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Illuminate\Database\Connection  $database
+     * @param  \Laravel\Passport\AuthCodeRepository  $codeRepository
      * @return void
      */
-    public function __construct(Connection $database)
+    public function __construct(CodeRepository $codeRepository)
     {
-        $this->database = $database;
+        $this->codeRepository = $codeRepository;
     }
 
     /**
@@ -42,16 +41,14 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-        $attributes = [
+        $this->codeRepository->create([
             'id' => $authCodeEntity->getIdentifier(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
             'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
-        ];
-
-        Passport::authCode()->setRawAttributes($attributes)->save();
+        ]);
     }
 
     /**
@@ -59,8 +56,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-        $this->database->table(Passport::authCode()->getTable())
-                    ->where('id', $codeId)->update(['revoked' => true]);
+        $this->codeRepository->revokeAuthCode($codeId);
     }
 
     /**
@@ -68,7 +64,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return $this->database->table(Passport::authCode()->getTable())
-                    ->where('id', $codeId)->where('revoked', 1)->exists();
+        return $this->codeRepository->isAuthCodeRevoked($codeId);
     }
 }
