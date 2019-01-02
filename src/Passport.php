@@ -73,7 +73,7 @@ class Passport
      *
      * @var \DateTimeInterface|null
      */
-    public static $personAccessTokensExpireAt;
+    public static $personalAccessTokensExpireAt;
 
     /**
      * The name for API token cookies.
@@ -331,12 +331,12 @@ class Passport
     public static function personalAccessTokensExpireIn(DateTimeInterface $date = null)
     {
         if (is_null($date)) {
-            return static::$personAccessTokensExpireAt
-                ? Carbon::now()->diff(static::$personAccessTokensExpireAt)
+            return static::$personalAccessTokensExpireAt
+                ? Carbon::now()->diff(static::$personalAccessTokensExpireAt)
                 : new DateInterval('P1Y');
         }
 
-        static::$personAccessTokensExpireAt = $date;
+        static::$personalAccessTokensExpireAt = $date;
 
         return new static;
     }
