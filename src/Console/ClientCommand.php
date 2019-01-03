@@ -17,9 +17,9 @@ class ClientCommand extends Command
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
-            {--redirect_uri= : Redirect URI after authorization request }
-            {--user_id= : User ID the client is assigned to }
-            {--name= : The name of the client}';
+            {--name= : The name of the client}
+            {--redirect_uri= : The URI to redirect to after authorization }
+            {--user_id= : The user ID the client should be assigned to }';
 
     /**
      * The console command description.
