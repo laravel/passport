@@ -100,7 +100,8 @@ class ClientCommand extends Command
     protected function createClientCredentialsClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
+            'What should we name the client?',
+            config('app.name').' ClientCredentials Grant Client'
         );
 
         $client = $clients->create(
