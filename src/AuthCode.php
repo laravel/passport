@@ -14,6 +14,13 @@ class AuthCode extends Model
     protected $table = 'oauth_auth_codes';
 
     /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
      * The guarded attributes on the model.
      *
      * @var array
