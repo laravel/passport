@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TokenRepository
 {
+    private static $tokens = [];
+
     /**
      * Creates a new Access Token.
      *
@@ -26,7 +28,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Passport::token()->where('id', $id)->first();
+        return static::$tokens[$id] ?? (static::$tokens[$id] = Passport::token()->where('id', $id)->first());
     }
 
     /**
@@ -76,6 +78,7 @@ class TokenRepository
      */
     public function save(Token $token)
     {
+        $this->invalidateInMemoryCache();
         $token->save();
     }
 
@@ -87,6 +90,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
+        $this->invalidateInMemoryCache($id);
         return Passport::token()->where('id', $id)->update(['revoked' => true]);
     }
 
@@ -121,5 +125,14 @@ class TokenRepository
                       ->where('expires_at', '>', Carbon::now())
                       ->latest('expires_at')
                       ->first();
+    }
+
+    private function invalidateInMemoryCache($id = null)
+    {
+        if ($id) {
+            unset(static::$tokens[$id]);
+        } else {
+            static::$tokens[$id] = [];
+        }
     }
 }
