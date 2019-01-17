@@ -44,26 +44,6 @@ class AccessTokenControllerTest extends TestCase
             m::mock('Psr\Http\Message\ServerRequestInterface')
         )->getContent());
     }
-
-    public function test_exceptions_are_handled()
-    {
-        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = m::mock());
-        Container::getInstance()->instance(Repository::class, $config = m::mock());
-        $exceptions->shouldReceive('report')->once();
-        $config->shouldReceive('get')->once()->andReturn(true);
-
-        $tokens = m::mock(TokenRepository::class);
-        $jwt = m::mock(Parser::class);
-
-        $server = m::mock('League\OAuth2\Server\AuthorizationServer');
-        $server->shouldReceive('respondToAccessTokenRequest')->with(
-            m::type('Psr\Http\Message\ServerRequestInterface'), m::type('Psr\Http\Message\ResponseInterface')
-        )->andThrow(new Exception('whoops'));
-
-        $controller = new AccessTokenController($server, $tokens, $jwt);
-
-        $this->assertEquals('whoops', $controller->issueToken(m::mock('Psr\Http\Message\ServerRequestInterface'))->getOriginalContent());
-    }
 }
 
 class AccessTokenControllerTestStubToken

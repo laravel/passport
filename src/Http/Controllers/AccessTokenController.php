@@ -10,7 +10,7 @@ use League\OAuth2\Server\AuthorizationServer;
 
 class AccessTokenController
 {
-    use HandlesOAuthErrors;
+    use ConvertsPsrResponses;
 
     /**
      * The authorization server.
@@ -58,10 +58,8 @@ class AccessTokenController
      */
     public function issueToken(ServerRequestInterface $request)
     {
-        return $this->withErrorHandling(function () use ($request) {
-            return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($request, new Psr7Response)
-            );
-        });
+        return $this->convertResponse(
+            $this->server->respondToAccessTokenRequest($request, new Psr7Response)
+        );
     }
 }
