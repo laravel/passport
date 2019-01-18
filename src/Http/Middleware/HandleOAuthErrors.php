@@ -18,15 +18,26 @@ class HandleOAuthErrors
     use ConvertsPsrResponses;
 
     /**
+     * The configuration repository instance..
+     *
      * @var \Illuminate\Contracts\Config\Repository
      */
-    private $config;
+    protected $config;
 
     /**
+     * The exception handler instance.
+     *
      * @var \Illuminate\Contracts\Debug\ExceptionHandler
      */
-    private $exceptionHandler;
+    protected $exceptionHandler;
 
+    /**
+     * Create a new middleware instance.
+     *
+     * @param  \Illuminate\Contracts\Config\Repository  $config
+     * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $exceptionHandler
+     * @return void
+     */
     public function __construct(Config $config, ExceptionHandler $exceptionHandler)
     {
         $this->config = $config;
