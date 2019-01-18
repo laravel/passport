@@ -3,11 +3,15 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
+use Zend\Diactoros\StreamFactory;
+use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\UploadedFileFactory;
 use League\OAuth2\Server\ResourceServer;
+use Zend\Diactoros\ServerRequestFactory;
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 class CheckClientCredentials
 {
@@ -40,7 +44,12 @@ class CheckClientCredentials
      */
     public function handle($request, Closure $next, ...$scopes)
     {
-        $psr = (new DiactorosFactory)->createRequest($request);
+        $psr = (new PsrHttpFactory(
+            new ServerRequestFactory,
+            new StreamFactory,
+            new UploadedFileFactory,
+            new ResponseFactory
+        ))->createRequest($request);
 
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
