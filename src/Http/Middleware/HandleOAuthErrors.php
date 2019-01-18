@@ -18,7 +18,7 @@ class HandleOAuthErrors
     use ConvertsPsrResponses;
 
     /**
-     * The configuration repository instance..
+     * The configuration repository instance.
      *
      * @var \Illuminate\Contracts\Config\Repository
      */
