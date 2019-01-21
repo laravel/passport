@@ -7,7 +7,9 @@ use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Bridge\Client;
+use Laravel\Passport\TokenRepository;
 use Laravel\Passport\Bridge\AccessToken;
+use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Bridge\AccessTokenRepository;
 
 class BridgeAccessTokenRepositoryTest extends TestCase
@@ -21,9 +23,8 @@ class BridgeAccessTokenRepositoryTest extends TestCase
     {
         $expiration = Carbon::now();
 
-        $tokenRepository = m::mock('Laravel\Passport\TokenRepository');
-
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $tokenRepository = m::mock(TokenRepository::class);
+        $events = m::mock(Dispatcher::class);
 
         $tokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
             $this->assertEquals(1, $array['id']);

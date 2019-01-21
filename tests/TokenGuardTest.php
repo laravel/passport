@@ -11,7 +11,12 @@ use PHPUnit\Framework\TestCase;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Container\Container;
 use Illuminate\Encryption\Encrypter;
+use Laravel\Passport\TokenRepository;
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Guards\TokenGuard;
+use League\OAuth2\Server\ResourceServer;
+use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
 class TokenGuardTest extends TestCase
@@ -23,11 +28,11 @@ class TokenGuardTest extends TestCase
 
     public function test_user_can_be_pulled_via_bearer_token()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -52,14 +57,14 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance('Illuminate\Contracts\Debug\ExceptionHandler', $handler = m::mock());
-        $handler->shouldReceive('report')->once()->with(m::type('League\OAuth2\Server\Exception\OAuthServerException'));
+        $container->instance(ExceptionHandler::class, $handler = m::mock());
+        $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
 
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -78,11 +83,11 @@ class TokenGuardTest extends TestCase
 
     public function test_null_is_returned_if_no_user_is_found()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -98,10 +103,10 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -126,10 +131,10 @@ class TokenGuardTest extends TestCase
 
     public function test_cookie_xsrf_is_verified_against_header()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -152,10 +157,10 @@ class TokenGuardTest extends TestCase
 
     public function test_expired_cookies_may_not_be_used()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -178,10 +183,10 @@ class TokenGuardTest extends TestCase
 
     public function test_csrf_check_can_be_disabled()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
@@ -206,11 +211,11 @@ class TokenGuardTest extends TestCase
 
     public function test_client_can_be_pulled_via_bearer_token()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -230,14 +235,14 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance('Illuminate\Contracts\Debug\ExceptionHandler', $handler = m::mock());
-        $handler->shouldReceive('report')->once()->with(m::type('League\OAuth2\Server\Exception\OAuthServerException'));
+        $container->instance(ExceptionHandler::class, $handler = m::mock());
+        $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
 
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -256,11 +261,11 @@ class TokenGuardTest extends TestCase
 
     public function test_null_is_returned_if_no_client_is_found()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $encrypter = m::mock('Illuminate\Contracts\Encryption\Encrypter');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -276,10 +281,10 @@ class TokenGuardTest extends TestCase
 
     public function test_clients_may_be_retrieved_from_cookies()
     {
-        $resourceServer = m::mock('League\OAuth2\Server\ResourceServer');
-        $userProvider = m::mock('Illuminate\Contracts\Auth\UserProvider');
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(UserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);

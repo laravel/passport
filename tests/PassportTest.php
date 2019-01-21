@@ -1,5 +1,7 @@
 <?php
 
+namespace Laravel\Passport\Tests;
+
 use Laravel\Passport\Token;
 use Laravel\Passport\Client;
 use Laravel\Passport\AuthCode;
@@ -46,11 +48,11 @@ class PassportTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function test_missing_personal_access_client_is_reported()
     {
-        Passport::usePersonalAccessClientModel('PersonalAccessClientStub');
+        Passport::usePersonalAccessClientModel(PersonalAccessClientStub::class);
 
         $clientRepository = new ClientRepository;
         $clientRepository->personalAccessClient();

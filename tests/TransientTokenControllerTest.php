@@ -5,6 +5,7 @@ namespace Laravel\Passport\Tests;
 use Mockery as m;
 use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
+use Laravel\Passport\ApiTokenCookieFactory;
 use Symfony\Component\HttpFoundation\Cookie;
 use Laravel\Passport\Http\Controllers\TransientTokenController;
 
@@ -17,7 +18,7 @@ class TransientTokenControllerTest extends TestCase
 
     public function test_token_can_be_refreshed()
     {
-        $cookieFactory = m::mock('Laravel\Passport\ApiTokenCookieFactory');
+        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
         $cookieFactory->shouldReceive('make')->once()->with(1, 'token')->andReturn(new Cookie('cookie'));
 
         $request = m::mock(Request::class);
