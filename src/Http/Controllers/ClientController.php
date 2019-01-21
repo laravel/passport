@@ -122,6 +122,6 @@ class ClientController
 
         $this->clients->delete($client);
 
-        return new Response('Client successfully deleted.', Response::HTTP_NO_CONTENT);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }

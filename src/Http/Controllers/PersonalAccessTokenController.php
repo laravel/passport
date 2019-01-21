@@ -89,6 +89,6 @@ class PersonalAccessTokenController
 
         $token->revoke();
 
-        return new Response('Token successfully revoked.', Response::HTTP_NO_CONTENT);
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
