@@ -59,5 +59,7 @@ class AuthorizedAccessTokenController
         }
 
         $token->revoke();
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
