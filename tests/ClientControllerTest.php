@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Http\Rules\RedirectRule;
+use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\ClientController;
 
 class ClientControllerTest extends TestCase
@@ -155,7 +156,9 @@ class ClientControllerTest extends TestCase
             $clients, $validator, m::mock(RedirectRule::class)
         );
 
-        $controller->destroy($request, 1);
+        $response = $controller->destroy($request, 1);
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
