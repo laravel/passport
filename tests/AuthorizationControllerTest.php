@@ -3,7 +3,14 @@
 namespace Laravel\Passport\Tests;
 
 use Exception;
+use Illuminate\Http\Request;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Token;
+use Laravel\Passport\TokenRepository;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery as m;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +41,7 @@ class AuthorizationControllerTest extends TestCase
 
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $request->shouldReceive('user')->andReturn('user');
@@ -51,14 +58,14 @@ class AuthorizationControllerTest extends TestCase
             return 'view';
         });
 
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
+        $tokens = m::mock(TokenRepository::class);
         $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
 
         $this->assertEquals('view', $controller->authorize(
-            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         ));
     }
 
@@ -74,21 +81,17 @@ class AuthorizationControllerTest extends TestCase
 
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
 
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
+        $clients = m::mock(ClientRepository::class);
+        $tokens = m::mock(TokenRepository::class);
 
         $this->assertEquals('whoops', $controller->authorize(
-            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         )->getContent());
     }
 
-    /**
-     * @group shithead
-     */
     public function test_request_is_approved_if_valid_token_exists()
     {
         Passport::tokensCan([
@@ -102,12 +105,12 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = new Response();
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
-            ->andReturn($authRequest = m::mock('League\OAuth2\Server\RequestTypes\AuthorizationRequest'));
+            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
         $server->shouldReceive('completeAuthorizationRequest')
-            ->with($authRequest, m::type('Psr\Http\Message\ResponseInterface'))
+            ->with($authRequest, m::type(ResponseInterface::class))
             ->andReturn($psrResponse);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
         $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getKey')->andReturn(1);
         $request->shouldNotReceive('session');
@@ -117,17 +120,17 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn('client');
 
-        $tokens = m::mock('Laravel\Passport\TokenRepository');
+        $tokens = m::mock(TokenRepository::class);
         $tokens->shouldReceive('findValidToken')
             ->with($user, 'client')
-            ->andReturn($token = m::mock('Laravel\Passport\Token'));
+            ->andReturn($token = m::mock(Token::class));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
         $this->assertEquals('approved', $controller->authorize(
-            m::mock('Psr\Http\Message\ServerRequestInterface'), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         )->getContent());
     }
 }

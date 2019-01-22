@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\TokenRepository;
+use Illuminate\Contracts\Validation\Factory;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 
@@ -42,7 +43,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertCount(1, $controller->forUser($request));
@@ -68,7 +69,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
@@ -102,7 +103,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $response = $controller->destroy($request, 1);
@@ -124,7 +125,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertEquals(404, $controller->destroy($request, 3)->status());

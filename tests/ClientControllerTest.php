@@ -6,6 +6,8 @@ use Mockery as m;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
+use Laravel\Passport\ClientRepository;
+use Illuminate\Contracts\Validation\Factory;
 use Laravel\Passport\Http\Rules\RedirectRule;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\ClientController;
@@ -19,16 +21,16 @@ class ClientControllerTest extends TestCase
 
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('activeForUser')->once()->with(1)->andReturn($client = m::mock());
         $client->shouldReceive('makeVisible')->with('secret')->andReturn($client);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn(new ClientControllerFakeUser);
 
         $controller = new ClientController(
             $clients,
-            m::mock('Illuminate\Contracts\Validation\Factory'),
+            m::mock(Factory::class),
             m::mock(RedirectRule::class)
         );
 
@@ -37,7 +39,7 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_stored()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(function () {
@@ -51,7 +53,7 @@ class ClientControllerTest extends TestCase
 
         $redirectRule = m::mock(RedirectRule::class);
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
@@ -70,8 +72,8 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_updated()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $client = m::mock('Laravel\Passport\Client');
+        $clients = m::mock(ClientRepository::class);
+        $client = m::mock(Client::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -84,12 +86,12 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('update')->once()->with(
-            m::type('Laravel\Passport\Client'), 'client name', 'http://localhost'
+            m::type(Client::class), 'client name', 'http://localhost'
         )->andReturn('response');
 
         $redirectRule = m::mock(RedirectRule::class);
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
@@ -108,7 +110,7 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -122,7 +124,7 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('update')->never();
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
             $clients, $validator, m::mock(RedirectRule::class)
@@ -133,8 +135,8 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_deleted()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
-        $client = m::mock('Laravel\Passport\Client');
+        $clients = m::mock(ClientRepository::class);
+        $client = m::mock(Client::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -147,10 +149,10 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('delete')->once()->with(
-            m::type('Laravel\Passport\Client')
+            m::type(Client::class)
         )->andReturn('response');
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
             $clients, $validator, m::mock(RedirectRule::class)
@@ -163,7 +165,7 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
-        $clients = m::mock('Laravel\Passport\ClientRepository');
+        $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -177,7 +179,7 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('delete')->never();
 
-        $validator = m::mock('Illuminate\Contracts\Validation\Factory');
+        $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
             $clients, $validator, m::mock(RedirectRule::class)

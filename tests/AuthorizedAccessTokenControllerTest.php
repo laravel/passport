@@ -23,17 +23,17 @@ class AuthorizedAccessTokenControllerTest extends TestCase
      */
     protected $controller;
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function setUp()
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
-        $this->controller = new AuthorizedAccessTokenController(
-            $this->tokenRepository
-        );
+        $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
+    }
+
+    public function tearDown()
+    {
+        m::close();
+
+        unset($this->tokenRepository, $this->controller);
     }
 
     public function test_tokens_can_be_retrieved_for_users()
