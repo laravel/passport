@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\TokenRepository;
+use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 
 class AuthorizedAccessTokenControllerTest extends TestCase
@@ -22,17 +23,17 @@ class AuthorizedAccessTokenControllerTest extends TestCase
      */
     protected $controller;
 
-    public function tearDown()
-    {
-        m::close();
-    }
-
     public function setUp()
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
-        $this->controller = new AuthorizedAccessTokenController(
-            $this->tokenRepository
-        );
+        $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
+    }
+
+    public function tearDown()
+    {
+        m::close();
+
+        unset($this->tokenRepository, $this->controller);
     }
 
     public function test_tokens_can_be_retrieved_for_users()
@@ -85,7 +86,9 @@ class AuthorizedAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $this->controller->destroy($request, 1);
+        $response = $this->controller->destroy($request, 1);
+
+        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
     }
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()

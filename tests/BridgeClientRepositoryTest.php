@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 
@@ -33,13 +34,15 @@ class BridgeClientRepositoryTest extends TestCase
     public function tearDown()
     {
         m::close();
+
+        unset($this->clientModelRepository, $this->repository);
     }
 
     public function test_can_get_client_for_auth_code_grant()
     {
         $client = $this->repository->getClientEntity(1, 'authorization_code', 'secret', true);
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $client);
+        $this->assertInstanceOf(Client::class, $client);
         $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'wrong-secret', true));
         $this->assertNull($this->repository->getClientEntity(1, 'client_credentials', 'wrong-secret', true));
     }
@@ -49,7 +52,10 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->personal_access_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret', true));
+        $this->assertInstanceOf(
+            Client::class,
+            $this->repository->getClientEntity(1, 'client_credentials', 'secret', true)
+        );
         $this->assertNull($this->repository->getClientEntity(1, 'authorization_code', 'secret', true));
     }
 
@@ -58,7 +64,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->password_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'password', 'secret'));
+        $this->assertInstanceOf(Client::class, $this->repository->getClientEntity(1, 'password', 'secret'));
     }
 
     public function test_password_grant_is_prevented()
@@ -68,7 +74,7 @@ class BridgeClientRepositoryTest extends TestCase
 
     public function test_authorization_code_grant_is_permitted()
     {
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'authorization_code', 'secret'));
+        $this->assertInstanceOf(Client::class, $this->repository->getClientEntity(1, 'authorization_code', 'secret'));
     }
 
     public function test_authorization_code_grant_is_prevented()
@@ -84,7 +90,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->personal_access_client = true;
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'personal_access', 'secret'));
+        $this->assertInstanceOf(Client::class, $this->repository->getClientEntity(1, 'personal_access', 'secret'));
     }
 
     public function test_personal_access_grant_is_prevented()
@@ -94,7 +100,7 @@ class BridgeClientRepositoryTest extends TestCase
 
     public function test_client_credentials_grant_is_permitted()
     {
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+        $this->assertInstanceOf(Client::class, $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
 
     public function test_client_credentials_grant_is_prevented()
@@ -110,7 +116,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->clientModelRepository->findActive(1);
         $client->grant_types = ['client_credentials'];
 
-        $this->assertInstanceOf('Laravel\Passport\Bridge\Client', $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
+        $this->assertInstanceOf(Client::class, $this->repository->getClientEntity(1, 'client_credentials', 'secret'));
     }
 
     public function test_grant_types_disallows_request()

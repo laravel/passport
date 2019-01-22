@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests;
 
+use Illuminate\Http\Request;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -21,7 +22,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($response);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
@@ -50,7 +51,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($response);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
@@ -79,7 +80,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($response);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
@@ -108,7 +109,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($response);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
@@ -141,7 +142,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($response);
 
-        $request = m::mock('Illuminate\Http\Request');
+        $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->never();

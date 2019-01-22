@@ -108,7 +108,7 @@ class ClientController
     /**
      * Delete the given client.
      *
-     * @param  Request  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  string  $clientId
      * @return \Illuminate\Http\Response
      */
@@ -120,8 +120,8 @@ class ClientController
             return new Response('', 404);
         }
 
-        $this->clients->delete(
-            $client
-        );
+        $this->clients->delete($client);
+
+        return new Response('', Response::HTTP_NO_CONTENT);
     }
 }
