@@ -55,13 +55,15 @@ class ClientCommand extends Command
      */
     protected function createPersonalClient(ClientRepository $clients)
     {
+        $userId = $this->option('user_id') ?: null;
+        
         $name = $this->option('name') ?: $this->ask(
             'What should we name the personal access client?',
             config('app.name').' Personal Access Client'
         );
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            $userId, $name, 'http://localhost'
         );
 
         $this->info('Personal access client created successfully.');
@@ -77,13 +79,15 @@ class ClientCommand extends Command
      */
     protected function createPasswordClient(ClientRepository $clients)
     {
+        $userId = $this->option('user_id') ?: null;
+        
         $name = $this->option('name') ?: $this->ask(
             'What should we name the password grant client?',
             config('app.name').' Password Grant Client'
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost'
+            $userId, $name, 'http://localhost'
         );
 
         $this->info('Password grant client created successfully.');
@@ -99,13 +103,15 @@ class ClientCommand extends Command
      */
     protected function createClientCredentialsClient(ClientRepository $clients)
     {
+        $userId = $this->option('user_id') ?: null;
+        
         $name = $this->option('name') ?: $this->ask(
             'What should we name the client?',
             config('app.name').' ClientCredentials Grant Client'
         );
 
         $client = $clients->create(
-            null, $name, ''
+            $userId, $name, ''
         );
 
         $this->info('New client created successfully.');
