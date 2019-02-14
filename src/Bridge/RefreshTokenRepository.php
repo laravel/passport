@@ -57,7 +57,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
             'expires_at' => $refreshTokenEntity->getExpiryDateTime(),
         ]);
 
-        $this->events->fire(new RefreshTokenCreated($id, $accessTokenId));
+        $this->events->dispatch(new RefreshTokenCreated($id, $accessTokenId));
     }
 
     /**
