@@ -134,4 +134,77 @@ class AuthorizationControllerTest extends TestCase
             m::mock(ServerRequestInterface::class), $request
         )->getContent());
     }
+
+    public function test_request_is_approved_if_overridden_method_allows()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn('client');
+        $tokens = m::mock(TokenRepository::class);
+
+        $controller = new class($server, $response, $clients, $tokens) extends AuthorizationController {
+            protected function approveAutomatically($user, $client, $scopes) {
+                return true;
+            }
+        };
+        $psrResponse = new Response();
+        $psrResponse->getBody()->write('approved');
+        $server->shouldReceive('validateAuthorizationRequest')
+            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+        $server->shouldReceive('completeAuthorizationRequest')
+            ->with($authRequest, m::type(ResponseInterface::class))
+            ->andReturn($psrResponse);
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->once()->andReturn($user = m::mock());
+        $user->shouldReceive('getKey')->andReturn(1);
+        $request->shouldNotReceive('session');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
+        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+
+        $this->assertEquals('approved', $controller->authorize(
+            m::mock(ServerRequestInterface::class), $request
+        )->getContent());
+    }
+    
+    public function test_authorization_view_is_presented_if_overridden_method_denies()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn('client');
+        $tokens = m::mock(TokenRepository::class);
+
+        $controller = new class($server, $response, $clients, $tokens) extends AuthorizationController {
+            protected function approveAutomatically($user, $client, $scopes) {
+                return false;
+            }
+        };
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $session->shouldReceive('put')->with('authRequest', $authRequest);
+        $request->shouldReceive('user')->andReturn('user');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+        $response->shouldReceive('view')->once()->andReturn('view');
+
+        $this->assertEquals('view', $controller->authorize(
+            m::mock(ServerRequestInterface::class), $request
+        ));
+    }
 }

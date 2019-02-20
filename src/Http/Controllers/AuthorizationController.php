@@ -74,13 +74,10 @@ class AuthorizationController
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
             $scopes = $this->parseScopes($authRequest);
+            $user = $request->user();
+            $client = $this->clients->find($authRequest->getClient()->getIdentifier());
 
-            $token = $this->tokens->findValidToken(
-                $user = $request->user(),
-                $client = $this->clients->find($authRequest->getClient()->getIdentifier())
-            );
-
-            if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
+            if ($this->approveAutomatically($user, $client, $scopes)) {
                 return $this->approveRequest($authRequest, $user);
             }
 
@@ -126,5 +123,19 @@ class AuthorizationController
         return $this->convertResponse(
             $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
         );
+    }
+
+    /**
+     * Decides whether the authorization request should be approved automatically.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Laravel\Passport\Client  $client
+     * @param  array  $scopes
+     * @return bool
+     */
+    protected function approveAutomatically($user, $client, $scopes) {
+        $token = $this->tokens->findValidToken($user, $client);
+
+        return $token && $token->scopes === collect($scopes)->pluck('id')->all();
     }
 }
