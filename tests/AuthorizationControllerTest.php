@@ -37,7 +37,13 @@ class AuthorizationControllerTest extends TestCase
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
 
-        $controller = new AuthorizationController($server, $response);
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn('client');
+
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
+
+        $controller = new AuthorizationController($server, $response, $clients, $tokens);
 
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
 
@@ -58,14 +64,8 @@ class AuthorizationControllerTest extends TestCase
             return 'view';
         });
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('find')->with(1)->andReturn('client');
-
-        $tokens = m::mock(TokenRepository::class);
-        $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
-
         $this->assertEquals('view', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request
         ));
     }
 
@@ -76,19 +76,18 @@ class AuthorizationControllerTest extends TestCase
 
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
+        $clients = m::mock(ClientRepository::class);
+        $tokens = m::mock(TokenRepository::class);
 
-        $controller = new AuthorizationController($server, $response);
+        $controller = new AuthorizationController($server, $response, $clients, $tokens);
 
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
 
-        $clients = m::mock(ClientRepository::class);
-        $tokens = m::mock(TokenRepository::class);
-
         $this->assertEquals('whoops', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request
         )->getContent());
     }
 
@@ -101,7 +100,19 @@ class AuthorizationControllerTest extends TestCase
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
 
-        $controller = new AuthorizationController($server, $response);
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn('client');
+
+        $user = m::mock();
+        $user->shouldReceive('getKey')->andReturn(1);
+
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldReceive('findValidToken')
+            ->with($user, 'client')
+            ->andReturn($token = m::mock(Token::class));
+        $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
+
+        $controller = new AuthorizationController($server, $response, $clients, $tokens);
         $psrResponse = new Response();
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
@@ -111,8 +122,7 @@ class AuthorizationControllerTest extends TestCase
             ->andReturn($psrResponse);
 
         $request = m::mock(Request::class);
-        $request->shouldReceive('user')->once()->andReturn($user = m::mock());
-        $user->shouldReceive('getKey')->andReturn(1);
+        $request->shouldReceive('user')->once()->andReturn($user);
         $request->shouldNotReceive('session');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
@@ -120,17 +130,8 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('find')->with(1)->andReturn('client');
-
-        $tokens = m::mock(TokenRepository::class);
-        $tokens->shouldReceive('findValidToken')
-            ->with($user, 'client')
-            ->andReturn($token = m::mock(Token::class));
-        $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
-
         $this->assertEquals('approved', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+            m::mock(ServerRequestInterface::class), $request
         )->getContent());
     }
 }

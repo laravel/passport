@@ -31,16 +31,34 @@ class AuthorizationController
     protected $response;
 
     /**
+     * The client repository.
+     *
+     * @var \Laravel\Passport\ClientRepository
+     */
+    protected $clients;
+
+    /**
+     * The token repository.
+     *
+     * @var \Laravel\Passport\TokenRepository
+     */
+    protected $tokens;
+
+    /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return void
      */
-    public function __construct(AuthorizationServer $server, ResponseFactory $response)
+    public function __construct(AuthorizationServer $server, ResponseFactory $response, ClientRepository $clients, TokenRepository $tokens)
     {
         $this->server = $server;
         $this->response = $response;
+        $this->clients = $clients;
+        $this->tokens = $tokens;
     }
 
     /**
@@ -48,23 +66,18 @@ class AuthorizationController
      *
      * @param  \Psr\Http\Message\ServerRequestInterface  $psrRequest
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return \Illuminate\Http\Response
      */
-    public function authorize(ServerRequestInterface $psrRequest,
-                              Request $request,
-                              ClientRepository $clients,
-                              TokenRepository $tokens)
+    public function authorize(ServerRequestInterface $psrRequest, Request $request)
     {
-        return $this->withErrorHandling(function () use ($psrRequest, $request, $clients, $tokens) {
+        return $this->withErrorHandling(function () use ($psrRequest, $request) {
             $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
 
             $scopes = $this->parseScopes($authRequest);
 
-            $token = $tokens->findValidToken(
+            $token = $this->tokens->findValidToken(
                 $user = $request->user(),
-                $client = $clients->find($authRequest->getClient()->getIdentifier())
+                $client = $this->clients->find($authRequest->getClient()->getIdentifier())
             );
 
             if ($token && $token->scopes === collect($scopes)->pluck('id')->all()) {
