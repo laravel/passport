@@ -53,7 +53,7 @@ class RefreshToken extends Model
     public $timestamps = false;
 
     /**
-     * Get the access token that the refresh token belongs to..
+     * Get the access token that the refresh token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
