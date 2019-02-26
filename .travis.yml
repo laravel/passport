@@ -1,7 +1,6 @@
 language: php
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
@@ -20,12 +19,31 @@ env:
 
 matrix:
   fast_finish: true
+  include:
+    - php: 7.1
+      env: LARAVEL=5.6.*
+    - php: 7.1
+      env: LARAVEL=5.7.*
+    - php: 7.1
+      env: LARAVEL=5.8.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.6.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.7.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.8.*
   allow_failures:
     - env: LARAVEL=dev-master
     - env: SETUP=nightly LARAVEL=5.6.*
     - env: SETUP=nightly LARAVEL=5.7.*
     - env: SETUP=nightly LARAVEL=5.8.*
     - env: SETUP=nightly LARAVEL=dev-master
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.6.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.7.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.8.*
 
 sudo: false
 
