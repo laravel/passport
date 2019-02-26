@@ -33,7 +33,7 @@ before_install:
   - phpenv config-rm xdebug.ini || true
 
 install:
-  - composer require "laravel/framework=${laravel}" --prefer-dist --no-interaction --no-sugges
+  - composer require "laravel/framework=${laravel}" --prefer-dist --no-interaction --no-suggest
   - if [[ $SETUP = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
   - if [[ $SETUP = 'nightly' ]]; then travis_retry composer update --prefer-dist --no-interaction --no-suggest; fi
 
