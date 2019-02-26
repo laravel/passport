@@ -1,15 +1,30 @@
 language: php
 
-php:
-  - 7.1
-  - 7.2
-  - 7.3
+env:
+  global:
+    - SETUP=stable
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.1
+    - php: 7.2
+    - php: 7.3
+  allow_failures:
+    - php: 7.1
+      env: SETUP=nightly
+    - php: 7.2
+      env: SETUP=nightly
+    - php: 7.3
+      env: SETUP=nightly
 
 sudo: false
 
 before_install:
   - phpenv config-rm xdebug.ini || true
 
-install: travis_retry composer install --no-interaction --prefer-dist --no-suggest
+install:
+  - if [[ $SETUP = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
+  - if [[ $SETUP = 'nightly' ]]; then travis_retry composer update --prefer-dist --no-interaction --no-suggest; fi
 
 script: vendor/bin/phpunit --verbose
