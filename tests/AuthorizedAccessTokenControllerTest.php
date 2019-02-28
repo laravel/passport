@@ -73,6 +73,8 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
+        $events = m::mock(Dispatcher::class);
+        
         $token1 = m::mock(Token::class.'[revoke]');
         $token1->id = 1;
         $token1->shouldReceive('revoke')->once();
@@ -85,6 +87,8 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
             return $user;
         });
+
+        $events->shouldReceive('dispatch')->once();
 
         $response = $this->controller->destroy($request, 1);
 
