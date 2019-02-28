@@ -12,7 +12,7 @@ commands:
     steps:
       - checkout
       - run: composer self-update
-      - run: composer require "laravel/contracts=<< parameters.laravel >>" --prefer-source --no-interaction --no-suggest
+      - run: composer require "illuminate/contracts=<< parameters.laravel >>" --prefer-source --no-interaction --no-suggest
       - run: composer update << parameters.composer_flags >> --no-interaction --prefer-source
       - run: vendor/bin/phpunit --verbose
 
