@@ -1,28 +1,49 @@
 language: php
 
+php:
+  - 7.2
+  - 7.3
+
 env:
   global:
     - SETUP=stable
+  matrix:
+    - LARAVEL=5.6.*
+    - LARAVEL=5.7.*
+    - LARAVEL=5.8.*
+    - LARAVEL=dev-master
+    - SETUP=nightly LARAVEL=5.6.*
+    - SETUP=nightly LARAVEL=5.7.*
+    - SETUP=nightly LARAVEL=5.8.*
+    - SETUP=nightly LARAVEL=dev-master
 
 matrix:
   fast_finish: true
   include:
     - php: 7.1
+      env: LARAVEL=5.6.*
     - php: 7.1
-      env: SETUP=nightly
-    - php: 7.2
-    - php: 7.2
-      env: SETUP=nightly
-    - php: 7.3
-    - php: 7.3
-      env: SETUP=nightly
+      env: LARAVEL=5.7.*
+    - php: 7.1
+      env: LARAVEL=5.8.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.6.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.7.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.8.*
   allow_failures:
+    - env: LARAVEL=dev-master
+    - env: SETUP=nightly LARAVEL=5.6.*
+    - env: SETUP=nightly LARAVEL=5.7.*
+    - env: SETUP=nightly LARAVEL=5.8.*
+    - env: SETUP=nightly LARAVEL=dev-master
     - php: 7.1
-      env: SETUP=nightly
-    - php: 7.2
-      env: SETUP=nightly
-    - php: 7.3
-      env: SETUP=nightly
+      env: SETUP=nightly LARAVEL=5.6.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.7.*
+    - php: 7.1
+      env: SETUP=nightly LARAVEL=5.8.*
 
 sudo: false
 
@@ -30,6 +51,7 @@ before_install:
   - phpenv config-rm xdebug.ini || true
 
 install:
+  - composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
   - if [[ $SETUP = 'stable' ]]; then travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest; fi
   - if [[ $SETUP = 'nightly' ]]; then travis_retry composer update --prefer-dist --no-interaction --no-suggest; fi
 
