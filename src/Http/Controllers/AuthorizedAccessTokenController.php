@@ -61,8 +61,10 @@ class AuthorizedAccessTokenController
 
         $token->revoke();
 
+        // create event dispatcher
+        $event = new \Illuminate\Events\Dispatcher();
         // Dispatch event AccessTokenRevoked
-        event(new AccessTokenRevoked(
+        $event->dispatch(new AccessTokenRevoked(
                 $token->id,
                 $token->user_id,
                 $token->client_id
