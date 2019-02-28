@@ -389,6 +389,8 @@ class Passport
 
         $user->withAccessToken($token);
 
+        $user->wasRecentlyCreated = false;
+
         app('auth')->guard($guard)->setUser($user);
 
         app('auth')->shouldUse($guard);
