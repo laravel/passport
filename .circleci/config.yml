@@ -12,8 +12,16 @@ commands:
     steps:
       - checkout
       - run: composer self-update
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
       - run: composer require "illuminate/contracts=<< parameters.laravel >>" --prefer-source --no-interaction --no-suggest
       - run: composer update << parameters.composer_flags >> --no-interaction --prefer-source
+      - save_cache: # special step to save the dependency cache with the `composer.lock` cache key template
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
       - run: vendor/bin/phpunit --verbose
 
 workflows:
