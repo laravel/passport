@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\TokenRepository;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Events\Dispatcher;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 
