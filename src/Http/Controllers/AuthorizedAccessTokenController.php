@@ -5,6 +5,7 @@ namespace Laravel\Passport\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\TokenRepository;
+use Illuminate\Events\Dispatcher;
 use Laravel\Passport\Events\AccessTokenRevoked;
 
 class AuthorizedAccessTokenController
@@ -62,7 +63,7 @@ class AuthorizedAccessTokenController
         $token->revoke();
 
         // create event dispatcher
-        $event = new \Illuminate\Events\Dispatcher();
+        $event = new Dispatcher();
         // Dispatch event AccessTokenRevoked
         $event->dispatch(new AccessTokenRevoked(
                 $token->id,
