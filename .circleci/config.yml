@@ -1,0 +1,173 @@
+version: 2.1
+
+commands:
+  install_and_test:
+    parameters:
+      composer_flags:
+        type: string
+        default: ""
+      laravel:
+        type: string
+        default: ""
+    steps:
+      - checkout
+      - run: composer self-update
+      - run: composer require "illuminate/contracts=<< parameters.laravel >>" --prefer-source --no-interaction --no-suggest
+      - run: composer update << parameters.composer_flags >> --no-interaction --prefer-source
+      - run: vendor/bin/phpunit --verbose
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - php71-laravel56
+      - php71-laravel56-nightly
+      - php72-laravel56
+      - php72-laravel56-nightly
+      - php73-laravel56
+      - php73-laravel56-nightly
+      - php71-laravel57
+      - php71-laravel57-nightly
+      - php72-laravel57
+      - php72-laravel57-nightly
+      - php73-laravel57
+      - php73-laravel57-nightly
+      - php71-laravel58
+      - php71-laravel58-nightly
+      - php72-laravel58
+      - php72-laravel58-nightly
+      - php73-laravel58
+      - php73-laravel58-nightly
+      - php72-laravel59-nightly
+      - php73-laravel59-nightly
+
+jobs:
+  php71-laravel56:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+          composer_flags: --prefer-stable
+  php71-laravel56-nightly:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+  php72-laravel56:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+          composer_flags: --prefer-stable
+  php72-laravel56-nightly:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+  php73-laravel56:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+          composer_flags: --prefer-stable
+  php73-laravel56-nightly:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.6.*
+  php71-laravel57:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+          composer_flags: --prefer-stable
+  php71-laravel57-nightly:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+  php72-laravel57:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+          composer_flags: --prefer-stable
+  php72-laravel57-nightly:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+  php73-laravel57:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+          composer_flags: --prefer-stable
+  php73-laravel57-nightly:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.7.*
+  php71-laravel58:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+          composer_flags: --prefer-stable
+  php71-laravel58-nightly:
+    docker:
+      - image: circleci/php:7.1
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+  php72-laravel58:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+          composer_flags: --prefer-stable
+  php72-laravel58-nightly:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+  php73-laravel58:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+          composer_flags: --prefer-stable
+  php73-laravel58-nightly:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.8.*
+  php72-laravel59-nightly:
+    docker:
+      - image: circleci/php:7.2
+    steps:
+      - install_and_test:
+          laravel: 5.9.*
+  php73-laravel59-nightly:
+    docker:
+      - image: circleci/php:7.3
+    steps:
+      - install_and_test:
+          laravel: 5.9.*
