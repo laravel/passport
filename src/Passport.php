@@ -389,6 +389,10 @@ class Passport
 
         $user->withAccessToken($token);
 
+        if (isset($user->wasRecentlyCreated) && $user->wasRecentlyCreated) {
+            $user->wasRecentlyCreated = false;
+        }
+
         app('auth')->guard($guard)->setUser($user);
 
         app('auth')->shouldUse($guard);
