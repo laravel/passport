@@ -82,6 +82,8 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->registerResourceServer();
 
+        $this->registerMiddleware();
+
         $this->registerGuard();
 
         $this->offerPublishing();
@@ -240,6 +242,16 @@ class PassportServiceProvider extends ServiceProvider
         }
 
         return new CryptKey($key, null, false);
+    }
+
+    /**
+     * Register route middleware.
+     *
+     * @return void
+     */
+    protected function registerMiddleware()
+    {
+        $this->app['router']->aliasMiddleware('passport.guard', \Laravel\Passport\Http\Middleware\GuardSelector::class);
     }
 
     /**

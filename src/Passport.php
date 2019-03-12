@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Closure;
 use Mockery;
 use DateInterval;
 use Carbon\Carbon;
@@ -149,6 +150,13 @@ class Passport
 
         return new static;
     }
+
+    /**
+     *
+     *
+     * @var Closure
+     */
+    protected static $guardResolver;
 
     /**
      * Binds the Passport routes into the controller.
@@ -582,6 +590,18 @@ class Passport
     public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
+
+        return new static;
+    }
+
+    public static function getGuardResolver()
+    {
+        return static::$guardResolver;
+    }
+
+    public static function setGuardResolver(Closure $callback)
+    {
+        static::$guardResolver = $callback;
 
         return new static;
     }

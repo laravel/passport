@@ -2,57 +2,56 @@
 
 namespace Laravel\Passport\Bridge;
 
-use RuntimeException;
-use Illuminate\Hashing\HashManager;
-use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Auth\EloquentUserProvider;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    /**
-     * The hasher implementation.
-     *
-     * @var \Illuminate\Hashing\HashManager
-     */
-    protected $hasher;
 
     /**
-     * Create a new repository instance.
      *
-     * @param  \Illuminate\Hashing\HashManager  $hasher
-     * @return void
-     */
-    public function __construct(HashManager $hasher)
-    {
-        $this->hasher = $hasher->driver();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
-        $provider = config('auth.guards.api.provider');
+        $auth = app('auth');
+        $guard = $auth->getDefaultDriver();
+        $provider = config('auth.guards.' . $guard . '.provider');
+        $userProvider = $auth->createUserProvider($provider);
 
-        if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
-            throw new RuntimeException('Unable to determine authentication model from configuration.');
+        if ($userProvider instanceof EloquentUserProvider) {
+            $model = $userProvider->getModel();
+            if (method_exists($model, 'findForPassport')) {
+                $user = (new $model())->findForPassport($username);
+            } else {
+                $user = (new $model())->where('email', $username)->first();
+            }
+        } else {
+            $user = $userProvider->retrieveById($username);
         }
 
-        if (method_exists($model, 'findForPassport')) {
+        /*
+        if ($userProvider instanceof EloquentUserProvider &&
+            method_exists($model = $userProvider->getModel(), 'findForPassport')) {
             $user = (new $model)->findForPassport($username);
         } else {
-            $user = (new $model)->where('email', $username)->first();
+            $user = $userProvider->retrieveById($username);
+        }
+        */
+
+        if (!$user) {
+            return;
         }
 
-        if (! $user) {
-            return;
-        } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {
-            if (! $user->validateForPassportPasswordGrant($password)) {
+        if (method_exists($user, 'validateForPassportPasswordGrant')) {
+            if (!$user->validateForPassportPasswordGrant($password)) {
                 return;
             }
-        } elseif (! $this->hasher->check($password, $user->getAuthPassword())) {
-            return;
+        } else {
+            if (!$userProvider->validateCredentials($user, ['password' => $password])) {
+                return;
+            }
         }
 
         return new User($user->getAuthIdentifier());

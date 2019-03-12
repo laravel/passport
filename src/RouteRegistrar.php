@@ -73,7 +73,7 @@ class RouteRegistrar
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
             'as' => 'passport.token',
-            'middleware' => 'throttle',
+            'middleware' => ['throttle', 'passport.guard'],
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
