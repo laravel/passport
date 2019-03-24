@@ -45,13 +45,12 @@ class UserRepository implements UserRepositoryInterface
             $user = (new $model)->where('email', $username)->first();
         }
 
-        if (! $user) {
-            return;
-        } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {
-            if (! $user->validateForPassportPasswordGrant($password)) {
-                return;
-            }
-        } elseif (! $this->hasher->check($password, $user->getAuthPassword())) {
+
+        
+        if (! $user 
+            || (method_exists($user, 'validateForPassportPasswordGrant') && ! $user->validateForPassportPasswordGrant($password))
+            || ! $this->hasher->check($password, $user->getAuthPassword())
+        ) {
             return;
         }
 
