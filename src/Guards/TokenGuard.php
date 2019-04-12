@@ -219,7 +219,7 @@ class TokenGuard
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
-        // sent with the request. If the two don't match then this request is sent from
+        // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
         if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
             time() >= $token['expiry'])) {
