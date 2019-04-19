@@ -268,8 +268,6 @@ class Passport
             if (isset(static::$scopes[$id])) {
                 return new Scope($id, static::$scopes[$id]);
             }
-
-            return;
         })->filter()->values()->all();
     }
 
@@ -381,7 +379,7 @@ class Passport
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
-        $token = Mockery::mock(Passport::tokenModel())->shouldIgnoreMissing(false);
+        $token = Mockery::mock(self::tokenModel())->shouldIgnoreMissing(false);
 
         foreach ($scopes as $scope) {
             $token->shouldReceive('can')->with($scope)->andReturn(true);

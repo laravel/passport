@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Console;
 
-use Illuminate\Console\Command;
 use Laravel\Passport\Client;
+use Illuminate\Console\Command;
 use Laravel\Passport\ClientRepository;
 
 class ClientCommand extends Command

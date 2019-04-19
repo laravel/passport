@@ -8,8 +8,8 @@ use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\ApiTokenCookieFactory;
-use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Symfony\Component\HttpFoundation\Cookie;
+use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 
 class CreateFreshApiTokenTest extends TestCase
 {
@@ -75,7 +75,8 @@ class CreateFreshApiTokenTest extends TestCase
         $request = Request::create('/', 'GET');
         $response = new Response;
 
-        $request->setUserResolver(function () {});
+        $request->setUserResolver(function () {
+        });
 
         $result = $middleware->handle($request, function () use ($response) {
             return $response;
