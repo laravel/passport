@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Tests;
 
-use Lcobucci\JWT\Parser;
 use Mockery as m;
+use Lcobucci\JWT\Parser;
 use Laravel\Passport\Token;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\TokenRepository;
