@@ -96,5 +96,4 @@ class PersonalAccessClientStub
 
 class RefreshTokenStub
 {
-
 }

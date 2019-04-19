@@ -2,12 +2,11 @@
 
 namespace Laravel\Passport\Bridge;
 
-use Illuminate\Database\Connection;
 use Illuminate\Contracts\Events\Dispatcher;
-use Laravel\Passport\RefreshTokenRepository as PassportRefreshTokenRepository;
 use Laravel\Passport\Events\RefreshTokenCreated;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
+use Laravel\Passport\RefreshTokenRepository as PassportRefreshTokenRepository;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
