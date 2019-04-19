@@ -6,7 +6,7 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as CheckScopes;
 
-class CheckForAnyScopesTest extends TestCase
+class CheckForAnyScopeTest extends TestCase
 {
     public function tearDown()
     {

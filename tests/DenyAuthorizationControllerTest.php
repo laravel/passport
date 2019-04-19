@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Tests;
 
-use Illuminate\Http\Request;
 use Mockery as m;
+use Illuminate\Http\Request;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
@@ -65,7 +65,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
         $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn(['http://localhost.localdomain','http://localhost']);
+        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn(['http://localhost.localdomain', 'http://localhost']);
 
         $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
             return $url;
@@ -102,7 +102,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $this->assertEquals('http://localhost#error=access_denied&state=state', $controller->deny($request));
     }
-    
+
     public function test_authorization_can_be_denied_with_existing_query_string()
     {
         $response = m::mock(ResponseFactory::class);
