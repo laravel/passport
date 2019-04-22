@@ -102,4 +102,3 @@
 
 ### Changed
 - Don't serialize by default ([29e9d53](https://github.com/laravel/passport/commit/29e9d5312f3b11381f1fd472bde1fbbd73122cf1))
->>>>>>> 7.0
