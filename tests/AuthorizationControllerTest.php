@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Tests;
 
 use Exception;
+use Laravel\Passport\Client;
 use Mockery as m;
 use Laravel\Passport\Token;
 use Illuminate\Http\Request;
@@ -46,25 +47,25 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->with('authRequest', $authRequest);
-        $request->shouldReceive('user')->andReturn('user');
+        $request->shouldReceive('user')->andReturn($user = m::mock());
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
         $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($authRequest) {
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
+
+        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($authRequest, $client, $user) {
             $this->assertEquals('passport::authorize', $view);
-            $this->assertEquals('client', $data['client']);
-            $this->assertEquals('user', $data['user']);
+            $this->assertEquals($client, $data['client']);
+            $this->assertEquals($user, $data['user']);
             $this->assertEquals('description', $data['scopes'][0]->description);
 
             return 'view';
         });
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('find')->with(1)->andReturn('client');
-
         $tokens = m::mock(TokenRepository::class);
-        $tokens->shouldReceive('findValidToken')->with('user', 'client')->andReturnNull();
+        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
 
         $this->assertEquals('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
