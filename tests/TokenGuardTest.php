@@ -24,6 +24,7 @@ class TokenGuardTest extends TestCase
     public function tearDown()
     {
         m::close();
+        Container::getInstance()->flush();
     }
 
     public function test_user_can_be_pulled_via_bearer_token()
