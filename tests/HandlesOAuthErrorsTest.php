@@ -9,6 +9,7 @@ use RuntimeException;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
@@ -18,6 +19,7 @@ class HandlesOAuthErrorsTest extends TestCase
     public function tearDown()
     {
         m::close();
+        Container::getInstance()->flush();
     }
 
     public function testShouldReturnCallbackResultIfNoErrorIsThrown()
@@ -35,6 +37,7 @@ class HandlesOAuthErrorsTest extends TestCase
     public function testShouldHandleOAuthServerException()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
+        Container::getInstance()->instance(Repository::class, $config = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
         $exception = new OAuthServerException('Error', 1, 'fatal');
@@ -52,11 +55,14 @@ class HandlesOAuthErrorsTest extends TestCase
     public function testShouldHandleOtherExceptions()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
+        Container::getInstance()->instance(Repository::class, $config = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
         $exception = new RuntimeException('Exception occurred', 1);
 
         $handler->shouldReceive('report')->once()->with($exception);
+
+        $config->shouldReceive('get')->once()->andReturn(true);
 
         $result = $controller->test(function () use ($exception) {
             throw $exception;
@@ -69,6 +75,7 @@ class HandlesOAuthErrorsTest extends TestCase
     public function testShouldHandleThrowables()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $handler = m::mock());
+        Container::getInstance()->instance(Repository::class, $config = m::mock());
 
         $controller = new HandlesOAuthErrorsStubController;
         $exception = new Error('Fatal Error', 1);
@@ -76,6 +83,8 @@ class HandlesOAuthErrorsTest extends TestCase
         $handler->shouldReceive('report')
             ->once()
             ->with(m::type(Exception::class));
+
+        $config->shouldReceive('get')->once()->andReturn(true);
 
         $result = $controller->test(function () use ($exception) {
             throw $exception;

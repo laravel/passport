@@ -13,6 +13,7 @@ class HasApiTokensTest extends TestCase
     public function tearDown()
     {
         m::close();
+        Container::getInstance()->flush();
     }
 
     public function test_token_can_indicates_if_token_has_given_scope()

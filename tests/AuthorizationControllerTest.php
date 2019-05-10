@@ -14,6 +14,7 @@ use Illuminate\Container\Container;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use Psr\Http\Message\ResponseInterface;
+use Illuminate\Contracts\Config\Repository;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -26,6 +27,7 @@ class AuthorizationControllerTest extends TestCase
     public function tearDown()
     {
         m::close();
+        Container::getInstance()->flush();
     }
 
     public function test_authorization_view_is_presented()
@@ -72,7 +74,9 @@ class AuthorizationControllerTest extends TestCase
     public function test_authorization_exceptions_are_handled()
     {
         Container::getInstance()->instance(ExceptionHandler::class, $exceptions = m::mock());
+        Container::getInstance()->instance(Repository::class, $config = m::mock());
         $exceptions->shouldReceive('report')->once();
+        $config->shouldReceive('get')->once()->andReturn(true);
 
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
