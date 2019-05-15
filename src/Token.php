@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\Observers\TokenObserver;
 
 class Token extends Model
 {
@@ -52,6 +53,17 @@ class Token extends Model
      * @var bool
      */
     public $timestamps = false;
+
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'saved' => TokenObserver::class,
+        'updated' => TokenObserver::class
+    ];
 
     /**
      * Get the client that the token belongs to.

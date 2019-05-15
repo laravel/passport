@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use DateInterval;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\Events\Logout;
+use Laravel\Passport\Observers\TokenObserver;
 use League\OAuth2\Server\CryptKey;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -33,6 +34,8 @@ class PassportServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
+
+        Token::observe(TokenObserver::class);
 
         $this->deleteCookieOnLogout();
 
