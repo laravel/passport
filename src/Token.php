@@ -54,7 +54,6 @@ class Token extends Model
      */
     public $timestamps = false;
 
-
     /**
      * The event map for the model.
      *
@@ -62,7 +61,7 @@ class Token extends Model
      */
     protected $dispatchesEvents = [
         'saved' => TokenObserver::class,
-        'updated' => TokenObserver::class
+        'updated' => TokenObserver::class,
     ];
 
     /**
