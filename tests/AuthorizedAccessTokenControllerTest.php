@@ -7,6 +7,7 @@ use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
+use Illuminate\Events\Dispatcher;
 use Laravel\Passport\TokenRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
@@ -19,6 +20,11 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     protected $tokenRepository;
 
     /**
+     * @var \Mockery\Mock|Illuminate\Events\Dispatcher
+     */
+    protected $events;
+
+    /**
      * @var AuthorizedAccessTokenController
      */
     protected $controller;
@@ -26,7 +32,11 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     public function setUp()
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
-        $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
+        $this->events = m::mock(Dispatcher::class);
+        $this->controller = new AuthorizedAccessTokenController(
+            $this->tokenRepository,
+            $this->events
+        );
     }
 
     public function tearDown()
@@ -72,6 +82,8 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     public function test_tokens_can_be_deleted()
     {
         $request = Request::create('/', 'GET');
+
+        $this->events->shouldReceive('dispatch')->once();
 
         $token1 = m::mock(Token::class.'[revoke]');
         $token1->id = 1;
