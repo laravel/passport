@@ -4,8 +4,8 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Events\Dispatcher;
 use Laravel\Passport\TokenRepository;
+use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Events\AccessTokenRevoked;
 
 class AuthorizedAccessTokenController
@@ -13,7 +13,7 @@ class AuthorizedAccessTokenController
     /**
      * The token repository implementation.
      *
-     * @var use Illuminate\Events\Dispatcher;
+     * @var \Illuminate\Contracts\Events\Dispatcher
      */
     protected $events;
 
@@ -71,11 +71,11 @@ class AuthorizedAccessTokenController
         $token->revoke();
 
         $this->events->dispatch(new AccessTokenRevoked(
-            $token->id,
-            $token->user_id,
-            $token->client_id
-        )
-    );
+                $token->id,
+                $token->user_id,
+                $token->client_id
+            )
+        );
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }

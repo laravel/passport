@@ -7,9 +7,10 @@ use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Events\Dispatcher;
 use Laravel\Passport\TokenRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Testing\Fakes\EventFake;
+use Laravel\Passport\Events\AccessTokenRevoked;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 
 class AuthorizedAccessTokenControllerTest extends TestCase
@@ -20,7 +21,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     protected $tokenRepository;
 
     /**
-     * @var \Mockery\Mock|Illuminate\Events\Dispatcher
+     * @var \Mockery\Mock|\Illuminate\Support\Testing\Fakes\EventFake
      */
     protected $events;
 
@@ -32,7 +33,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     public function setUp()
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
-        $this->events = m::mock(Dispatcher::class);
+        $this->events = m::mock(EventFake::class);
         $this->controller = new AuthorizedAccessTokenController(
             $this->tokenRepository,
             $this->events
@@ -84,6 +85,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $request = Request::create('/', 'GET');
 
         $this->events->shouldReceive('dispatch')->once();
+        $this->events->shouldReceive('assertDispatched')->once();
 
         $token1 = m::mock(Token::class.'[revoke]');
         $token1->id = 1;
@@ -100,6 +102,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $response = $this->controller->destroy($request, 1);
 
+        $this->events->assertDispatched(AccessTokenRevoked::class, 1);
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
     }
 
