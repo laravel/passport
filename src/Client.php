@@ -82,4 +82,14 @@ class Client extends Model
     {
         return $this->personal_access_client || $this->password_client;
     }
+
+    /**
+     * Determine if the client should skip the authorization prompt.
+     *
+     * @return bool
+     */
+    public function skipsAuthorization()
+    {
+        return false;
+    }
 }
