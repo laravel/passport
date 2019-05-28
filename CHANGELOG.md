@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.2.2...7.0)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.3.0...7.0)
+
+
+## [v7.3.0 (2019-05-28)](https://github.com/laravel/passport/compare/v7.2.2...v7.3.0)
+
+### Added
+- Allow first party clients to skip the authorization prompt ([#1022](https://github.com/laravel/passport/pull/1022))
+
+### Fixed
+- Fix AccessToken docblock ([#996](https://github.com/laravel/passport/pull/996))
 
 
 ## [v7.2.2 (2019-03-13)](https://github.com/laravel/passport/compare/v7.2.1...v7.2.2)
