@@ -51,6 +51,10 @@ class RouteRegistrar
                         $options['middleware'] = explode('|', $options['middleware']);
                     }
 
+                    if (!is_array($subOptions['middleware'])) {
+                        $subOptions['middleware'] = explode('|', $subOptions['middleware']);
+                    }
+
                     $options['middleware'] = array_merge($options['middleware'], $subOptions['middleware']);
 
                     unset($subOptions['middleware']);
