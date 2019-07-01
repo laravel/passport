@@ -16,7 +16,7 @@ class CheckClientCredentialsForAnyScope
      *
      * @var \League\OAuth2\Server\ResourceServer
      */
-    private $server;
+    protected $server;
 
     /**
      * Create a new middleware instance.
