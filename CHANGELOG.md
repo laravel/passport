@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.3.0...7.0)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.3.1...7.0)
+
+
+## [v7.3.1 (2019-07-02)](https://github.com/laravel/passport/compare/v7.3.0...v7.3.1)
+
+### Changed
+- Change server property type in `CheckClientCredentialForAnyScope` ([#1034](https://github.com/laravel/passport/pull/1034))
 
 
 ## [v7.3.0 (2019-05-28)](https://github.com/laravel/passport/compare/v7.2.2...v7.3.0)
