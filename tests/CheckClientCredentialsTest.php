@@ -9,7 +9,6 @@ use Laravel\Passport\Client;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\ResourceServer;
-use Illuminate\Auth\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 
