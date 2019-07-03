@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\ResourceServer;
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
@@ -19,14 +20,23 @@ class CheckClientCredentials
     protected $server;
 
     /**
+     * Token Repository
+     *
+     * @var \Laravel\Passport\TokenRepository
+     */
+    protected $repository;
+
+    /**
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
+     * @param  \Laravel\Passport\TokenRepository  $repository
      * @return void
      */
-    public function __construct(ResourceServer $server)
+    public function __construct(ResourceServer $server, TokenRepository $repository)
     {
         $this->server = $server;
+        $this->repository = $repository;
     }
 
     /**
@@ -48,9 +58,27 @@ class CheckClientCredentials
             throw new AuthenticationException;
         }
 
+        $this->validateToken($psr);
         $this->validateScopes($psr, $scopes);
 
         return $next($request);
+    }
+
+    /**
+     * Validate the token on the incoming request.
+     * Check token doesn't belongs to first party clients.
+     *
+     * @param  \Psr\Http\Message\ServerRequestInterface $psr
+     * @return void
+     * @throws \Illuminate\Auth\AuthenticationException
+     */
+    protected function validateToken($psr)
+    {
+        $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
+
+        if (!$token || $token->client->firstParty()) {
+            throw new AuthenticationException;
+        }
     }
 
     /**
