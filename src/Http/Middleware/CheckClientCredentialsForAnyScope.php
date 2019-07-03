@@ -19,7 +19,6 @@ class CheckClientCredentialsForAnyScope
      */
     protected $server;
 
-
     /**
      * Token Repository.
      *
