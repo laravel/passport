@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Tests;
 
 use Error;
-use Exception;
 use Mockery as m;
 use RuntimeException;
 use Illuminate\Http\Request;
