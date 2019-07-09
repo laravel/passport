@@ -12,24 +12,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The database connection.
-     *
-     * @var \Illuminate\Database\Connection
-     */
-    protected $database;
-
-    /**
-     * Create a new repository instance.
-     *
-     * @param  \Illuminate\Database\Connection  $database
-     * @return void
-     */
-    public function __construct(Connection $database)
-    {
-        $this->database = $database;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getNewAuthCode()
@@ -59,8 +41,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-        $this->database->table(Passport::authCode()->getTable())
-                    ->where('id', $codeId)->update(['revoked' => true]);
+        Passport::authCode()->where('id', $codeId)->update(['revoked' => true]);
     }
 
     /**
@@ -68,7 +49,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return $this->database->table(Passport::authCode()->getTable())
-                    ->where('id', $codeId)->where('revoked', 1)->exists();
+        return Passport::authCode()->where('id', $codeId)->where('revoked', 1)->exists();
     }
 }
