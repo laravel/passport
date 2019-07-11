@@ -3,6 +3,12 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v7.3.1...7.0)
 
 
+## [v7.3.2 (2019-07-11)](https://github.com/laravel/passport/compare/v7.3.1...v7.3.2)
+
+### Fixed
+- Merge default Passport configuration ([#1039](https://github.com/laravel/passport/pull/1039))
+
+
 ## [v7.3.1 (2019-07-02)](https://github.com/laravel/passport/compare/v7.3.0...v7.3.1)
 
 ### Changed
