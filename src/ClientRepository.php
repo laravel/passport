@@ -106,14 +106,19 @@ class ClientRepository
      * @param  string  $redirect
      * @param  bool  $personalAccess
      * @param  bool  $password
+     * @param  bool  $confidential
      * @return \Laravel\Passport\Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false)
+    public function create($userId, $name, $redirect, $personalAccess = false, $password = false, $confidential = true)
     {
+        if ($personalAccess) {
+            $confidential = true;
+        }
+
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
-            'secret' => Str::random(40),
+            'secret' => $confidential ? Str::random(40) : null,
             'redirect' => $redirect,
             'personal_access_client' => $personalAccess,
             'password_client' => $password,

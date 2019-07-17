@@ -82,4 +82,14 @@ class Client extends Model
     {
         return $this->personal_access_client || $this->password_client;
     }
+
+    /**
+     * Determine if the client is a confidential client.
+     *
+     * @return bool
+     */
+    public function confidential()
+    {
+        return ! empty($this->secret);
+    }
 }
