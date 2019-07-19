@@ -52,7 +52,6 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        // Once we have an existing client record we will verify the secret.
         return hash_equals($record->secret, (string) $clientSecret);
     }
 
