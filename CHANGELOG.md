@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.3.2...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.3.4...master)
 
 ### Added
 - Add ability to customize the `RefreshToken` ([#966](https://github.com/laravel/passport/pull/966))
@@ -12,10 +12,22 @@
 - Use caret for constraints ([d906804](https://github.com/laravel/passport/commit/d906804c2faccca0333801eccfbf6c2fa5afbaee))
 
 
+## [v7.3.4 (2019-07-30)](https://github.com/laravel/passport/compare/v7.3.3...v7.3.4)
+
+### Changed
+- Remove old 5.9 constraints ([58eb99c](https://github.com/laravel/passport/commit/58eb99cac0668ba61f3c9dc03694848f0ac7035a))
+
+
+## [v7.3.3 (2019-07-29)](https://github.com/laravel/passport/compare/v7.3.2...v7.3.3)
+
+### Changed
+- Update version constraints for Laravel 6.0 ([609b5e8](https://github.com/laravel/passport/commit/609b5e829bf65dbeffb83dc8c324275fe0ebf30c))
+
+
 ## [v7.3.2 (2019-07-11)](https://github.com/laravel/passport/compare/v7.3.1...v7.3.2)
 
 ### Fixed
-- Merge default Passport configuration ([#1039](https://github.com/laravel/passport/pull/1039))
+- Merge default Passport configuration ([#1039](https://github.com/laravel/passport/pull/1039), [e260c86](https://github.com/laravel/passport/commit/e260c865c218f00e4ad0c445dc45852e254d60c7))
 
 
 ## [v7.3.1 (2019-07-02)](https://github.com/laravel/passport/compare/v7.3.0...v7.3.1)
