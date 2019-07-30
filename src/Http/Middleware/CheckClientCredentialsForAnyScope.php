@@ -21,7 +21,7 @@ class CheckClientCredentialsForAnyScope
      *
      * @var \League\OAuth2\Server\ResourceServer
      */
-    private $server;
+    protected $server;
 
     /**
      * Token Repository.

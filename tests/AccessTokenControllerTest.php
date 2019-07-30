@@ -17,6 +17,7 @@ class AccessTokenControllerTest extends TestCase
     public function tearDown()
     {
         m::close();
+        Container::getInstance()->flush();
     }
 
     public function test_a_token_can_be_issued()
