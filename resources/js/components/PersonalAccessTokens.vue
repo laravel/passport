@@ -141,11 +141,12 @@
                             You may now use this token to make API requests.
                         </p>
 
-                        <textarea class="form-control" rows="10">{{ accessToken }}</textarea>
+                        <textarea class="form-control" rows="10" ref="token">{{ accessToken }}</textarea>
                     </div>
 
                     <!-- Modal Actions -->
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @click="copyAccessToken">Copy Token</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -292,6 +293,23 @@
                         .then(response => {
                             this.getTokens();
                         });
+            },
+
+            /**
+             * Copy the access Token
+             */
+            copyAccessToken() {
+                this.$refs.token.select();
+
+                try {
+                    let result = document.execCommand('copy');
+                    let msg = result ? 'successful' : 'unsuccessful';
+
+                    alert('Token code was copied ' + msg);
+
+                } catch (err) {
+                    alert('Oops, unable to copy');
+                }
             }
         }
     }
