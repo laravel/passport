@@ -3,22 +3,16 @@ language: php
 sudo: false
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
 env:
   matrix:
-    - LARAVEL=5.6.*
-    - LARAVEL=5.7.*
     - LARAVEL=5.8.*
     - LARAVEL=dev-master
 
 matrix:
   fast_finish: true
-  exclude:
-    - php: 7.1
-      env: LARAVEL=dev-master
   allow_failures:
     - env: LARAVEL=dev-master
 

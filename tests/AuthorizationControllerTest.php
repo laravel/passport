@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests;
 
-use Exception;
 use Mockery as m;
 use Laravel\Passport\Token;
 use Illuminate\Http\Request;
@@ -18,7 +17,6 @@ use Psr\Http\Message\ResponseInterface;
 use Illuminate\Contracts\Config\Repository;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
