@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v7.3.5...7.0)
 
 
-## [v7.3.5 (2019-08-06)](https://github.com/laravel/passport/compare/v7.3.3...v7.3.5)
+## [v7.3.5 (2019-08-06)](https://github.com/laravel/passport/compare/v7.3.4...v7.3.5)
 
 ### Fixed
 - Use `bigInteger` column type for `user_id` columns ([#1057](https://github.com/laravel/passport/pull/1057))
