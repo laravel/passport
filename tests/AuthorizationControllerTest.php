@@ -14,7 +14,6 @@ use Illuminate\Container\Container;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use Psr\Http\Message\ResponseInterface;
-use Illuminate\Contracts\Config\Repository;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -70,31 +69,6 @@ class AuthorizationControllerTest extends TestCase
         $this->assertEquals('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         ));
-    }
-
-    public function test_authorization_exceptions_are_handled()
-    {
-        Container::getInstance()->instance(ExceptionHandler::class, $exceptions = m::mock());
-        Container::getInstance()->instance(Repository::class, $config = m::mock());
-        $exceptions->shouldReceive('report')->once();
-        $config->shouldReceive('get')->once()->andReturn(true);
-
-        $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
-
-        $controller = new AuthorizationController($server, $response);
-
-        $server->shouldReceive('validateAuthorizationRequest')->andThrow(new Exception('whoops'));
-
-        $request = m::mock(Request::class);
-        $request->shouldReceive('session')->andReturn($session = m::mock());
-
-        $clients = m::mock(ClientRepository::class);
-        $tokens = m::mock(TokenRepository::class);
-
-        $this->assertEquals('whoops', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
-        )->getContent());
     }
 
     public function test_request_is_approved_if_valid_token_exists()
