@@ -14,7 +14,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 
 class AuthorizationController
 {
-    use ConvertsPsrResponses;
+    use HandlesOAuthErrors;
 
     /**
      * The authorization server.
@@ -57,7 +57,9 @@ class AuthorizationController
                               ClientRepository $clients,
                               TokenRepository $tokens)
     {
-        $authRequest = $this->server->validateAuthorizationRequest($psrRequest);
+        $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
+            return $this->server->validateAuthorizationRequest($psrRequest);
+        });
 
         $scopes = $this->parseScopes($authRequest);
 
@@ -109,8 +111,10 @@ class AuthorizationController
 
         $authRequest->setAuthorizationApproved(true);
 
-        return $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        );
+        return $this->withErrorHandling(function () use ($authRequest) {
+            return $this->convertResponse(
+                $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
+            );
+        });
     }
 }

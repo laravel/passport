@@ -10,22 +10,22 @@ use Zend\Diactoros\Response;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
 use Laravel\Passport\Bridge\Scope;
-use Illuminate\Container\Container;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Laravel\Passport\Exceptions\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 
 class AuthorizationControllerTest extends TestCase
 {
     public function tearDown()
     {
         m::close();
-        Container::getInstance()->flush();
     }
 
     public function test_authorization_view_is_presented()
@@ -69,6 +69,28 @@ class AuthorizationControllerTest extends TestCase
         $this->assertEquals('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         ));
+    }
+
+    public function test_authorization_exceptions_are_handled()
+    {
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
+
+        $controller = new AuthorizationController($server, $response);
+
+        $server->shouldReceive('validateAuthorizationRequest')->andThrow(LeagueException::invalidCredentials());
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+
+        $clients = m::mock(ClientRepository::class);
+        $tokens = m::mock(TokenRepository::class);
+
+        $this->expectException(OAuthServerException::class);
+
+        $controller->authorize(
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+        );
     }
 
     public function test_request_is_approved_if_valid_token_exists()
