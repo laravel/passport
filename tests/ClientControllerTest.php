@@ -48,7 +48,7 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('create')
             ->once()
-            ->with(1, 'client name', 'http://localhost')
+            ->with(1, 'client name', 'http://localhost', false, false, true)
             ->andReturn($client = new Client);
 
         $redirectRule = m::mock(RedirectRule::class);
@@ -60,6 +60,46 @@ class ClientControllerTest extends TestCase
         ], [
             'name' => 'required|max:255',
             'redirect' => ['required', $redirectRule],
+            'confidential' => 'boolean',
+        ])->andReturn($validator);
+        $validator->shouldReceive('validate')->once();
+
+        $controller = new ClientController(
+            $clients, $validator, $redirectRule
+        );
+
+        $this->assertEquals($client, $controller->store($request));
+    }
+
+    public function test_public_clients_can_be_stored()
+    {
+        $clients = m::mock(ClientRepository::class);
+
+        $request = Request::create(
+            '/',
+            'GET',
+            ['name' => 'client name', 'redirect' => 'http://localhost', 'confidential' => false]
+        );
+        $request->setUserResolver(function () {
+            return new ClientControllerFakeUser;
+        });
+
+        $clients->shouldReceive('create')
+            ->once()
+            ->with(1, 'client name', 'http://localhost', false, false, false)
+            ->andReturn($client = new Client);
+
+        $redirectRule = m::mock(RedirectRule::class);
+
+        $validator = m::mock(Factory::class);
+        $validator->shouldReceive('make')->once()->with([
+            'name' => 'client name',
+            'redirect' => 'http://localhost',
+            'confidential' => false,
+        ], [
+            'name' => 'required|max:255',
+            'redirect' => ['required', $redirectRule],
+            'confidential' => 'boolean',
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
