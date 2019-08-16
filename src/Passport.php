@@ -139,6 +139,13 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * Indicates the scope should inherit its parent scope.
+     *
+     * @var bool
+     */
+    public static $withInheritedScopes = false;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
