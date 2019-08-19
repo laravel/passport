@@ -136,8 +136,9 @@
                                             <input type="checkbox" v-model="createForm.confidential">
                                         </label>
                                     </div>
+
                                     <span class="form-text text-muted">
-                                        Require the client to authenticate with a secret.
+                                        Require the client to authenticate with a secret. Confidential clients can hold credentials in a secure way without exposing them to unauthorized parties. Public applications, such as native desktop or JavaScript SPA applications, are unable to hold secrets securely.
                                     </span>
                                 </div>
                             </div>
