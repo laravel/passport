@@ -4,6 +4,7 @@
 
 ### Added
 - Add ability to customize the `RefreshToken` ([#966](https://github.com/laravel/passport/pull/966))
+- Add support for "public" clients ([#1065](https://github.com/laravel/passport/pull/1065))
 
 ### Changed
 - Rework HandlesOAuthErrors trait to middleware ([#937](https://github.com/laravel/passport/pull/937))
