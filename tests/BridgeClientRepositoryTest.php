@@ -74,6 +74,15 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'password'));
     }
 
+    public function test_public_client_password_grant_is_permitted()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->password_client = true;
+        $client->secret = null;
+
+        $this->assertTrue($this->repository->validateClient(1, null, 'password'));
+    }
+
     public function test_password_grant_is_prevented()
     {
         $this->assertFalse($this->repository->validateClient(1, 'secret', 'password'));
@@ -82,6 +91,14 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_authorization_code_grant_is_permitted()
     {
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'authorization_code'));
+    }
+
+    public function test_public_client_authorization_code_grant_is_permitted()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->secret = null;
+
+        $this->assertTrue($this->repository->validateClient(1, null, 'authorization_code'));
     }
 
     public function test_authorization_code_grant_is_prevented()
@@ -103,6 +120,15 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_personal_access_grant_is_prevented()
     {
         $this->assertFalse($this->repository->validateClient(1, 'secret', 'personal_access'));
+    }
+
+    public function test_public_client_personal_access_grant_is_prevented()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->personal_access_client = true;
+        $client->secret = null;
+
+        $this->assertFalse($this->repository->validateClient(1, null, 'personal_access'));
     }
 
     public function test_client_credentials_grant_is_permitted()
@@ -133,6 +159,24 @@ class BridgeClientRepositoryTest extends TestCase
 
         $this->assertFalse($this->repository->validateClient(1, 'secret', 'authorization_code'));
     }
+
+    public function test_refresh_grant_is_permitted()
+    {
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'refresh_token'));
+    }
+
+    public function test_public_refresh_grant_is_permitted()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->secret = null;
+
+        $this->assertTrue($this->repository->validateClient(1, null, 'refresh_token'));
+    }
+
+    public function test_refresh_grant_is_prevented()
+    {
+        $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'refresh_token'));
+    }
 }
 
 class BridgeClientRepositoryTestClientStub
@@ -152,5 +196,10 @@ class BridgeClientRepositoryTestClientStub
     public function firstParty()
     {
         return $this->personal_access_client || $this->password_client;
+    }
+
+    public function confidential()
+    {
+        return ! empty($this->secret);
     }
 }
