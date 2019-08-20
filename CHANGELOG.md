@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.3.5...7.0)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.4.0...7.0)
+
+
+## [v7.4.0 (2019-08-20)](https://github.com/laravel/passport/compare/v7.3.5...v7.4.0)
+
+### Added
+- Let Passport support inherited parent scopes ([#1068](https://github.com/laravel/passport/pull/1068))
+- Accept requests with the encrypted X-XSRF-TOKEN HTTP header ([#1069](https://github.com/laravel/passport/pull/1069))
 
 
 ## [v7.3.5 (2019-08-06)](https://github.com/laravel/passport/compare/v7.3.4...v7.3.5)
