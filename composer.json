@@ -22,6 +22,7 @@
         "illuminate/console": "~5.6.0|~5.7.0|~5.8.0|^6.0",
         "illuminate/container": "~5.6.0|~5.7.0|~5.8.0|^6.0",
         "illuminate/contracts": "~5.6.0|~5.7.0|~5.8.0|^6.0",
+        "illuminate/cookie": "~5.6.0|~5.7.0|~5.8.0|^6.0",
         "illuminate/database": "~5.6.0|~5.7.0|~5.8.0|^6.0",
         "illuminate/encryption": "~5.6.0|~5.7.0|~5.8.0|^6.0",
         "illuminate/http": "~5.6.0|~5.7.0|~5.8.0|^6.0",

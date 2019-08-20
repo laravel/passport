@@ -14,6 +14,7 @@ use League\OAuth2\Server\ResourceServer;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
@@ -254,7 +255,34 @@ class TokenGuard
     protected function validCsrf($token, $request)
     {
         return isset($token['csrf']) && hash_equals(
-            $token['csrf'], (string) $request->header('X-CSRF-TOKEN')
+            $token['csrf'], (string) $this->getTokenFromRequest($request)
         );
+    }
+
+    /**
+     * Get the CSRF token from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string
+     */
+    protected function getTokenFromRequest($request)
+    {
+        $token = $request->header('X-CSRF-TOKEN');
+
+        if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
+            $token = $this->encrypter->decrypt($header, static::serialized());
+        }
+
+        return $token;
+    }
+
+    /**
+     * Determine if the cookie contents should be serialized.
+     *
+     * @return bool
+     */
+    public static function serialized()
+    {
+        return EncryptCookies::serialized('XSRF-TOKEN');
     }
 }
