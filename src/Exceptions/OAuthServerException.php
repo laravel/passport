@@ -18,8 +18,8 @@ class OAuthServerException extends Exception
     /**
      * Create a new OAuthServerException.
      *
-     * @param LeagueException $e
-     * @param Response        $response
+     * @param  \League\OAuth2\Server\Exception\OAuthServerException  $e
+     * @param  \Illuminate\Http\Response  $response
      * @return void
      */
     public function __construct(LeagueException $e, Response $response)
