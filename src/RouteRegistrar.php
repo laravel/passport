@@ -3,7 +3,6 @@
 namespace Laravel\Passport;
 
 use Illuminate\Contracts\Routing\Registrar as Router;
-use Laravel\Passport\Http\Middleware\HandleOAuthErrors;
 
 class RouteRegistrar
 {
@@ -50,13 +49,11 @@ class RouteRegistrar
             $router->get('/authorize', [
                 'uses' => 'AuthorizationController@authorize',
                 'as' => 'passport.authorizations.authorize',
-                'middleware' => [HandleOAuthErrors::class],
             ]);
 
             $router->post('/authorize', [
                 'uses' => 'ApproveAuthorizationController@approve',
                 'as' => 'passport.authorizations.approve',
-                'middleware' => [HandleOAuthErrors::class],
             ]);
 
             $router->delete('/authorize', [
@@ -76,7 +73,7 @@ class RouteRegistrar
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
             'as' => 'passport.token',
-            'middleware' => ['throttle', HandleOAuthErrors::class],
+            'middleware' => 'throttle',
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
