@@ -18,7 +18,7 @@ use Laravel\Passport\Http\Controllers\AccessTokenController;
 
 class AccessTokenControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
         Container::getInstance()->flush();

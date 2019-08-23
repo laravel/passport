@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 
 class ApiTokenCookieFactoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

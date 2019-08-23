@@ -13,7 +13,7 @@ use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
 
 class ApproveAuthorizationControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

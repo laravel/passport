@@ -10,7 +10,7 @@ use Laravel\Passport\PersonalAccessTokenFactory;
 
 class HasApiTokensTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
         Container::getInstance()->flush();

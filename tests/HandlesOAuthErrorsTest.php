@@ -16,7 +16,7 @@ use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
 
 class HandlesOAuthErrorsTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
         Container::getInstance()->flush();

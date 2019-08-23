@@ -23,13 +23,13 @@ class AuthorizedAccessTokenControllerTest extends TestCase
      */
     protected $controller;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
         $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
 

@@ -14,7 +14,7 @@ use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 
 class PersonalAccessTokenControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

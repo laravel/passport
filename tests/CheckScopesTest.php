@@ -8,7 +8,7 @@ use Laravel\Passport\Http\Middleware\CheckScopes;
 
 class CheckScopesTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

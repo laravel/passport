@@ -14,7 +14,7 @@ use Laravel\Passport\PersonalAccessTokenFactory;
 
 class PersonalAccessTokenFactoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

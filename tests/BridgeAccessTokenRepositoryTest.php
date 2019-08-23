@@ -14,7 +14,7 @@ use Laravel\Passport\Bridge\AccessTokenRepository;
 
 class BridgeAccessTokenRepositoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }
