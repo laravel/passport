@@ -23,7 +23,7 @@ use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 
 class AuthorizationControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

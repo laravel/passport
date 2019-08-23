@@ -15,7 +15,7 @@ function custom_path($file = null)
 
 class KeysCommandTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
 

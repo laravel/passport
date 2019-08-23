@@ -9,7 +9,7 @@ use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenReposito
 
 class BridgeRefreshTokenRepositoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

@@ -14,7 +14,7 @@ use Laravel\Passport\Http\Controllers\ClientController;
 
 class ClientControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

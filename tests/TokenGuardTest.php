@@ -21,7 +21,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 
 class TokenGuardTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
         Container::getInstance()->flush();

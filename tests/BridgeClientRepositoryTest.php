@@ -20,7 +20,7 @@ class BridgeClientRepositoryTest extends TestCase
      */
     private $repository;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $clientModelRepository = m::mock(ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')
@@ -31,7 +31,7 @@ class BridgeClientRepositoryTest extends TestCase
         $this->repository = new BridgeClientRepository($clientModelRepository);
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
 

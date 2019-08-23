@@ -16,7 +16,7 @@ use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 
 class AccessTokenControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

@@ -11,7 +11,7 @@ use Laravel\Passport\Http\Controllers\TransientTokenController;
 
 class TransientTokenControllerTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }
