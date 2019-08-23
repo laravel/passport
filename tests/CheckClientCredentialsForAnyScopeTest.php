@@ -11,7 +11,7 @@ use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 
 class CheckClientCredentialsForAnyScopeTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

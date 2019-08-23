@@ -10,7 +10,7 @@ use Illuminate\Contracts\Validation\Validator;
 
 class RedirectRuleTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

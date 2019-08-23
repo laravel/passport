@@ -11,7 +11,7 @@ use Laravel\Passport\Bridge\RefreshTokenRepository;
 
 class BridgeRefreshTokenRepositoryTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }

@@ -13,7 +13,7 @@ use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 
 class CreateFreshApiTokenTest extends TestCase
 {
-    public function tearDown()
+    protected function tearDown(): void
     {
         m::close();
     }
