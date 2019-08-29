@@ -5,13 +5,13 @@ namespace Laravel\Passport\Guards;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Passport;
 use Illuminate\Container\Container;
 use Laravel\Passport\TransientToken;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\ResourceServer;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -58,14 +58,12 @@ class TokenGuard
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Illuminate\Contracts\Auth\UserProvider  $provider
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(ResourceServer $server,
-                                UserProvider $provider,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
                                 Encrypter $encrypter)
@@ -73,18 +71,23 @@ class TokenGuard
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
-        $this->provider = $provider;
         $this->encrypter = $encrypter;
     }
 
     /**
      * Get the user for the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param $provider
+     * @param \Illuminate\Http\Request $request
      * @return mixed
      */
-    public function user(Request $request)
+    public function user($provider, Request $request)
     {
+        // To support multi-auth we need to validate the provider.
+        if (!$this->validateProvider($provider, $request)) {
+            return;
+        }
+
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
         } elseif ($request->cookie(Passport::cookie())) {
@@ -113,6 +116,25 @@ class TokenGuard
                 return $this->clients->findActive($token['aud']);
             }
         }
+    }
+
+    /**
+     * Validate the user provider for multi-auth.
+     *
+     * @param $provider
+     * @param $request
+     * @return bool
+     */
+    protected function validateProvider($provider, $request)
+    {
+        // The client's provider must match the requested provider.
+        if ($this->client($request)->provider && $this->client($request)->provider !== $provider) {
+            return false;
+        }
+
+        $this->provider = Auth::createUserProvider($provider);
+
+        return true;
     }
 
     /**
