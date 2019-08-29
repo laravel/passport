@@ -3,7 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Passport\Contracts\TokenContract;
+use Laravel\Passport\Contracts\Token as TokenContract;
 
 class Token extends Model implements TokenContract
 {
