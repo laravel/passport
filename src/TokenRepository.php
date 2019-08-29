@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Laravel\Passport\Contracts\TokenContract;
 
 class TokenRepository
 {
@@ -70,10 +71,10 @@ class TokenRepository
     /**
      * Store the given token instance.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \Laravel\Passport\Contracts\TokenContract  $token
      * @return void
      */
-    public function save(Token $token)
+    public function save(TokenContract $token)
     {
         $token->save();
     }

@@ -3,8 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\Contracts\TokenContract;
 
-class Token extends Model
+class Token extends Model implements TokenContract
 {
     /**
      * The database table used by the model.
