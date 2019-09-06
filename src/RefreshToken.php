@@ -21,6 +21,13 @@ class RefreshToken extends Model
     public $incrementing = false;
 
     /**
+     * The "type" of the primary key ID.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
      * The guarded attributes on the model.
      *
      * @var array
