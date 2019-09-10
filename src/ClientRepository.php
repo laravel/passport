@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport;
 
-use RuntimeException;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class ClientRepository
 {

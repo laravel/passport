@@ -2,11 +2,11 @@
 
 namespace Laravel\Passport\Tests;
 
+use Laravel\Passport\Console\KeysCommand;
+use Laravel\Passport\Passport;
 use Mockery as m;
 use phpseclib\Crypt\RSA;
-use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Console\KeysCommand;
 
 function custom_path($file = null)
 {

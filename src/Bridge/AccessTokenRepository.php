@@ -3,11 +3,11 @@
 namespace Laravel\Passport\Bridge;
 
 use DateTime;
-use Laravel\Passport\TokenRepository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Events\AccessTokenCreated;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 
 class AccessTokenRepository implements AccessTokenRepositoryInterface

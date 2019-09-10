@@ -2,11 +2,11 @@
 
 namespace Laravel\Passport;
 
-use Mockery;
-use DateInterval;
 use Carbon\Carbon;
+use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
+use Mockery;
 
 class Passport
 {

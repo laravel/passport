@@ -2,15 +2,15 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
-use Laravel\Passport\Token;
-use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
-use PHPUnit\Framework\TestCase;
-use Laravel\Passport\TokenRepository;
 use Illuminate\Contracts\Validation\Factory;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
+use Laravel\Passport\Passport;
+use Laravel\Passport\Token;
+use Laravel\Passport\TokenRepository;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class PersonalAccessTokenControllerTest extends TestCase
 {
