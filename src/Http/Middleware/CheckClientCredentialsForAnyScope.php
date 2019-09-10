@@ -3,16 +3,16 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
-use Zend\Diactoros\StreamFactory;
-use Zend\Diactoros\ResponseFactory;
-use Laravel\Passport\TokenRepository;
-use Zend\Diactoros\UploadedFileFactory;
-use League\OAuth2\Server\ResourceServer;
-use Zend\Diactoros\ServerRequestFactory;
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\StreamFactory;
+use Zend\Diactoros\UploadedFileFactory;
 
 class CheckClientCredentialsForAnyScope
 {

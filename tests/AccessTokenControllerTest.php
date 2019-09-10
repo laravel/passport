@@ -2,17 +2,17 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
-use Lcobucci\JWT\Parser;
-use Zend\Diactoros\Response;
-use PHPUnit\Framework\TestCase;
-use Laravel\Passport\TokenRepository;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use League\OAuth2\Server\AuthorizationServer;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
+use Laravel\Passport\TokenRepository;
+use Lcobucci\JWT\Parser;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 
 class AccessTokenControllerTest extends TestCase
 {

@@ -2,15 +2,15 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
-use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
-use PHPUnit\Framework\TestCase;
-use Laravel\Passport\TokenRepository;
-use League\OAuth2\Server\ResourceServer;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
+use Laravel\Passport\Token;
+use Laravel\Passport\TokenRepository;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResourceServer;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 class CheckClientCredentialsForAnyScopeTest extends TestCase
 {
