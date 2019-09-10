@@ -2,12 +2,12 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
-use Laravel\Passport\Passport;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Config\Repository as Config;
-use Laravel\Passport\PassportServiceProvider;
 use Illuminate\Contracts\Foundation\Application as App;
+use Laravel\Passport\Passport;
+use Laravel\Passport\PassportServiceProvider;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 class PassportServiceProviderTest extends TestCase
 {

@@ -4,9 +4,9 @@ namespace Laravel\Passport;
 
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
-use Symfony\Component\HttpFoundation\Cookie;
-use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Config\Repository as Config;
+use Illuminate\Contracts\Encryption\Encrypter;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class ApiTokenCookieFactory
 {

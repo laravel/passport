@@ -2,15 +2,15 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
+use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
-use PHPUnit\Framework\TestCase;
 use Laravel\Passport\ClientRepository;
-use Illuminate\Contracts\Validation\Factory;
-use Laravel\Passport\Http\Rules\RedirectRule;
-use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\ClientController;
+use Laravel\Passport\Http\Rules\RedirectRule;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class ClientControllerTest extends TestCase
 {

@@ -2,11 +2,11 @@
 
 namespace Laravel\Passport\Bridge;
 
-use RuntimeException;
-use Illuminate\Hashing\HashManager;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Hashing\HashManager;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
+use RuntimeException;
 
 class UserRepository implements UserRepositoryInterface
 {

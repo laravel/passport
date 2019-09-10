@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Http\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Contracts\Validation\Factory;
+use Illuminate\Contracts\Validation\Rule;
 
 class RedirectRule implements Rule
 {
