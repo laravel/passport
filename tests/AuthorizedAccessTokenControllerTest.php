@@ -2,14 +2,14 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
-use Laravel\Passport\Token;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
-use PHPUnit\Framework\TestCase;
-use Laravel\Passport\TokenRepository;
-use Symfony\Component\HttpFoundation\Response;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
+use Laravel\Passport\Token;
+use Laravel\Passport\TokenRepository;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizedAccessTokenControllerTest extends TestCase
 {

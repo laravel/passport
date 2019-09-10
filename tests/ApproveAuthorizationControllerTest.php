@@ -2,14 +2,14 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
 use Illuminate\Http\Request;
-use Zend\Diactoros\Response;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
+use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
 
 class ApproveAuthorizationControllerTest extends TestCase
 {

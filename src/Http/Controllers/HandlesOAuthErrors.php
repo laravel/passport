@@ -3,14 +3,14 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Exception;
-use Throwable;
-use Illuminate\Http\Response;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Config\Repository;
-use Zend\Diactoros\Response as Psr7Response;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Http\Response;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
+use Throwable;
+use Zend\Diactoros\Response as Psr7Response;
 
 trait HandlesOAuthErrors
 {
