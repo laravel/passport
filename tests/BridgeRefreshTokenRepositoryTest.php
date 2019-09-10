@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Tests;
 
+use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
+use Laravel\Passport\RefreshTokenRepository;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\RefreshTokenRepository;
-use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
 
 class BridgeRefreshTokenRepositoryTest extends TestCase
 {
