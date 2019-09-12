@@ -2,22 +2,22 @@
 
 namespace Laravel\Passport\Tests;
 
-use Mockery as m;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
-use Illuminate\Http\Request;
-use Laravel\Passport\Passport;
-use PHPUnit\Framework\TestCase;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Container\Container;
-use Illuminate\Encryption\Encrypter;
-use Laravel\Passport\TokenRepository;
-use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Guards\TokenGuard;
-use League\OAuth2\Server\ResourceServer;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Http\Request;
+use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Guards\TokenGuard;
+use Laravel\Passport\HasApiTokens;
+use Laravel\Passport\Passport;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\ResourceServer;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
 class TokenGuardTest extends TestCase
 {

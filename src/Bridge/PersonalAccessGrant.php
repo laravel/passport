@@ -3,9 +3,9 @@
 namespace Laravel\Passport\Bridge;
 
 use DateInterval;
-use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class PersonalAccessGrant extends AbstractGrant
 {

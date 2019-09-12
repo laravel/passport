@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
 class DenyAuthorizationController
 {

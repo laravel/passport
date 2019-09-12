@@ -4,15 +4,15 @@ namespace Laravel\Passport\Tests;
 
 use Error;
 use Exception;
-use Mockery as m;
-use RuntimeException;
-use Illuminate\Http\Response;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use League\OAuth2\Server\Exception\OAuthServerException;
+use Illuminate\Http\Response;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class HandlesOAuthErrorsTest extends TestCase
 {

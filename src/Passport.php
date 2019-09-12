@@ -2,12 +2,12 @@
 
 namespace Laravel\Passport;
 
-use Mockery;
-use DateInterval;
 use Carbon\Carbon;
+use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
+use Mockery;
 
 class Passport
 {

@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.4.0...7.0)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.4.1...7.0)
+
+
+## [v7.4.1 (2019-09-10)](https://github.com/laravel/passport/compare/v7.4.0...v7.4.1)
+
+### Fixed
+- Fixed key types for models ([#1078](https://github.com/laravel/passport/pull/1078), [a9a885d3](https://github.com/laravel/passport/commit/a9a885d3c2344ec133ed42a0268e503a76810982))
 
 
 ## [v7.4.0 (2019-08-20)](https://github.com/laravel/passport/compare/v7.3.5...v7.4.0)
