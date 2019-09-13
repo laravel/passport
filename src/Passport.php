@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
+use League\OAuth2\Server\ResourceServer;
 use Mockery;
 
 class Passport
@@ -403,6 +404,29 @@ class Passport
         app('auth')->shouldUse($guard);
 
         return $user;
+    }
+
+    /**
+     * Set the current client for the application with the given scopes.
+     *
+     * @param  \Laravel\Passport\Client  $client
+     * @param  array  $scopes
+     * @return \Laravel\Passport\Client
+     */
+    public static function actingAsClient($client, $scopes = [])
+    {
+        $mock = Mockery::mock(ResourceServer::class);
+
+        $mock->shouldReceive('validateAuthenticatedRequest')
+            ->andReturnUsing(function ($request) use ($client, $scopes) {
+                return $request
+                    ->withAttribute('oauth_client_id', $client->id)
+                    ->withAttribute('oauth_scopes', $scopes);
+            });
+
+        app()->instance(ResourceServer::class, $mock);
+
+        return $client;
     }
 
     /**
