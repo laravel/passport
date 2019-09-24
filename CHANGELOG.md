@@ -3,6 +3,12 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v7.4.1...7.0)
 
 
+## [v7.5.0 (2019-09-24)](https://github.com/laravel/passport/compare/v7.4.0...v7.4.1)
+
+### Added
+- Add `actingAsClient` method for tests ([#1083](https://github.com/laravel/passport/pull/1083))
+
+
 ## [v7.4.1 (2019-09-10)](https://github.com/laravel/passport/compare/v7.4.0...v7.4.1)
 
 ### Fixed
