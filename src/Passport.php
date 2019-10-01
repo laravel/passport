@@ -80,7 +80,7 @@ class Passport
      *
      * @var string
      */
-    public static $cookie = 'laravel_token';
+    public static $cookie = config('session.cookie') . '_token';
 
     /**
      * Indicates if Passport should ignore incoming CSRF tokens.
