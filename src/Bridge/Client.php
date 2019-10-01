@@ -9,7 +9,7 @@ class Client implements ClientEntityInterface
 {
     use ClientTrait;
 
-   /**
+    /**
      * @var string
      */
     protected $identifier;
