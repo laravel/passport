@@ -10,6 +10,8 @@ class Client implements ClientEntityInterface
     use ClientTrait;
 
     /**
+     * The client identifier.
+     * 
      * @var string
      */
     protected $identifier;
@@ -31,6 +33,8 @@ class Client implements ClientEntityInterface
     }
 
     /**
+     * Get the client's identifier.
+     *
      * @return string
      */
     public function getIdentifier()
@@ -39,7 +43,9 @@ class Client implements ClientEntityInterface
     }
 
     /**
-     * @param string $identifier
+     * Set the client's identifier.
+     *
+     * @param  string  $identifier
      */
     public function setIdentifier($identifier)
     {
