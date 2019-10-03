@@ -11,7 +11,7 @@ class Client implements ClientEntityInterface
 
     /**
      * The client identifier.
-     * 
+     *
      * @var string
      */
     protected $identifier;
