@@ -1,9 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.4.1...7.0)
+## [Unreleased](https://github.com/laravel/passport/compare/v7.5.1...7.0)
 
 
-## [v7.5.0 (2019-09-24)](https://github.com/laravel/passport/compare/v7.4.0...v7.4.1)
+## [v7.5.1 (2019-10-08)](https://github.com/laravel/passport/compare/v7.5.0...v7.5.1)
+
+### Fixed
+- Cast returned client identifier value to string ([#1091](https://github.com/laravel/passport/pull/1091))
+
+
+## [v7.5.0 (2019-09-24)](https://github.com/laravel/passport/compare/v7.4.1...v7.5.0)
 
 ### Added
 - Add `actingAsClient` method for tests ([#1083](https://github.com/laravel/passport/pull/1083))
