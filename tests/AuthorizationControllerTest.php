@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests;
 
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\Scope;
