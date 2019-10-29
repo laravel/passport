@@ -8,10 +8,18 @@
 
 ### Changed
 - Rework HandlesOAuthErrors trait to middleware ([#937](https://github.com/laravel/passport/pull/937))
+- Use a renderable exception for OAuth errors ([#1066](https://github.com/laravel/passport/pull/1066))
 - Use diactoros 2.0 and psr-http-factory ([aadf603](https://github.com/laravel/passport/commit/aadf603c1f45cfa4bbf954bfc3abc30cdd572683))
 - Replaced helpers with Blade directives ([#939](https://github.com/laravel/passport/pull/939))
 - Use caret for constraints ([d906804](https://github.com/laravel/passport/commit/d906804c2faccca0333801eccfbf6c2fa5afbaee))
 - Dropped support for Laravel 5.8 ([654cc09](https://github.com/laravel/passport/commit/654cc09b06b600c5629497aa2567be44c285d113))
+- Dropped support for PHP 7.1 ([3c830ac](https://github.com/laravel/passport/commit/3c830accaa1feefdeda0038b3d684cf4c80a0c52))
+- Upgrade to league/oauth2-server 8.0 ([97e3026](https://github.com/laravel/passport/commit/97e3026790d953d7a67fe487e30775cd995e93df))
+
+### Fixed
+- Fix exception will thrown if token belongs to first party clients ([#1040](https://github.com/laravel/passport/pull/1040))
+- Fix auth codes table customization ([#1044](https://github.com/laravel/passport/pull/1044))
+- Add key type to refresh token model ([e400c2b](https://github.com/laravel/passport/commit/e400c2b665f66b5669e792e42b6d1479cff23df7))
 
 
 ## [v7.5.1 (2019-10-08)](https://github.com/laravel/passport/compare/v7.5.0...v7.5.1)
