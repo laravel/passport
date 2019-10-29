@@ -1,6 +1,6 @@
 # Upgrade Guide
 
-## Upgrading To 7.0 From 8.0
+## Upgrading To 8.0 From 7.0
 
 ### Minimum & Upgraded Versions
 
