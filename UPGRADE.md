@@ -8,6 +8,16 @@ Commit: https://github.com/laravel/passport/commit/97e3026790d953d7a67fe487e3077
 
 The minimum Laravel version is now v6.0 and the minimum PHP version is now 7.2. The underlying `league/oauth2-server` has also been updated to v8.
 
+### Public Clients
+
+PR: https://github.com/laravel/passport/pull/1065
+
+Passport now supports public clients and PCKE. To leverage this feature, you should update the the `secret` column of the `oauth_clients` table to be `nullable`. If you use Passport migrations this will be done automatically for you upon the next migration. Otherwise, you'll need to create the following migration and migrate manually:
+
+    Schema::table('oauth_clients', function (Blueprint $table) {
+        $table->string('secret', 100)->nullable()->change();
+    });
+
 ### Renderable Exceptions For OAuth Errors
 
 PR: https://github.com/laravel/passport/pull/1066
