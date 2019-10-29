@@ -1,6 +1,9 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v7.5.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.0.0...master)
+
+
+## [v8.0.0 (2019-10-29)](https://github.com/laravel/passport/compare/v7.5.1...v8.0.0)
 
 ### Added
 - Add ability to customize the `RefreshToken` ([#966](https://github.com/laravel/passport/pull/966))
