@@ -6,7 +6,7 @@
 
 Commit: https://github.com/laravel/passport/commit/97e3026790d953d7a67fe487e30775cd995e93df
 
-The minimum Laravel version is now v6.0. The underlying `league/oauth2-server` was also updated to v8.
+The minimum Laravel version is now v6.0 and the minimum PHP version is now 7.2. The underlying `league/oauth2-server` was also updated to v8.
 
 ### Renderable Exceptions for OAuth Errors
 
