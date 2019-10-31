@@ -17,4 +17,6 @@ return [
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
 
+    'guard' => env('PASSPORT_GUARD', 'api'),
+
 ];
