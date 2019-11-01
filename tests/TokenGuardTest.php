@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\HasApiTokens;
@@ -104,6 +105,7 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_csrf_token_header()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -132,6 +134,7 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_header()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -160,6 +163,7 @@ class TokenGuardTest extends TestCase
 
     public function test_cookie_xsrf_is_verified_against_csrf_token_header()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -186,6 +190,7 @@ class TokenGuardTest extends TestCase
 
     public function test_cookie_xsrf_is_verified_against_xsrf_token_header()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -212,6 +217,7 @@ class TokenGuardTest extends TestCase
 
     public function test_xsrf_token_cookie_without_a_token_header_is_not_accepted()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -238,6 +244,7 @@ class TokenGuardTest extends TestCase
 
     public function test_expired_cookies_may_not_be_used()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -264,6 +271,7 @@ class TokenGuardTest extends TestCase
 
     public function test_csrf_check_can_be_disabled()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);
@@ -362,6 +370,7 @@ class TokenGuardTest extends TestCase
 
     public function test_clients_may_be_retrieved_from_cookies()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(UserProvider::class);
         $tokens = m::mock(TokenRepository::class);

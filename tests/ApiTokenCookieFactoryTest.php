@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Config;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,7 @@ class ApiTokenCookieFactoryTest extends TestCase
 
     public function test_cookie_can_be_successfully_created()
     {
+        Config::shouldReceive('get')->withSomeOfArgs('app.name')->andReturn('laravel');
         $config = m::mock(Repository::class);
         $config->shouldReceive('get')->with('session')->andReturn([
             'lifetime' => 120,
