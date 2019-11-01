@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 
@@ -81,7 +82,7 @@ class Passport
      *
      * @var string
      */
-    public static $cookie = 'laravel_token';
+    public static $cookie;
 
     /**
      * Indicates if Passport should ignore incoming CSRF tokens.
@@ -363,6 +364,10 @@ class Passport
     public static function cookie($cookie = null)
     {
         if (is_null($cookie)) {
+            if (is_null(static::$cookie)) {
+                static::$cookie = Str::slug(env('APP_NAME', 'laravel'), '_').'_token';
+            }
+
             return static::$cookie;
         }
 
