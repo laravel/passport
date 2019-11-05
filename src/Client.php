@@ -49,7 +49,7 @@ class Client extends Model
     public function user()
     {
         return $this->belongsTo(
-            config('auth.providers.'.config('auth.guards.api.provider').'.model')
+            config('passport.auth_guard')::model()
         );
     }
 

@@ -17,4 +17,5 @@ return [
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
 
+    'auth_guard' => Laravel\Passport\Bridge\AuthGuard::class,
 ];
