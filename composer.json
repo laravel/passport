@@ -4,8 +4,8 @@
     "keywords": ["laravel", "passport", "oauth"],
     "license": "MIT",
     "support": {
-        "issues": "https://github.com/laravel/passport/issues",
-        "source": "https://github.com/laravel/passport"
+        "issues": "https://github.com/glocom/passport/issues",
+        "source": "https://github.com/glocom/passport"
     },
     "authors": [
         {
