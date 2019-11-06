@@ -16,11 +16,7 @@ use Laravel\Passport\TokenRepository;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\StreamFactory;
-use Zend\Diactoros\UploadedFileFactory;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 
 class TokenGuard
 {
@@ -69,12 +65,13 @@ class TokenGuard
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
-    public function __construct(ResourceServer $server,
-                                UserProvider $provider,
-                                TokenRepository $tokens,
-                                ClientRepository $clients,
-                                Encrypter $encrypter)
-    {
+    public function __construct(
+        ResourceServer $server,
+        UserProvider $provider,
+        TokenRepository $tokens,
+        ClientRepository $clients,
+        Encrypter $encrypter
+    ) {
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
@@ -106,7 +103,7 @@ class TokenGuard
     public function client(Request $request)
     {
         if ($request->bearerToken()) {
-            if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
+            if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
                 return;
             }
 
@@ -128,18 +125,22 @@ class TokenGuard
      */
     protected function authenticateViaBearerToken($request)
     {
-        if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
+        if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
-
+        $clientType = $this->clients->findActive(
+            $psr->getAttribute('oauth_client_id')
+        )->name;
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
         $user = $this->provider->retrieveById(
             $psr->getAttribute('oauth_user_id') ?: null
         );
-
-        if (! $user) {
+        if ($clientType != $user->getGuard()) {
+            return;
+        }
+        if (!$user) {
             return;
         }
 
@@ -173,12 +174,7 @@ class TokenGuard
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
         // conversion for us to a Zend Diactoros implementation of the PSR-7 request.
-        $psr = (new PsrHttpFactory(
-            new ServerRequestFactory,
-            new StreamFactory,
-            new UploadedFileFactory,
-            new ResponseFactory
-        ))->createRequest($request);
+        $psr = (new DiactorosFactory)->createRequest($request);
 
         try {
             return $this->server->validateAuthenticatedRequest($psr);
@@ -199,7 +195,7 @@ class TokenGuard
      */
     protected function authenticateViaCookie($request)
     {
-        if (! $token = $this->getTokenViaCookie($request)) {
+        if (!$token = $this->getTokenViaCookie($request)) {
             return;
         }
 
@@ -231,7 +227,7 @@ class TokenGuard
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
+        if (!Passport::$ignoreCsrfToken && (!$this->validCsrf($token, $request) ||
             time() >= $token['expiry'])) {
             return;
         }
@@ -264,7 +260,8 @@ class TokenGuard
     protected function validCsrf($token, $request)
     {
         return isset($token['csrf']) && hash_equals(
-            $token['csrf'], (string) $this->getTokenFromRequest($request)
+            $token['csrf'],
+            (string) $this->getTokenFromRequest($request)
         );
     }
 
@@ -278,7 +275,7 @@ class TokenGuard
     {
         $token = $request->header('X-CSRF-TOKEN');
 
-        if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
+        if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
             $token = $this->encrypter->decrypt($header, static::serialized());
         }
 
