@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Guards;
 
+
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
@@ -125,6 +126,7 @@ class TokenGuard
      */
     protected function authenticateViaBearerToken($request)
     {
+        dd(1);
         if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
