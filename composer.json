@@ -38,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Passport\\": "src/"
+            "Glocom\\Passport\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Laravel\\Passport\\Tests\\": "tests/"
+            "Glocom\\Passport\\Tests\\": "tests/"
         }
     },
     "extra": {
@@ -52,7 +52,7 @@
         },
         "laravel": {
             "providers": [
-                "Laravel\\Passport\\PassportServiceProvider"
+                "Glocom\\Passport\\PassportServiceProvider"
             ]
         }
     },
