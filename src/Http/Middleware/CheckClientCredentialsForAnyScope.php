@@ -5,7 +5,7 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
-use Laravel\Passport\TokenRepository;
+use Laravel\Passport\ClientRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -24,9 +24,9 @@ class CheckClientCredentialsForAnyScope
     protected $server;
 
     /**
-     * Token Repository.
+     * Client Repository.
      *
-     * @var \Laravel\Passport\TokenRepository
+     * @var \Laravel\Passport\ClientRepository
      */
     protected $repository;
 
@@ -34,10 +34,10 @@ class CheckClientCredentialsForAnyScope
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Laravel\Passport\TokenRepository  $repository
+     * @param  \Laravel\Passport\ClientRepository  $repository
      * @return void
      */
-    public function __construct(ResourceServer $server, TokenRepository $repository)
+    public function __construct(ResourceServer $server, ClientRepository $repository)
     {
         $this->server = $server;
         $this->repository = $repository;
@@ -84,18 +84,18 @@ class CheckClientCredentialsForAnyScope
      */
     protected function validate($psr, $scopes)
     {
-        $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
+        $client = $this->repository->find($psr->getAttribute('oauth_client_id'));
 
-        if (! $token || $token->client->firstParty()) {
+        if (! $client || $client->firstParty()) {
             throw new AuthenticationException;
         }
 
-        if (in_array('*', $token->scopes)) {
+        if (in_array('*', $tokenScopes = $psr->getAttribute('oauth_scopes'))) {
             return true;
         }
 
         foreach ($scopes as $scope) {
-            if ($token->can($scope)) {
+            if (in_array($scope, $tokenScopes)) {
                 return true;
             }
         }
