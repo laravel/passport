@@ -4,8 +4,8 @@ namespace Laravel\Passport\Tests;
 
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
-use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
