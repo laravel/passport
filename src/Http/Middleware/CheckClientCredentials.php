@@ -4,8 +4,8 @@ namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\AuthenticationException;
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Exceptions\MissingScopeException;
+use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -24,9 +24,9 @@ class CheckClientCredentials
     protected $server;
 
     /**
-     * Client Repository.
+     * Token Repository.
      *
-     * @var \Laravel\Passport\ClientRepository
+     * @var \Laravel\Passport\TokenRepository
      */
     protected $repository;
 
@@ -34,10 +34,10 @@ class CheckClientCredentials
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Laravel\Passport\ClientRepository  $repository
+     * @param  \Laravel\Passport\TokenRepository  $repository
      * @return void
      */
-    public function __construct(ResourceServer $server, ClientRepository $repository)
+    public function __construct(ResourceServer $server, TokenRepository $repository)
     {
         $this->server = $server;
         $this->repository = $repository;
@@ -82,18 +82,18 @@ class CheckClientCredentials
      */
     protected function validate($psr, $scopes)
     {
-        $client = $this->repository->find($psr->getAttribute('oauth_client_id'));
+        $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
 
-        if (! $client || $client->firstParty()) {
+        if (! $token || $token->client->firstParty()) {
             throw new AuthenticationException;
         }
 
-        if (in_array('*', $tokenScopes = $psr->getAttribute('oauth_scopes'))) {
+        if (in_array('*', $token->scopes)) {
             return;
         }
 
         foreach ($scopes as $scope) {
-            if (! in_array($scope, $tokenScopes)) {
+            if ($token->cant($scope)) {
                 throw new MissingScopeException($scope);
             }
         }
