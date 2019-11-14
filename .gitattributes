@@ -9,3 +9,4 @@
 .travis.yml export-ignore
 CHANGELOG.md export-ignore
 phpunit.xml.dist export-ignore
+UPGRADE.md

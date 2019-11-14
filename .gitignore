@@ -1,4 +1,4 @@
 /vendor
 composer.lock
-phpunit.xml
+/phpunit.xml
 .phpunit.result.cache
