@@ -2,11 +2,12 @@
 
 namespace Laravel\Passport;
 
-use Mockery;
 use DateInterval;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
+use League\OAuth2\Server\ResourceServer;
+use Mockery;
 
 class Passport
 {
@@ -403,6 +404,37 @@ class Passport
         app('auth')->shouldUse($guard);
 
         return $user;
+    }
+
+    /**
+     * Set the current client for the application with the given scopes.
+     *
+     * @param  \Laravel\Passport\Client  $client
+     * @param  array  $scopes
+     * @return \Laravel\Passport\Client
+     */
+    public static function actingAsClient($client, $scopes = [])
+    {
+        $token = app(self::tokenModel());
+        $token->client = $client;
+        $token->scopes = $scopes;
+
+        $mock = Mockery::mock(ResourceServer::class);
+        $mock->shouldReceive('validateAuthenticatedRequest')
+            ->andReturnUsing(function ($request) use ($token) {
+                return $request->withAttribute('oauth_client_id', $token->client->id)
+                    ->withAttribute('oauth_access_token_id', $token->id)
+                    ->withAttribute('oauth_scopes', $token->scopes);
+            });
+
+        app()->instance(ResourceServer::class, $mock);
+
+        $mock = Mockery::mock(TokenRepository::class);
+        $mock->shouldReceive('find')->andReturn($token);
+
+        app()->instance(TokenRepository::class, $mock);
+
+        return $client;
     }
 
     /**
