@@ -24,7 +24,7 @@ class ComponentsPresetCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Passport Components';
+    protected $description = 'Passport Components Installation Command';
 
     protected $views = [
         'AuthorizedClients.vue' => 'components/AuthorizedClients.vue',
@@ -67,7 +67,7 @@ class ComponentsPresetCommand extends Command
     }
 
     /**
-     * Export the authentication views.
+     * Export the passport management vue components.
      *
      * @return void
      */

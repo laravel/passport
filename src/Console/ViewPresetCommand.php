@@ -24,7 +24,7 @@ class ViewPresetCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Passport Authorize View';
+    protected $description = 'Passport Authorize Preset Installation Command';
 
     protected $views = [
         'views/authorize.blade.php' => 'passport/authorize.blade.php',
@@ -65,7 +65,7 @@ class ViewPresetCommand extends Command
     }
 
     /**
-     * Export the authentication views.
+     * Export the authentication view.
      *
      * @return void
      */
