@@ -47,6 +47,7 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertEquals('Client', $client->getName());
         $this->assertEquals(['http://localhost'], $client->getRedirectUri());
         $this->assertTrue($client->isConfidential());
+        $this->assertNull($client->getProvider());
     }
 
     public function test_can_validate_client_for_auth_code_grant()
@@ -192,6 +193,8 @@ class BridgeClientRepositoryTestClientStub
     public $password_client = false;
 
     public $grant_types;
+
+    public $provider = null;
 
     public function firstParty()
     {

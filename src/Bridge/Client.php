@@ -2,10 +2,11 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Laravel\Passport\UserProviderInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\ClientTrait;
 
-class Client implements ClientEntityInterface
+class Client implements ClientEntityInterface, UserProviderInterface
 {
     use ClientTrait;
 
@@ -17,21 +18,28 @@ class Client implements ClientEntityInterface
     protected $identifier;
 
     /**
+     * @var string|null
+     */
+    protected $provider;
+
+    /**
      * Create a new client instance.
      *
      * @param  string  $identifier
      * @param  string  $name
      * @param  string  $redirectUri
+     * @param  string  $provider
      * @param  bool  $isConfidential
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri, $isConfidential = false)
+    public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
     {
         $this->setIdentifier((string) $identifier);
 
         $this->name = $name;
         $this->isConfidential = $isConfidential;
         $this->redirectUri = explode(',', $redirectUri);
+        $this->provider = $provider;
     }
 
     /**
@@ -52,5 +60,15 @@ class Client implements ClientEntityInterface
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+    }
+
+    public function getProvider()
+    {
+        return $this->provider;
+    }
+
+    public function setProvider($provider)
+    {
+        $this->provider = $provider;
     }
 }

@@ -58,6 +58,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () use ($token1, $token2) {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
@@ -81,6 +82,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
@@ -95,10 +97,11 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $this->tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
+        $this->tokenRepository->shouldReceive('findForUser')->with(3, 'users', 1)->andReturnNull();
 
         $request->setUserResolver(function () {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;

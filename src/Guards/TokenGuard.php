@@ -5,11 +5,11 @@ namespace Laravel\Passport\Guards;
 use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
+use Laravel\Passport\UserProviderResolver;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
@@ -34,9 +34,9 @@ class TokenGuard
     /**
      * The user provider implementation.
      *
-     * @var \Illuminate\Contracts\Auth\UserProvider
+     * @var \Illuminate\Contracts\Auth\UserProviderResolver
      */
-    protected $provider;
+    protected $resolver;
 
     /**
      * The token repository instance.
@@ -63,14 +63,14 @@ class TokenGuard
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Illuminate\Contracts\Auth\UserProvider  $provider
+     * @param  \Illuminate\Contracts\Auth\UserProviderResolver  $resolver
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(ResourceServer $server,
-                                UserProvider $provider,
+                                UserProviderResolver $resolver,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
                                 Encrypter $encrypter)
@@ -78,7 +78,7 @@ class TokenGuard
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
-        $this->provider = $provider;
+        $this->resolver = $resolver;
         $this->encrypter = $encrypter;
     }
 
@@ -132,10 +132,21 @@ class TokenGuard
             return;
         }
 
+        $clientId = $psr->getAttribute('oauth_client_id');
+
+        // We will verify if the client that issued this token is still valid and
+        // its tokens may still be used. If not, we will bail out since we don't want a
+        // user to be able to send access tokens for deleted or revoked applications.
+        if ($this->clients->revoked($clientId)) {
+            return;
+        }
+
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->provider->retrieveById(
+        $user = $this->resolver->resolve(
+            $this->clients->find($clientId)->provider
+        )->retrieveById(
             $psr->getAttribute('oauth_user_id') ?: null
         );
 
@@ -149,15 +160,6 @@ class TokenGuard
         $token = $this->tokens->find(
             $psr->getAttribute('oauth_access_token_id')
         );
-
-        $clientId = $psr->getAttribute('oauth_client_id');
-
-        // Finally, we will verify if the client that issued this token is still valid and
-        // its tokens may still be used. If not, we will bail out since we don't want a
-        // user to be able to send access tokens for deleted or revoked applications.
-        if ($this->clients->revoked($clientId)) {
-            return;
-        }
 
         return $token ? $user->withAccessToken($token) : null;
     }
@@ -206,7 +208,12 @@ class TokenGuard
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
-        if ($user = $this->provider->retrieveById($token['sub'])) {
+        $provider = null;
+        $userId = $token['sub'];
+        if (strpos($token['sub'], '#') !== false) {
+            list($provider, $userId) = explode('#', $token['sub'], 2);
+        }
+        if ($user = $this->resolver->resolve($provider)->retrieveById($userId)) {
             return $user->withAccessToken(new TransientToken);
         }
     }

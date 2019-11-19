@@ -45,7 +45,7 @@ class PersonalAccessTokenController
      */
     public function forUser(Request $request)
     {
-        $tokens = $this->tokenRepository->forUser($request->user()->getKey());
+        $tokens = $this->tokenRepository->forUser($request->user()->getMorphClass(), $request->user()->getKey());
 
         return $tokens->load('client')->filter(function ($token) {
             return $token->client->personal_access_client && ! $token->revoked;
@@ -80,7 +80,7 @@ class PersonalAccessTokenController
     public function destroy(Request $request, $tokenId)
     {
         $token = $this->tokenRepository->findForUser(
-            $tokenId, $request->user()->getKey()
+            $tokenId, $request->user()->getMorphClass(), $request->user()->getKey()
         );
 
         if (is_null($token)) {

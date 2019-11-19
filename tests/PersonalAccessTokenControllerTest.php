@@ -38,6 +38,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () use ($token1, $token2) {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
@@ -98,6 +99,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
@@ -116,10 +118,11 @@ class PersonalAccessTokenControllerTest extends TestCase
         $request = Request::create('/', 'GET');
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
+        $tokenRepository->shouldReceive('findForUser')->with(3, 'users', 1)->andReturnNull();
 
         $request->setUserResolver(function () {
             $user = m::mock();
+            $user->shouldReceive('getMorphClass')->andReturn('users');
             $user->shouldReceive('getKey')->andReturn(1);
 
             return $user;
