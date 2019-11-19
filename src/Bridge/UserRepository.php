@@ -4,7 +4,6 @@ namespace Laravel\Passport\Bridge;
 
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Hashing\HashManager;
-use Laravel\Passport\UserProviderResolver;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use RuntimeException;
@@ -30,7 +29,7 @@ class UserRepository implements UserRepositoryInterface
      * @param  UserProviderResolver  $resolver
      * @return void
      */
-    public function __construct(HashManager $hasher, UserProviderResolver $resolver)
+    public function __construct(HashManager $hasher)
     {
         $this->hasher = $hasher->driver();
         $this->resolver = $resolver;
@@ -41,9 +40,9 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
-        $provider = $this->resolver->getProvider($clientEntity->getProvider());
+        $userProvider = $clientEntity->getUserProvider()->name;
 
-        if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
+        if (is_null($model = config('auth.providers.'.$userProvider.'.model'))) {
             throw new RuntimeException('Unable to determine authentication model from configuration.');
         }
 
