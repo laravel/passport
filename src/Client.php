@@ -103,9 +103,9 @@ class Client extends Model
         return ! empty($this->secret);
     }
 
-    public function getUserProviderAttribute()
+    public function getUserProvider()
     {
-        $providerName = is_null($this->attributes['user_provider_name']) ? config('auth.guards.api.provider') : $this->attributes['user_provider_name'];
+        $providerName = is_null($this->user_provider_name) ? config('auth.guards.api.provider') : $this->user_provider_name;
         return new UserProvider($providerName, config('auth.providers.' . $providerName . '.driver'), config('auth.providers.' . $providerName . '.model'));
     }
 }

@@ -270,7 +270,7 @@ class PassportServiceProvider extends ServiceProvider
         return new RequestGuard(function ($request) use ($config) {
             return (new TokenGuard(
                 $this->app->make(ResourceServer::class),
-                $this->app->make(UserProviderResolver::class),
+                Auth::getFacadeRoot(),
                 $this->app->make(TokenRepository::class),
                 $this->app->make(ClientRepository::class),
                 $this->app->make('encrypter')
