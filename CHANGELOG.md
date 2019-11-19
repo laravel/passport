@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.0.0...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.0.1...8.x)
+
+
+## [v8.0.1 (2019-11-19)](https://github.com/laravel/passport/compare/v8.0.0...v8.0.1)
+
+### Fixed
+- Fix `actingAsClient` testing method ([#1119](https://github.com/laravel/passport/pull/1119))
 
 
 ## [v8.0.0 (2019-10-29)](https://github.com/laravel/passport/compare/v7.5.1...v8.0.0)
