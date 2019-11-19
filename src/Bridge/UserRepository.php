@@ -18,21 +18,14 @@ class UserRepository implements UserRepositoryInterface
     protected $hasher;
 
     /**
-     * @var UserProviderResolver
-     */
-    protected $resolver;
-
-    /**
      * Create a new repository instance.
      *
      * @param  \Illuminate\Hashing\HashManager  $hasher
-     * @param  UserProviderResolver  $resolver
      * @return void
      */
     public function __construct(HashManager $hasher)
     {
         $this->hasher = $hasher->driver();
-        $this->resolver = $resolver;
     }
 
     /**
