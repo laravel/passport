@@ -20,7 +20,7 @@ class Client implements ClientEntityInterface, UserProviderInterface
     /**
      * @var string|null
      */
-    protected $provider;
+    protected $userProvider;
 
     /**
      * Create a new client instance.
@@ -28,18 +28,18 @@ class Client implements ClientEntityInterface, UserProviderInterface
      * @param  string  $identifier
      * @param  string  $name
      * @param  string  $redirectUri
-     * @param  string  $provider
+     * @param  string  $userProvider
      * @param  bool  $isConfidential
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
+    public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $userProvider = null)
     {
         $this->setIdentifier((string) $identifier);
 
         $this->name = $name;
         $this->isConfidential = $isConfidential;
         $this->redirectUri = explode(',', $redirectUri);
-        $this->provider = $provider;
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -62,13 +62,13 @@ class Client implements ClientEntityInterface, UserProviderInterface
         $this->identifier = $identifier;
     }
 
-    public function getProvider()
+    public function getUserProvider()
     {
-        return $this->provider;
+        return $this->userProvider;
     }
 
-    public function setProvider($provider)
+    public function setUserProvider($userProvider)
     {
-        $this->provider = $provider;
+        $this->userProvider = $userProvider;
     }
 }

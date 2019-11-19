@@ -5,6 +5,6 @@ namespace Laravel\Passport;
 
 interface UserProviderInterface
 {
-    public function getProvider();
-    public function setProvider($provider);
+    public function getUserProvider();
+    public function setUserProvider($userProvider);
 }

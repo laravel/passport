@@ -63,6 +63,6 @@ class UserRepository implements UserRepositoryInterface
             return;
         }
 
-        return new User($user->getMorphClass() . '#' . $user->getAuthIdentifier());
+        return new User($user->getAuthIdentifier());
     }
 }

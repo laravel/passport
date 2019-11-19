@@ -5,6 +5,7 @@ namespace Laravel\Passport\Tests;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\UserProvider;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +48,7 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertEquals('Client', $client->getName());
         $this->assertEquals(['http://localhost'], $client->getRedirectUri());
         $this->assertTrue($client->isConfidential());
-        $this->assertNull($client->getProvider());
+        $this->assertNull($client->getUserProvider());
     }
 
     public function test_can_validate_client_for_auth_code_grant()
@@ -194,7 +195,7 @@ class BridgeClientRepositoryTestClientStub
 
     public $grant_types;
 
-    public $provider = null;
+    public $userProvider = null;
 
     public function firstParty()
     {

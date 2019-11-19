@@ -109,7 +109,7 @@ class ClientRepository
      * @param  bool  $confidential
      * @return \Laravel\Passport\Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false, $confidential = true, $provider = null)
+    public function create($userId, $name, $redirect, $personalAccess = false, $password = false, $confidential = true, $userProviderName = null)
     {
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
@@ -119,7 +119,7 @@ class ClientRepository
             'personal_access_client' => $personalAccess,
             'password_client' => $password,
             'revoked' => false,
-            'provider' => $provider
+            'user_provider_name' => $userProviderName
         ]);
 
         $client->save();

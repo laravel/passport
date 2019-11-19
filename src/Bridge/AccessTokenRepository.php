@@ -53,11 +53,12 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity)
     {
-        list($userType, $userId) = explode('#', $accessTokenEntity->getUserIdentifier(), 2);
+        $userProviderModelClass = $accessTokenEntity->getClient()->getUserProvider()->model;
+        $userType = (new $userProviderModelClass)->getMorphClass();
         $this->tokenRepository->create([
             'id' => $accessTokenEntity->getIdentifier(),
             'user_type' => $userType,
-            'user_id' => $userId,
+            'user_id' => $accessTokenEntity->getUserIdentifier(),
             'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
