@@ -12,7 +12,7 @@ The minimum Laravel version is now v6.0 and the minimum PHP version is now 7.2. 
 
 PR: https://github.com/laravel/passport/pull/1065
 
-Passport now supports public clients and PCKE. To leverage this feature, you should update the the `secret` column of the `oauth_clients` table to be `nullable`. If you use Passport migrations this will be done automatically for you upon the next migration. Otherwise, you'll need to create the following migration and migrate manually:
+Passport now supports public clients and PCKE. To leverage this feature, you should update the the `secret` column of the `oauth_clients` table to be `nullable`:
 
     Schema::table('oauth_clients', function (Blueprint $table) {
         $table->string('secret', 100)->nullable()->change();
