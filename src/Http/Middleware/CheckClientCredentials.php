@@ -21,7 +21,6 @@ class CheckClientCredentials extends CheckCredentials
         }
     }
 
-
     /**
      * Validate token credentials.
      *
