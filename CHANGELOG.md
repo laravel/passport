@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.0.1...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.0.2...8.x)
+
+
+## [v8.0.2 (2019-11-26)](https://github.com/laravel/passport/compare/v8.0.1...v8.0.2)
+
+### Changed
+- Add abstract CheckCredentials middleware and allows to create ([#1127](https://github.com/laravel/passport/pull/1127))
 
 
 ## [v8.0.1 (2019-11-19)](https://github.com/laravel/passport/compare/v8.0.0...v8.0.1)
