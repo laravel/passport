@@ -203,6 +203,8 @@ class PassportServiceProvider extends ServiceProvider
             new DateInterval('PT10M')
         );
 
+        $grant->setVerificationUri(url(Passport::$deviceCodeVerificationUri));
+
         $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
 
         return $grant;
