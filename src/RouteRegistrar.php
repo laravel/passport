@@ -176,4 +176,5 @@ class RouteRegistrar
             'as' => 'passport.authorizations.authorize_device',
             'middleware' => 'throttle',
         ]);
+    }
 }
