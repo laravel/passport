@@ -168,7 +168,7 @@ class ClientRepository
      */
     public function createDeviceCodeGrantClient($userId, $name, $redirect)
     {
-        return $this->create($userId, $name, $redirect, false, false, true);
+        return $this->create($userId, $name, $redirect, false, false, true, false);
     }
 
     /**
