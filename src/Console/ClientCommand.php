@@ -16,6 +16,7 @@ class ClientCommand extends Command
     protected $signature = 'passport:client
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
+            {--device : Create a device code grant client}
             {--client : Create a client credentials grant client}
             {--name= : The name of the client}
             {--redirect_uri= : The URI to redirect to after authorization }
@@ -42,6 +43,8 @@ class ClientCommand extends Command
             $this->createPasswordClient($clients);
         } elseif ($this->option('client')) {
             $this->createClientCredentialsClient($clients);
+        } elseif ($this->option('device')) {
+            $this->createDeviceCodeClient($clients);
         } else {
             $this->createAuthCodeClient($clients);
         }
@@ -139,6 +142,28 @@ class ClientCommand extends Command
         );
 
         $this->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
+     * Create a new password grant client.
+     *
+     * @param \Laravel\Passport\ClientRepository $clients
+     * @return void
+     */
+    protected function createDeviceCodeClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the device code grant client?',
+            config('app.name') . ' Device Code Grant Client'
+        );
+
+        $client = $clients->createDeviceCodeGrantClient(
+            null, $name, 'http://localhost'
+        );
+
+        $this->info('Device code grant client created successfully.');
 
         $this->outputClientDetails($client);
     }
