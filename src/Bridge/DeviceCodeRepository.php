@@ -41,25 +41,25 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function getDeviceCodeEntityByDeviceCode($codeId, $grantType, ClientEntityInterface $clientEntity)
     {
-        $deviceCode = Passport::deviceCode()->where('id', $codeId)->first();
+        $record = Passport::deviceCode()->where('id', $codeId)->first();
 
-        if (!$deviceCode) {
+        if (!$record) {
             return;
         }
 
-        $deviceCodeEntity = new DeviceCode();
-        $deviceCodeEntity->setIdentifier($deviceCode->id);
-        $deviceCodeEntity->setUserCode($deviceCode->user_code);
+        $deviceCode = new DeviceCode();
+        $deviceCode->setIdentifier($record->id);
+        $deviceCode->setUserCode($record->user_code);
 
-        foreach ($deviceCode->scopes as $scope) {
-            $deviceCodeEntity->addScope($scope);
+        foreach ($record->scopes as $scope) {
+            $deviceCode->addScope($scope);
         }
 
-        $deviceCodeEntity->setClient($clientEntity);
+        $deviceCode->setClient($clientEntity);
 
-        $deviceCodeEntity->setUserIdentifier($deviceCode->user_id);
+        $deviceCode->setUserIdentifier($record->user_id);
 
-        return $deviceCodeEntity;
+        return $deviceCode;
     }
 
     /**
