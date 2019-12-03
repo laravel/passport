@@ -136,35 +136,4 @@ class CheckClientCredentialsTest extends TestCase
             return 'response';
         }, 'foo', 'bar');
     }
-
-    /**
-     * @expectedException \Illuminate\Auth\AuthenticationException
-     */
-    public function test_exception_is_thrown_if_token_belongs_to_first_party_client()
-    {
-        $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['*']);
-
-        $client = m::mock(Client::class);
-        $client->shouldReceive('firstParty')->andReturnTrue();
-
-        $token = m::mock(Token::class);
-        $token->shouldReceive('getAttribute')->with('client')->andReturn($client);
-
-        $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('find')->with('token')->andReturn($token);
-
-        $middleware = new CheckClientCredentials($resourceServer, $tokenRepository);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $response = $middleware->handle($request, function () {
-            return 'response';
-        });
-    }
 }
