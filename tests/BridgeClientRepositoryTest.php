@@ -206,4 +206,9 @@ class BridgeClientRepositoryTestClientStub
     {
         return ! empty($this->secret);
     }
+
+    public function getUserProvider()
+    {
+        return null;
+    }
 }
