@@ -23,8 +23,11 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
+        $userProviderModelClass = $authCodeEntity->getClient()->getUserProvider()->model;
+        $userType = (new $userProviderModelClass)->getMorphClass();
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
+            'user_type' => $userType,
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
             'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),

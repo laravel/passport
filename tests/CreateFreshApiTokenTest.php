@@ -28,18 +28,18 @@ class CreateFreshApiTokenTest extends TestCase
         $response = new Response;
 
         $guard = 'guard';
-        $user = m::mock()
-            ->shouldReceive('getKey')
-            ->andReturn($userKey = 1)
-            ->getMock();
+        $user = m::mock();
+
+        $user->shouldReceive('getMorphClass')->andReturn($morphClass = 'users');
+        $user->shouldReceive('getKey')->andReturn($userKey = 1);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('isMethod')->with('GET')->once()->andReturn(true);
-        $request->shouldReceive('user')->with($guard)->twice()->andReturn($user);
+        $request->shouldReceive('user')->with($guard)->times(3)->andReturn($user);
         $session->shouldReceive('token')->withNoArgs()->once()->andReturn($token = 't0k3n');
 
         $cookieFactory->shouldReceive('make')
-            ->with($userKey, $token)
+            ->with($morphClass . '#' . $userKey, $token)
             ->once()
             ->andReturn(new Cookie(Passport::cookie()));
 

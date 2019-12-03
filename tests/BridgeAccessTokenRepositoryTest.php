@@ -9,6 +9,7 @@ use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\TokenRepository;
+use Laravel\Passport\UserProvider;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,7 @@ class BridgeAccessTokenRepositoryTest extends TestCase
 
         $tokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
             $this->assertEquals(1, $array['id']);
+            $this->assertEquals('users', $array['user_type']);
             $this->assertEquals(2, $array['user_id']);
             $this->assertEquals('client-id', $array['client_id']);
             $this->assertEquals(['scopes'], $array['scopes']);
@@ -39,7 +41,9 @@ class BridgeAccessTokenRepositoryTest extends TestCase
 
         $events->shouldReceive('dispatch')->once();
 
-        $accessToken = new AccessToken(2, [new Scope('scopes')], new Client('client-id', 'name', 'redirect'));
+        $userProvider = new UserProvider('users', 'eloquent', BridgeAccessTokenFakeUser::class);
+
+        $accessToken = new AccessToken(2, [new Scope('scopes')], new Client('client-id', 'name', 'redirect', false, $userProvider));
         $accessToken->setIdentifier(1);
         $accessToken->setExpiryDateTime($expiration);
 
@@ -63,5 +67,20 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $this->assertEquals($client, $token->getClient());
         $this->assertEquals($scopes, $token->getScopes());
         $this->assertEquals($userIdentifier, $token->getUserIdentifier());
+    }
+}
+
+class BridgeAccessTokenFakeUser
+{
+    public $id = 1;
+
+    public function getMorphClass()
+    {
+        return 'users';
+    }
+
+    public function getKey()
+    {
+        return $this->id;
     }
 }

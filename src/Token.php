@@ -73,13 +73,11 @@ class Token extends Model
     /**
      * Get the user that the token belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
     public function user()
     {
-        $provider = config('auth.guards.api.provider');
-
-        return $this->belongsTo(config('auth.providers.'.$provider.'.model'));
+        return $this->morphTo('user');
     }
 
     /**

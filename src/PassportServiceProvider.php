@@ -295,7 +295,7 @@ class PassportServiceProvider extends ServiceProvider
         return new RequestGuard(function ($request) use ($config) {
             return (new TokenGuard(
                 $this->app->make(ResourceServer::class),
-                Auth::createUserProvider($config['provider']),
+                Auth::getFacadeRoot(),
                 $this->app->make(TokenRepository::class),
                 $this->app->make(ClientRepository::class),
                 $this->app->make('encrypter')
