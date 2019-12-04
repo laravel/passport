@@ -120,7 +120,7 @@ class ClientControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -157,7 +157,7 @@ class ClientControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -183,7 +183,7 @@ class ClientControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -212,7 +212,7 @@ class ClientControllerTest extends TestCase
 
         $request->setUserResolver(function () {
             $user = m::mock();
-            $user->shouldReceive('getKey')->andReturn(1);
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
@@ -233,7 +233,7 @@ class ClientControllerFakeUser
 {
     public $id = 1;
 
-    public function getKey()
+    public function getAuthIdentifier()
     {
         return $this->id;
     }

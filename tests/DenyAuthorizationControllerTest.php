@@ -160,7 +160,7 @@ class DenyAuthorizationControllerFakeUser
 {
     public $id = 1;
 
-    public function getKey()
+    public function getAuthIdentifier()
     {
         return $this->id;
     }

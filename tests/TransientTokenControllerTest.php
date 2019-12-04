@@ -23,7 +23,7 @@ class TransientTokenControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldReceive('session->token')->andReturn('token');
 
         $controller = new TransientTokenController($cookieFactory);

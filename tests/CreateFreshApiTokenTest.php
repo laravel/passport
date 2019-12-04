@@ -29,7 +29,7 @@ class CreateFreshApiTokenTest extends TestCase
 
         $guard = 'guard';
         $user = m::mock()
-            ->shouldReceive('getKey')
+            ->shouldReceive('getAuthIdentifier')
             ->andReturn($userKey = 1)
             ->getMock();
 
@@ -99,7 +99,7 @@ class CreateFreshApiTokenTest extends TestCase
 
         $request->setUserResolver(function () {
             return m::mock()
-                ->shouldReceive('getKey')
+                ->shouldReceive('getAuthIdentifier')
                 ->andReturn(1)
                 ->getMock();
         });
