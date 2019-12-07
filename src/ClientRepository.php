@@ -159,7 +159,7 @@ class ClientRepository
     /**
      * Update the given client.
      *
-     * @param  Client  $client
+     * @param  \Laravel\Passport\Client  $client
      * @param  string  $name
      * @param  string  $redirect
      * @return \Laravel\Passport\Client

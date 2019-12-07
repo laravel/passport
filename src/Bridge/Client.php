@@ -48,6 +48,7 @@ class Client implements ClientEntityInterface
      * Set the client's identifier.
      *
      * @param  string  $identifier
+     * @return void
      */
     public function setIdentifier($identifier)
     {

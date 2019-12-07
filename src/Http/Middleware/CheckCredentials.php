@@ -49,6 +49,7 @@ abstract class CheckCredentials
      * @param  \Closure  $next
      * @param  mixed  ...$scopes
      * @return mixed
+     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     public function handle($request, Closure $next, ...$scopes)
@@ -77,6 +78,7 @@ abstract class CheckCredentials
      * @param  \Psr\Http\Message\ServerRequestInterface $psr
      * @param  array  $scopes
      * @return void
+     *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException|\Illuminate\Auth\AuthenticationException
      */
     protected function validate($psr, $scopes)
@@ -93,6 +95,7 @@ abstract class CheckCredentials
      *
      * @param  \Laravel\Passport\Token  $token
      * @return void
+     *
      * @throws \Illuminate\Auth\AuthenticationException
      */
     abstract protected function validateCredentials($token);
@@ -103,6 +106,7 @@ abstract class CheckCredentials
      * @param  \Laravel\Passport\Token  $token
      * @param  array  $scopes
      * @return void
+     *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     abstract protected function validateScopes($token, $scopes);
