@@ -93,8 +93,7 @@ class TokenRepository
      * Check if the access token has been revoked.
      *
      * @param  string  $id
-     *
-     * @return bool Return true if this token has been revoked
+     * @return bool
      */
     public function isAccessTokenRevoked($id)
     {
