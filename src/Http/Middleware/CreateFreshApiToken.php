@@ -51,7 +51,7 @@ class CreateFreshApiToken
 
         if ($this->shouldReceiveFreshToken($request, $response)) {
             $response->withCookie($this->cookieFactory->make(
-                $request->user($this->guard)->getKey(), $request->session()->token()
+                $request->user($this->guard)->getAuthIdentifier(), $request->session()->token()
             ));
         }
 
