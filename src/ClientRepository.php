@@ -111,7 +111,7 @@ class ClientRepository
      * @param  string|null $userProviderName
      * @return \Laravel\Passport\Client
      */
-    public function create($userId, $name, $redirect, $personalAccess = false, $password = false, $confidential = true, $userProviderName = null)
+    public function create($userId, $name, $redirect, $personalAccess = false, $password = false, $device = false, $confidential = true, $userProviderName = null)
     {
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
