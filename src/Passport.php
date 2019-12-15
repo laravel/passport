@@ -423,6 +423,7 @@ class Passport
     public static function actingAsClient($client, $scopes = [])
     {
         $token = app(self::tokenModel());
+
         $token->client = $client;
         $token->scopes = $scopes;
 
