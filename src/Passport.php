@@ -147,6 +147,13 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     *
+     *
+     * @var bool
+     */
+    public static $useHashedClientSecrets = false;
+
+    /**
      * Indicates the scope should inherit its parent scope.
      *
      * @var bool
@@ -633,6 +640,18 @@ class Passport
     public static function ignoreMigrations()
     {
         static::$runsMigrations = false;
+
+        return new static;
+    }
+
+    /**
+     * Configure Passport to hash client credential secrets.
+     *
+     * @return static
+     */
+    public static function useHashedClientSecrets()
+    {
+        static::$useHashedClientSecrets = true;
 
         return new static;
     }
