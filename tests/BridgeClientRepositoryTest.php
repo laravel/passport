@@ -6,6 +6,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Passport;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -17,12 +18,19 @@ class BridgeClientRepositoryTest extends TestCase
     protected $clientModelRepository;
 
     /**
+     * @var \Illuminate\Contracts\Hashing\Hasher
+     */
+    protected $hasher;
+
+    /**
      * @var \Laravel\Passport\Bridge\ClientRepository
      */
     protected $repository;
 
     protected function setUp(): void
     {
+        Passport::$useHashedClientSecrets = false;
+
         $hasher = m::mock(Hasher::class);
 
         $clientModelRepository = m::mock(ClientRepository::class);
@@ -31,6 +39,7 @@ class BridgeClientRepositoryTest extends TestCase
             ->andReturn(new BridgeClientRepositoryTestClientStub);
 
         $this->clientModelRepository = $clientModelRepository;
+        $this->hasher = $hasher;
         $this->repository = new BridgeClientRepository($clientModelRepository, $hasher);
     }
 
