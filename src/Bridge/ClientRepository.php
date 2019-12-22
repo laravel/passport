@@ -64,7 +64,7 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        return ! $record->confidential() || $this->verifySecret($record->secret, (string) $clientSecret);
+        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret);
     }
 
     /**
@@ -95,11 +95,11 @@ class ClientRepository implements ClientRepositoryInterface
     }
 
     /**
-     * @param  string  $storedHash
      * @param  string  $clientSecret
+     * @param  string  $storedHash
      * @return bool
      */
-    protected function verifySecret($storedHash, $clientSecret)
+    protected function verifySecret($clientSecret, $storedHash)
     {
         if (Passport::$useHashedClientSecrets) {
             return $this->hasher->check($clientSecret, $storedHash);
