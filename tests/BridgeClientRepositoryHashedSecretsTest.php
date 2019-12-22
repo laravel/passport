@@ -3,12 +3,10 @@
 namespace Laravel\Passport\Tests;
 
 use Illuminate\Contracts\Hashing\Hasher;
-use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
 
 class BridgeClientRepositoryHashedSecretsTest extends BridgeClientRepositoryTest
 {

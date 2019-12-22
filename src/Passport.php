@@ -147,8 +147,6 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
-     *
-     *
      * @var bool
      */
     public static $useHashedClientSecrets = false;
