@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
-use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Laravel\Passport\ClientRepository as ClientModelRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -28,7 +28,7 @@ class ClientRepository implements ClientRepositoryInterface
      * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
      * @return void
      */
-    public function __construct(ClientModelRepository $clients, Hasher $hasher)
+    public function __construct(ClientModelRepository $clients, HasherContract $hasher)
     {
         $this->clients = $clients;
         $this->hasher = $hasher;
