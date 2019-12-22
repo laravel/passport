@@ -82,6 +82,20 @@ class Client extends Model
     }
 
     /**
+     * The temporary non-hashed client secret.
+     *
+     * If you're using hashed client secrets, this value will only be available
+     * once during the request the client was created. Afterwards, it cannot
+     * be retrieved or decrypted anymore.
+     *
+     * @return string|null
+     */
+    public function getPlainSecretAttribute()
+    {
+        return $this->plainSecret;
+    }
+
+    /**
      * @param string|null $value
      */
     public function setSecretAttribute($value)
@@ -95,20 +109,6 @@ class Client extends Model
         }
 
         $this->attributes['secret'] = app(HasherContract::class)->make($value);
-    }
-
-    /**
-     * The temporary non-hashed client secret.
-     *
-     * If you're using hashed client secrets, this value will only be available
-     * once during the request the client was created. Afterwards, it cannot
-     * be retrieved or decrypted anymore.
-     *
-     * @return string|null
-     */
-    public function plainSecret()
-    {
-        return $this->plainSecret;
     }
 
     /**
