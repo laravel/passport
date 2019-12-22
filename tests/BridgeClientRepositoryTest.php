@@ -14,12 +14,12 @@ class BridgeClientRepositoryTest extends TestCase
     /**
      * @var \Laravel\Passport\ClientRepository
      */
-    private $clientModelRepository;
+    protected $clientModelRepository;
 
     /**
      * @var \Laravel\Passport\Bridge\ClientRepository
      */
-    private $repository;
+    protected $repository;
 
     protected function setUp(): void
     {
