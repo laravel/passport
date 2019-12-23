@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests;
 
-use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
@@ -31,16 +30,13 @@ class BridgeClientRepositoryTest extends TestCase
     {
         Passport::$useHashedClientSecrets = false;
 
-        $hasher = m::mock(Hasher::class);
-
         $clientModelRepository = m::mock(ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')
             ->with(1)
             ->andReturn(new BridgeClientRepositoryTestClientStub);
 
         $this->clientModelRepository = $clientModelRepository;
-        $this->hasher = $hasher;
-        $this->repository = new BridgeClientRepository($clientModelRepository, $hasher);
+        $this->repository = new BridgeClientRepository($clientModelRepository);
     }
 
     protected function tearDown(): void

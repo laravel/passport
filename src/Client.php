@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport;
 
-use Illuminate\Contracts\Hashing\Hasher as HasherContract;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
@@ -108,7 +107,7 @@ class Client extends Model
             return;
         }
 
-        $this->attributes['secret'] = app(HasherContract::class)->make($value);
+        $this->attributes['secret'] = password_hash($value, CRYPT_SHA256);
     }
 
     /**
