@@ -20,7 +20,6 @@ class BridgeClientRepositoryHashedSecretsTest extends BridgeClientRepositoryTest
 
         $this->clientModelRepository = $clientModelRepository;
         $this->repository = new BridgeClientRepository($clientModelRepository);
-
     }
 }
 
