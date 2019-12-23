@@ -17,11 +17,6 @@ class BridgeClientRepositoryTest extends TestCase
     protected $clientModelRepository;
 
     /**
-     * @var \Illuminate\Contracts\Hashing\Hasher
-     */
-    protected $hasher;
-
-    /**
      * @var \Laravel\Passport\Bridge\ClientRepository
      */
     protected $repository;
