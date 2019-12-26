@@ -25,5 +25,5 @@ class BridgeClientRepositoryHashedSecretsTest extends BridgeClientRepositoryTest
 
 class BridgeClientRepositoryHashedTestClientStub extends BridgeClientRepositoryTestClientStub
 {
-    public $secret = '$2y$10$ILY9x.zBwltszjoU21a21.naD6oeN5eMWd00l7P8OMrK5US3ZYeP2';
+    public $secret = '2bb80d537b1da3e38bd30361aa855686bde0eacd7162fef6a25fe97bf527a25b';
 }

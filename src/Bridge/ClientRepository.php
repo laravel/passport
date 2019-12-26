@@ -94,7 +94,7 @@ class ClientRepository implements ClientRepositoryInterface
     protected function verifySecret($clientSecret, $storedHash)
     {
         if (Passport::$useHashedClientSecrets) {
-            return password_verify($clientSecret, $storedHash);
+            $clientSecret = hash('sha256', $clientSecret);
         }
 
         return hash_equals($storedHash, $clientSecret);
