@@ -83,11 +83,10 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         $this->assertEquals('response', $response);
     }
 
-    /**
-     * @expectedException \Illuminate\Auth\AuthenticationException
-     */
     public function test_exception_is_thrown_when_oauth_throws_exception()
     {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
         $tokenRepository = m::mock(TokenRepository::class);
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
@@ -104,11 +103,10 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         });
     }
 
-    /**
-     * @expectedException \Laravel\Passport\Exceptions\MissingScopeException
-     */
     public function test_exception_is_thrown_if_token_does_not_have_required_scope()
     {
+        $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
+
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
@@ -138,11 +136,10 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         }, 'baz', 'notbar');
     }
 
-    /**
-     * @expectedException \Illuminate\Auth\AuthenticationException
-     */
     public function test_exception_is_thrown_if_token_belongs_to_first_party_client()
     {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
