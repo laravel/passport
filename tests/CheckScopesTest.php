@@ -29,11 +29,10 @@ class CheckScopesTest extends TestCase
         $this->assertEquals('response', $response);
     }
 
-    /**
-     * @expectedException \Laravel\Passport\Exceptions\MissingScopeException
-     */
     public function test_exception_is_thrown_if_token_doesnt_have_scope()
     {
+        $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
+
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->andReturn($user = m::mock());
@@ -45,11 +44,10 @@ class CheckScopesTest extends TestCase
         }, 'foo', 'bar');
     }
 
-    /**
-     * @expectedException \Illuminate\Auth\AuthenticationException
-     */
     public function test_exception_is_thrown_if_no_authenticated_user()
     {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->once()->andReturn(null);
@@ -59,11 +57,10 @@ class CheckScopesTest extends TestCase
         }, 'foo', 'bar');
     }
 
-    /**
-     * @expectedException \Illuminate\Auth\AuthenticationException
-     */
     public function test_exception_is_thrown_if_no_token()
     {
+        $this->expectException('Illuminate\Auth\AuthenticationException');
+
         $middleware = new CheckScopes;
         $request = m::mock();
         $request->shouldReceive('user')->andReturn($user = m::mock());
