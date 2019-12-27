@@ -42,7 +42,7 @@ class Client extends Model
     ];
 
     /**
-     * The temporary non-hashed client secret.
+     * The temporary plain-text client secret.
      *
      * @var string|null
      */
@@ -83,9 +83,7 @@ class Client extends Model
     /**
      * The temporary non-hashed client secret.
      *
-     * If you're using hashed client secrets, this value will only be available
-     * once during the request the client was created. Afterwards, it cannot
-     * be retrieved or decrypted anymore.
+     * This is only available once during the request that created the client.
      *
      * @return string|null
      */
@@ -95,13 +93,16 @@ class Client extends Model
     }
 
     /**
-     * @param string|null $value
+     * Set the value of the secret attribute.
+     *
+     * @param  string|null  $value
+     * @return void
      */
     public function setSecretAttribute($value)
     {
         $this->plainSecret = $value;
 
-        if ($value === null || ! Passport::$useHashedClientSecrets) {
+        if (is_null($value) || ! Passport::$hashesClientSecrets) {
             $this->attributes['secret'] = $value;
 
             return;

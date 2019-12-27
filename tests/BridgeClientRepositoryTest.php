@@ -23,7 +23,7 @@ class BridgeClientRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        Passport::$useHashedClientSecrets = false;
+        Passport::$hashesClientSecrets = false;
 
         $clientModelRepository = m::mock(ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')

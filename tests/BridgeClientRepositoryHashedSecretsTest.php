@@ -11,7 +11,7 @@ class BridgeClientRepositoryHashedSecretsTest extends BridgeClientRepositoryTest
 {
     protected function setUp(): void
     {
-        Passport::useHashedClientSecrets();
+        Passport::hashClientSecrets();
 
         $clientModelRepository = m::mock(ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')

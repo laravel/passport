@@ -87,16 +87,16 @@ class ClientRepository implements ClientRepositoryInterface
     }
 
     /**
+     * Verify the client secret is valid.
+     *
      * @param  string  $clientSecret
      * @param  string  $storedHash
      * @return bool
      */
     protected function verifySecret($clientSecret, $storedHash)
     {
-        if (Passport::$useHashedClientSecrets) {
-            $clientSecret = hash('sha256', $clientSecret);
-        }
-
-        return hash_equals($storedHash, $clientSecret);
+        return Passport::$hashesClientSecrets
+                    ? hash_equals($storedHash, hash('sha256', $clientSecret))
+                    : hash_equals($storedHash, $clientSecret);
     }
 }
