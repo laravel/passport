@@ -108,7 +108,7 @@ class Client extends Model
             return;
         }
 
-        $this->attributes['secret'] = hash('sha256', $value);
+        $this->attributes['secret'] = password_hash($value, PASSWORD_BCRYPT);
     }
 
     /**
