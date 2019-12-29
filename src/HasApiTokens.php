@@ -26,11 +26,11 @@ trait HasApiTokens
     /**
      * Get all of the access tokens for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
     public function tokens()
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
+        return $this->morphMany(Passport::tokenModel(), 'user')->orderBy('created_at', 'desc');
     }
 
     /**
