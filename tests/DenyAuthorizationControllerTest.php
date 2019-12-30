@@ -132,12 +132,11 @@ class DenyAuthorizationControllerTest extends TestCase
         $this->assertEquals('http://localhost?action=some_action&error=access_denied&state=state', $controller->deny($request));
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Authorization request was not present in the session.
-     */
     public function test_auth_request_should_exist()
     {
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Authorization request was not present in the session.');
+
         $response = m::mock(ResponseFactory::class);
 
         $controller = new DenyAuthorizationController($response);
