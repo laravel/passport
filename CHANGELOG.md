@@ -3,6 +3,13 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v8.0.2...8.x)
 
 
+## [v8.1.0 (2019-12-30)](https://github.com/laravel/passport/compare/v8.0.2...v8.1.0)
+
+### Added
+- Allow access to HTTP response status code on OAuthServerException ([#1148](https://github.com/laravel/passport/pull/1148))
+- Modify UserRepository to check for 'findAndValidateForPassport' method ([#1144](https://github.com/laravel/passport/pull/1144))
+
+
 ## [v8.0.2 (2019-11-26)](https://github.com/laravel/passport/compare/v8.0.1...v8.0.2)
 
 ### Changed
