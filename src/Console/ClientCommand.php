@@ -136,8 +136,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-			$userId, $name, $redirect, false, false,
-			!$this->option('public')
+            $userId, $name, $redirect, false, false, ! $this->option('public')
         );
 
         $this->info('New client created successfully.');
