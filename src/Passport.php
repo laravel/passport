@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Passport
 {
@@ -429,7 +430,7 @@ class Passport
 
         $mock = Mockery::mock(ResourceServer::class);
         $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function ($request) use ($token) {
+            ->andReturnUsing(function (ServerRequestInterface $request) use ($token) {
                 return $request->withAttribute('oauth_client_id', $token->client->id)
                     ->withAttribute('oauth_access_token_id', $token->id)
                     ->withAttribute('oauth_scopes', $token->scopes);
