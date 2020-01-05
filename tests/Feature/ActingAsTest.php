@@ -38,7 +38,7 @@ class ActingAsTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckScopes::class . ':admin,footest');
+        })->middleware(CheckScopes::class.':admin,footest');
 
         Passport::actingAs(new PassportUser(), ['admin', 'footest']);
 
@@ -56,7 +56,7 @@ class ActingAsTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckForAnyScope::class . ':admin,footest');
+        })->middleware(CheckForAnyScope::class.':admin,footest');
 
         Passport::actingAs(new PassportUser(), ['footest']);
 

@@ -38,7 +38,7 @@ class ActingAsClientTest extends TestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckClientCredentialsForAnyScope::class . ':testFoo');
+        })->middleware(CheckClientCredentialsForAnyScope::class.':testFoo');
 
         Passport::actingAsClient(new Client(), ['testFoo']);
 
