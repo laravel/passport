@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests;
 
+use Illuminate\Container\Container;
 use Laravel\Passport\Console\KeysCommand;
 use Laravel\Passport\Passport;
 use Mockery as m;
@@ -11,6 +12,11 @@ use PHPUnit\Framework\TestCase;
 function custom_path($file = null)
 {
     return __DIR__.DIRECTORY_SEPARATOR.'files'.DIRECTORY_SEPARATOR.$file;
+}
+
+function storage_path($file = null)
+{
+    return __DIR__.DIRECTORY_SEPARATOR.$file;
 }
 
 class KeysCommandTest extends TestCase
@@ -32,6 +38,8 @@ class KeysCommandTest extends TestCase
             ->shouldReceive('info')
             ->with('Encryption keys generated successfully.')
             ->getMock();
+
+        Container::getInstance()->instance('path.storage', storage_path());
 
         $rsa = new RSA();
 
