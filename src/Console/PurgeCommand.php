@@ -15,23 +15,39 @@ class PurgeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'passport:purge';
+    protected $signature = 'passport:purge
+                            {--revoked : Only purge revoked tokens and auth codes}
+                            {--expired : Only purge expired tokens and auth codes}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Purges revoked and expired tokens from oauth_access_tokens, oauth_auth_codes and oauth_refresh_tokens';
+    protected $description = 'Purges revoked and/or expired tokens and auth codes';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
+        $options = $this->options();
         $now = Carbon::now();
-        Token::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
-        AuthCode::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
-        RefreshToken::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
+        if (
+            ($options['revoked'] && $options['expired']) ||
+            (!$options['revoked'] && !$options['expired'])
+        ) {
+            Token::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
+            AuthCode::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
+            RefreshToken::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
+        } else if ($options['revoked']) {
+            Token::where('revoked', 1)->delete();
+            AuthCode::where('revoked', 1)->delete();
+            RefreshToken::where('revoked', 1)->delete();
+        } else if ($options['expired']) {
+            Token::whereDate('expires_at', '<', $now)->delete();
+            AuthCode::whereDate('expires_at', '<', $now)->delete();
+            RefreshToken::whereDate('expires_at', '<', $now)->delete();
+        }
     }
 }
