@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport;
 
-use Lcobucci\JWT\Parser as JwtParser;
-use League\OAuth2\Server\AuthorizationServer;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Lcobucci\JWT\Parser as JwtParser;
+use League\OAuth2\Server\AuthorizationServer;
 
 class PersonalAccessTokenFactory
 {

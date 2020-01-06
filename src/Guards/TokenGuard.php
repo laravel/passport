@@ -10,6 +10,10 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\StreamFactory;
+use Laminas\Diactoros\UploadedFileFactory;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
@@ -17,10 +21,6 @@ use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
-use Laminas\Diactoros\ResponseFactory;
-use Laminas\Diactoros\ServerRequestFactory;
-use Laminas\Diactoros\StreamFactory;
-use Laminas\Diactoros\UploadedFileFactory;
 
 class TokenGuard
 {
