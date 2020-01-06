@@ -35,16 +35,16 @@ class PurgeCommand extends Command
         $now = Carbon::now();
         if (
             ($options['revoked'] && $options['expired']) ||
-            (!$options['revoked'] && !$options['expired'])
+            (! $options['revoked'] && ! $options['expired'])
         ) {
             Token::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
             AuthCode::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
             RefreshToken::where('revoked', 1)->orWhereDate('expires_at', '<', $now)->delete();
-        } else if ($options['revoked']) {
+        } elseif ($options['revoked']) {
             Token::where('revoked', 1)->delete();
             AuthCode::where('revoked', 1)->delete();
             RefreshToken::where('revoked', 1)->delete();
-        } else if ($options['expired']) {
+        } elseif ($options['expired']) {
             Token::whereDate('expires_at', '<', $now)->delete();
             AuthCode::whereDate('expires_at', '<', $now)->delete();
             RefreshToken::whereDate('expires_at', '<', $now)->delete();
