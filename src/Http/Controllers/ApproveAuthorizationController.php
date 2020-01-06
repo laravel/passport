@@ -3,8 +3,8 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
-use League\OAuth2\Server\AuthorizationServer;
 use Laminas\Diactoros\Response as Psr7Response;
+use League\OAuth2\Server\AuthorizationServer;
 
 class ApproveAuthorizationController
 {
