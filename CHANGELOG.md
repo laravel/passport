@@ -1,6 +1,16 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.1.0...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.2.0...8.x)
+
+
+## [v8.2.0 (2020-01-07)](https://github.com/laravel/passport/compare/v8.1.0...v8.2.0)
+
+### Added
+- Update ClientCommand to support public clients ([#1151](https://github.com/laravel/passport/pull/1151))
+- Purge Command for revoked and/or expired tokens and auth codes ([#1159](https://github.com/laravel/passport/pull/1159), [6c1ea42](https://github.com/laravel/passport/commit/6c1ea42e66100b15ecad89b0e1c5ccaa12b4331b))
+
+### Changed
+- Replace deprecated package and namespaces ([#1158](https://github.com/laravel/passport/pull/1158))
 
 
 ## [v8.1.0 (2019-12-30)](https://github.com/laravel/passport/compare/v8.0.2...v8.1.0)
