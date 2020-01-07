@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests;
 
+use Laminas\Diactoros\Response;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use Laravel\Passport\TokenRepository;
@@ -12,7 +13,6 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
 
 class AccessTokenControllerTest extends TestCase
 {

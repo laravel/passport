@@ -55,6 +55,7 @@ class PassportServiceProvider extends ServiceProvider
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
                 Console\KeysCommand::class,
+                Console\PurgeCommand::class,
             ]);
         }
     }
