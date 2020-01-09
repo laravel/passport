@@ -17,4 +17,6 @@ return [
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
 
+    'json_resource_wrapper' => null, // Set this to a string (usually 'data') to wrap the output
+
 ];

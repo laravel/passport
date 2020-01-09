@@ -6,6 +6,7 @@ use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Http\Resources\ClientResource;
 use Laravel\Passport\Http\Rules\RedirectRule;
 
 class ClientController
@@ -59,7 +60,7 @@ class ClientController
     {
         $userId = $request->user()->getKey();
 
-        return $this->clients->activeForUser($userId)->makeVisible('secret');
+        return ClientResource::collection($this->clients->activeForUser($userId)->makeVisible('secret'));
     }
 
     /**
@@ -76,10 +77,10 @@ class ClientController
             'confidential' => 'boolean',
         ])->validate();
 
-        return $this->clients->create(
+        return new ClientResource($this->clients->create(
             $request->user()->getKey(), $request->name, $request->redirect,
             false, false, (bool) $request->input('confidential', true)
-        )->makeVisible('secret');
+        )->makeVisible('secret'));
     }
 
     /**
@@ -102,9 +103,9 @@ class ClientController
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
-        return $this->clients->update(
+        return new ClientResource($this->clients->update(
             $client, $request->name, $request->redirect
-        );
+        ));
     }
 
     /**
