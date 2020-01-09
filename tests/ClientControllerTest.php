@@ -2,11 +2,14 @@
 
 namespace Laravel\Passport\Tests;
 
+use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Controllers\ClientController;
+use Laravel\Passport\Http\Resources\ClientResource;
 use Laravel\Passport\Http\Rules\RedirectRule;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -14,16 +17,38 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ClientControllerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $configMock = m::mock(ConfigRepository::class)
+            ->shouldReceive('get')
+            ->with('passport.json_resource_wrapper', null)
+            ->andReturn('data')->getMock();
+
+        app()->instance('config', $configMock);
+    }
+
     protected function tearDown(): void
     {
         m::close();
     }
 
+    public function test_that_the_json_resource_wraps_in_data()
+    {
+        $this->assertEquals('data', ClientResource::$wrap);
+    }
+
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
+        $client1 = new Client;
+        $client2 = new Client;
+
+        $client = m::mock(collect([$client1, $client2]));
+        $client->shouldReceive('makeVisible')->andReturn($client);
+
         $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('activeForUser')->once()->with(1)->andReturn($client = m::mock());
-        $client->shouldReceive('makeVisible')->with('secret')->andReturn($client);
+        $clients->shouldReceive('activeForUser')->with(1)->andReturn($client);
 
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn(new ClientControllerFakeUser);
@@ -34,7 +59,10 @@ class ClientControllerTest extends TestCase
             m::mock(RedirectRule::class)
         );
 
-        $this->assertEquals($client, $controller->forUser($request));
+        $this->assertInstanceOf(JsonResource::class, $controller->forUser($request));
+        $this->assertCount(2, $controller->forUser($request)->collection);
+        $this->assertInstanceOf(ClientResource::class, $controller->forUser($request)->collection[0]);
+        $this->assertEquals($client1, $controller->forUser($request)->collection[0]->resource);
     }
 
     public function test_clients_can_be_stored()
@@ -68,7 +96,9 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals($client, $controller->store($request));
+        $resource = $controller->store($request);
+        $this->assertInstanceOf(ClientResource::class, $resource);
+        $this->assertEquals($client, $resource->resource);
     }
 
     public function test_public_clients_can_be_stored()
@@ -107,7 +137,9 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals($client, $controller->store($request));
+        $resource = $controller->store($request);
+        $this->assertInstanceOf(ClientResource::class, $resource);
+        $this->assertEquals($client, $resource->resource);
     }
 
     public function test_clients_can_be_updated()
@@ -145,7 +177,9 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals('response', $controller->update($request, 1));
+        $resource = $controller->update($request, 1);
+        $this->assertInstanceOf(ClientResource::class, $resource);
+        $this->assertEquals('response', $resource->resource);
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user()

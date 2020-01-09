@@ -2,9 +2,12 @@
 
 namespace Laravel\Passport\Tests;
 
+use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
+use Laravel\Passport\Http\Resources\PersonalAccessTokenResource;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
@@ -14,9 +17,26 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PersonalAccessTokenControllerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $configMock = m::mock(ConfigRepository::class)
+            ->shouldReceive('get')
+            ->with('passport.json_resource_wrapper', null)
+            ->andReturn('data')->getMock();
+
+        app()->instance('config', $configMock);
+    }
+
     protected function tearDown(): void
     {
         m::close();
+    }
+
+    public function test_that_the_json_resource_wraps_in_data()
+    {
+        $this->assertEquals('data', PersonalAccessTokenResource::$wrap);
     }
 
     public function test_tokens_can_be_retrieved_for_users()
@@ -25,10 +45,10 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $token1 = new Token;
         $token2 = new Token;
-
-        $userTokens = m::mock();
         $token1->client = (object) ['personal_access_client' => true];
         $token2->client = (object) ['personal_access_client' => false];
+
+        $userTokens = m::mock(collect([$token1, $token2]));
         $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
             $token1, $token2,
         ]));
@@ -46,8 +66,10 @@ class PersonalAccessTokenControllerTest extends TestCase
         $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertCount(1, $controller->forUser($request));
-        $this->assertEquals($token1, $controller->forUser($request)[0]);
+        $this->assertInstanceOf(JsonResource::class, $controller->forUser($request));
+        $this->assertCount(1, $controller->forUser($request)->collection);
+        $this->assertInstanceOf(PersonalAccessTokenResource::class, $controller->forUser($request)->collection[0]);
+        $this->assertEquals($token1, $controller->forUser($request)->collection[0]->resource);
     }
 
     public function test_tokens_can_be_updated()
@@ -70,19 +92,20 @@ class PersonalAccessTokenControllerTest extends TestCase
         });
 
         $validator = m::mock(Factory::class);
-        $validator->shouldReceive('make')->once()->with([
+        $validator->shouldReceive('make')->with([
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
         ], [
             'name' => 'required|max:255',
             'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
         ])->andReturn($validator);
-        $validator->shouldReceive('validate')->once();
+        $validator->shouldReceive('validate');
 
         $tokenRepository = m::mock(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertEquals('response', $controller->store($request));
+        $this->assertInstanceOf(PersonalAccessTokenResource::class, $controller->store($request));
+        $this->assertEquals('response', $controller->store($request)->resource);
     }
 
     public function test_tokens_can_be_deleted()
