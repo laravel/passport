@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.2.0...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.3.0...8.x)
+
+
+## [v8.3.0 (2020-01-07)](https://github.com/laravel/passport/compare/v8.2.0...v8.3.0)
+
+### Added
+- Add a Passport Client factory to Passport publishing ([#1171](https://github.com/laravel/passport/pull/1171))
+
+### Changed
+- Use bigIncrements and indexes on relationships ([#1169](https://github.com/laravel/passport/pull/1169), [140a693](https://github.com/laravel/passport/commit/140a693a079f5611b3342360cde00b10e94162c1))
 
 
 ## [v8.2.0 (2020-01-07)](https://github.com/laravel/passport/compare/v8.1.0...v8.2.0)
