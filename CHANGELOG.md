@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v8.3.0...8.x)
 
 
-## [v8.3.0 (2020-01-07)](https://github.com/laravel/passport/compare/v8.2.0...v8.3.0)
+## [v8.3.0 (2020-01-28)](https://github.com/laravel/passport/compare/v8.2.0...v8.3.0)
 
 ### Added
 - Add a Passport Client factory to Passport publishing ([#1171](https://github.com/laravel/passport/pull/1171))
