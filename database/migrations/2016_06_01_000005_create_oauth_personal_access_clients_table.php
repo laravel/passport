@@ -17,8 +17,6 @@ class CreateOauthPersonalAccessClientsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('client_id');
             $table->timestamps();
-
-            $table->foreign('client_id')->references('id')->on('oauth_clients')->onDelete('cascade');
         });
     }
 
