@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.3.0...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.3.1...8.x)
+
+
+## [v8.3.1 (2020-01-29)](https://github.com/laravel/passport/compare/v8.3.0...v8.3.1)
+
+### Fixed
+- Remove foreign keys ([20e9b66](https://github.com/laravel/passport/commit/20e9b66fcd003ba41301fc5de23b9892e307051a))
 
 
 ## [v8.3.0 (2020-01-28)](https://github.com/laravel/passport/compare/v8.2.0...v8.3.0)
