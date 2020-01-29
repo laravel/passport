@@ -22,7 +22,6 @@ class CreateOauthAccessTokensTable extends Migration
             $table->boolean('revoked');
             $table->timestamps();
             $table->dateTime('expires_at')->nullable();
-
         });
     }
 
