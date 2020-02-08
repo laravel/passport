@@ -12,8 +12,15 @@ $factory->define(Client::class, function (Faker $faker) {
         'name' => $faker->company,
         'secret' => Str::random(40),
         'redirect' => $faker->url,
-        'personal_access_client' => 0,
-        'password_client' => 0,
-        'revoked' => 0,
+        'personal_access_client' => false,
+        'password_client' => false,
+        'revoked' => false,
+    ];
+});
+
+$factory->state(Client::class, 'password_client', function (Faker $faker) {
+    return [
+        'personal_access_client' => false,
+        'password_client' => true,
     ];
 });
