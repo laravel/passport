@@ -171,12 +171,13 @@ class Passport
      *
      * @param  callable|null  $callback
      * @param  array  $options
+     * @param  array|null  $middleware
      * @return void
      */
-    public static function routes($callback = null, array $options = [])
+    public static function routes($callback = null, array $options = [], array $middleware = null)
     {
-        $callback = $callback ?: function ($router) {
-            $router->all();
+        $callback = $callback ?: function ($router) use ($middleware) {
+            $router->all($middleware);
         };
 
         $defaultOptions = [
@@ -308,8 +309,8 @@ class Passport
     {
         if (is_null($date)) {
             return static::$tokensExpireAt
-                            ? Carbon::now()->diff(static::$tokensExpireAt)
-                            : new DateInterval('P1Y');
+                ? Carbon::now()->diff(static::$tokensExpireAt)
+                : new DateInterval('P1Y');
         }
 
         static::$tokensExpireAt = $date;
@@ -327,8 +328,8 @@ class Passport
     {
         if (is_null($date)) {
             return static::$refreshTokensExpireAt
-                            ? Carbon::now()->diff(static::$refreshTokensExpireAt)
-                            : new DateInterval('P1Y');
+                ? Carbon::now()->diff(static::$refreshTokensExpireAt)
+                : new DateInterval('P1Y');
         }
 
         static::$refreshTokensExpireAt = $date;

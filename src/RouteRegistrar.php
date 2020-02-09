@@ -16,7 +16,7 @@ class RouteRegistrar
     /**
      * Create a new route registrar instance.
      *
-     * @param  \Illuminate\Contracts\Routing\Registrar  $router
+     * @param  \Illuminate\Contracts\Routing\Registrar $router
      * @return void
      */
     public function __construct(Router $router)
@@ -25,27 +25,40 @@ class RouteRegistrar
     }
 
     /**
+     * Returns default ['web', 'auth'] middleware if given is empty or null
+     *
+     * @param array|null $middleware
+     * @return array
+     */
+    protected function getMiddleware(array $middleware = null)
+    {
+        return empty($middleware) ? ['web', 'auth'] : $middleware;
+    }
+
+    /**
      * Register routes for transient tokens, clients, and personal access tokens.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function all()
+    public function all(array $middleware = null)
     {
-        $this->forAuthorization();
-        $this->forAccessTokens();
-        $this->forTransientTokens();
-        $this->forClients();
-        $this->forPersonalAccessTokens();
+        $this->forAuthorization($middleware);
+        $this->forAccessTokens($middleware);
+        $this->forTransientTokens($middleware);
+        $this->forClients($middleware);
+        $this->forPersonalAccessTokens($middleware);
     }
 
     /**
      * Register the routes needed for authorization.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function forAuthorization()
+    public function forAuthorization(array $middleware = null)
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group(['middleware' => $this->getMiddleware($middleware)], function ($router) {
             $router->get('/authorize', [
                 'uses' => 'AuthorizationController@authorize',
                 'as' => 'passport.authorizations.authorize',
@@ -66,9 +79,10 @@ class RouteRegistrar
     /**
      * Register the routes for retrieving and issuing access tokens.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function forAccessTokens()
+    public function forAccessTokens(array $middleware = null)
     {
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
@@ -76,7 +90,7 @@ class RouteRegistrar
             'middleware' => 'throttle',
         ]);
 
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group(['middleware' => $this->getMiddleware($middleware)], function ($router) {
             $router->get('/tokens', [
                 'uses' => 'AuthorizedAccessTokenController@forUser',
                 'as' => 'passport.tokens.index',
@@ -92,12 +106,13 @@ class RouteRegistrar
     /**
      * Register the routes needed for refreshing transient tokens.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function forTransientTokens()
+    public function forTransientTokens(array $middleware = null)
     {
         $this->router->post('/token/refresh', [
-            'middleware' => ['web', 'auth'],
+            'middleware' => $this->getMiddleware($middleware),
             'uses' => 'TransientTokenController@refresh',
             'as' => 'passport.token.refresh',
         ]);
@@ -106,11 +121,12 @@ class RouteRegistrar
     /**
      * Register the routes needed for managing clients.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function forClients()
+    public function forClients(array $middleware = null)
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group(['middleware' => $this->getMiddleware($middleware)], function ($router) {
             $router->get('/clients', [
                 'uses' => 'ClientController@forUser',
                 'as' => 'passport.clients.index',
@@ -136,11 +152,12 @@ class RouteRegistrar
     /**
      * Register the routes needed for managing personal access tokens.
      *
+     * @param array|null $middleware
      * @return void
      */
-    public function forPersonalAccessTokens()
+    public function forPersonalAccessTokens(array $middleware = null)
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group(['middleware' => $this->getMiddleware($middleware)], function ($router) {
             $router->get('/scopes', [
                 'uses' => 'ScopeController@all',
                 'as' => 'passport.scopes.index',
