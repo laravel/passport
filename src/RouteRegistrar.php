@@ -25,7 +25,7 @@ class RouteRegistrar
     }
 
     /**
-     * Returns default ['web', 'auth'] middleware if given is empty or null
+     * Returns default ['web', 'auth'] middleware if given is empty or null.
      *
      * @param array|null $middleware
      * @return array
