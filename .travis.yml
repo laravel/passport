@@ -16,8 +16,12 @@ matrix:
   allow_failures:
     - env: LARAVEL=^7.0
 
+services:
+  - mysql
+
 before_install:
   - phpenv config-rm xdebug.ini || true
+  - mysql -e 'CREATE DATABASE forge;'
 
 install:
   - travis_retry composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
