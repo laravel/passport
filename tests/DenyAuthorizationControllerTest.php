@@ -27,6 +27,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
@@ -58,6 +59,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
@@ -89,6 +91,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
@@ -120,6 +123,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('input')->with('state')->andReturn('state');
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
@@ -154,6 +158,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');

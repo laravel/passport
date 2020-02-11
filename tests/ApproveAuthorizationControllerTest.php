@@ -26,6 +26,7 @@ class ApproveAuthorizationControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');

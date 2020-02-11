@@ -19,7 +19,7 @@ trait RetrievesAuthRequestFromSession
      */
     protected function assertValidAuthToken(Request $request)
     {
-        if ($request->session()->get('authToken') !== $request->get('auth_token')) {
+        if ($request->has('auth_token') && $request->session()->get('authToken') !== $request->get('auth_token')) {
             throw InvalidAuthTokenException::different();
         }
     }
