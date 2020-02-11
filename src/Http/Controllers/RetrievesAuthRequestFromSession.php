@@ -5,9 +5,25 @@ namespace Laravel\Passport\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\User;
+use Laravel\Passport\Exceptions\InvalidAuthTokenException;
 
 trait RetrievesAuthRequestFromSession
 {
+    /**
+     * Make sure the auth token matches the one in the session.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Laravel\Passport\Exceptions\InvalidAuthTokenException
+     */
+    protected function assertValidAuthToken(Request $request)
+    {
+        if ($request->has('auth_token') && $request->session()->get('authToken') !== $request->get('auth_token')) {
+            throw InvalidAuthTokenException::different();
+        }
+    }
+
     /**
      * Get the authorization request from the session.
      *
