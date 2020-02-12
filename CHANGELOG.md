@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.3.1...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.4.0...8.x)
+
+
+## [v8.4.0 (2020-02-12)](https://github.com/laravel/passport/compare/v8.3.1...v8.4.0)
+
+### Changed
+- Implement auth token for access requests ([#1188](https://github.com/laravel/passport/pull/1188))
+
+### Fixed
+- Revoke refresh tokens when auth tokens get revoked ([#1186](https://github.com/laravel/passport/pull/1186))
 
 
 ## [v8.3.1 (2020-01-29)](https://github.com/laravel/passport/compare/v8.3.0...v8.3.1)
