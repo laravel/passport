@@ -20,6 +20,8 @@ trait RetrievesAuthRequestFromSession
     protected function assertValidAuthToken(Request $request)
     {
         if ($request->has('auth_token') && $request->session()->get('authToken') !== $request->get('auth_token')) {
+            $request->session()->forget(['authToken', 'authRequest']);
+
             throw InvalidAuthTokenException::different();
         }
     }
