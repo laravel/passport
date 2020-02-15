@@ -155,7 +155,7 @@ class PassportServiceProvider extends ServiceProvider
         return new AuthCodeGrant(
             $this->app->make(Bridge\AuthCodeRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class),
-            new DateInterval('PT10M')
+            Passport::authCodesExpireIn()
         );
     }
 
