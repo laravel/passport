@@ -71,6 +71,13 @@ class Passport
     public static $refreshTokensExpireAt;
 
     /**
+     * The date when auth codes expire.
+     *
+     * @var \DateTimeInterface|null
+     */
+    public static $authCodesExpireAt;
+
+    /**
      * The date when personal access tokens expire.
      *
      * @var \DateTimeInterface|null
@@ -146,11 +153,6 @@ class Passport
      * @var bool
      */
     public static $unserializesCookies = false;
-
-    /**
-     * @var bool
-     */
-    public static $hashesClientSecrets = false;
 
     /**
      * Indicates the scope should inherit its parent scope.
@@ -337,6 +339,25 @@ class Passport
         }
 
         static::$refreshTokensExpireAt = $date;
+
+        return new static;
+    }
+
+    /**
+     * Get or set when auth codes expire.
+     *
+     * @param  \DateTimeInterface|null  $date
+     * @return \DateInterval|static
+     */
+    public static function authCodesExpireIn(DateTimeInterface $date = null)
+    {
+        if (is_null($date)) {
+            return static::$authCodesExpireAt
+                            ? Carbon::now()->diff(static::$authCodesExpireAt)
+                            : new DateInterval('PT10M');
+        }
+
+        static::$authCodesExpireAt = $date;
 
         return new static;
     }
@@ -630,18 +651,6 @@ class Passport
     public static function refreshToken()
     {
         return new static::$refreshTokenModel;
-    }
-
-    /**
-     * Configure Passport to hash client credential secrets.
-     *
-     * @return static
-     */
-    public static function hashClientSecrets()
-    {
-        static::$hashesClientSecrets = true;
-
-        return new static;
     }
 
     /**

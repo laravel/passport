@@ -51,6 +51,10 @@ class PassportServiceProvider extends ServiceProvider
                 __DIR__.'/../resources/js/components' => base_path('resources/js/components/passport'),
             ], 'passport-components');
 
+            $this->publishes([
+                __DIR__.'/../database/factories' => database_path('factories'),
+            ], 'passport-factories');
+
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
@@ -151,7 +155,7 @@ class PassportServiceProvider extends ServiceProvider
         return new AuthCodeGrant(
             $this->app->make(Bridge\AuthCodeRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class),
-            new DateInterval('PT10M')
+            Passport::authCodesExpireIn()
         );
     }
 
