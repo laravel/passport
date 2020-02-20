@@ -58,6 +58,5 @@ abstract class PassportTestCase extends TestCase
      */
     protected function getUserClass()
     {
-        return null;
     }
 }
