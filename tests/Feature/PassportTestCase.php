@@ -3,14 +3,14 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Orchestra\Testbench\TestCase;
 
 abstract class PassportTestCase extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -31,21 +31,18 @@ abstract class PassportTestCase extends TestCase
 
         $config->set('auth.defaults.provider', 'users');
 
-        if (null !== ($userClass = $this->getUserClass())) {
+        if (($userClass = $this->getUserClass()) !== null) {
             $config->set('auth.providers.users.model', $userClass);
         }
 
         $config->set('auth.guards.api', ['driver' => 'passport', 'provider' => 'users']);
 
-        $config->set('database.default', 'forge');
+        $app['config']->set('database.default', 'testbench');
 
-        $config->set('database.connections.forge', [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'username' => 'root',
-            'password' => '',
-            'database' => 'forge',
-            'prefix' => '',
+        $app['config']->set('database.connections.testbench', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
         ]);
     }
 
@@ -59,7 +56,7 @@ abstract class PassportTestCase extends TestCase
      *
      * @return string|null
      */
-    protected function getUserClass(): ?string
+    protected function getUserClass()
     {
         return null;
     }
