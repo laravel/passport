@@ -55,6 +55,10 @@ class PassportServiceProvider extends ServiceProvider
                 __DIR__.'/../database/factories' => database_path('factories'),
             ], 'passport-factories');
 
+            $this->publishes([
+                __DIR__.'/../config/passport.php' => config_path('passport.php'),
+            ], 'passport-config');
+
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
@@ -90,7 +94,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerAuthorizationServer();
         $this->registerResourceServer();
         $this->registerGuard();
-        $this->offerPublishing();
     }
 
     /**
@@ -295,19 +298,5 @@ class PassportServiceProvider extends ServiceProvider
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }
         });
-    }
-
-    /**
-     * Setup the resource publishing groups for Passport.
-     *
-     * @return void
-     */
-    protected function offerPublishing()
-    {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/passport.php' => config_path('passport.php'),
-            ], 'passport-config');
-        }
     }
 }

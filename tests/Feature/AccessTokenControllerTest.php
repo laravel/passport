@@ -36,7 +36,7 @@ class AccessTokenControllerTest extends PassportTestCase
         parent::tearDown();
     }
 
-    protected function getUserClass(): ?string
+    protected function getUserClass()
     {
         return User::class;
     }
