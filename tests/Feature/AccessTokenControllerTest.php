@@ -78,7 +78,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $decodedResponse);
         $this->assertArrayHasKey('refresh_token', $decodedResponse);
         $this->assertSame('Bearer', $decodedResponse['token_type']);
-        $expiresInSeconds = 31622400;
+        $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
         $jwtAccessToken = (new Parser())->parse($decodedResponse['access_token']);
