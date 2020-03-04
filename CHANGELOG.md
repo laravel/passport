@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.4.0...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.4.1...master)
+
+
+## [v8.4.1 (2020-03-04)](https://github.com/laravel/passport/compare/v8.4.0...v8.4.1)
+
+### Fixed
+- Forget session keys on invalid match ([#1192](https://github.com/laravel/passport/pull/1192))
+- Update dependencies for PSR request ([#1201](https://github.com/laravel/passport/pull/1201))
 
 
 ## [v8.4.0 (2020-02-12)](https://github.com/laravel/passport/compare/v8.3.1...v8.4.0)
