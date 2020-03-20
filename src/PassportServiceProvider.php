@@ -87,9 +87,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (! $this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
-        }
+        $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
         $this->registerAuthorizationServer();
         $this->registerResourceServer();
