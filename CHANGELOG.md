@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.4.1...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.4.2...8.x)
+
+
+## [v8.4.2 (2020-03-24)](https://github.com/laravel/passport/compare/v8.4.1...v8.4.2)
+
+### Fixed
+- `mergeConfigFrom` already checked if app is running with config cached ([#1205](https://github.com/laravel/passport/pull/1205))
 
 
 ## [v8.4.1 (2020-03-04)](https://github.com/laravel/passport/compare/v8.4.0...v8.4.1)
