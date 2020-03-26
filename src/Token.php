@@ -116,6 +116,7 @@ class Token extends Model
     protected function resolveInheritedScopes($scope)
     {
         $parts = explode(':', $scope);
+
         $partsCount = count($parts);
 
         $scopes = [];
