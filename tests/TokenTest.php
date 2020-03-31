@@ -5,6 +5,7 @@ namespace Laravel\Passport\Tests;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 
 class TokenTest extends TestCase
 {
@@ -57,5 +58,21 @@ class TokenTest extends TestCase
         $this->assertTrue($token->can('user'));
         $this->assertTrue($token->can('something'));
         $this->assertTrue($token->can('admin:webhooks:write'));
+    }
+
+    public function test_token_resolves_inherited_scopes()
+    {
+        $token = new Token;
+
+        $reflector = new ReflectionObject($token);
+        $method = $reflector->getMethod('resolveInheritedScopes');
+        $method->setAccessible(true);
+        $inheritedScopes = $method->invoke($token, 'admin:webhooks:read');
+
+        $this->assertSame([
+            'admin',
+            'admin:webhooks',
+            'admin:webhooks:read',
+        ], $inheritedScopes);
     }
 }
