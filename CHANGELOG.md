@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.4.2...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.4.3...8.x)
+
+
+## [v8.4.3 (2020-03-31)](https://github.com/laravel/passport/compare/v8.4.2...v8.4.3)
+
+### Fixed
+- Fix resolveInheritedScopes ([#1207](https://github.com/laravel/passport/pull/1207))
 
 
 ## [v8.4.2 (2020-03-24)](https://github.com/laravel/passport/compare/v8.4.1...v8.4.2)
