@@ -132,6 +132,13 @@ class Passport
      * @var string
      */
     public static $refreshTokenModel = 'Laravel\Passport\RefreshToken';
+    
+     /**
+     * The scope model class name.
+     *
+     * @var string
+     */
+    public static $scopeModel = 'Laravel\Passport\Scope';
 
     /**
      * Indicates if Passport migrations will be run.
@@ -625,6 +632,37 @@ class Passport
     public static function refreshToken()
     {
         return new static::$refreshTokenModel;
+    }
+    
+    /**
+     * Set the scope model class name.
+     *
+     * @param  string  $tokenModel
+     * @return void
+     */
+    public static function useScopeModel($scopeModel)
+    {
+        static::$scopeModel = $scopeModel;
+    }
+
+    /**
+     * Get the scope model class name.
+     *
+     * @return string
+     */
+    public static function scopeModel()
+    {
+        return static::$scopeModel;
+    }
+
+    /**
+     * Get a new scope instance.
+     *
+     * @return \Laravel\Passport\Scope
+     */
+    public static function scope()
+    {
+        return new static::$scopeModel;
     }
 
     /**
