@@ -133,7 +133,7 @@ class Passport
      */
     public static $refreshTokenModel = 'Laravel\Passport\RefreshToken';
     
-     /**
+    /**
      * The scope model class name.
      *
      * @var string
