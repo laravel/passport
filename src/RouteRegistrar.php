@@ -177,7 +177,7 @@ class RouteRegistrar
     protected function ensureDefaultOptions(array $options = [])
     {
         $defaultOptions = [
-            'middleware' => ['web', 'auth']
+            'middleware' => ['web', 'auth'],
         ];
 
         return array_merge($defaultOptions, $options);
