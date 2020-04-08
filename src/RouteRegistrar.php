@@ -27,25 +27,27 @@ class RouteRegistrar
     /**
      * Register routes for transient tokens, clients, and personal access tokens.
      *
+     * @param array $options
      * @return void
      */
-    public function all()
+    public function all(array $options = [])
     {
-        $this->forAuthorization();
-        $this->forAccessTokens();
-        $this->forTransientTokens();
-        $this->forClients();
-        $this->forPersonalAccessTokens();
+        $this->forAuthorization($options);
+        $this->forAccessTokens($options);
+        $this->forTransientTokens($options);
+        $this->forClients($options);
+        $this->forPersonalAccessTokens($options);
     }
 
     /**
      * Register the routes needed for authorization.
      *
+     * @param array $options
      * @return void
      */
-    public function forAuthorization()
+    public function forAuthorization(array $options = [])
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group($this->ensureDefaultOptions($options), function ($router) {
             $router->get('/authorize', [
                 'uses' => 'AuthorizationController@authorize',
                 'as' => 'passport.authorizations.authorize',
@@ -66,9 +68,10 @@ class RouteRegistrar
     /**
      * Register the routes for retrieving and issuing access tokens.
      *
+     * @param array $options
      * @return void
      */
-    public function forAccessTokens()
+    public function forAccessTokens(array $options = [])
     {
         $this->router->post('/token', [
             'uses' => 'AccessTokenController@issueToken',
@@ -76,7 +79,7 @@ class RouteRegistrar
             'middleware' => 'throttle',
         ]);
 
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group($this->ensureDefaultOptions($options), function ($router) {
             $router->get('/tokens', [
                 'uses' => 'AuthorizedAccessTokenController@forUser',
                 'as' => 'passport.tokens.index',
@@ -92,25 +95,26 @@ class RouteRegistrar
     /**
      * Register the routes needed for refreshing transient tokens.
      *
+     * @param array $options
      * @return void
      */
-    public function forTransientTokens()
+    public function forTransientTokens(array $options = [])
     {
-        $this->router->post('/token/refresh', [
-            'middleware' => ['web', 'auth'],
+        $this->router->post('/token/refresh', array_merge($this->ensureDefaultOptions($options), [
             'uses' => 'TransientTokenController@refresh',
             'as' => 'passport.token.refresh',
-        ]);
+        ]));
     }
 
     /**
      * Register the routes needed for managing clients.
      *
+     * @param array $options
      * @return void
      */
-    public function forClients()
+    public function forClients(array $options = [])
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group($this->ensureDefaultOptions($options), function ($router) {
             $router->get('/clients', [
                 'uses' => 'ClientController@forUser',
                 'as' => 'passport.clients.index',
@@ -136,11 +140,12 @@ class RouteRegistrar
     /**
      * Register the routes needed for managing personal access tokens.
      *
+     * @param array $options
      * @return void
      */
-    public function forPersonalAccessTokens()
+    public function forPersonalAccessTokens(array $options = [])
     {
-        $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
+        $this->router->group($this->ensureDefaultOptions($options), function ($router) {
             $router->get('/scopes', [
                 'uses' => 'ScopeController@all',
                 'as' => 'passport.scopes.index',
@@ -161,5 +166,20 @@ class RouteRegistrar
                 'as' => 'passport.personal.tokens.destroy',
             ]);
         });
+    }
+
+    /**
+     * Ensure default options are properly configured.
+     *
+     * @param array $options
+     * @return array
+     */
+    protected function ensureDefaultOptions(array $options = [])
+    {
+        $defaultOptions = [
+            'middleware' => ['web', 'auth']
+        ];
+
+        return array_merge($defaultOptions, $options);
     }
 }
