@@ -101,12 +101,13 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param  int  $userId
-     * @param  string  $name
-     * @param  string  $redirect
-     * @param  bool  $personalAccess
-     * @param  bool  $password
-     * @param  bool  $confidential
+     * @param int $userId
+     * @param string $name
+     * @param string $redirect
+     * @param string|null $provider
+     * @param bool $personalAccess
+     * @param bool $password
+     * @param bool $confidential
      * @return \Laravel\Passport\Client
      */
     public function create($userId, $name, $redirect, $provider = null, $personalAccess = false, $password = false, $confidential = true)
@@ -147,9 +148,10 @@ class ClientRepository
     /**
      * Store a new password grant client.
      *
-     * @param  int  $userId
-     * @param  string  $name
-     * @param  string  $redirect
+     * @param int $userId
+     * @param string $name
+     * @param string $redirect
+     * @param string|null $provider
      * @return \Laravel\Passport\Client
      */
     public function createPasswordGrantClient($userId, $name, $redirect, $provider = null)
