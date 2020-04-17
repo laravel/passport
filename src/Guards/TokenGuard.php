@@ -83,6 +83,17 @@ class TokenGuard
     }
 
     /**
+     * Determine if the requested provider matches the client's provider.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function validateProvider(Request $request)
+    {
+        return $this->provider == $this->client($request)->getProvider();
+    }
+
+    /**
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -90,6 +101,10 @@ class TokenGuard
      */
     public function user(Request $request)
     {
+        if (!$this->validateProvider($request)) {
+            return;
+        }
+
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
         } elseif ($request->cookie(Passport::cookie())) {

@@ -16,6 +16,8 @@ class Client implements ClientEntityInterface
      */
     protected $identifier;
 
+    public $provider;
+
     /**
      * Create a new client instance.
      *
@@ -25,13 +27,14 @@ class Client implements ClientEntityInterface
      * @param  bool  $isConfidential
      * @return void
      */
-    public function __construct($identifier, $name, $redirectUri, $isConfidential = false)
+    public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
     {
         $this->setIdentifier((string) $identifier);
 
         $this->name = $name;
         $this->isConfidential = $isConfidential;
         $this->redirectUri = explode(',', $redirectUri);
+        $this->provider = $provider;
     }
 
     /**
