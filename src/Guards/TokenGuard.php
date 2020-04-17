@@ -90,7 +90,7 @@ class TokenGuard
      */
     protected function validateProvider(Request $request)
     {
-        return $this->provider == $this->client($request)->getProvider();
+        return $this->client($request) && $this->client($request)->getProvider() == $this->provider;
     }
 
     /**
