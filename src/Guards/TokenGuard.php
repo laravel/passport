@@ -101,7 +101,7 @@ class TokenGuard
      */
     public function user(Request $request)
     {
-        if (!$this->validateProvider($request)) {
+        if (! $this->validateProvider($request)) {
             return;
         }
 
