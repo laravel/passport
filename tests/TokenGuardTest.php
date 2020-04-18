@@ -416,6 +416,5 @@ class TokenGuardTestClient
 {
     public function getProvider()
     {
-        return null;
     }
 }
