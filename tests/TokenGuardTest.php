@@ -47,6 +47,7 @@ class TokenGuardTest extends TestCase
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
         $clients->shouldReceive('revoked')->with(1)->andReturn(false);
+        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user($request);
 
@@ -90,6 +91,10 @@ class TokenGuardTest extends TestCase
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
+
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
@@ -97,6 +102,7 @@ class TokenGuardTest extends TestCase
 
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(null);
 
         $this->assertNull($guard->user($request));
@@ -109,6 +115,10 @@ class TokenGuardTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
+
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -137,6 +147,10 @@ class TokenGuardTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
+
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
@@ -270,6 +284,10 @@ class TokenGuardTest extends TestCase
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
+
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         Passport::ignoreCsrfToken();
@@ -396,4 +414,8 @@ class TokenGuardTestUser
 
 class TokenGuardTestClient
 {
+    public function getProvider()
+    {
+        return null;
+    }
 }

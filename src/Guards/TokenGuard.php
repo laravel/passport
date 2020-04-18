@@ -90,7 +90,14 @@ class TokenGuard
      */
     protected function validateProvider(Request $request)
     {
-        return $this->client($request) && $this->client($request)->getProvider() == $this->provider;
+        $client = $this->client($request);
+
+        // If not client provider is defined, fallback to old behavior.
+        if ($client && empty($client->getProvider())) {
+            return true;
+        }
+
+        return $client && $this->provider == $client->getProvider();
     }
 
     /**
