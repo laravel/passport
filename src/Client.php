@@ -49,8 +49,10 @@ class Client extends Model
      */
     public function user()
     {
+        $provider = $this->provider ?: config('auth.guards.api.provider');
+
         return $this->belongsTo(
-            config('auth.providers.'.$this->provider ?: config('auth.guards.api.provider').'.model')
+            config("auth.providers.$provider.model")
         );
     }
 
@@ -107,7 +109,7 @@ class Client extends Model
     /**
      * Get the client's provider.
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\UserProvider|null
      */
     public function getProvider()
     {

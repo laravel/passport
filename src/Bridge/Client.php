@@ -26,11 +26,12 @@ class Client implements ClientEntityInterface
     /**
      * Create a new client instance.
      *
-     * @param string $identifier
-     * @param string $name
-     * @param string $redirectUri
-     * @param bool $isConfidential
-     * @param string|null $provider
+     * @param  string  $identifier
+     * @param  string  $name
+     * @param  string  $redirectUri
+     * @param  bool  $isConfidential
+     * @param  string|null  $provider
+     * @return void
      */
     public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
     {

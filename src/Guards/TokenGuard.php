@@ -88,11 +88,11 @@ class TokenGuard
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    protected function validateProvider(Request $request)
+    protected function hasValidProvider(Request $request)
     {
         $client = $this->client($request);
 
-        // If not client provider is defined, fallback to old behavior.
+        // If no client provider is defined, fallback to old behavior.
         if ($client && empty($client->getProvider())) {
             return true;
         }
@@ -108,7 +108,7 @@ class TokenGuard
      */
     public function user(Request $request)
     {
-        if (! $this->validateProvider($request)) {
+        if (! $this->hasValidProvider($request)) {
             return;
         }
 
