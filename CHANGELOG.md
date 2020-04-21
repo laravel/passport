@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.4.3...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.4.4...master)
+
+
+## [v8.4.4 (2020-04-21)](https://github.com/laravel/passport/compare/v8.4.3...v8.4.4)
+
+### Fixed
+- Fix 500 Internal Server Error response ([#1222](https://github.com/laravel/passport/pull/1222))
 
 
 ## [v8.4.3 (2020-03-31)](https://github.com/laravel/passport/compare/v8.4.2...v8.4.3)
