@@ -414,7 +414,4 @@ class TokenGuardTestUser
 
 class TokenGuardTestClient
 {
-    public function getProvider()
-    {
-    }
 }
