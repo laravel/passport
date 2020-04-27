@@ -98,7 +98,7 @@ class TokenGuard
         }
 
         // Determine if the client's provider and the request's provider have matching models.
-        return $client->getProvider()->getModel() === $this->provider->getModel();
+        return $client && $client->getProvider()->getModel() === $this->provider->getModel();
     }
 
     /**
@@ -109,6 +109,10 @@ class TokenGuard
      */
     public function user(Request $request)
     {
+        if (! $this->hasValidProvider($request)) {
+            return;
+        }
+
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
         } elseif ($request->cookie(Passport::cookie())) {
