@@ -45,7 +45,7 @@ class PassportUserProvider implements UserProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function retrieveById($identifier)
     {
@@ -53,7 +53,7 @@ class PassportUserProvider implements UserProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function retrieveByToken($identifier, $token)
     {
@@ -61,7 +61,7 @@ class PassportUserProvider implements UserProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function updateRememberToken(Authenticatable $user, $token)
     {
@@ -69,7 +69,7 @@ class PassportUserProvider implements UserProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function retrieveByCredentials(array $credentials)
     {
@@ -77,7 +77,7 @@ class PassportUserProvider implements UserProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
