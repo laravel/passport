@@ -98,7 +98,7 @@ class TokenGuard
         }
 
         // Determine if the client's provider and the request's provider have matching models.
-        return $client && $client->getProvider()->getModel() === $this->provider->getModel();
+        return $client->getProvider()->getModel() === $this->provider->getModel();
     }
 
     /**
@@ -150,13 +150,6 @@ class TokenGuard
         if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
-
-        $client = $this->client($request);
-
-        if ($client && $model = class_exists(config('auth.providers'.$this->client($request)->provider.'.model'))) {
-            $this->provider->setModel($model);
-        }
-
 
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
