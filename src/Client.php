@@ -105,14 +105,4 @@ class Client extends Model
     {
         return ! empty($this->secret);
     }
-
-    /**
-     * Get the client's provider.
-     *
-     * @return \Illuminate\Contracts\Auth\UserProvider|null
-     */
-    public function getProvider()
-    {
-        return $this->provider ? Auth::createUserProvider($this->provider) : null;
-    }
 }
