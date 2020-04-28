@@ -194,6 +194,8 @@ class BridgeClientRepositoryTestClientStub
 
     public $password_client = false;
 
+    public $provider = null;
+
     public $grant_types;
 
     public function firstParty()

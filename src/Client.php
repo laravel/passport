@@ -55,8 +55,10 @@ class Client extends Model
      */
     public function user()
     {
+        $provider = $this->provider ?: config('auth.guards.api.provider');
+
         return $this->belongsTo(
-            config('auth.providers.'.config('auth.guards.api.provider').'.model')
+            config("auth.providers.{$provider}.model")
         );
     }
 
