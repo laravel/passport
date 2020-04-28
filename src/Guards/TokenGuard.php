@@ -93,7 +93,6 @@ class TokenGuard
     {
         $client = $this->client($request);
 
-        // If no client provider is defined, fallback to old behavior.
         if ($client && ! $client->provider) {
             return true;
         }

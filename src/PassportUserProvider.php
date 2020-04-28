@@ -8,14 +8,14 @@ use Illuminate\Contracts\Auth\UserProvider;
 class PassportUserProvider implements UserProvider
 {
     /**
-     * The Application UserProvider instance.
+     * The user provider instance.
      *
      * @var \Illuminate\Contracts\Auth\UserProvider
      */
     protected $provider;
 
     /**
-     * The Application UserProvider name.
+     * The user provider name.
      *
      * @var string
      */
@@ -32,16 +32,6 @@ class PassportUserProvider implements UserProvider
     {
         $this->provider = $provider;
         $this->providerName = $providerName;
-    }
-
-    /**
-     * Get the UserProvider name.
-     *
-     * @return string
-     */
-    public function getProviderName()
-    {
-        return $this->providerName;
     }
 
     /**
@@ -82,5 +72,15 @@ class PassportUserProvider implements UserProvider
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
         return $this->provider->validateCredentials($user, $credentials);
+    }
+
+    /**
+     * Get the name of the user provider.
+     *
+     * @return string
+     */
+    public function getProviderName()
+    {
+        return $this->providerName;
     }
 }

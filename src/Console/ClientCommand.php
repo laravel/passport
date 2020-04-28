@@ -18,7 +18,7 @@ class ClientCommand extends Command
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
             {--name= : The name of the client}
-            {--provider= : The name of the provider}
+            {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
             {--user_id= : The user ID the client should be assigned to }
             {--public : Create a public client (Auth code grant type only) }';
@@ -87,7 +87,7 @@ class ClientCommand extends Command
         $providers = array_keys(config('auth.providers'));
 
         $provider = $this->option('provider') ?: $this->choice(
-            'What provider should be used?',
+            'Which user provider should this client use to retrieve users?',
             $providers,
             in_array('users', $providers) ? 'users' : null
         );

@@ -37,7 +37,11 @@ class ClientRepository implements ClientRepositoryInterface
         }
 
         return new Client(
-            $clientIdentifier, $record->name, $record->redirect, $record->confidential(), $record->provider
+            $clientIdentifier,
+            $record->name,
+            $record->redirect,
+            $record->confidential(),
+            $record->provider
         );
     }
 
