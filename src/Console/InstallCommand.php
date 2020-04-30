@@ -76,7 +76,7 @@ class InstallCommand extends Command
     {
         file_put_contents(
             $path,
-            str_replace($search, $replace, file_get_contents($path)),
+            str_replace($search, $replace, file_get_contents($path))
         );
     }
 }
