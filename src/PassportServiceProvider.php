@@ -75,7 +75,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerMigrations()
     {
-        if (Passport::$runsMigrations) {
+        if (Passport::$runsMigrations && ! config('passport.client_uuids')) {
             return $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
