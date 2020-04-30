@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
+use Laravel\Passport\Passport;
 
 class InstallCommand extends Command
 {
@@ -51,6 +52,7 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
 
         config(['passport.client_uuids' => true]);
+        Passport::setClientUuids(true);
 
         $this->replaceInFile(config_path('passport.php'), 'false', 'true');
         $this->replaceInFile(database_path('migrations/2016_06_01_000001_create_oauth_auth_codes_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
@@ -61,6 +63,7 @@ class InstallCommand extends Command
         if ($this->confirm('In order to finish configuring client UUIDs, we need to rebuild the Passport database tables. Would you like to rollback and re-run your last migration?')) {
             $this->call('migrate:rollback');
             $this->call('migrate');
+            $this->line('');
         }
     }
 
