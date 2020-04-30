@@ -127,7 +127,7 @@ class Client extends Model
      */
     public function getKeyType()
     {
-        return config('passport.client_uuids') ? 'string' : $this->keyType;
+        return Passport::clientUuids() ? 'string' : $this->keyType;
     }
 
     /**
@@ -137,6 +137,6 @@ class Client extends Model
      */
     public function getIncrementing()
     {
-        return config('passport.client_uuids') ? false : $this->incrementing;
+        return Passport::clientUuids() ? false : $this->incrementing;
     }
 }
