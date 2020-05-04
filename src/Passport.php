@@ -113,6 +113,13 @@ class Passport
     public static $clientModel = 'Laravel\Passport\Client';
 
     /**
+     * Indicates if client's are identified by UUIDs.
+     *
+     * @var bool
+     */
+    public static $clientUuids = false;
+
+    /**
      * The personal access client model class name.
      *
      * @var string
@@ -532,6 +539,27 @@ class Passport
     public static function client()
     {
         return new static::$clientModel;
+    }
+
+    /**
+     * Determine if clients are identified using UUIDs.
+     *
+     * @return bool
+     */
+    public static function clientUuids()
+    {
+        return static::$clientUuids;
+    }
+
+    /**
+     * Specify if clients are identified using UUIDs.
+     *
+     * @param  bool  $value
+     * @return void
+     */
+    public static function setClientUuids($value)
+    {
+        static::$clientUuids = $value;
     }
 
     /**
