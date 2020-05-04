@@ -17,7 +17,7 @@ class CheckClientCredentials extends CheckCredentials
      */
     protected function validateCredentials($token)
     {
-        if (! $token || ! $token->client || $token->client->firstParty()) {
+        if (! $token) {
             throw new AuthenticationException;
         }
     }
