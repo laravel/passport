@@ -53,7 +53,7 @@ class Client extends Model
 
         static::creating(function ($model) {
             if (config('passport.client_uuids')) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::uuid();
+                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
             }
         });
     }
