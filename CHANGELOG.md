@@ -7,6 +7,7 @@
 
 ### Added
 - Allow client credentials secret to be hashed ([#1145](https://github.com/laravel/passport/pull/1145), [ccbcfeb](https://github.com/laravel/passport/commit/ccbcfeb5301e8f757395ba0e43980615acf4385e), [1c40ae0](https://github.com/laravel/passport/commit/1c40ae07503aeb23173d48f3a6e5757cafcfd71b))
+- Implement `passport:hash` command ([#1238](https://github.com/laravel/passport/pull/1238))
 - Initial support for multiple providers ([#1220](https://github.com/laravel/passport/pull/1220))
 
 ### Changed
