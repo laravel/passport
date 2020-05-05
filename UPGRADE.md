@@ -6,41 +6,41 @@
 
 PR: https://github.com/laravel/passport/pull/1220
 
-Passport now has support for multiple guard providers. This requires that you add a new `provider` column on the `oauth_clients`. Add and run the following migration in your app:
+Passport now has support for multiple guard user providers. Because of this change, you must add a `provider` column to the `oauth_clients` database table:
 
     Schema::table('oauth_clients', function (Blueprint $table) {
-        $table->string('provider')->nullable();
+        $table->string('provider')->after('secret')->nullable();
     });
 
 ### Client Credentials Secret Hashing
 
 PR: https://github.com/laravel/passport/pull/1145
 
-If you want to make use of the new secret hashing functionality there's a couple of things you should be aware of. First of all, there's no way back once you've migrated your existing tokens. Once your secrets are hashed, they can't be reversed back to their old values. Secondly, with the new hashing secret you'll get one chance only to display the value to the user before it's gone.
+Client secrets may now be stored using a SHA-256 hash. However, before enabling this functionality, please consider the following. First, there is no way to reverse the hashing process once you have migrated your existing tokens. Secondly, when hashing client secrets, you will only have one opportunity to display the plain-text value to the user before it is hashed and stored in the database.
 
-Converting existing applications can be done by adding `Passport::hashClientSecrets();` to the `boot` method of your `AppServiceProvider` class. We've also included a new command which you can run to hash all existing client secrets.
+You may enable client secret hashing by calling the `Passport::hashClientSecrets()` method within the `boot` method of your `AppServiceProvider`. For convenience, we've included a new Artisan command which you can run to hash all existing client secrets:
 
     php artisan passport:hash
 
-**Please be aware that running this command cannot be undone.**
+**Again, please be aware that running this command cannot be undone. For extra precaution, you may wish to create a backup of your database before running the command.**
 
 ### Client Credentials Middleware Changes
 
 PR: https://github.com/laravel/passport/pull/1132
 
-[After lengthy debate](https://github.com/laravel/passport/issues/1125) it was decided to revert the change made [in the original PR](https://github.com/laravel/passport/pull/1040) that introduced exception throwing when the client credentials middleware was used for first party clients.
+[After a lengthy debate](https://github.com/laravel/passport/issues/1125), it was decided to revert the change made [in a previous PR](https://github.com/laravel/passport/pull/1040) that introduced an exception when the client credentials middleware was used to authenticate first party clients.
 
-### Switch from `getKey` to `getAuthIdentifier`
+### Switch From `getKey` To `getAuthIdentifier`
 
 PR: https://github.com/laravel/passport/pull/1134
 
-Internally, Passport will now use the `getAuthIdentifier` method to determine a model's primary key. This is more in line with the framework and other usages in first party libraries.
+Internally, Passport will now use the `getAuthIdentifier` method to determine a model's primary key. This is consistent with the framework and Laravel's first party libraries.
 
 ### Remove Deprecated Functionality
 
 PR: https://github.com/laravel/passport/pull/1235
 
-The `revokeOtherTokens` and `pruneRevokedTokens` methods as well as the `revokeOtherTokens` and `pruneRevokedTokens` properties on the `Passport` object were removed.
+The deprecated `revokeOtherTokens` and `pruneRevokedTokens` methods and the `revokeOtherTokens` and `pruneRevokedTokens` properties were removed from the `Passport` object.
 
 
 ## Upgrading To 8.0 From 7.0
