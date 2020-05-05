@@ -13,9 +13,11 @@
 - Client credentials middleware should allow any valid client ([#1132](https://github.com/laravel/passport/pull/1132))
 - Switch from `getKey()` to `getAuthIdentifier()` to match Laravel core ([#1134](https://github.com/laravel/passport/pull/1134))
 - Use Hasher interface instead of HashManager ([#1157](https://github.com/laravel/passport/pull/1157))
+- Bump league server dependency ([#1237](https://github.com/laravel/passport/pull/1237))
 
 ### Removed
 - Remove deprecated functionality ([#1235](https://github.com/laravel/passport/pull/1235))
+- Drop support for old JWT versions ([#1236](https://github.com/laravel/passport/pull/1236))
 
 
 ## [v8.5.0 (2020-05-05)](https://github.com/laravel/passport/compare/v8.4.4...v8.5.0)
