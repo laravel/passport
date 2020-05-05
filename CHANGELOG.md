@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v8.4.4...8.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v8.5.0...8.x)
+
+
+## [v8.5.0 (2020-05-05)](https://github.com/laravel/passport/compare/v8.4.4...v8.5.0)
+
+### Added
+- Automatic configuration of client UUIDs ([#1231](https://github.com/laravel/passport/pull/1231))
 
 
 ## [v8.4.4 (2020-04-21)](https://github.com/laravel/passport/compare/v8.4.3...v8.4.4)
