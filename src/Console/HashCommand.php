@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 use Laravel\Passport\Passport;
 
 class HashCommand extends Command
