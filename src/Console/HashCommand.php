@@ -29,12 +29,12 @@ class HashCommand extends Command
     public function handle()
     {
         if (! Passport::$hashesClientSecrets) {
-            $this->warn("Warning! You haven't enabled client hashing yet in your AppServiceProvider.");
+            $this->warn("Please enable client hashing yet in your AppServiceProvider before continuning.");
 
             return;
         }
 
-        if ($this->confirm('Are you sure you want to hash ALL client secrets? This cannot be undone.')) {
+        if ($this->confirm('Are you sure you want to hash all client secrets? This cannot be undone.')) {
             $model = Passport::clientModel();
 
             foreach ((new $model)->whereNotNull('secret')->cursor() as $client) {
@@ -49,7 +49,7 @@ class HashCommand extends Command
                 ])->save();
             }
 
-            $this->info('All OAuth client secrets were successfully hashed.');
+            $this->info('All client secrets were successfully hashed.');
         }
     }
 }
