@@ -162,6 +162,6 @@ class ClientCommand extends Command
     protected function outputClientDetails(Client $client)
     {
         $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+        $this->line('<comment>Client secret:</comment> '.$client->plainSecret);
     }
 }

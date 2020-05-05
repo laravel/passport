@@ -62,6 +62,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
+                Console\HashCommand::class,
                 Console\KeysCommand::class,
                 Console\PurgeCommand::class,
             ]);
