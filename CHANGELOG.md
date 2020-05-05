@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v9.0.0...9.x)
 
 
-## [v9.0.0 (2020-05-05)](https://github.com/laravel/passport/compare/v8.4.4...v8.5.0)
+## [v9.0.0 (2020-05-05)](https://github.com/laravel/passport/compare/v8.5.0...v9.0.0)
 
 ### Added
 - Allow client credentials secret to be hashed ([#1145](https://github.com/laravel/passport/pull/1145), [ccbcfeb](https://github.com/laravel/passport/commit/ccbcfeb5301e8f757395ba0e43980615acf4385e), [1c40ae0](https://github.com/laravel/passport/commit/1c40ae07503aeb23173d48f3a6e5757cafcfd71b))
