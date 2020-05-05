@@ -39,7 +39,7 @@ class HashCommand extends Command
             $model = Passport::clientModel();
 
             foreach ((new $model)->whereNotNull('secret')->cursor() as $client) {
-                if (Str::startsWith($client->secret, '$2y')) {
+                if (password_get_info($client->secret)['algo'] === PASSWORD_BCRYPT) {
                     continue;
                 }
 
