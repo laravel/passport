@@ -85,7 +85,7 @@ class ClientController
 
         $client = $this->clients->create(
             $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
-            false, false, (bool) $request->input('confidential', true)
+            null, false, false, (bool) $request->input('confidential', true)
         );
 
         if (Passport::$hashesClientSecrets) {
