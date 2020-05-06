@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Rules\RedirectRule;
+use Laravel\Passport\Passport;
 
 class ClientController
 {
@@ -59,14 +60,20 @@ class ClientController
     {
         $userId = $request->user()->getAuthIdentifier();
 
-        return $this->clients->activeForUser($userId)->makeVisible('secret');
+        $clients = $this->clients->activeForUser($userId);
+
+        if (Passport::$hashesClientSecrets) {
+            return $clients;
+        }
+
+        return $clients->makeVisible('secret');
     }
 
     /**
      * Store a new client.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Laravel\Passport\Client
+     * @return \Laravel\Passport\Client|array
      */
     public function store(Request $request)
     {
@@ -76,10 +83,16 @@ class ClientController
             'confidential' => 'boolean',
         ])->validate();
 
-        return $this->clients->create(
+        $client = $this->clients->create(
             $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
-            false, false, (bool) $request->input('confidential', true)
-        )->makeVisible('secret');
+            null, false, false, (bool) $request->input('confidential', true)
+        );
+
+        if (Passport::$hashesClientSecrets) {
+            return ['secret' => $client->plainSecret] + $client->toArray();
+        }
+
+        return $client->makeVisible('secret');
     }
 
     /**

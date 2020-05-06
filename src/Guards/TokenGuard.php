@@ -108,10 +108,6 @@ class TokenGuard
      */
     public function user(Request $request)
     {
-        if (! $this->hasValidProvider($request)) {
-            return;
-        }
-
         if ($request->bearerToken()) {
             return $this->authenticateViaBearerToken($request);
         } elseif ($request->cookie(Passport::cookie())) {
@@ -151,6 +147,10 @@ class TokenGuard
     protected function authenticateViaBearerToken($request)
     {
         if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
+            return;
+        }
+
+        if (! $this->hasValidProvider($request)) {
             return;
         }
 
