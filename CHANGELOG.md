@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.0.0...9.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.0.1...9.x)
+
+
+## [v9.0.1 (2020-05-06)](https://github.com/laravel/passport/compare/v9.0.0...v9.0.1)
+
+### Fixed
+- Fix displaying secret in Vue component ([#1244](https://github.com/laravel/passport/pull/1244))
+- Moved provider check to bearer token only ([#1246](https://github.com/laravel/passport/pull/1246))
+- Fix create client call ([aff9d09](https://github.com/laravel/passport/commit/aff9d0933737354d04df98cfc431fa20309be03a))
 
 
 ## [v9.0.0 (2020-05-05)](https://github.com/laravel/passport/compare/v8.5.0...v9.0.0)
