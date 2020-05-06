@@ -50,7 +50,7 @@
 
                             <!-- Secret -->
                             <td style="vertical-align: middle;">
-                                <code>{{ client.secret }}</code>
+                                <code>{{ client.secret ? client.secret : '-' }}</code>
                             </td>
 
                             <!-- Edit Button -->
@@ -337,7 +337,7 @@
 
                 axios[method](uri, form)
                     .then(response => {
-                        this.getClients();
+                        this.clients.push(response.data);
 
                         form.name = '';
                         form.redirect = '';
