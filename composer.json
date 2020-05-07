@@ -27,7 +27,7 @@
         "illuminate/encryption": "^6.0|^7.0",
         "illuminate/http": "^6.0|^7.0",
         "illuminate/support": "^6.0|^7.0",
-        "league/oauth2-server": "dev-device-flow-grant",
+        "league/oauth2-server": "dev-device-flow-grant#d3f0a791e4f11b2bbdc94b40d2e47b55d9bd01b8",
         "phpseclib/phpseclib": "^2.0",
         "symfony/psr-http-message-bridge": "^1.0",
         "zendframework/zend-diactoros": "^2.0"
