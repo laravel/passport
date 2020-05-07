@@ -30,4 +30,21 @@ return [
 
     'client_uuids' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Passport Storage Driver
+    |--------------------------------------------------------------------------
+    |
+    | This configuration options determines the storage driver that will
+    | be used to store Passport's data. In addition, you may set any
+    | custom options as needed by the particular driver you choose.
+    |
+    */
+
+    'storage' => [
+        'database' => [
+            'connection' => env('DB_CONNECTION', 'mysql'),
+        ],
+    ],
+
 ];
