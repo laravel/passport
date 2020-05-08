@@ -21,6 +21,14 @@ class BridgeClientRepositoryHashedSecretsTest extends BridgeClientRepositoryTest
         $this->clientModelRepository = $clientModelRepository;
         $this->repository = new BridgeClientRepository($clientModelRepository);
     }
+
+    public function test_personal_access_grant_is_permitted()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->personal_access_client = true;
+
+        $this->assertTrue($this->repository->validateClient(1, $client->secret, 'personal_access'));
+    }
 }
 
 class BridgeClientRepositoryHashedTestClientStub extends BridgeClientRepositoryTestClientStub
