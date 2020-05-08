@@ -115,15 +115,9 @@ class ClientController
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
-        $client = $this->clients->update(
+        return $this->clients->update(
             $client, $request->name, $request->redirect
         );
-
-        if (Passport::$hashesClientSecrets) {
-            return $client;
-        }
-
-        return $client->makeVisible('secret');
     }
 
     /**
