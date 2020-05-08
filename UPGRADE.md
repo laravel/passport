@@ -33,8 +33,8 @@ Before you continue, you should set your personal access client ID and unhashed 
 
 Next, you should register these values by placing the following calls within the `boot` method of your `AppServiceProvider`:
 
-    Passport::personalAccessClientId(config('passport.personal_access_token.id'));
-    Passport::personalAccessClientSecret(config('passport.personal_access_token.secret'));
+    Passport::personalAccessClientId(config('passport.personal_access_client.id'));
+    Passport::personalAccessClientSecret(config('passport.personal_access_client.secret'));
 
 > Make sure you follow the instructions above before hashing your secrets. Otherwise, irreversible data loss may occur.
 
