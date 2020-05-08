@@ -30,4 +30,20 @@ return [
 
     'client_uuids' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Personal Access Client
+    |--------------------------------------------------------------------------
+    |
+    | If you enable client hashing, you should set the personal access
+    | client id and secret in your config file. This way they will be
+    | used when you issue access tokens to your users.
+    |
+    */
+
+    'personal_access_client' => [
+        'id' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_ID'),
+        'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
+    ],
+
 ];
