@@ -25,7 +25,7 @@ Before you continue, you should set your personal access client ID and unhashed 
     PASSPORT_PERSONAL_ACCESS_CLIENT_ID=client-id-value
     PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=unhashed-client-secret-value
 
-Next, you should set register these values by placing the following calls within the `boot` method of your `AppServiceProvider`:
+Next, you should register these values by placing the following calls within the `boot` method of your `AppServiceProvider`:
 
     Passport::personalAccessClientId(config('passport.personal_access_token.id'));
     Passport::personalAccessClientSecret(config('passport.personal_access_token.secret'));
