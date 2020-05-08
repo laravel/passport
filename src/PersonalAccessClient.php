@@ -21,6 +21,16 @@ class PersonalAccessClient extends Model
     protected $guarded = [];
 
     /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return config('passport.storage.database.connection') ?? $this->connection;
+    }
+
+    /**
      * Get all of the authentication codes for the client.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

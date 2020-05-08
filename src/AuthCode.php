@@ -60,6 +60,16 @@ class AuthCode extends Model
     protected $keyType = 'string';
 
     /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return config('passport.storage.database.connection') ?? $this->connection;
+    }
+
+    /**
      * Get the client that owns the authentication code.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
