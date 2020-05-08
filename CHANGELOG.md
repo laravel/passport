@@ -1,6 +1,17 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.0.1...9.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.1.0...9.x)
+
+
+## [v9.1.0 (2020-05-08](https://github.com/laravel/passport/compare/v9.0.1...v9.1.0)
+
+### Added
+- Implement secret modal ([#1258](https://github.com/laravel/passport/pull/1258))
+- Warn about one-time-hashed-secret ([#1259](https://github.com/laravel/passport/pull/1259))
+- Add force option to hash command ([#1251](https://github.com/laravel/passport/pull/1251))
+
+### Fixed
+- Implement personal access client config ([#1260](https://github.com/laravel/passport/pull/1260))
 
 
 ## [v9.0.1 (2020-05-06)](https://github.com/laravel/passport/compare/v9.0.0...v9.0.1)
