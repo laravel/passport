@@ -89,7 +89,7 @@ class ClientController
         );
 
         if (Passport::$hashesClientSecrets) {
-            return ['secret' => $client->plainSecret] + $client->toArray();
+            return ['plainSecret' => $client->plainSecret] + $client->toArray();
         }
 
         return $client->makeVisible('secret');

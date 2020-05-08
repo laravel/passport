@@ -1,5 +1,11 @@
 # Upgrade Guide
 
+## General Notes
+
+After updating Passport, you should always re-publish and re-compile the Vue "quickstart" assets if you're using them:
+
+    php artisan vendor:publish --tag=passport-views --force
+
 ## Upgrading To 9.0 From 8.0
 
 ### Support For Multiple Guards
