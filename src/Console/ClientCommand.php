@@ -164,6 +164,7 @@ class ClientCommand extends Command
     {
         if (Passport::$hashesClientSecrets) {
             $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
+            $this->line('');
         }
 
         $this->line('<comment>Client ID:</comment> '.$client->id);
