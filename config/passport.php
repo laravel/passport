@@ -35,9 +35,9 @@ return [
     | Personal Access Client
     |--------------------------------------------------------------------------
     |
-    | If you enable client hashing, you should set the personal access
-    | client id and secret in your config file. This way they will be
-    | used when you issue access tokens to your users.
+    | If you enable client hashing, you should set the personal access client
+    | ID and unhashed secret within your environment file. The values will
+    | get used while issuing fresh personal access tokens to your users.
     |
     */
 
