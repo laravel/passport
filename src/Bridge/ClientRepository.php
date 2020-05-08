@@ -60,7 +60,7 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret);
+        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret, $grantType);
     }
 
     /**
@@ -95,11 +95,12 @@ class ClientRepository implements ClientRepositoryInterface
      *
      * @param  string  $clientSecret
      * @param  string  $storedHash
+     * @param  string  $grantType
      * @return bool
      */
-    protected function verifySecret($clientSecret, $storedHash)
+    protected function verifySecret($clientSecret, $storedHash, $grantType)
     {
-        return Passport::$hashesClientSecrets
+        return Passport::$hashesClientSecrets && $grantType !== 'personal_access'
                     ? password_verify($clientSecret, $storedHash)
                     : hash_equals($storedHash, $clientSecret);
     }
