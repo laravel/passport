@@ -303,8 +303,10 @@
              */
             store() {
                 this.persistClient(
-                    'post', '/oauth/clients',
-                    this.createForm, '#modal-create-client'
+                    'post',
+                    '/oauth/clients',
+                    this.createForm,
+                    '#modal-create-client'
                 );
             },
 
@@ -324,8 +326,10 @@
              */
             update() {
                 this.persistClient(
-                    'put', '/oauth/clients/' + this.editForm.id,
-                    this.editForm, '#modal-edit-client'
+                    'put',
+                    '/oauth/clients/' + this.editForm.id,
+                    this.editForm,
+                    '#modal-edit-client'
                 );
             },
 
@@ -337,7 +341,11 @@
 
                 axios[method](uri, form)
                     .then(response => {
-                        this.clients.push(response.data);
+                        if (method === 'post') {
+                            this.clients.push(response.data);
+                        } else {
+                            this.getClients();
+                        }
 
                         form.name = '';
                         form.redirect = '';
