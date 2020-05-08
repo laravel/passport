@@ -89,7 +89,7 @@ class ClientController
         );
 
         if (Passport::$hashesClientSecrets) {
-            return ['secret' => $client->plainSecret] + $client->toArray();
+            return ['plainSecret' => $client->plainSecret] + $client->toArray();
         }
 
         return $client->makeVisible('secret');
@@ -115,9 +115,15 @@ class ClientController
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
-        return $this->clients->update(
+        $client = $this->clients->update(
             $client, $request->name, $request->redirect
         );
+
+        if (Passport::$hashesClientSecrets) {
+            return $client;
+        }
+
+        return $client->makeVisible('secret');
     }
 
     /**
