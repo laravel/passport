@@ -7,13 +7,30 @@ use Illuminate\Support\Facades\Schema;
 class CreateOauthAuthCodesTable extends Migration
 {
     /**
+     * The database schema.
+     *
+     * @var \Illuminate\Database\Schema\Builder
+     */
+    protected $schema;
+
+    /**
+     * Create a new migration instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->schema = Schema::connection($this->getConnection());
+    }
+
+    /**
      * Run the migrations.
      *
      * @return void
      */
     public function up()
     {
-        Schema::create('oauth_auth_codes', function (Blueprint $table) {
+        $this->schema->create('oauth_auth_codes', function (Blueprint $table) {
             $table->string('id', 100)->primary();
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('client_id');
@@ -30,6 +47,16 @@ class CreateOauthAuthCodesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('oauth_auth_codes');
+        $this->schema->dropIfExists('oauth_auth_codes');
+    }
+
+    /**
+     * Get the migration connection name.
+     *
+     * @return string|null
+     */
+    public function getConnection()
+    {
+        return config('passport.storage.database.connection');
     }
 }
