@@ -17,8 +17,8 @@ Passport now has support for multiple guard user providers. Because of this chan
     Schema::table('oauth_clients', function (Blueprint $table) {
         $table->string('provider')->after('secret')->nullable();
     });
-    
-If you hadn't published the migrations you'll need to manually add the column to your database.
+
+If you have not previously published the Passport migations, you should manually create a new migration to add this column to your databsae.
 
 ### Client Credentials Secret Hashing
 
