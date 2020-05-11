@@ -24,16 +24,6 @@ class CreateOauthAccessTokensTable extends Migration
     }
 
     /**
-     * Get the migration connection name.
-     *
-     * @return string|null
-     */
-    public function getConnection()
-    {
-        return config('passport.storage.database.connection');
-    }
-
-    /**
      * Run the migrations.
      *
      * @return void
@@ -60,5 +50,15 @@ class CreateOauthAccessTokensTable extends Migration
     public function down()
     {
         $this->schema->dropIfExists('oauth_access_tokens');
+    }
+
+    /**
+     * Get the migration connection name.
+     *
+     * @return string|null
+     */
+    public function getConnection()
+    {
+        return config('passport.storage.database.connection');
     }
 }

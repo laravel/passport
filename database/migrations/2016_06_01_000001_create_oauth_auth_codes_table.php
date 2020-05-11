@@ -24,16 +24,6 @@ class CreateOauthAuthCodesTable extends Migration
     }
 
     /**
-     * Get the migration connection name.
-     *
-     * @return string|null
-     */
-    public function getConnection()
-    {
-        return config('passport.storage.database.connection');
-    }
-
-    /**
      * Run the migrations.
      *
      * @return void
@@ -58,5 +48,15 @@ class CreateOauthAuthCodesTable extends Migration
     public function down()
     {
         $this->schema->dropIfExists('oauth_auth_codes');
+    }
+
+    /**
+     * Get the migration connection name.
+     *
+     * @return string|null
+     */
+    public function getConnection()
+    {
+        return config('passport.storage.database.connection');
     }
 }

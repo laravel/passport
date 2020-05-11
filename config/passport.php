@@ -51,9 +51,9 @@ return [
     | Passport Storage Driver
     |--------------------------------------------------------------------------
     |
-    | This configuration options determines the storage driver that will
-    | be used to store Passport's data. In addition, you may set any
-    | custom options as needed by the particular driver you choose.
+    | This configuration value allows you to customize the storage options
+    | for Passport, such as the database connection that should be used
+    | by Passport's internal database models which store tokens, etc.
     |
     */
 
