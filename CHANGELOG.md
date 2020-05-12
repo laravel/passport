@@ -1,6 +1,26 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.0.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.2.0...master)
+
+
+## [v9.2.0 (2020-05-12](https://github.com/laravel/passport/compare/v9.1.0...v9.2.0)
+
+### Added
+- Allow to change Models database connection ([#1255](https://github.com/laravel/passport/pull/1255), [7ab3bdb](https://github.com/laravel/passport/commit/7ab3bdbdb9bf162f2da9d8c445523dc63c862248))
+
+### Fixed
+- Nonstandard ID in the token's relationship with the user ([#1267](https://github.com/laravel/passport/pull/1267))
+
+
+## [v9.1.0 (2020-05-08](https://github.com/laravel/passport/compare/v9.0.1...v9.1.0)
+
+### Added
+- Implement secret modal ([#1258](https://github.com/laravel/passport/pull/1258))
+- Warn about one-time-hashed-secret ([#1259](https://github.com/laravel/passport/pull/1259))
+- Add force option to hash command ([#1251](https://github.com/laravel/passport/pull/1251))
+
+### Fixed
+- Implement personal access client config ([#1260](https://github.com/laravel/passport/pull/1260))
 
 
 ## [v9.0.1 (2020-05-06)](https://github.com/laravel/passport/compare/v9.0.0...v9.0.1)

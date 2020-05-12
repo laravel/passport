@@ -22,9 +22,16 @@ class Passport
     /**
      * The personal access token client ID.
      *
-     * @var int
+     * @var int|string
      */
     public static $personalAccessClientId;
+
+    /**
+     * The personal access token client secret.
+     *
+     * @var string
+     */
+    public static $personalAccessClientSecret;
 
     /**
      * The default scope.
@@ -192,12 +199,25 @@ class Passport
     /**
      * Set the client ID that should be used to issue personal access tokens.
      *
-     * @param  int  $clientId
+     * @param  int|string  $clientId
      * @return static
      */
     public static function personalAccessClientId($clientId)
     {
         static::$personalAccessClientId = $clientId;
+
+        return new static;
+    }
+
+    /**
+     * Set the client secret that should be used to issue personal access tokens.
+     *
+     * @param  string  $clientSecret
+     * @return static
+     */
+    public static function personalAccessClientSecret($clientSecret)
+    {
+        static::$personalAccessClientSecret = $clientSecret;
 
         return new static;
     }

@@ -30,4 +30,37 @@ return [
 
     'client_uuids' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Personal Access Client
+    |--------------------------------------------------------------------------
+    |
+    | If you enable client hashing, you should set the personal access client
+    | ID and unhashed secret within your environment file. The values will
+    | get used while issuing fresh personal access tokens to your users.
+    |
+    */
+
+    'personal_access_client' => [
+        'id' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_ID'),
+        'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Passport Storage Driver
+    |--------------------------------------------------------------------------
+    |
+    | This configuration value allows you to customize the storage options
+    | for Passport, such as the database connection that should be used
+    | by Passport's internal database models which store tokens, etc.
+    |
+    */
+
+    'storage' => [
+        'database' => [
+            'connection' => env('DB_CONNECTION', 'mysql'),
+        ],
+    ],
+
 ];
