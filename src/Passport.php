@@ -421,6 +421,7 @@ class Passport
 
         $token->client_id = $client->id;
         $token->setRelation('client', $client);
+
         $token->scopes = $scopes;
 
         $mock = Mockery::mock(ResourceServer::class);
