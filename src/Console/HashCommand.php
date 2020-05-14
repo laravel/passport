@@ -45,7 +45,7 @@ class HashCommand extends Command
                 $client->timestamps = false;
 
                 $client->forceFill([
-                    'secret' => password_hash($client->secret, PASSWORD_BCRYPT),
+                    'secret' => $client->secret,
                 ])->save();
             }
 
