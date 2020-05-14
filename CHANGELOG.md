@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.2.0...9.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.2.1...9.x)
+
+
+## [v9.2.1 (2020-05-14)](https://github.com/laravel/passport/compare/v9.2.0...v9.2.1)
+
+### Fixed
+- Fix actingAsClient token relation ([#1268](https://github.com/laravel/passport/pull/1268))
+- Fix HashCommand ([bedf02c](https://github.com/laravel/passport/commit/bedf02c8bb8fb9ca373e34f0ceefb2e8c5bf006b))
 
 
 ## [v9.2.0 (2020-05-12](https://github.com/laravel/passport/compare/v9.1.0...v9.2.0)
