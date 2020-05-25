@@ -225,6 +225,10 @@ class TokenGuard
             return;
         }
 
+        if (! $this->hasValidProvider($request)) {
+            return;
+        }
+
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
