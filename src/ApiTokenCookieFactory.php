@@ -44,7 +44,7 @@ class ApiTokenCookieFactory
      * @param  string  $csrfToken
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    public function make($userId, $csrfToken)
+    public function make($userId, $csrfToken, $provider)
     {
         $config = $this->config->get('session');
 
@@ -52,7 +52,7 @@ class ApiTokenCookieFactory
 
         return new Cookie(
             Passport::cookie(),
-            $this->createToken($userId, $csrfToken, $expiration),
+            $this->createToken($userId, $csrfToken, $expiration, $provider),
             $expiration,
             $config['path'],
             $config['domain'],
@@ -71,10 +71,11 @@ class ApiTokenCookieFactory
      * @param  \Carbon\Carbon  $expiration
      * @return string
      */
-    protected function createToken($userId, $csrfToken, Carbon $expiration)
+    protected function createToken($userId, $csrfToken, Carbon $expiration, $provider)
     {
         return JWT::encode([
             'sub' => $userId,
+            'provider' => $provider,
             'csrf' => $csrfToken,
             'expiry' => $expiration->getTimestamp(),
         ], $this->encrypter->getKey());

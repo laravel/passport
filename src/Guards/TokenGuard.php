@@ -101,6 +101,21 @@ class TokenGuard
     }
 
     /**
+     * Determine if the request has valid provider in Cookie.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function hasValidCookieProvider(Request $request)
+    {
+        if($token = $this->getTokenViaCookie($request)) {
+            return $token['provider'] === $this->provider->getProviderName();
+        }
+
+        return false;
+    }
+
+    /**
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -222,6 +237,10 @@ class TokenGuard
     protected function authenticateViaCookie($request)
     {
         if (! $token = $this->getTokenViaCookie($request)) {
+            return;
+        }
+
+        if(! $this->hasValidCookieProvider($request)) {
             return;
         }
 
