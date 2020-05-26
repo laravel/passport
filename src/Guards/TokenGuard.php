@@ -108,7 +108,7 @@ class TokenGuard
      */
     protected function hasValidCookieProvider(Request $request)
     {
-        if($token = $this->getTokenViaCookie($request)) {
+        if ($token = $this->getTokenViaCookie($request)) {
             return $token['provider'] === $this->provider->getProviderName();
         }
 
@@ -240,7 +240,7 @@ class TokenGuard
             return;
         }
 
-        if(! $this->hasValidCookieProvider($request)) {
+        if (! $this->hasValidCookieProvider($request)) {
             return;
         }
 

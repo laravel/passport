@@ -50,7 +50,7 @@ class ApiTokenCookieFactory
 
         $expiration = Carbon::now()->addMinutes($config['lifetime']);
 
-        $provider = config("auth.guards.$guard.provider") ?: config("auth.guards.web.provider");
+        $provider = config("auth.guards.$guard.provider") ?: config('auth.guards.web.provider');
 
         return new Cookie(
             Passport::cookie(),
