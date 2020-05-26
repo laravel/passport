@@ -139,7 +139,6 @@ class TokenGuardTest extends TestCase
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
 
-
         $user = $guard->user($request);
 
         $this->assertEquals($expectedUser, $user);
