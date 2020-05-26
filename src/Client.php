@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class Client extends Model
@@ -127,7 +128,7 @@ class Client extends Model
             return;
         }
 
-        $this->attributes['secret'] = password_hash($value, PASSWORD_BCRYPT);
+        $this->attributes['secret'] = Hash::make($value);
     }
 
     /**

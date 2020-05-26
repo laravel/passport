@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\ClientRepository as ClientModelRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
@@ -100,7 +101,7 @@ class ClientRepository implements ClientRepositoryInterface
     protected function verifySecret($clientSecret, $storedHash)
     {
         return Passport::$hashesClientSecrets
-                    ? password_verify($clientSecret, $storedHash)
+                    ? Hash::check($clientSecret, $storedHash)
                     : hash_equals($storedHash, $clientSecret);
     }
 }
