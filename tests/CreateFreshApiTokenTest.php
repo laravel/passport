@@ -39,7 +39,7 @@ class CreateFreshApiTokenTest extends TestCase
         $session->shouldReceive('token')->withNoArgs()->once()->andReturn($token = 't0k3n');
 
         $cookieFactory->shouldReceive('make')
-            ->with($userKey, $token)
+            ->with($userKey, $token, $guard)
             ->once()
             ->andReturn(new Cookie(Passport::cookie()));
 

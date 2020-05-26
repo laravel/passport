@@ -26,6 +26,15 @@ class ApiTokenCookieFactoryTest extends TestCase
             'secure' => true,
             'same_site' => 'lax',
         ]);
+
+        $config->shouldReceive('get')->with('auth')->andReturn([
+            'guards' => [
+                'web' => [
+                    'provider' => 'users',
+                ]
+            ]
+        ]);
+
         $encrypter = new Encrypter(str_repeat('a', 16));
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 

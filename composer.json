@@ -19,6 +19,7 @@
         "firebase/php-jwt": "^5.0",
         "guzzlehttp/guzzle": "^6.0",
         "illuminate/auth": "^6.0|^7.0",
+        "illuminate/config": "^6.0|^7.0",
         "illuminate/console": "^6.0|^7.0",
         "illuminate/container": "^6.0|^7.0",
         "illuminate/contracts": "^6.0|^7.0",

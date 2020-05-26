@@ -46,22 +46,23 @@ class ApiTokenCookieFactory
      */
     public function make($userId, $csrfToken, $guard = null)
     {
-        $config = $this->config->get('session');
+        $session = $this->config->get('session');
+        $auth = $this->config->get('auth');
 
-        $expiration = Carbon::now()->addMinutes($config['lifetime']);
+        $expiration = Carbon::now()->addMinutes($session['lifetime']);
 
-        $provider = config("auth.guards.$guard.provider") ?: config('auth.guards.web.provider');
+        $provider = $auth['guards'][$guard ?: 'web']['provider'];
 
         return new Cookie(
             Passport::cookie(),
             $this->createToken($userId, $csrfToken, $expiration, $provider),
             $expiration,
-            $config['path'],
-            $config['domain'],
-            $config['secure'],
+            $session['path'],
+            $session['domain'],
+            $session['secure'],
             true,
             false,
-            $config['same_site'] ?? null
+            $session['same_site'] ?? null
         );
     }
 

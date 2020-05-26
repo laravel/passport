@@ -124,19 +124,21 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $userProvider->shouldReceive('getProviderName')->andReturn('provider');
+
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
-                'aud' => 1,
+                'provider' => $userProvider->getProviderName(),
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+
 
         $user = $guard->user($request);
 
@@ -157,19 +159,20 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $userProvider->shouldReceive('getProviderName')->andReturn('provider');
+
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token', false));
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
-                'aud' => 1,
+                'provider' => $userProvider->getProviderName(),
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
 
         $user = $guard->user($request);
 
@@ -294,19 +297,20 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
+        $userProvider->shouldReceive('getProviderName')->andReturn('provider');
+
         Passport::ignoreCsrfToken();
 
         $request = Request::create('/');
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
-                'aud' => 1,
+                'provider' => $userProvider->getProviderName(),
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
 
         $user = $guard->user($request);
 
