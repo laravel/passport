@@ -31,8 +31,8 @@ class ApiTokenCookieFactoryTest extends TestCase
             'guards' => [
                 'web' => [
                     'provider' => 'users',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $encrypter = new Encrypter(str_repeat('a', 16));
