@@ -44,11 +44,13 @@ class ApiTokenCookieFactory
      * @param  string  $csrfToken
      * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    public function make($userId, $csrfToken, $provider)
+    public function make($userId, $csrfToken, $guard = null)
     {
         $config = $this->config->get('session');
 
         $expiration = Carbon::now()->addMinutes($config['lifetime']);
+
+        $provider = config("auth.guards.$guard.provider") ?: config("auth.guards.web.provider");
 
         return new Cookie(
             Passport::cookie(),

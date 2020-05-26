@@ -29,7 +29,7 @@ class ApiTokenCookieFactoryTest extends TestCase
         $encrypter = new Encrypter(str_repeat('a', 16));
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 
-        $cookie = $factory->make(1, 'token');
+        $cookie = $factory->make(1, 'token', 'web');
 
         $this->assertInstanceOf(Cookie::class, $cookie);
     }

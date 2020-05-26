@@ -49,11 +49,9 @@ class CreateFreshApiToken
 
         $response = $next($request);
 
-        $provider = config("auth.guards.$guard.provider") ?: config("auth.guards.web.provider");
-
         if ($this->shouldReceiveFreshToken($request, $response)) {
             $response->withCookie($this->cookieFactory->make(
-                $request->user($this->guard)->getAuthIdentifier(), $request->session()->token(), $provider
+                $request->user($this->guard)->getAuthIdentifier(), $request->session()->token(), $guard
             ));
         }
 
