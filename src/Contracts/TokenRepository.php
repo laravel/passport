@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Contracts;
 
-use Laravel\Passport\Token;
 use Illuminate\Database\Eloquent\Collection;
+use Laravel\Passport\Token;
 
 interface TokenRepository
 {
