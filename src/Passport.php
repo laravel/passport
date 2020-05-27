@@ -127,6 +127,13 @@ class Passport
     public static $tokenModel = 'Laravel\Passport\Token';
 
     /**
+     * The token repository.
+     *
+     * @var \Laravel\Passport\Contracts\TokenRepository
+     */
+    public static $tokenRepository;
+
+    /**
      * The refresh token model class name.
      *
      * @var string
@@ -611,6 +618,36 @@ class Passport
     public static function token()
     {
         return new static::$tokenModel;
+    }
+
+    /**
+     * Set the token repository.
+     *
+     * @param \Laravel\Passport\Contracts\TokenRepository|null $tokenRepository
+     * @return \Laravel\Passport\Contracts\TokenRepository|void
+     */
+    public static function useTokenRepository(
+        Contracts\TokenRepository $tokenRepository = null
+    ) {
+        if (is_null($tokenRepository)) {
+            return static::$tokenRepository = new TokenRepository();
+        }
+
+        static::$tokenRepository = $tokenRepository;
+    }
+
+    /**
+     * Get the token repository.
+     *
+     * @return \Laravel\Passport\Contracts\TokenRepository
+     */
+    public static function tokenRepository()
+    {
+        if (is_null(static::$tokenRepository)) {
+            return static::useTokenRepository();
+        }
+
+        return static::$tokenRepository;
     }
 
     /**
