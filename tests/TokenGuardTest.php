@@ -14,6 +14,8 @@ use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
 use Laravel\Passport\TokenRepository;
+use Laravel\Passport\Token;
+use Laravel\Passport\Contracts\TokenRepository as TokenRepositoryInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
@@ -31,7 +33,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -46,7 +48,7 @@ class TokenGuardTest extends TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
+        $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock(Token::class));
         $clients->shouldReceive('revoked')->with(1)->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -65,7 +67,7 @@ class TokenGuardTest extends TestCase
 
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -88,7 +90,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -114,7 +116,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -147,7 +149,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -180,7 +182,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -206,7 +208,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -232,7 +234,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -258,7 +260,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -284,7 +286,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
@@ -317,7 +319,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -344,7 +346,7 @@ class TokenGuardTest extends TestCase
 
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -367,7 +369,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = m::mock(Encrypter::class);
 
@@ -387,7 +389,7 @@ class TokenGuardTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $userProvider = m::mock(PassportUserProvider::class);
-        $tokens = m::mock(TokenRepository::class);
+        $tokens = m::mock(TokenRepository::class, TokenRepositoryInterface::class);
         $clients = m::mock(ClientRepository::class);
         $encrypter = new Encrypter(str_repeat('a', 16));
 
