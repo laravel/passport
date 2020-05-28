@@ -2,9 +2,12 @@
 
 namespace Laravel\Passport;
 
+use Laravel\Passport\Contracts\TokenRepository as TokenRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+use Laravel\Passport\Token;
 use Carbon\Carbon;
 
-class TokenRepository
+class TokenRepository implements TokenRepositoryInterface
 {
     /**
      * Creates a new Access Token.
@@ -12,7 +15,7 @@ class TokenRepository
      * @param  array  $attributes
      * @return \Laravel\Passport\Token
      */
-    public function create($attributes)
+    public function create($attributes): Token
     {
         return Passport::token()->create($attributes);
     }
@@ -23,7 +26,7 @@ class TokenRepository
      * @param  string  $id
      * @return \Laravel\Passport\Token
      */
-    public function find($id)
+    public function find($id): Token
     {
         return Passport::token()->where('id', $id)->first();
     }
@@ -46,7 +49,7 @@ class TokenRepository
      * @param  mixed  $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function forUser($userId)
+    public function forUser($userId): Collection
     {
         return Passport::token()->where('user_id', $userId)->get();
     }
@@ -73,7 +76,7 @@ class TokenRepository
      * @param  \Laravel\Passport\Token  $token
      * @return void
      */
-    public function save(Token $token)
+    public function save(Token $token): void
     {
         $token->save();
     }
@@ -95,7 +98,7 @@ class TokenRepository
      * @param  string  $id
      * @return bool
      */
-    public function isAccessTokenRevoked($id)
+    public function isAccessTokenRevoked($id): bool
     {
         if ($token = $this->find($id)) {
             return $token->revoked;

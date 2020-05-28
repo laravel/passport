@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Tests;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshTokenRepository;
@@ -50,7 +51,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $token1 = new Token;
         $token2 = new Token;
 
-        $userTokens = m::mock();
+        $userTokens = m::mock(Collection::class);
         $client1 = new Client;
         $client1->personal_access_client = true;
         $client2 = new Client;

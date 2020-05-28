@@ -8,6 +8,7 @@ use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
+use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +36,8 @@ class BridgeAccessTokenRepositoryTest extends TestCase
             $this->assertInstanceOf('DateTime', $array['created_at']);
             $this->assertInstanceOf('DateTime', $array['updated_at']);
             $this->assertEquals($expiration, $array['expires_at']);
+
+            return m::mock(Token::class);
         });
 
         $events->shouldReceive('dispatch')->once();
