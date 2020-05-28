@@ -3,8 +3,8 @@
 namespace Laravel\Passport\Tests;
 
 use Illuminate\Contracts\Validation\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;

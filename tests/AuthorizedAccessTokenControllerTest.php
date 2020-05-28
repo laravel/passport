@@ -2,8 +2,8 @@
 
 namespace Laravel\Passport\Tests;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshTokenRepository;

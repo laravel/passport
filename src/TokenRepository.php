@@ -2,10 +2,9 @@
 
 namespace Laravel\Passport;
 
-use Laravel\Passport\Contracts\TokenRepository as TokenRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Laravel\Passport\Token;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use Laravel\Passport\Contracts\TokenRepository as TokenRepositoryInterface;
 
 class TokenRepository implements TokenRepositoryInterface
 {
