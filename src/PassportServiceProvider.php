@@ -238,7 +238,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create a CryptKey instance without permissions check.
      *
-     * @param  string  $key
+     * @param  string  $type
      * @return \League\OAuth2\Server\CryptKey
      */
     protected function makeCryptKey($type)
