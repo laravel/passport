@@ -12,9 +12,9 @@ abstract class PassportTestCase extends TestCase
 {
     use RefreshDatabase;
 
-    const KEYS = __DIR__ . '/keys';
-    const PUBLIC_KEY = self::KEYS . '/oauth-public.key';
-    const PRIVATE_KEY = self::KEYS . '/oauth-private.key';
+    const KEYS = __DIR__.'/keys';
+    const PUBLIC_KEY = self::KEYS.'/oauth-public.key';
+    const PRIVATE_KEY = self::KEYS.'/oauth-private.key';
 
     protected function setUp(): void
     {
