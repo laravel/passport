@@ -36,10 +36,10 @@ class PassportServiceProviderTest extends TestCase
 
     public function test_can_use_crypto_keys_from_local_disk()
     {
-        Passport::loadKeysFrom(__DIR__ . '/../keys');
+        Passport::loadKeysFrom(__DIR__.'/../keys');
 
         file_put_contents(
-            __DIR__ . '/../keys/oauth-private.key',
+            __DIR__.'/../keys/oauth-private.key',
             "-----BEGIN RSA PRIVATE KEY-----\ndisk\n-----END RSA PRIVATE KEY-----"
         );
 
@@ -61,6 +61,6 @@ class PassportServiceProviderTest extends TestCase
             file_get_contents($cryptKey->getKeyPath())
         );
 
-        @unlink(__DIR__ . '/../keys/oauth-private.key');
+        @unlink(__DIR__.'/../keys/oauth-private.key');
     }
 }

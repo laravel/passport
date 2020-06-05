@@ -11,9 +11,9 @@ use PHPUnit\Framework\TestCase;
 
 class KeysCommandTest extends TestCase
 {
-    const KEYS = __DIR__ . '/../keys';
-    const PUBLIC_KEY = self::KEYS . '/oauth-public.key';
-    const PRIVATE_KEY = self::KEYS . '/oauth-private.key';
+    const KEYS = __DIR__.'/../keys';
+    const PUBLIC_KEY = self::KEYS.'/oauth-public.key';
+    const PRIVATE_KEY = self::KEYS.'/oauth-private.key';
 
     protected function setUp(): void
     {
