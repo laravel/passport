@@ -10,7 +10,7 @@ use Laravel\Passport\Tests\Feature\PassportTestCase;
 
 class HashCommand extends PassportTestCase
 {
-    public function test_it_can_properly_has_client_secrets()
+    public function test_it_can_properly_hash_client_secrets()
     {
         $client = factory(Client::class)->create(['secret' => $secret = Str::random(40)]);
         $hasher = $this->app->make(Hasher::class);
