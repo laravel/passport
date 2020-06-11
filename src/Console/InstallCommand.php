@@ -56,7 +56,7 @@ class InstallCommand extends Command
         config(['passport.client_uuids' => true]);
         Passport::setClientUuids(true);
 
-        $this->replaceInFile(config_path('passport.php'), 'false', 'true');
+        $this->replaceInFile(config_path('passport.php'), '\'client_uuids\' => false', '\'client_uuids\' => true');
         $this->replaceInFile(database_path('migrations/2016_06_01_000001_create_oauth_auth_codes_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
         $this->replaceInFile(database_path('migrations/2016_06_01_000002_create_oauth_access_tokens_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
         $this->replaceInFile(database_path('migrations/2016_06_01_000004_create_oauth_clients_table.php'), '$table->bigIncrements(\'id\');', '$table->uuid(\'id\')->primary();');
