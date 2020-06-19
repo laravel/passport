@@ -74,7 +74,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
         ], [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();

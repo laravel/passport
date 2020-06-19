@@ -58,7 +58,7 @@ class ClientControllerTest extends TestCase
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
@@ -97,7 +97,7 @@ class ClientControllerTest extends TestCase
             'redirect' => 'http://localhost',
             'confidential' => false,
         ], [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
@@ -136,7 +136,7 @@ class ClientControllerTest extends TestCase
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'redirect' => ['required', $redirectRule],
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();

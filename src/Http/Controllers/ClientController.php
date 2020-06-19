@@ -78,7 +78,7 @@ class ClientController
     public function store(Request $request)
     {
         $this->validation->make($request->all(), [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'redirect' => ['required', $this->redirectRule],
             'confidential' => 'boolean',
         ])->validate();
@@ -111,7 +111,7 @@ class ClientController
         }
 
         $this->validation->make($request->all(), [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
