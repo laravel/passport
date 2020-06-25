@@ -46,7 +46,7 @@ class ProviderColumnWhenTableExists extends Migration
      */
     public function up()
     {
-        if (!Schema::hasColumn($this->table, $this->column)) {
+        if (! Schema::hasColumn($this->table, $this->column)) {
             $this->schema->table($this->table, function (Blueprint $table) {
                 $table->string($this->column)->after('secret')->nullable();
             });
