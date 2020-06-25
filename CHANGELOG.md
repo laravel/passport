@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.2.1...9.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.2.2...9.x)
+
+
+## [v9.2.2 (2020-06-25)](https://github.com/laravel/passport/compare/v9.2.1...v9.2.2)
+
+### Fixed
+- Fix maxlength for token names ([#1300](https://github.com/laravel/passport/pull/1300))
+- Improve `passport:install` command ([#1294](https://github.com/laravel/passport/pull/1294))
 
 
 ## [v9.2.1 (2020-05-14)](https://github.com/laravel/passport/compare/v9.2.0...v9.2.1)
