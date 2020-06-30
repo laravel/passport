@@ -3,6 +3,12 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v9.2.2...9.x)
 
 
+## [v9.3.0 (2020-06-30)](https://github.com/laravel/passport/compare/v9.2.2...v9.3.0)
+
+### Added
+- Guzzle 7 support ([#1311](https://github.com/laravel/passport/pull/1311))
+
+
 ## [v9.2.2 (2020-06-25)](https://github.com/laravel/passport/compare/v9.2.1...v9.2.2)
 
 ### Fixed
