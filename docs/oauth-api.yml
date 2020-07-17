@@ -1,0 +1,700 @@
+---
+openapi: 3.0.0
+
+info:
+  description: Laravel Passport's OAuth2 server API
+  version: "1.0.0"
+  title: OAuth API
+
+tags:
+  - name: client
+  - name: personal-access-tokens
+  - name: tokens
+
+paths:
+
+  /oauth/clients:
+    post:
+      summary: Create a new OAuth client for the authenticated user
+      security:
+        - LaravelUserSession: []
+      tags: [client]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDataRequest'
+      responses:
+        '200':
+          description: OAuth client created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientInfoResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '419':
+          description: CSRF token verification failed
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableResponse'
+
+    get:
+      summary: Get all of the clients for the authenticated user
+      security:
+        - LaravelUserSession: []
+      tags: [client]
+      responses:
+        '200':
+          description: All clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientSummaryResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+
+  /oauth/clients/{client-id}:
+    put:
+      summary: Update client
+      security:
+        - LaravelUserSession: []
+      tags: [client]
+      parameters:
+        - in: path
+          name: client-id
+          required: true
+          schema:
+            type: integer
+            example: 2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDataRequest'
+      responses:
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '200':
+          description: Update client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateClientSummaryResponse'
+        '404':
+          description: Client not found
+        '405':
+          description: Not Allowed - You need to log in to the application
+        '419':
+          description: CSRF token verification failed
+
+    delete:
+      summary: Delete client
+      tags: [client]
+      security:
+        - LaravelUserSession: []
+      parameters:
+        - in: path
+          name: Client-id
+          required: true
+          schema:
+            type: integer
+            example: 2
+      responses:
+        '200':
+          description: Client deleted
+        '404':
+          description: Client not Found
+        '405':
+          description: Not Allowed - You need to log in to the application
+
+  /oauth/personal-access-tokens:
+    post:
+      summary: Create a personal access token
+      security:
+        - LaravelUserSession: []
+      tags: [personal-access-tokens]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalTokenRequest'
+      responses:
+        '200':
+          description: List of all personal access tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalTokenInfoResponse'
+
+    get:
+      summary: Get all personal access tokens
+      security:
+        - LaravelUserSession: []
+      tags: [personal-access-tokens]
+      responses:
+        '200':
+          description: List of all personal access tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalTokenSummaryResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '419':
+          description: CSRF token verification failed
+
+  /oauth/personal-access-tokens/{token_id}:
+    delete:
+      summary: Delete personal access token
+      security:
+        - LaravelUserSession: []
+      tags: [personal-access-tokens]
+      parameters:
+        - in: path
+          name: token_id
+          required: true
+          schema:
+            type: string
+            example: f93a945336b3d9c1534559082c402a3a468400513e8137ca1104609b3cb
+      responses:
+        '200':
+          description: Token deleted
+        '404':
+          description: Personal access token not found
+        '419':
+          description: CSRF token verification failed
+
+  /oauth/scopes:
+    get:
+      summary: List available scopes
+      security:
+        - LaravelUserSession: []
+      tags: [client]
+      responses:
+        '200':
+          description: Returns all defined scopes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScopesInfoResponse'
+        '401':
+          description: Unauthenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '404':
+          description: Scope not found
+
+  /oauth/token:
+    post:
+      summary: Obtain a new OAuth token
+      tags: [tokens]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+            examples:
+              ClientToken:
+                summary: Request client-specific access token
+                value:
+                  grant_type: authorization_code
+                  client_id: 23
+                  client_secret: s3kr1t
+                  redirect_uri: http://example.com/callback
+                  code: abc
+              UserToken:
+                summary: Request user-specific access token
+                value:
+                  grant_type: authorization_code
+                  client_id: 23
+                  client_secret: s3kr1t
+                  username: user@example.org
+                  password: user-pw
+                  scope: scope
+              TokenRefresh:
+                summary: Refresh existing token
+                value:
+                  grant_type: authorization_code
+                  refresh_token: refresh_token
+                  client_id: 23
+                  client_secret: s3kr1t
+                  scope: scope
+      responses:
+        '200':
+          description: Token information
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TokenInfoResponse'
+                  - $ref: '#/components/schemas/AuthorizationDataResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+        '405':
+          description: Not Allowed - You need to log in to the application
+
+  /oauth/tokens:
+    get:
+      summary: Get all authorized access tokens
+      security:
+        - LaravelUserSession: []
+      tags: [tokens]
+      responses:
+        '200':
+          description: All authorized access tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthenticatedResponse'
+
+  /oauth/tokens/{token-id}:
+    delete:
+      summary: Delete an access token
+      security:
+        - LaravelUserSession: []
+      tags: [tokens]
+      parameters:
+        - name: token-id
+          in: path
+          description: ID of the token
+          required: true
+          schema:
+            type: string
+            example: f93a945336b3d9c1534559082c402a3a468400513e8137ca1104609b3cb
+      responses:
+        '200':
+          description: Token deleted
+        '404':
+          description: Authorized access token not found
+        '405':
+          description: Not Allowed - You need to log in to the application
+        '419':
+          description: CSRF token verification failed
+
+components:
+
+  securitySchemes:
+    LaravelUserSession:
+      type: apiKey
+      in: cookie
+      name: laravel_session
+      description: You need to log in to the application
+
+  schemas:
+    AuthorizationDataResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: yvMbx_TgwdYE0hgOVb8N4ZOvxOukqfjzYOGRZcJiCjQuRGkVIBfjjV3YG4zKT
+        token_type:
+          type: string
+          example: bearer
+        refresh_token:
+          type: string
+          example: 0b9KjiBVlZLz7a4HshSAIcFuscStiXT1VzT5mgNYwCQ_dWctTDsaIjedAhD1L
+        expires_in:
+          type: integer
+          example: 3600
+        scope:
+          type: string
+          example: all
+
+    ClientInfoResponse:
+      type: object
+      properties:
+        user_id:
+          type: integer
+          example: 21
+        name:
+          type: string
+          example: Client Name
+        secret:
+          type: string
+          example: kIROJavupsFLIyBXwtqll22uZOarrioz3BrWTIQM
+        redirect:
+          type: string
+          example: http://example.com/callback
+        personal_access_client:
+          type: boolean
+          example: false
+        password_client:
+          type: boolean
+          example: false
+        revoked:
+          type: boolean
+          example: false
+        updated_at:
+          type: string
+          format: date-time
+          example: "2020-07-07 09:38:45"
+        created_at:
+          type: string
+          format: date-time
+          example: "2020-07-07 09:38:45"
+        id:
+          type: integer
+          example: 2
+
+    ClientSummaryResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 2
+          user_id:
+            type: integer
+            example: 21
+          name:
+            type: string
+            example: Client Name
+          secret:
+            type: string
+            example: DKFMuGAmrLEdy6LE3mFysTgU2gn0VRwBjGspzpjn
+          redirect:
+            type: string
+            example: http://example.com/callback
+          personal_access_client:
+            type: boolean
+            example: false
+          password_client:
+            type: boolean
+            example: false
+          revoked:
+            type: boolean
+            example: false
+          created_at:
+            type: string
+            format: date-time
+          updated_at:
+            type: string
+            format: date-time
+
+    PersonalTokenInfoResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          example: yJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImY5M2E5NDUzMzZiM2
+        token:
+          type: object
+          properties:
+            id:
+              type: string
+              example: f93a945336b3d9c1534559082c402a3a468400513e8137ca1104609b3
+            user_id:
+              type: integer
+              example: 21
+            client_id:
+              type: integer
+              example: 2
+            name:
+              type: string
+              example: Token Name
+            scopes:
+              type: array
+              items:
+                type: string
+                example: read
+            revoked:
+              type: boolean
+              example: false
+            created_at:
+              type: string
+              format: date-time
+              example: "2020-07-07 13:42:58"
+            updated_at:
+              type: string
+              format: date-time
+              example: "2020-07-07 13:42:58"
+            expires_at:
+              type: string
+              format: date-time
+              example: "2020-07-07 13:42:58"
+
+    PersonalTokenSummaryResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            example: f93a945336b3d9c1534559082c402a3a468400513e8137ca1104609b3cb
+          user_id:
+            type: integer
+            example: 21
+          client_id:
+            type: integer
+            example: 2
+          name:
+            type: string
+            example: check-status
+          scope:
+            type: array
+            items:
+              type: string
+              example: read
+          revoked:
+            type: boolean
+            example: false
+          created_at:
+            type: string
+            format: date-time
+            example: "2020-07-07 13:42:58"
+          updated_at:
+            type: string
+            format: date-time
+            example: "2020-07-07 13:42:58"
+          expires_at:
+            type: string
+            format: date-time
+            example: "2020-07-07 13:42:58"
+          client:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 2
+              name:
+                type: string
+                example: Client name
+              scope:
+                type: array
+                items:
+                  type: string
+                  example: read
+              revoked:
+                type: boolean
+                example: false
+              created_at:
+                type: string
+                format: date-time
+                example: "2020-07-07 08:53:32"
+              updated_at:
+                type: string
+                format: date-time
+                example: "2020-07-07 08:53:32"
+
+    ScopesInfoResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            example: read
+          description:
+            type: string
+            example: order details
+
+    TokenInfoResponse:
+      type: object
+      properties:
+        token_type:
+          type: string
+          example: Bearer
+        expires_in:
+          type: integer
+          example: 31536000
+        access_token:
+          type: string
+          example: eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImJlYTg5ZWZlYjE2N
+
+    UnauthenticatedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthenticated.
+
+    UnprocessableResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            message:
+              type: string
+              example: The given data was invalid.
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Name must be filled in.
+              source:
+                type: object
+                properties:
+                  pointer:
+                    type: string
+                    example: /data/attributes/name
+
+    UpdateClientSummaryResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        user_id:
+          type: integer
+          example: 21
+        name:
+          type: string
+          example: Client Name
+        redirect:
+          type: string
+          example: http://example.com/callback
+        personal_access_client:
+          type: boolean
+          example: false
+        password_client:
+          type: boolean
+          example: false
+        revoked:
+          type: boolean
+          example: false
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    AuthorizeRequest:
+      type: object
+      properties:
+        client_id:
+          type: string
+          example: 1
+        redirect_uri:
+          type: string
+          example: http://example.com/callback
+        responses_type:
+          type: string
+          example: token
+        scope:
+          type: string
+          example: read
+
+    BadRequest:
+      type: object
+      properties:
+        error:
+          type: string
+          example: unsupported_grant_type
+        message:
+          type: string
+          example: The authorization grant type is not supported by
+            the authorization server.
+        hint:
+          type: string
+          example: Check the `grant_type` parameter
+
+    ClientDataRequest:
+      type: object
+      required:
+        - name
+        - redirect
+      properties:
+        name:
+          type: string
+          example: Client Name
+        redirect:
+          type: string
+          example: http://example.com/callback
+
+    PersonalTokenRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Token Name
+        scope:
+          type: array
+          items:
+            type: string
+            example: read
+
+    TokenRequest:
+      type: array
+      items:
+        type: object
+        properties:
+          form_params:
+            type: array
+            items:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  example: authorization_code
+                client_id:
+                  type: string
+                  example: 1
+                client_secret:
+                  type: string
+                  example: wodSh7DfsY9g7eG29LcwPpWu2NN9Dz0cFGQSlNRnjpq
+                redirect_uri:
+                  type: string
+                  example: http://example.com
+                code:
+                  type: string
+                refresh_token:
+                  type: string
+                  example: the-refresh-token
+                scope:
+                  type: string
+                  example: read
+                username:
+                  type: string
+                  example: taylor@laravel.com
+                password:
+                  type: string
+                  example: my-password
+                response_type:
+                  type: string
+                  example: token
