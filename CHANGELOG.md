@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.3.0...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.3.1...master)
+
+
+## [v9.3.1 (2020-07-21)](https://github.com/laravel/passport/compare/v9.3.0...v9.3.1)
+
+### Fixed
+- Use custom models in purge command if set ([#1316](https://github.com/laravel/passport/pull/1316))
+- Apply table responsive on table class ([#1318](https://github.com/laravel/passport/pull/1318))
 
 
 ## [v9.3.0 (2020-06-30)](https://github.com/laravel/passport/compare/v9.2.2...v9.3.0)

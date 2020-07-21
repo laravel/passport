@@ -27,7 +27,7 @@
                     </p>
 
                     <!-- Personal Access Tokens -->
-                    <table class="table table-borderless mb-0" v-if="tokens.length > 0">
+                    <table class="table table-responsive table-borderless mb-0" v-if="tokens.length > 0">
                         <thead>
                             <tr>
                                 <th>Name</th>
