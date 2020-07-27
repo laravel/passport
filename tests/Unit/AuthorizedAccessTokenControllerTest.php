@@ -63,7 +63,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $this->tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
-        $request->setUserResolver(function () use ($token1, $token2) {
+        $request->setUserResolver(function () {
             $user = m::mock();
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 

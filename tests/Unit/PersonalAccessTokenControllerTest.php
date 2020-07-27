@@ -36,7 +36,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $tokenRepository = m::mock(TokenRepository::class);
         $tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
-        $request->setUserResolver(function () use ($token1, $token2) {
+        $request->setUserResolver(function () {
             $user = m::mock();
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
