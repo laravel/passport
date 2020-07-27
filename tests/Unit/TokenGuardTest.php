@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
@@ -127,7 +128,7 @@ class TokenGuardTest extends TestCase
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
@@ -158,9 +159,9 @@ class TokenGuardTest extends TestCase
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter);
 
         $request = Request::create('/');
-        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('token', false));
+        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
@@ -298,7 +299,7 @@ class TokenGuardTest extends TestCase
 
         $request = Request::create('/');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
@@ -396,7 +397,7 @@ class TokenGuardTest extends TestCase
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
         $request->cookies->set('laravel_token',
-            $encrypter->encrypt(JWT::encode([
+            $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
