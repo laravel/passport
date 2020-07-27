@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.3.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.3.2...master)
+
+
+## [v9.3.2 (2020-07-27)](https://github.com/laravel/passport/compare/v9.3.1...v9.3.2)
+
+### Security
+- Fix cookie handling for security release ([#1322](https://github.com/laravel/passport/pull/1322), [75f1ad2](https://github.com/laravel/passport/commit/75f1ad218ddf4500f2beb9e5c2fb186530e8ddb6))
 
 
 ## [v9.3.1 (2020-07-21)](https://github.com/laravel/passport/compare/v9.3.0...v9.3.1)
