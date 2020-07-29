@@ -8,6 +8,7 @@ use Illuminate\Auth\AuthManager;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
@@ -20,6 +21,7 @@ use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Zend\Diactoros\ResponseFactory;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\StreamFactory;
+
 use Zend\Diactoros\UploadedFileFactory;
 
 class TokenGuard
@@ -255,7 +257,7 @@ class TokenGuard
     protected function decodeJwtTokenCookie($request)
     {
         return (array) JWT::decode(
-            $this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies),
+            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
             $this->encrypter->getKey(),
             ['HS256']
         );
@@ -286,7 +288,7 @@ class TokenGuard
         $token = $request->header('X-CSRF-TOKEN');
 
         if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
-            $token = $this->encrypter->decrypt($header, static::serialized());
+            $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
         }
 
         return $token;
