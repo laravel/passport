@@ -93,6 +93,7 @@ class PassportServiceProvider extends ServiceProvider
         Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
 
         $this->registerAuthorizationServer();
+        $this->registerClientRepository();
         $this->registerResourceServer();
         $this->registerGuard();
     }
@@ -218,6 +219,20 @@ class PassportServiceProvider extends ServiceProvider
             $this->makeCryptKey('private'),
             app('encrypter')->getKey()
         );
+    }
+
+    /**
+     * Register the client repository.
+     *
+     * @return void
+     */
+    protected function registerClientRepository()
+    {
+        $this->app->singleton(ClientRepository::class, function ($container) {
+            $config = $container->make('config')->get('passport.personal_access_client');
+
+            return new ClientRepository($config['id'] ?? null, $config['secret'] ?? null);
+        });
     }
 
     /**
