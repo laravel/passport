@@ -8,6 +8,33 @@ use RuntimeException;
 class ClientRepository
 {
     /**
+     * The personal access client ID.
+     *
+     * @var int|string|null
+     */
+    protected $personalAccessClientId;
+
+    /**
+     * The personal access client secret.
+     *
+     * @var string|null
+     */
+    protected $personalAccessClientSecret;
+
+    /**
+     * Create a new client repository.
+     *
+     * @param  int|string|null  $personalAccessClientId
+     * @param  string|null  $personalAccessClientSecret
+     * @return void
+     */
+    public function __construct($personalAccessClientId = null, $personalAccessClientSecret = null)
+    {
+        $this->personalAccessClientId = $personalAccessClientId;
+        $this->personalAccessClientSecret = $personalAccessClientSecret;
+    }
+
+    /**
      * Get a client by the given ID.
      *
      * @param  int  $id
@@ -85,8 +112,8 @@ class ClientRepository
      */
     public function personalAccessClient()
     {
-        if (Passport::$personalAccessClientId) {
-            return $this->find(Passport::$personalAccessClientId);
+        if ($this->personalAccessClientId) {
+            return $this->find($this->personalAccessClientId);
         }
 
         $client = Passport::personalAccessClient();
@@ -215,5 +242,25 @@ class ClientRepository
         $client->tokens()->update(['revoked' => true]);
 
         $client->forceFill(['revoked' => true])->save();
+    }
+
+    /**
+     * Get the personal access client id.
+     *
+     * @return int|string|null
+     */
+    public function getPersonalAccessClientId()
+    {
+        return $this->personalAccessClientId;
+    }
+
+    /**
+     * Get the personal access client secret.
+     *
+     * @return string|null
+     */
+    public function getPersonalAccessClientSecret()
+    {
+        return $this->personalAccessClientSecret;
     }
 }
