@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\Scope;
@@ -17,6 +16,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery as m;
+use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
