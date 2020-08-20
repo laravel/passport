@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laminas\Diactoros\Response as Psr7Response;
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
+use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 
 class AccessTokenController
