@@ -10,10 +10,6 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
-use Laminas\Diactoros\ResponseFactory;
-use Laminas\Diactoros\ServerRequestFactory;
-use Laminas\Diactoros\StreamFactory;
-use Laminas\Diactoros\UploadedFileFactory;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
@@ -21,6 +17,7 @@ use Laravel\Passport\TokenRepository;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 class TokenGuard
@@ -195,12 +192,12 @@ class TokenGuard
     {
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
-        // conversion for us to a new Diactoros implementation of this PSR-7 request.
+        // conversion for us to a new Nyholm implementation of this PSR-7 request.
         $psr = (new PsrHttpFactory(
-            new ServerRequestFactory,
-            new StreamFactory,
-            new UploadedFileFactory,
-            new ResponseFactory
+            new Psr17Factory,
+            new Psr17Factory,
+            new Psr17Factory,
+            new Psr17Factory
         ))->createRequest($request);
 
         try {
