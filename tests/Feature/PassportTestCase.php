@@ -20,8 +20,6 @@ abstract class PassportTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->withFactories(__DIR__.'/../../database/factories');
-
         $this->artisan('migrate:fresh');
 
         Passport::routes();

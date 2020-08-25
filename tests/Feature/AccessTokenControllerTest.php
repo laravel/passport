@@ -8,6 +8,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
@@ -51,7 +52,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
@@ -102,7 +103,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
@@ -145,7 +146,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
