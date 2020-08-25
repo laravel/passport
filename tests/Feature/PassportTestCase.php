@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Database\Eloquent\LegacyFactoryServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
@@ -57,7 +58,7 @@ abstract class PassportTestCase extends TestCase
 
     protected function getPackageProviders($app)
     {
-        return [PassportServiceProvider::class];
+        return [PassportServiceProvider::class, LegacyFactoryServiceProvider::class];
     }
 
     /**
