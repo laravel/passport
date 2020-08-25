@@ -4,7 +4,6 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Client;
@@ -52,7 +51,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = $this->app->make(Factory::class)->of(Client::class)->state('password_client')->create(['user_id' => $user->id]);
+        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
@@ -103,7 +102,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = $this->app->make(Factory::class)->of(Client::class)->state('password_client')->create(['user_id' => $user->id]);
+        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
@@ -146,7 +145,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = $this->app->make(Factory::class)->of(Client::class)->state('password_client')->create(['user_id' => $user->id]);
+        $client = Client::factory()->asPasswordClient()->create(['user_id' => $user->id]);
 
         $response = $this->post(
             '/oauth/token',
