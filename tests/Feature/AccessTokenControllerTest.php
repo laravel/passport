@@ -71,7 +71,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $response->assertHeader('cache-control', 'no-store, private');
         $response->assertHeader('content-type', 'application/json; charset=UTF-8');
 
-        $decodedResponse = $response->decodeResponseJson();
+        $decodedResponse = $response->decodeResponseJson()->json();
 
         $this->assertArrayHasKey('token_type', $decodedResponse);
         $this->assertArrayHasKey('expires_in', $decodedResponse);
@@ -121,7 +121,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $response->assertHeader('cache-control', 'no-cache, private');
         $response->assertHeader('content-type', 'application/json');
 
-        $decodedResponse = $response->decodeResponseJson();
+        $decodedResponse = $response->decodeResponseJson()->json();
 
         $this->assertArrayNotHasKey('token_type', $decodedResponse);
         $this->assertArrayNotHasKey('expires_in', $decodedResponse);
@@ -164,7 +164,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $response->assertHeader('cache-control', 'no-cache, private');
         $response->assertHeader('content-type', 'application/json');
 
-        $decodedResponse = $response->decodeResponseJson();
+        $decodedResponse = $response->decodeResponseJson()->json();
 
         $this->assertArrayNotHasKey('token_type', $decodedResponse);
         $this->assertArrayNotHasKey('expires_in', $decodedResponse);
