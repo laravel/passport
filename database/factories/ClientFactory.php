@@ -45,4 +45,17 @@ class ClientFactory extends Factory
             'password_client' => true,
         ]);
     }
+
+    /**
+     * Use as Client Credentials.
+     *
+     * @return $this
+     */
+    public function asClientCredentials()
+    {
+        return $this->state([
+            'personal_access_client' => false,
+            'password_client' => false,
+        ]);
+    }
 }
