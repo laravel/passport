@@ -24,3 +24,10 @@ $factory->state(Client::class, 'password_client', function (Faker $faker) {
         'password_client' => true,
     ];
 });
+
+$factory->state(Client::class, 'client_credentials', function (Faker $faker) {
+    return [
+        'personal_access_client' => false,
+        'password_client' => false,
+    ];
+});
