@@ -55,7 +55,7 @@ class ClientFactory extends Factory
     {
         return $this->state([
             'personal_access_client' => false,
-            'password_client' => false
+            'password_client' => false,
         ]);
     }
 }
