@@ -30,7 +30,7 @@ class TransientTokenControllerTest extends TestCase
 
         $response = $controller->refresh($request);
 
-        $this->assertEquals(200, $response->status());
-        $this->assertEquals('Refreshed.', $response->getOriginalContent());
+        $this->assertSame(200, $response->status());
+        $this->assertSame('Refreshed.', $response->getOriginalContent());
     }
 }

@@ -26,7 +26,7 @@ class CheckScopesTest extends TestCase
             return 'response';
         }, 'foo', 'bar');
 
-        $this->assertEquals('response', $response);
+        $this->assertSame('response', $response);
     }
 
     public function test_exception_is_thrown_if_token_doesnt_have_scope()

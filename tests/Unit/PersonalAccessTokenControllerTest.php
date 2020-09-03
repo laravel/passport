@@ -82,7 +82,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $tokenRepository = m::mock(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertEquals('response', $controller->store($request));
+        $this->assertSame('response', $controller->store($request));
     }
 
     public function test_tokens_can_be_deleted()
@@ -108,7 +108,7 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $response = $controller->destroy($request, 1);
 
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
     }
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
@@ -128,6 +128,6 @@ class PersonalAccessTokenControllerTest extends TestCase
         $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertEquals(404, $controller->destroy($request, 3)->status());
+        $this->assertSame(404, $controller->destroy($request, 3)->status());
     }
 }

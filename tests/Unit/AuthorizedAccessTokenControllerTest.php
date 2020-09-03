@@ -96,7 +96,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $response = $this->controller->destroy($request, 1);
 
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
     }
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
@@ -112,6 +112,6 @@ class AuthorizedAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $this->assertEquals(404, $this->controller->destroy($request, 3)->status());
+        $this->assertSame(404, $this->controller->destroy($request, 3)->status());
     }
 }

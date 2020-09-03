@@ -21,7 +21,7 @@ class PassportTest extends TestCase
 
         $this->assertTrue(Passport::hasScope('user'));
         $this->assertEquals(['user'], Passport::scopeIds());
-        $this->assertEquals('user', Passport::scopes()[0]->id);
+        $this->assertSame('user', Passport::scopes()[0]->id);
     }
 
     public function test_auth_code_instance_can_be_created()
