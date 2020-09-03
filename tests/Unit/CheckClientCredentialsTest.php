@@ -47,7 +47,7 @@ class CheckClientCredentialsTest extends TestCase
             return 'response';
         });
 
-        $this->assertEquals('response', $response);
+        $this->assertSame('response', $response);
     }
 
     public function test_request_is_passed_along_if_token_and_scope_are_valid()
@@ -79,7 +79,7 @@ class CheckClientCredentialsTest extends TestCase
             return 'response';
         }, 'see-profile');
 
-        $this->assertEquals('response', $response);
+        $this->assertSame('response', $response);
     }
 
     public function test_exception_is_thrown_when_oauth_throws_exception()

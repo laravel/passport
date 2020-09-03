@@ -47,7 +47,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
             return 'response';
         });
 
-        $this->assertEquals('response', $response);
+        $this->assertSame('response', $response);
     }
 
     public function test_request_is_passed_along_if_token_has_any_required_scope()
@@ -80,7 +80,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
             return 'response';
         }, 'notfoo', 'bar', 'notbaz');
 
-        $this->assertEquals('response', $response);
+        $this->assertSame('response', $response);
     }
 
     public function test_exception_is_thrown_when_oauth_throws_exception()

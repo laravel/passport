@@ -38,7 +38,7 @@ class AccessTokenControllerTest extends TestCase
 
         $controller = new AccessTokenController($server, $tokens, $jwt);
 
-        $this->assertEquals('{"access_token":"access-token"}', $controller->issueToken($request)->getContent());
+        $this->assertSame('{"access_token":"access-token"}', $controller->issueToken($request)->getContent());
     }
 
     public function test_exceptions_are_handled()
