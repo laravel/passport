@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/laravel/passport/compare/v10.0.0...master)
 
 
-## [v9.3.2 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
+## [v10.0.0 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
 
 ### Added
 - Support Laravel 8 ([#1336](https://github.com/laravel/passport/pull/1336))
