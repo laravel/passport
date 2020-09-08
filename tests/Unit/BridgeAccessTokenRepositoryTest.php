@@ -27,9 +27,9 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $events = m::mock(Dispatcher::class);
 
         $tokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
-            $this->assertEquals(1, $array['id']);
-            $this->assertEquals(2, $array['user_id']);
-            $this->assertEquals('client-id', $array['client_id']);
+            $this->assertSame(1, $array['id']);
+            $this->assertSame(2, $array['user_id']);
+            $this->assertSame('client-id', $array['client_id']);
             $this->assertEquals(['scopes'], $array['scopes']);
             $this->assertEquals(false, $array['revoked']);
             $this->assertInstanceOf('DateTime', $array['created_at']);
@@ -62,6 +62,6 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $this->assertInstanceOf(AccessToken::class, $token);
         $this->assertEquals($client, $token->getClient());
         $this->assertEquals($scopes, $token->getScopes());
-        $this->assertEquals($userIdentifier, $token->getUserIdentifier());
+        $this->assertSame($userIdentifier, $token->getUserIdentifier());
     }
 }

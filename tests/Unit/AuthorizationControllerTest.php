@@ -56,10 +56,10 @@ class AuthorizationControllerTest extends TestCase
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
         $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
-            $this->assertEquals('passport::authorize', $view);
+            $this->assertSame('passport::authorize', $view);
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
-            $this->assertEquals('description', $data['scopes'][0]->description);
+            $this->assertSame('description', $data['scopes'][0]->description);
 
             return 'view';
         });
@@ -67,7 +67,7 @@ class AuthorizationControllerTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
 
-        $this->assertEquals('view', $controller->authorize(
+        $this->assertSame('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         ));
     }
@@ -131,7 +131,7 @@ class AuthorizationControllerTest extends TestCase
             ->andReturn($token = m::mock(Token::class));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
-        $this->assertEquals('approved', $controller->authorize(
+        $this->assertSame('approved', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         )->getContent());
     }
@@ -174,7 +174,7 @@ class AuthorizationControllerTest extends TestCase
             ->with($user, $client)
             ->andReturnNull();
 
-        $this->assertEquals('approved', $controller->authorize(
+        $this->assertSame('approved', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         )->getContent());
     }

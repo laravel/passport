@@ -49,7 +49,7 @@ class ApproveAuthorizationControllerTest extends TestCase
             ->with($authRequest, m::type(ResponseInterface::class))
             ->andReturn($psrResponse);
 
-        $this->assertEquals('response', $controller->approve($request)->getContent());
+        $this->assertSame('response', $controller->approve($request)->getContent());
     }
 }
 

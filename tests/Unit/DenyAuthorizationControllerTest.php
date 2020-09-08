@@ -45,7 +45,7 @@ class DenyAuthorizationControllerTest extends TestCase
             return $url;
         });
 
-        $this->assertEquals('http://localhost?error=access_denied&state=state', $controller->deny($request));
+        $this->assertSame('http://localhost?error=access_denied&state=state', $controller->deny($request));
     }
 
     public function test_authorization_can_be_denied_with_multiple_redirect_uris()
@@ -77,7 +77,7 @@ class DenyAuthorizationControllerTest extends TestCase
             return $url;
         });
 
-        $this->assertEquals('http://localhost?error=access_denied&state=state', $controller->deny($request));
+        $this->assertSame('http://localhost?error=access_denied&state=state', $controller->deny($request));
     }
 
     public function test_authorization_can_be_denied_implicit()
@@ -109,7 +109,7 @@ class DenyAuthorizationControllerTest extends TestCase
             return $url;
         });
 
-        $this->assertEquals('http://localhost#error=access_denied&state=state', $controller->deny($request));
+        $this->assertSame('http://localhost#error=access_denied&state=state', $controller->deny($request));
     }
 
     public function test_authorization_can_be_denied_with_existing_query_string()
@@ -141,7 +141,7 @@ class DenyAuthorizationControllerTest extends TestCase
             return $url;
         });
 
-        $this->assertEquals('http://localhost?action=some_action&error=access_denied&state=state', $controller->deny($request));
+        $this->assertSame('http://localhost?action=some_action&error=access_denied&state=state', $controller->deny($request));
     }
 
     public function test_auth_request_should_exist()

@@ -145,7 +145,7 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals('response', $controller->update($request, 1));
+        $this->assertSame('response', $controller->update($request, 1));
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user()
@@ -170,7 +170,7 @@ class ClientControllerTest extends TestCase
             $clients, $validator, m::mock(RedirectRule::class)
         );
 
-        $this->assertEquals(404, $controller->update($request, 1)->status());
+        $this->assertSame(404, $controller->update($request, 1)->status());
     }
 
     public function test_clients_can_be_deleted()
@@ -200,7 +200,7 @@ class ClientControllerTest extends TestCase
 
         $response = $controller->destroy($request, 1);
 
-        $this->assertEquals(Response::HTTP_NO_CONTENT, $response->status());
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->status());
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
@@ -225,7 +225,7 @@ class ClientControllerTest extends TestCase
             $clients, $validator, m::mock(RedirectRule::class)
         );
 
-        $this->assertEquals(404, $controller->destroy($request, 1)->status());
+        $this->assertSame(404, $controller->destroy($request, 1)->status());
     }
 }
 
