@@ -1,6 +1,20 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.3.2...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.0.0...master)
+
+
+## [v9.3.2 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
+
+### Added
+- Support Laravel 8 ([#1336](https://github.com/laravel/passport/pull/1336))
+
+### Changed
+- `forceFill` new auth code attributes ([#1266](https://github.com/laravel/passport/pull/1266))
+- Use only one PSR 7 implementation ([#1330](https://github.com/laravel/passport/pull/1330))
+
+### Removed
+- Remove old static personal client methods ([#1325](https://github.com/laravel/passport/pull/1325))
+- Remove Guzzle dependency ([#1327](https://github.com/laravel/passport/pull/1327))
 
 
 ## [v9.3.2 (2020-07-27)](https://github.com/laravel/passport/compare/v9.3.1...v9.3.2)
