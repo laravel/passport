@@ -4,9 +4,12 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Client extends Model
 {
+    use HasFactory;
+
     /**
      * The database table used by the model.
      *
