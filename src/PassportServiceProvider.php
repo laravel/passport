@@ -52,10 +52,6 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-components');
 
             $this->publishes([
-                __DIR__.'/../database/factories' => database_path('factories'),
-            ], 'passport-factories');
-
-            $this->publishes([
                 __DIR__.'/../config/passport.php' => config_path('passport.php'),
             ], 'passport-config');
 
