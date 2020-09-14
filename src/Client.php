@@ -2,11 +2,15 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
 {
+    use HasFactory;
+
     /**
      * The database table used by the model.
      *
@@ -188,5 +192,15 @@ class Client extends Model
     public function getConnectionName()
     {
         return config('passport.storage.database.connection') ?? $this->connection;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public static function newFactory()
+    {
+        return ClientFactory::new();
     }
 }
