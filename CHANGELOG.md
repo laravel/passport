@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.0.0...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.0.1...10.x)
+
+
+## [v10.0.1 (2020-09-15)](https://github.com/laravel/passport/compare/v10.0.0...v10.0.1)
+
+### Fixed
+- Use newFactory to properly reference factory ([#1349](https://github.com/laravel/passport/pull/1349))
 
 
 ## [v10.0.0 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
