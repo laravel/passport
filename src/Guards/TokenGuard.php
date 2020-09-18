@@ -246,7 +246,7 @@ class TokenGuard
             $token = $this->decodeJwtTokenCookie($request);
         } catch (Exception $e) {
             if (config('app.debug')) {
-                \Log::error('\Laravel\Passport\Guards\TokenGuard::getTokenViaCookie: Exception while calling decodeJwtTokenCookie(): ' . $e->getMessage());
+                \Log::error('\Laravel\Passport\Guards\TokenGuard::getTokenViaCookie: Exception while calling decodeJwtTokenCookie(): '.$e->getMessage());
             }
 
             return;
