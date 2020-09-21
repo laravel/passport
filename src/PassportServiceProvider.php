@@ -48,10 +48,6 @@ class PassportServiceProvider extends ServiceProvider
             ], 'passport-views');
 
             $this->publishes([
-                __DIR__.'/../resources/js/components' => base_path('resources/js/components/passport'),
-            ], 'passport-components');
-
-            $this->publishes([
                 __DIR__.'/../config/passport.php' => config_path('passport.php'),
             ], 'passport-config');
 

@@ -2,10 +2,6 @@
 
 ## General Notes
 
-After updating Passport, you should always re-publish and re-compile the Vue "quickstart" assets if you're using them:
-
-    php artisan vendor:publish --tag=passport-views --force
-
 ## Upgrading To 10.0 From 9.x
 
 ### Minimum PHP Version
