@@ -106,23 +106,35 @@ class ClientRepository
     /**
      * Get the personal access token client for the application.
      *
+     * @param string|null $provider
      * @return \Laravel\Passport\Client
      *
      * @throws \RuntimeException
      */
-    public function personalAccessClient()
+    public function personalAccessClient($provider = null)
     {
         if ($this->personalAccessClientId) {
             return $this->find($this->personalAccessClientId);
         }
 
-        $client = Passport::personalAccessClient();
+        $personalAccessClientModel = Passport::personalAccessClient();
+        $clientModel = Passport::client();
 
-        if (! $client->exists()) {
+        $personalAccessClient = $personalAccessClientModel
+            ->join(
+                $clientModel->getTable(),
+                $personalAccessClientModel->getTable() . '.client_id',
+                '=',
+                $clientModel->getTable() . '.' . $clientModel->getKeyName()
+            )
+            ->where($clientModel->getTable() . '.provider', $provider)
+            ->first();
+
+        if (is_null($personalAccessClient)) {
             throw new RuntimeException('Personal access client not found. Please create one.');
         }
 
-        return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
+        return $personalAccessClient->client;
     }
 
     /**

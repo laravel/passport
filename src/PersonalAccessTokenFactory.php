@@ -61,15 +61,16 @@ class PersonalAccessTokenFactory
     /**
      * Create a new personal access token.
      *
-     * @param  mixed  $userId
-     * @param  string  $name
-     * @param  array  $scopes
+     * @param mixed $userId
+     * @param string $name
+     * @param array $scopes
+     * @param string|null $provider
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [])
+    public function make($userId, $name, array $scopes = [], $provider = null)
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($this->clients->personalAccessClient(), $userId, $scopes)
+            $this->createRequest($this->clients->personalAccessClient($provider), $userId, $scopes)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {

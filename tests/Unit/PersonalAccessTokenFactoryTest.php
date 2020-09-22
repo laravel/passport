@@ -45,6 +45,35 @@ class PersonalAccessTokenFactoryTest extends TestCase
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
     }
+
+    public function test_access_token_can_be_created_with_provider()
+    {
+        $server = m::mock(AuthorizationServer::class);
+        $clients = m::mock(ClientRepository::class);
+        $tokens = m::mock(TokenRepository::class);
+        $jwt = m::mock(Parser::class);
+
+        $provider = "some_provider";
+
+        $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
+
+        $clients->shouldReceive('personalAccessClient')->with($provider)->andReturn($client = new PersonalAccessTokenFactoryTestClientStub);
+        $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock());
+        $response->shouldReceive('getBody->__toString')->andReturn(json_encode([
+            'access_token' => 'foo',
+        ]));
+
+        $jwt->shouldReceive('parse')->with('foo')->andReturn($parsedToken = m::mock());
+        $parsedToken->shouldReceive('getClaim')->with('jti')->andReturn('token');
+        $tokens->shouldReceive('find')
+            ->with('token')
+            ->andReturn($foundToken = new PersonalAccessTokenFactoryTestModelStub);
+        $tokens->shouldReceive('save')->with($foundToken);
+
+        $result = $factory->make(1, 'token', ['scopes'], $provider);
+
+        $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
+    }
 }
 
 class PersonalAccessTokenFactoryTestClientStub
