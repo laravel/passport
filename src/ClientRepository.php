@@ -163,9 +163,9 @@ class ClientRepository
      * @param  string  $redirect
      * @return \Laravel\Passport\Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect)
+    public function createPersonalAccessClient($userId, $name, $redirect, $provider)
     {
-        return tap($this->create($userId, $name, $redirect, null, true), function ($client) {
+        return tap($this->create($userId, $name, $redirect, $provider, true), function ($client) {
             $accessClient = Passport::personalAccessClient();
             $accessClient->client_id = $client->id;
             $accessClient->save();

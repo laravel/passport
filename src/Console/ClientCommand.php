@@ -63,8 +63,16 @@ class ClientCommand extends Command
             config('app.name').' Personal Access Client'
         );
 
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
+
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            null, $name, 'http://localhost', $provider
         );
 
         $this->info('Personal access client created successfully.');
