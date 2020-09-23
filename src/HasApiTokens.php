@@ -36,11 +36,11 @@ trait HasApiTokens
         return $this->hasMany(Passport::tokenModel(), 'user_id')
             ->join(
                 $clientModel->getTable(),
-                $tokenModel->getTable() . '.client_id',
+                $tokenModel->getTable().'.client_id',
                 '=',
-                $clientModel->getTable() . '.' . $clientModel->getKeyName()
+                $clientModel->getTable().'.'.$clientModel->getKeyName()
             )
-            ->where($clientModel->getTable() . '.provider', $this->getProvider())
+            ->where($clientModel->getTable().'.provider', $this->getProvider())
             ->orderBy('created_at', 'desc');
     }
 
@@ -94,15 +94,16 @@ trait HasApiTokens
         return $this;
     }
 
-    protected function getProvider() {
+    protected function getProvider()
+    {
         $providers = config('auth.providers');
 
         foreach ($providers as $name => $config) {
-            if($config['driver'] == 'eloquent' && is_a($this, $config['model'])) {
+            if ($config['driver'] == 'eloquent' && is_a($this, $config['model'])) {
                 return $name;
             }
 
-            if($config['driver'] == 'database' && $this->getTable() == $config['table']) {
+            if ($config['driver'] == 'database' && $this->getTable() == $config['table']) {
                 return $name;
             }
         }

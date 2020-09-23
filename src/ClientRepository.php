@@ -123,11 +123,11 @@ class ClientRepository
         $personalAccessClient = $personalAccessClientModel
             ->join(
                 $clientModel->getTable(),
-                $personalAccessClientModel->getTable() . '.client_id',
+                $personalAccessClientModel->getTable().'.client_id',
                 '=',
-                $clientModel->getTable() . '.' . $clientModel->getKeyName()
+                $clientModel->getTable().'.'.$clientModel->getKeyName()
             )
-            ->where($clientModel->getTable() . '.provider', $provider)
+            ->where($clientModel->getTable().'.provider', $provider)
             ->first();
 
         if (is_null($personalAccessClient)) {

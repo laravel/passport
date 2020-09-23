@@ -53,7 +53,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $jwt = m::mock(Parser::class);
 
-        $provider = "some_provider";
+        $provider = 'some_provider';
 
         $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
 
