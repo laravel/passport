@@ -417,7 +417,7 @@ class Passport
         app('auth')->guard($guard)->setUser($user);
 
         app('auth')->shouldUse($guard);
-        
+
         app('request')->setUserResolver(function () use ($user) {
             return $user;
         });
