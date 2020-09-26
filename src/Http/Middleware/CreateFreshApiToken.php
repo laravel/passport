@@ -79,7 +79,7 @@ class CreateFreshApiToken
      */
     protected function requestShouldReceiveFreshToken($request)
     {
-        return $request->isMethod('GET') && $request->user($this->guard);
+        return $request->user($this->guard);
     }
 
     /**
