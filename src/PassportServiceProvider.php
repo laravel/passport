@@ -32,7 +32,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'passport');
 
         $this->deleteCookieOnLogout();
 
@@ -40,15 +40,15 @@ class PassportServiceProvider extends ServiceProvider
             $this->registerMigrations();
 
             $this->publishes([
-                __DIR__.'/../database/migrations' => database_path('migrations'),
+                __DIR__ . '/../database/migrations' => database_path('migrations'),
             ], 'passport-migrations');
 
             $this->publishes([
-                __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
+                __DIR__ . '/../resources/views' => base_path('resources/views/vendor/passport'),
             ], 'passport-views');
 
             $this->publishes([
-                __DIR__.'/../config/passport.php' => config_path('passport.php'),
+                __DIR__ . '/../config/passport.php' => config_path('passport.php'),
             ], 'passport-config');
 
             $this->commands([
@@ -68,8 +68,8 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerMigrations()
     {
-        if (Passport::$runsMigrations && ! config('passport.client_uuids')) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        if (Passport::$runsMigrations && !config('passport.client_uuids')) {
+            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         }
     }
 
@@ -80,7 +80,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
+        $this->mergeConfigFrom(__DIR__ . '/../config/passport.php', 'passport');
 
         Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
 
@@ -88,6 +88,8 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerClientRepository();
         $this->registerResourceServer();
         $this->registerGuard();
+        if (config('passport.use_cache') == true)
+            $this->registerCache();
     }
 
     /**
@@ -245,15 +247,15 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create a CryptKey instance without permissions check.
      *
-     * @param  string  $type
+     * @param string $type
      * @return \League\OAuth2\Server\CryptKey
      */
     protected function makeCryptKey($type)
     {
-        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.'.$type.'_key'));
+        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.' . $type . '_key'));
 
-        if (! $key) {
-            $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
+        if (!$key) {
+            $key = 'file://' . Passport::keyPath('oauth-' . $type . '.key');
         }
 
         return new CryptKey($key, null, false);
@@ -278,7 +280,7 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Make an instance of the token guard.
      *
-     * @param  array  $config
+     * @param array $config
      * @return \Illuminate\Auth\RequestGuard
      */
     protected function makeGuard(array $config)
@@ -305,6 +307,18 @@ class PassportServiceProvider extends ServiceProvider
             if (Request::hasCookie(Passport::cookie())) {
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }
+        });
+    }
+
+    /**
+     * Bind CacheTokenRepository
+     *
+     * @return void
+     */
+    protected function registerCache()
+    {
+        $this->app->bind(TokenRepository::class, function () {
+            return new CacheTokenRepository();
         });
     }
 }

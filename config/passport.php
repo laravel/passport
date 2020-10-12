@@ -17,6 +17,20 @@ return [
 
     'public_key' => env('PASSPORT_PUBLIC_KEY'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Remove duplicate queries
+    |--------------------------------------------------------------------------
+    |
+    | By default, Passport doesn't cache queries .
+    | Change to true to increase performance
+    |
+    */
+
+
+    'use_cache' => env('PASSPORT_USE_CACHE', false),
+
     /*
     |--------------------------------------------------------------------------
     | Client UUIDs
