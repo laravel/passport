@@ -284,10 +284,15 @@ class PassportServiceProvider extends ServiceProvider
     protected function makeGuard(array $config)
     {
         return new RequestGuard(function ($request) use ($config) {
+            $tokenRepo = $this->app->make(TokenRepository::class);
+           
             return (new TokenGuard(
-                $this->app->make(ResourceServer::class),
+                new ResourceServer(
+                    new Bridge\AccessTokenRepository($tokenRepo, $this->app->make(\Illuminate\Contracts\Events\Dispatcher::class)),
+                    $this->makeCryptKey('public')
+                ),
                 new PassportUserProvider(Auth::createUserProvider($config['provider']), $config['provider']),
-                $this->app->make(TokenRepository::class),
+                $tokenRepo,
                 $this->app->make(ClientRepository::class),
                 $this->app->make('encrypter')
             ))->user($request);
