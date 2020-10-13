@@ -7,6 +7,13 @@ use Carbon\Carbon;
 class TokenRepository
 {
     /**
+     * The tokens cached by the class
+     *
+     * @var array
+     */
+    protected $cachedTokens = [];
+
+    /**
      * Creates a new Access Token.
      *
      * @param  array  $attributes
@@ -25,7 +32,33 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Passport::token()->where('id', $id)->first();
+        return $this->findByCache($id) ?? $this->addToCache(Passport::token()->where('id', $id)->first()); 
+    }
+
+    /**
+     * Add a token to the cache.
+     *
+     * @param  \Laravel\Passport\Token  $token
+     * @return \Laravel\Passport\Token
+     */
+    public function addToCache($token)
+    {
+        array_push($this->cachedTokens, $token);
+        return $token;
+    }
+
+    /**
+     * Search the cache for a token with a given ID.
+     *
+     * @param  string  $id
+     * @return \Laravel\Passport\Token
+     */
+    public function findByCache($id)
+    {
+        foreach($this->cachedTokens as $token) {
+            if($token->id == $id)
+                return $token;
+        }
     }
 
     /**
@@ -97,7 +130,7 @@ class TokenRepository
      */
     public function isAccessTokenRevoked($id)
     {
-        if ($token = $this->find($id)) {
+        if($token = $this->find($id)) {
             return $token->revoked;
         }
 
