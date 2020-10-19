@@ -130,7 +130,7 @@ class TokenRepository
      */
     public function isAccessTokenRevoked($id)
     {
-        if($token = $this->find($id)) {
+        if ($token = $this->find($id)) {
             return $token->revoked;
         }
 
