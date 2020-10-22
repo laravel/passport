@@ -29,6 +29,7 @@
         "league/oauth2-server": "^8.1",
         "nyholm/psr7": "^1.3",
         "phpseclib/phpseclib": "^2.0",
+        "steverhoades/oauth2-openid-connect-server": "^1.2",
         "symfony/psr-http-message-bridge": "^2.0"
     },
     "require-dev": {

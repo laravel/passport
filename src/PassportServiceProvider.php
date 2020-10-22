@@ -22,6 +22,8 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
+use OpenIDConnectServer\IdTokenResponse;
+use OpenIDConnectServer\ClaimExtractor;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -204,13 +206,20 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function makeAuthorizationServer()
     {
-        return new AuthorizationServer(
+
+
+        $responseType = new IdTokenResponse(new IdentityRepository(), new ClaimExtractor());
+
+        $server = new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            app('encrypter')->getKey()
+            app('encrypter')->getKey(),
+            $responseType
         );
+
+        return $server;
     }
 
     /**
