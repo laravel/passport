@@ -208,7 +208,7 @@ class PassportServiceProvider extends ServiceProvider
     {
 
 
-        $responseType = new IdTokenResponse(new IdentityRepository(), new ClaimExtractor());
+        $responseType = new IdTokenResponse(new Bridge\IdentityRepository(), new ClaimExtractor());
 
         $server = new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
