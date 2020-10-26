@@ -37,13 +37,14 @@ class User implements ClaimSetInterface, UserEntityInterface
             'phone_number_verified' => false,
             'preferred_username' => '',
             'profile' => '',
-            'picture' => '',
+            'picture' => $user->picture,
             'website' => '',
-            'gender' => '',
-            'birthdate' => '',
+            'gender' => $user->gender,
+            'birthdate' => $user->birthday_date,
             'zoneinfo' => '',
             'locale' => '',
-            'updated_at' => ''
+            'updated_at' => $user->updated_at,
+            'roles' => $user->roles
         ];
     }
 }

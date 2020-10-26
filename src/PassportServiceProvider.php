@@ -24,6 +24,7 @@ use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
 use OpenIDConnectServer\IdTokenResponse;
 use OpenIDConnectServer\ClaimExtractor;
+use OpenIDConnectServer\Entities\ClaimSetEntity;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -206,9 +207,15 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function makeAuthorizationServer()
     {
+        $claimExtractor = new ClaimExtractor();
 
+        $claimSet = new ClaimSetEntity('roles', [
+            'roles'
+        ]);
 
-        $responseType = new IdTokenResponse(new IdentityRepository(), new ClaimExtractor());
+        $claimExtractor->addClaimSet($claimSet);
+
+        $responseType = new IdTokenResponse(new IdentityRepository(), $claimExtractor);
 
         $server = new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
