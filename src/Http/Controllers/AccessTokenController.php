@@ -7,6 +7,7 @@ use Lcobucci\JWT\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
+use Laravel\Passport\Exceptions\OAuthServerException;
 
 class AccessTokenController
 {
@@ -41,10 +42,11 @@ class AccessTokenController
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                TokenRepository $tokens,
-                                JwtParser $jwt)
-    {
+    public function __construct(
+        AuthorizationServer $server,
+        TokenRepository $tokens,
+        JwtParser $jwt
+    ) {
         $this->jwt = $jwt;
         $this->server = $server;
         $this->tokens = $tokens;
@@ -58,10 +60,22 @@ class AccessTokenController
      */
     public function issueToken(ServerRequestInterface $request)
     {
-        return $this->withErrorHandling(function () use ($request) {
-            return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($request, new Psr7Response)
-            );
-        });
+        try {
+            return $this->withErrorHandling(function () use ($request) {
+                return $this->convertResponse(
+                    $this->server->respondToAccessTokenRequest($request, new Psr7Response)
+                );
+            });
+        } catch (OAuthServerException $e) {
+            if ($e->getCode() === 10) {
+                return response()->json([
+                    'error'=>'invalid_grant',
+                    'error_description'=>__('auth.failed'),
+                    'hint'=>'',
+                    'message'=>__('auth.failed')
+                ], $e->statusCode());
+            }
+            throw $e;
+        }
     }
 }

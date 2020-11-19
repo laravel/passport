@@ -220,8 +220,10 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('error', $decodedResponse);
         $this->assertSame('invalid_grant', $decodedResponse['error']);
         $this->assertArrayHasKey('error_description', $decodedResponse);
+        $this->assertEquals(__('auth.failed'), $decodedResponse['error_description']);
         $this->assertArrayHasKey('hint', $decodedResponse);
         $this->assertArrayHasKey('message', $decodedResponse);
+        $this->assertEquals(__('auth.failed'), $decodedResponse['message']);
 
         $this->assertSame(0, Token::count());
     }
