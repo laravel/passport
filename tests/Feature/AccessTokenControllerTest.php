@@ -12,7 +12,7 @@ use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
-use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Configuration;
 
 class AccessTokenControllerTest extends PassportTestCase
 {
@@ -77,7 +77,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = (new Parser())->parse($decodedResponse['access_token']);
+        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
         $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->getClaim('aud'))->is($client));
 
         $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->getClaim('jti'));
@@ -170,7 +170,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = (new Parser())->parse($decodedResponse['access_token']);
+        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
         $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->getClaim('aud'))->is($client));
         $this->assertTrue($this->app->make('auth')->createUserProvider()->retrieveById($jwtAccessToken->getClaim('sub'))->is($user));
 
