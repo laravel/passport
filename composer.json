@@ -16,7 +16,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/driesvints/oauth2-server/"
+            "url": "git@github.com:driesvints/oauth2-server.git"
         }
     ],
     "require": {
