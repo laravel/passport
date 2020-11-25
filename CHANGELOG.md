@@ -12,7 +12,7 @@
 ## [v10.0.0 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
 
 ### Added
-- Support Laravel 8 ([#1336](https://github.com/laravel/passport/pull/1336))
+- Support Laravel 8 & drop PHP 7.2 support ([#1336](https://github.com/laravel/passport/pull/1336))
 
 ### Changed
 - `forceFill` new auth code attributes ([#1266](https://github.com/laravel/passport/pull/1266))
