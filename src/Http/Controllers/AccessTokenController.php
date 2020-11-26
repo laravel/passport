@@ -30,6 +30,8 @@ class AccessTokenController
      * The JWT parser instance.
      *
      * @var \Lcobucci\JWT\Parser
+     *
+     * @deprecated This property will be removed in a future Passport version.
      */
     protected $jwt;
 

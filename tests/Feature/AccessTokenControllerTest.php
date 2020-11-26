@@ -12,7 +12,7 @@ use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
-use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Configuration;
 
 class AccessTokenControllerTest extends PassportTestCase
 {
@@ -77,10 +77,10 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = (new Parser())->parse($decodedResponse['access_token']);
-        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->getClaim('aud'))->is($client));
+        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
+        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->claims()->get('aud'))->is($client));
 
-        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->getClaim('jti'));
+        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->claims()->get('jti'));
         $this->assertInstanceOf(Token::class, $token);
         $this->assertTrue($token->client->is($client));
         $this->assertFalse($token->revoked);
@@ -170,11 +170,11 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = (new Parser())->parse($decodedResponse['access_token']);
-        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->getClaim('aud'))->is($client));
-        $this->assertTrue($this->app->make('auth')->createUserProvider()->retrieveById($jwtAccessToken->getClaim('sub'))->is($user));
+        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
+        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->claims()->get('aud'))->is($client));
+        $this->assertTrue($this->app->make('auth')->createUserProvider()->retrieveById($jwtAccessToken->claims()->get('sub'))->is($user));
 
-        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->getClaim('jti'));
+        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->claims()->get('jti'));
         $this->assertInstanceOf(Token::class, $token);
         $this->assertFalse($token->revoked);
         $this->assertTrue($token->user->is($user));
