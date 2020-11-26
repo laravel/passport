@@ -256,10 +256,10 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-    * Register the JWT Parser.
-    *
-    * @return void
-    */
+     * Register the JWT Parser.
+     *
+     * @return void
+     */
     protected function registerJWTParser()
     {
         $this->app->singleton(Parser::class, function () {
