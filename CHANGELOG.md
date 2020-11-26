@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.0.1...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.1.0...10.x)
+
+
+## [v10.1.0 (2020-11-26)](https://github.com/laravel/passport/compare/v10.0.1...v10.1.0)
+
+### Added
+- PHP 8 Support ([#1373](https://github.com/laravel/passport/pull/1373))
+
+### Removed
+- Remove Vue components ([#1352](https://github.com/laravel/passport/pull/1352))
 
 
 ## [v10.0.1 (2020-09-15)](https://github.com/laravel/passport/compare/v10.0.0...v10.0.1)
