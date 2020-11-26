@@ -61,6 +61,14 @@ class RouteRegistrar
                 'as' => 'passport.authorizations.deny',
             ]);
         });
+
+        $this->router->group(['middleware' => ['auth']], function ($router) {
+            $router->get('/authorize/token', [
+                'uses' => 'AuthorizationController@authorizeWithToken',
+                'as' => 'passport.authorizations.authorize_with_token',
+            ]);
+        });
+
     }
 
     /**

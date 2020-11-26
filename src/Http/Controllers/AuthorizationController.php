@@ -2,11 +2,13 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
@@ -84,6 +86,28 @@ class AuthorizationController
             'request' => $request,
             'authToken' => $authToken,
         ]);
+    }
+
+    public function authorizeWithToken(ServerRequestInterface $psrRequest,
+                              Request $request,
+                              ClientRepository $clients,
+                              TokenRepository $tokens)
+    {
+        $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
+            return $this->server->validateAuthorizationRequest($psrRequest);
+        });
+
+        $scopes = $this->parseScopes($authRequest);
+
+        $token = $tokens->findValidToken(
+            $user = $request->user(),
+            $client = $clients->find($authRequest->getClient()->getIdentifier())
+        );
+
+        if ($user) {
+            $client->skipsAuthorization();
+            return $this->approveRequest($authRequest, $user);
+        }
     }
 
     /**
