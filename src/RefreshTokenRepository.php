@@ -56,7 +56,7 @@ class RefreshTokenRepository
      */
     public function revokeRefreshTokensByAccessTokenId($tokenId)
     {
-        Passport::refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
+        return Passport::refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
     }
 
     /**
