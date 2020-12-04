@@ -28,7 +28,7 @@
         "illuminate/support": "^6.18.31|^7.22.4",
         "laminas/laminas-diactoros": "^2.2",
         "lcobucci/jwt": "^3.4|^4.0",
-        "league/oauth2-server": "^8.1",
+        "league/oauth2-server": "^8.2.3",
         "nyholm/psr7": "^1.0",
         "phpseclib/phpseclib": "^2.0",
         "symfony/psr-http-message-bridge": "^2.0"
