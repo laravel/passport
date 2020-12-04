@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v9.3.2...9.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v9.4.0...9.x)
+
+
+## [v9.4.0 (2020-12-04)](https://github.com/laravel/passport/compare/v9.3.2...v9.4.0)
+
+### Added
+- Support PHP 8.0 ([#1387](https://github.com/laravel/passport/pull/1387))
+
+### Removed
+- Remove Guzzle dependency ([#1327](https://github.com/laravel/passport/pull/1327))
 
 
 ## [v9.3.2 (2020-07-27)](https://github.com/laravel/passport/compare/v9.3.1...v9.3.2)
