@@ -8,6 +8,10 @@ use Laravel\Passport\PersonalAccessTokenResult;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Token\DataSet;
+use Lcobucci\JWT\Token\Plain as PlainToken;
+use Lcobucci\JWT\Token\RegisteredClaims;
+use Lcobucci\JWT\Token\Signature;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -34,8 +38,13 @@ class PersonalAccessTokenFactoryTest extends TestCase
             'access_token' => 'foo',
         ]));
 
-        $jwt->shouldReceive('parse')->with('foo')->andReturn($parsedToken = m::mock());
-        $parsedToken->shouldReceive('getClaim')->with('jti')->andReturn('token');
+        $parsedToken = new PlainToken(
+            new DataSet([], ''),
+            new DataSet([RegisteredClaims::ID => 'token'], ''),
+            Signature::fromEmptyData()
+        );
+
+        $jwt->shouldReceive('parse')->with('foo')->andReturn($parsedToken);
         $tokens->shouldReceive('find')
             ->with('token')
             ->andReturn($foundToken = new PersonalAccessTokenFactoryTestModelStub);
