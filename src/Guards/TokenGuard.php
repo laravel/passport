@@ -10,6 +10,7 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
@@ -131,7 +132,7 @@ class TokenGuard
             );
         } elseif ($request->cookie(Passport::cookie())) {
             if ($token = $this->getTokenViaCookie($request)) {
-                return $this->clients->findActive($token['aud']);
+                return $this->clients->findActive(is_array($token['aud']) ? Arr::first($token['aud']) : $token['aud']);
             }
         }
     }

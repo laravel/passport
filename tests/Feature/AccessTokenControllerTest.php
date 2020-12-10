@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use Arr;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\Schema\Blueprint;
@@ -87,6 +88,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertNull($token->name);
         $this->assertNull($token->user_id);
         $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
+        $this->assertEquals($client->id, Arr::first($jwtAccessToken->claims()->get('aud')));
     }
 
     public function testGettingAccessTokenWithClientCredentialsGrantInvalidClientSecret()
@@ -181,6 +183,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertTrue($token->client->is($client));
         $this->assertNull($token->name);
         $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
+        $this->assertEquals($client->id, Arr::first($jwtAccessToken->claims()->get('aud')));
     }
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidPassword()
