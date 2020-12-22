@@ -4,7 +4,7 @@ namespace Laravel\Passport\Http\Controllers;
 
 use League\OAuth2\Server\AuthorizationServer;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response as Psr7Response;
+use Nyholm\Psr7\Response as Psr7Response;
 
 class DeviceAuthorizationController
 {

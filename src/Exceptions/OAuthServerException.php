@@ -39,4 +39,14 @@ class OAuthServerException extends Exception
     {
         return $this->response;
     }
+
+    /**
+     * Get the HTTP response status code.
+     *
+     * @return int
+     */
+    public function statusCode()
+    {
+        return $this->response->getStatusCode();
+    }
 }

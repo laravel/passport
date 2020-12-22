@@ -2,10 +2,12 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
+    use HasFactory;
     /**
      * The database table used by the model.
      *
@@ -42,14 +44,39 @@ class Client extends Model
     ];
 
     /**
+     * The temporary plain-text client secret.
+     *
+     * @var string|null
+     */
+    protected $plainSecret;
+
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (config('passport.client_uuids')) {
+                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string)Str::orderedUuid();
+            }
+        });
+    }
+
+    /**
      * Get the user that the client belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
+        $provider = $this->provider ?: config('auth.guards.api.provider');
+
         return $this->belongsTo(
-            config('auth.providers.'.config('auth.guards.api.provider').'.model')
+            config("auth.providers.{$provider}.model")
         );
     }
 
@@ -71,6 +98,37 @@ class Client extends Model
     public function tokens()
     {
         return $this->hasMany(Passport::tokenModel(), 'client_id');
+    }
+
+    /**
+     * The temporary non-hashed client secret.
+     *
+     * This is only available once during the request that created the client.
+     *
+     * @return string|null
+     */
+    public function getPlainSecretAttribute()
+    {
+        return $this->plainSecret;
+    }
+
+    /**
+     * Set the value of the secret attribute.
+     *
+     * @param string|null $value
+     * @return void
+     */
+    public function setSecretAttribute($value)
+    {
+        $this->plainSecret = $value;
+
+        if (is_null($value) || !Passport::$hashesClientSecrets) {
+            $this->attributes['secret'] = $value;
+
+            return;
+        }
+
+        $this->attributes['secret'] = password_hash($value, PASSWORD_BCRYPT);
     }
 
     /**
@@ -103,6 +161,47 @@ class Client extends Model
         return ! empty($this->secret);
     }
 
+    /**
+     * Get the auto-incrementing key type.
+     *
+     * @return string
+     */
+    public function getKeyType()
+    {
+        return Passport::clientUuids() ? 'string' : $this->keyType;
+    }
+
+    /**
+     * Get the value indicating whether the IDs are incrementing.
+     *
+     * @return bool
+     */
+    public function getIncrementing()
+    {
+        return Passport::clientUuids() ? false : $this->incrementing;
+    }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return config('passport.storage.database.connection') ?? $this->connection;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public static function newFactory()
+    {
+        return ClientFactory::new();
+    }
+
+    // TODO: SEE IF STILL USED
     public function getUserProvider()
     {
         $providerName = is_null($this->user_provider_name) ? config('auth.guards.api.provider') : $this->user_provider_name;

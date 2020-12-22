@@ -52,7 +52,7 @@ class CreateFreshApiToken
         if ($this->shouldReceiveFreshToken($request, $response)) {
             $providerName = $this->getProviderName($request->user($this->guard));
             $response->withCookie($this->cookieFactory->make(
-                $providerName . '#' . $request->user($this->guard)->getKey(), $request->session()->token()
+                $providerName . '#' . $request->user($this->guard)->getAuthIdentifier(), $request->session()->token()
             ));
         }
 

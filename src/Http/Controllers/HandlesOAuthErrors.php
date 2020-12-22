@@ -4,7 +4,7 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Laravel\Passport\Exceptions\OAuthServerException;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
-use Zend\Diactoros\Response as Psr7Response;
+use Nyholm\Psr7\Response as Psr7Response;
 
 trait HandlesOAuthErrors
 {
@@ -13,7 +13,7 @@ trait HandlesOAuthErrors
     /**
      * Perform the given callback with exception handling.
      *
-     * @param  \Closure  $callback
+     * @param \Closure $callback
      * @return mixed
      *
      * @throws \Laravel\Passport\Exceptions\OAuthServerException

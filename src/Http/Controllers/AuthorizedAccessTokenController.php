@@ -4,6 +4,7 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Passport\RefreshTokenRepository;
 use Laravel\Passport\TokenRepository;
 
 class AuthorizedAccessTokenController
@@ -16,42 +17,51 @@ class AuthorizedAccessTokenController
     protected $tokenRepository;
 
     /**
+     * The refresh token repository implementation.
+     *
+     * @var \Laravel\Passport\RefreshTokenRepository
+     */
+    protected $refreshTokenRepository;
+
+    /**
      * Create a new controller instance.
      *
-     * @param  \Laravel\Passport\TokenRepository  $tokenRepository
+     * @param \Laravel\Passport\TokenRepository $tokenRepository
+     * @param \Laravel\Passport\RefreshTokenRepository $refreshTokenRepository
      * @return void
      */
-    public function __construct(TokenRepository $tokenRepository)
+    public function __construct(TokenRepository $tokenRepository, RefreshTokenRepository $refreshTokenRepository)
     {
         $this->tokenRepository = $tokenRepository;
+        $this->refreshTokenRepository = $refreshTokenRepository;
     }
 
     /**
      * Get all of the authorized tokens for the authenticated user.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function forUser(Request $request)
     {
-        $tokens = $this->tokenRepository->forUser($request->user()->getMorphClass(), $request->user()->getKey());
+        $tokens = $this->tokenRepository->forUser($request->user()->getAuthIdentifier());
 
         return $tokens->load('client')->filter(function ($token) {
-            return ! $token->client->firstParty() && ! $token->revoked;
+            return !$token->client->firstParty() && !$token->revoked;
         })->values();
     }
 
     /**
      * Delete the given token.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $tokenId
+     * @param \Illuminate\Http\Request $request
+     * @param string $tokenId
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $tokenId)
     {
         $token = $this->tokenRepository->findForUser(
-            $tokenId, $request->user()->getMorphClass(), $request->user()->getKey()
+            $tokenId, $request->user()->getAuthIdentifier()
         );
 
         if (is_null($token)) {
@@ -59,6 +69,8 @@ class AuthorizedAccessTokenController
         }
 
         $token->revoke();
+
+        $this->refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }

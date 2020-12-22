@@ -20,7 +20,7 @@ class DenyAuthorizationController
     /**
      * Create a new controller instance.
      *
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
+     * @param \Illuminate\Contracts\Routing\ResponseFactory $response
      * @return void
      */
     public function __construct(ResponseFactory $response)
@@ -31,23 +31,25 @@ class DenyAuthorizationController
     /**
      * Deny the authorization request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function deny(Request $request)
     {
+        $this->assertValidAuthToken($request);
+
         $authRequest = $this->getAuthRequestFromSession($request);
 
         $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
 
-        if (! in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
+        if (!in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
             $uri = Arr::first($clientUris);
         }
 
         $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : (strstr($uri, '?') ? '&' : '?');
 
         return $this->response->redirectTo(
-            $uri.$separator.'error=access_denied&state='.$request->input('state')
+            $uri . $separator . 'error=access_denied&state=' . $request->input('state')
         );
     }
 }

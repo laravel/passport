@@ -8,6 +8,7 @@ use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Passport
 {
@@ -17,27 +18,6 @@ class Passport
      * @var bool|null
      */
     public static $implicitGrantEnabled = false;
-
-    /**
-     * Indicates if Passport should revoke existing tokens when issuing a new one.
-     *
-     * @var bool
-     */
-    public static $revokeOtherTokens = false;
-
-    /**
-     * Indicates if Passport should prune revoked tokens.
-     *
-     * @var bool
-     */
-    public static $pruneRevokedTokens = false;
-
-    /**
-     * The personal access token client ID.
-     *
-     * @var int
-     */
-    public static $personalAccessClientId;
 
     /**
      * The default scope.
@@ -112,6 +92,13 @@ class Passport
     public static $clientModel = 'Laravel\Passport\Client';
 
     /**
+     * Indicates if client's are identified by UUIDs.
+     *
+     * @var bool
+     */
+    public static $clientUuids = false;
+
+    /**
      * The personal access client model class name.
      *
      * @var string
@@ -157,6 +144,11 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * @var bool
+     */
+    public static $hashesClientSecrets = false;
+
+    /**
      * Indicates the scope should inherit its parent scope.
      *
      * @var bool
@@ -198,43 +190,6 @@ class Passport
         Route::group($options, function ($router) use ($callback) {
             $callback(new RouteRegistrar($router));
         });
-    }
-
-    /**
-     * Instruct Passport to revoke other tokens when a new one is issued.
-     *
-     * @deprecated since 1.0. Listen to Passport events on token creation instead.
-     *
-     * @return static
-     */
-    public static function revokeOtherTokens()
-    {
-        return new static;
-    }
-
-    /**
-     * Instruct Passport to keep revoked tokens pruned.
-     *
-     * @deprecated since 1.0. Listen to Passport events on token creation instead.
-     *
-     * @return static
-     */
-    public static function pruneRevokedTokens()
-    {
-        return new static;
-    }
-
-    /**
-     * Set the client ID that should be used to issue personal access tokens.
-     *
-     * @param  int  $clientId
-     * @return static
-     */
-    public static function personalAccessClientId($clientId)
-    {
-        static::$personalAccessClientId = $clientId;
-
-        return new static;
     }
 
     /**
@@ -424,24 +379,35 @@ class Passport
     }
 
     /**
-     * Set the current client for the application with the given scopes.
+     * Set the current client for the application with the given scopes.
      *
-     * @param  \Laravel\Passport\Client  $client
-     * @param  array  $scopes
-     * @return \Laravel\Passport\Client
+     * @param \Laravel\Passport\Client $client
+     * @param array $scopes
+     * @return \Laravel\Passport\Client
      */
     public static function actingAsClient($client, $scopes = [])
     {
-        $mock = Mockery::mock(ResourceServer::class);
+        $token = app(self::tokenModel());
 
+        $token->client_id = $client->id;
+        $token->setRelation('client', $client);
+
+        $token->scopes = $scopes;
+
+        $mock = Mockery::mock(ResourceServer::class);
         $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function ($request) use ($client, $scopes) {
-                return $request
-                    ->withAttribute('oauth_client_id', $client->id)
-                    ->withAttribute('oauth_scopes', $scopes);
+            ->andReturnUsing(function (ServerRequestInterface $request) use ($token) {
+                return $request->withAttribute('oauth_client_id', $token->client->id)
+                    ->withAttribute('oauth_access_token_id', $token->id)
+                    ->withAttribute('oauth_scopes', $token->scopes);
             });
 
         app()->instance(ResourceServer::class, $mock);
+
+        $mock = Mockery::mock(TokenRepository::class);
+        $mock->shouldReceive('find')->andReturn($token);
+
+        app()->instance(TokenRepository::class, $mock);
 
         return $client;
     }
@@ -535,6 +501,27 @@ class Passport
     }
 
     /**
+     * Determine if clients are identified using UUIDs.
+     *
+     * @return bool
+     */
+    public static function clientUuids()
+    {
+        return static::$clientUuids;
+    }
+
+    /**
+     * Specify if clients are identified using UUIDs.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public static function setClientUuids($value)
+    {
+        static::$clientUuids = $value;
+    }
+
+    /**
      * Set the personal access client model class name.
      *
      * @param  string  $clientModel
@@ -625,6 +612,18 @@ class Passport
     public static function refreshToken()
     {
         return new static::$refreshTokenModel;
+    }
+
+    /**
+     * Configure Passport to hash client credential secrets.
+     *
+     * @return static
+     */
+    public static function hashClientSecrets()
+    {
+        static::$hashesClientSecrets = true;
+
+        return new static;
     }
 
 

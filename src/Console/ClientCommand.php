@@ -16,11 +16,13 @@ class ClientCommand extends Command
     protected $signature = 'passport:client
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
-            {--device : Create a device code grant client}
             {--client : Create a client credentials grant client}
             {--name= : The name of the client}
+            {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
-            {--user_id= : The user ID the client should be assigned to }';
+            {--user_id= : The user ID the client should be assigned to }
+            {--public : Create a public client (Auth code grant type only) }
+            {--device : Create a device code grant client}';
 
     /**
      * The console command description.
@@ -60,7 +62,7 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the personal access client?',
-            config('app.name').' Personal Access Client'
+            config('app.name') . ' Personal Access Client'
         );
 
         $client = $clients->createPersonalAccessClient(
@@ -82,11 +84,19 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the password grant client?',
-            config('app.name').' Password Grant Client'
+            config('app.name') . ' Password Grant Client'
+        );
+
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost'
+            null, $name, 'http://localhost', $provider
         );
 
         $this->info('Password grant client created successfully.');
@@ -104,7 +114,7 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the client?',
-            config('app.name').' ClientCredentials Grant Client'
+            config('app.name') . ' ClientCredentials Grant Client'
         );
 
         $client = $clients->create(
@@ -138,7 +148,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect
+            $userId, $name, $redirect, null, false, false, !$this->option('public')
         );
 
         $this->info('New client created successfully.');
@@ -159,8 +169,16 @@ class ClientCommand extends Command
             config('app.name') . ' Device Code Grant Client'
         );
 
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
+
         $client = $clients->createDeviceCodeGrantClient(
-            null, $name, 'http://localhost'
+            null, $name, '', $provider,
         );
 
         $this->info('Device code grant client created successfully.');
@@ -176,7 +194,12 @@ class ClientCommand extends Command
      */
     protected function outputClientDetails(Client $client)
     {
-        $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->secret);
+        if (Passport::$hashesClientSecrets) {
+            $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
+            $this->line('');
+        }
+
+        $this->line('<comment>Client ID:</comment> ' . $client->id);
+        $this->line('<comment>Client secret:</comment> ' . $client->plainSecret);
     }
 }

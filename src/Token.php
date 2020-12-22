@@ -73,17 +73,21 @@ class Token extends Model
     /**
      * Get the user that the token belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        return $this->morphTo('user');
+        $provider = config('auth.guards.api.provider');
+
+        $model = config('auth.providers.' . $provider . '.model');
+
+        return $this->belongsTo($model, 'user_id', (new $model)->getKeyName());
     }
 
     /**
      * Determine if the token has a given scope.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return bool
      */
     public function can($scope)
@@ -108,16 +112,18 @@ class Token extends Model
     /**
      * Resolve all possible scopes.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return array
      */
     protected function resolveInheritedScopes($scope)
     {
         $parts = explode(':', $scope);
 
+        $partsCount = count($parts);
+
         $scopes = [];
 
-        for ($i = 0; $i <= count($parts); $i++) {
+        for ($i = 1; $i <= $partsCount; $i++) {
             $scopes[] = implode(':', array_slice($parts, 0, $i));
         }
 
@@ -127,12 +133,12 @@ class Token extends Model
     /**
      * Determine if the token is missing a given scope.
      *
-     * @param  string  $scope
+     * @param string $scope
      * @return bool
      */
     public function cant($scope)
     {
-        return ! $this->can($scope);
+        return !$this->can($scope);
     }
 
     /**
@@ -153,5 +159,15 @@ class Token extends Model
     public function transient()
     {
         return false;
+    }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return config('passport.storage.database.connection') ?? $this->connection;
     }
 }

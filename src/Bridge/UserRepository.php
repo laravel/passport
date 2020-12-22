@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Bridge;
 
 use Illuminate\Contracts\Hashing\Hasher;
-use Illuminate\Hashing\HashManager;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use RuntimeException;
@@ -13,19 +12,19 @@ class UserRepository implements UserRepositoryInterface
     /**
      * The hasher implementation.
      *
-     * @var \Illuminate\Hashing\HashManager
+     * @var \Illuminate\Contracts\Hashing\Hasher
      */
     protected $hasher;
 
     /**
      * Create a new repository instance.
      *
-     * @param  \Illuminate\Hashing\HashManager  $hasher
+     * @param \Illuminate\Contracts\Hashing\Hasher  $hasher
      * @return void
      */
-    public function __construct(HashManager $hasher)
+    public function __construct(Hasher $hasher)
     {
-        $this->hasher = $hasher->driver();
+        $this->hasher = $hasher;
     }
 
     /**
@@ -33,10 +32,20 @@ class UserRepository implements UserRepositoryInterface
      */
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
     {
-        $userProvider = $clientEntity->getUserProvider()->name;
+        $provider = $clientEntity->provider ?: config('auth.guards.api.provider');
 
-        if (is_null($model = config('auth.providers.'.$userProvider.'.model'))) {
+        if (is_null($model = config('auth.providers.'. $provider .'.model'))) {
             throw new RuntimeException('Unable to determine authentication model from configuration.');
+        }
+
+        if (method_exists($model, 'findAndValidateForPassport')) {
+            $user = (new $model)->findAndValidateForPassport($username, $password);
+
+            if (!$user) {
+                return;
+            }
+
+            return new User($user->getAuthIdentifier());
         }
 
         if (method_exists($model, 'findForPassport')) {

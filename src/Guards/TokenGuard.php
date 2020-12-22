@@ -13,16 +13,13 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
+use Laravel\Passport\PassportUserProvider;
 use Laravel\Passport\TokenRepository;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
-use Zend\Diactoros\ResponseFactory;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\StreamFactory;
-
-use Zend\Diactoros\UploadedFileFactory;
 
 class TokenGuard
 {
@@ -34,11 +31,11 @@ class TokenGuard
     protected $server;
 
     /**
-     * The auth manager implementation.
+     * The user provider implementation.
      *
-     * @var \Illuminate\Auth\AuthManager
+     * @var \Laravel\Passport\PassportUserProvider
      */
-    protected $authManager;
+    protected $provider;
 
     /**
      * The token repository instance.
@@ -65,14 +62,14 @@ class TokenGuard
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Illuminate\Auth\AuthManager  $authManager
+     * @param \Laravel\Passport\PassportUserProvider  $provider
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
     public function __construct(ResourceServer $server,
-                                AuthManager $authManager,
+                                PassportUserProvider $provider,
                                 TokenRepository $tokens,
                                 ClientRepository $clients,
                                 Encrypter $encrypter)
@@ -80,8 +77,25 @@ class TokenGuard
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
-        $this->authManager = $authManager;
+        $this->provider = $provider;
         $this->encrypter = $encrypter;
+    }
+
+    /**
+     * Determine if the requested provider matches the client's provider.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return bool
+     */
+    protected function hasValidProvider(Request $request)
+    {
+        $client = $this->client($request);
+
+        if ($client && !$client->provider) {
+            return true;
+        }
+
+        return $client && $client->provider === $this->provider->getProviderName();
     }
 
     /**
@@ -130,29 +144,22 @@ class TokenGuard
      */
     protected function authenticateViaBearerToken($request)
     {
-        if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
+        if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
 
-        $clientId = $psr->getAttribute('oauth_client_id');
-
-        // We will verify if the client that issued this token is still valid and
-        // its tokens may still be used. If not, we will bail out since we don't want a
-        // user to be able to send access tokens for deleted or revoked applications.
-        if ($this->clients->revoked($clientId)) {
+        if (!$this->hasValidProvider($request)) {
             return;
         }
 
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->authManager->createUserProvider(
-            $this->clients->find($clientId)->getUserProvider()->name
-        )->retrieveById(
+        $user = $this->provider->retrieveById(
             $psr->getAttribute('oauth_user_id') ?: null
         );
 
-        if (! $user) {
+        if (!$user) {
             return;
         }
 
@@ -162,6 +169,15 @@ class TokenGuard
         $token = $this->tokens->find(
             $psr->getAttribute('oauth_access_token_id')
         );
+
+        $clientId = $psr->getAttribute('oauth_client_id');
+
+        // Finally, we will verify if the client that issued this token is still valid and
+        // its tokens may still be used. If not, we will bail out since we don't want a
+        // user to be able to send access tokens for deleted or revoked applications.
+        if ($this->clients->revoked($clientId)) {
+            return;
+        }
 
         return $token ? $user->withAccessToken($token) : null;
     }
@@ -176,12 +192,12 @@ class TokenGuard
     {
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
-        // conversion for us to a Zend Diactoros implementation of the PSR-7 request.
+        // conversion for us to a new Nyholm implementation of this PSR-7 request.
         $psr = (new PsrHttpFactory(
-            new ServerRequestFactory,
-            new StreamFactory,
-            new UploadedFileFactory,
-            new ResponseFactory
+            new Psr17Factory,
+            new Psr17Factory,
+            new Psr17Factory,
+            new Psr17Factory
         ))->createRequest($request);
 
         try {
@@ -203,19 +219,14 @@ class TokenGuard
      */
     protected function authenticateViaCookie($request)
     {
-        if (! $token = $this->getTokenViaCookie($request)) {
+        if (!$token = $this->getTokenViaCookie($request)) {
             return;
         }
 
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
-        $provider = null;
-        $userId = $token['sub'];
-        if (strpos($token['sub'], '#') !== false) {
-            list($provider, $userId) = explode('#', $token['sub'], 2);
-        }
-        if ($user = $this->authManager->createUserProvider($provider)->retrieveById($userId)) {
+        if ($user = $this->provider->retrieveById($token['sub'])) {
             return $user->withAccessToken(new TransientToken);
         }
     }
@@ -240,8 +251,8 @@ class TokenGuard
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
-            time() >= $token['expiry'])) {
+        if (!Passport::$ignoreCsrfToken && (!$this->validCsrf($token, $request) ||
+                time() >= $token['expiry'])) {
             return;
         }
 
@@ -256,8 +267,9 @@ class TokenGuard
      */
     protected function decodeJwtTokenCookie($request)
     {
-        return (array) JWT::decode(
-            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
+        return (array)JWT::decode(
+            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()),
+                Passport::$unserializesCookies)),
             $this->encrypter->getKey(),
             ['HS256']
         );
@@ -273,8 +285,8 @@ class TokenGuard
     protected function validCsrf($token, $request)
     {
         return isset($token['csrf']) && hash_equals(
-            $token['csrf'], (string) $this->getTokenFromRequest($request)
-        );
+                $token['csrf'], (string)$this->getTokenFromRequest($request)
+            );
     }
 
     /**
@@ -287,7 +299,7 @@ class TokenGuard
     {
         $token = $request->header('X-CSRF-TOKEN');
 
-        if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
+        if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
             $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
         }
 
