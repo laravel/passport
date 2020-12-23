@@ -200,11 +200,4 @@ class Client extends Model
     {
         return ClientFactory::new();
     }
-
-    // TODO: SEE IF STILL USED
-    public function getUserProvider()
-    {
-        $providerName = is_null($this->user_provider_name) ? config('auth.guards.api.provider') : $this->user_provider_name;
-        return new UserProvider($providerName, config('auth.providers.' . $providerName . '.driver'), config('auth.providers.' . $providerName . '.model'));
-    }
 }
