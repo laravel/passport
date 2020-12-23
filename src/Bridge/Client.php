@@ -2,11 +2,10 @@
 
 namespace Laravel\Passport\Bridge;
 
-use Laravel\Passport\providerInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\Traits\ClientTrait;
 
-class Client implements ClientEntityInterface, providerInterface
+class Client implements ClientEntityInterface
 {
     use ClientTrait;
 
