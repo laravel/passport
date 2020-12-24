@@ -15,7 +15,7 @@ class KeysCommand extends Command
      * @var string
      */
     protected $signature = 'passport:keys
-                                      {--force : Overwrite keys they already exist}
+                                      {--force : Overwrite keys if they already exist}
                                       {--length=4096 : The length of the private key}';
 
     /**
