@@ -36,18 +36,27 @@ class PurgeCommand extends Command
             Passport::token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
+            Passport::refreshToken()->whereNotIn('access_token_id', function($subQuery) {
+                $subQuery->select('id')->from(Passport::token()->getTable());
+            })->delete();
 
             $this->info('Purged revoked items and items expired for more than seven days.');
         } elseif ($this->option('revoked')) {
             Passport::token()->where('revoked', 1)->delete();
             Passport::authCode()->where('revoked', 1)->delete();
             Passport::refreshToken()->where('revoked', 1)->delete();
+            Passport::refreshToken()->whereNotIn('access_token_id', function($subQuery) {
+                $subQuery->select('id')->from(Passport::token()->getTable());
+            })->delete();
 
             $this->info('Purged revoked items.');
         } elseif ($this->option('expired')) {
             Passport::token()->whereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->whereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->whereDate('expires_at', '<', $expired)->delete();
+            Passport::refreshToken()->whereNotIn('access_token_id', function($subQuery) {
+                $subQuery->select('id')->from(Passport::token()->getTable());
+            })->delete();
 
             $this->info('Purged items expired for more than seven days.');
         }
