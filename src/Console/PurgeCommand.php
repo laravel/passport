@@ -22,7 +22,7 @@ class PurgeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Purge revoked and / or expired tokens, authentication codes, and refresh tokens.';
+    protected $description = 'Purge revoked and / or expired tokens and authentication codes';
 
     /**
      * Execute the console command.
@@ -36,23 +36,20 @@ class PurgeCommand extends Command
             Passport::token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
-            Passport::refreshToken()->whereDoesntHave('accessToken')->delete();
 
-            $this->info('Purged invalid refresh tokens, revoked tokens, and tokens expired for more than seven days.');
+            $this->info('Purged revoked items and items expired for more than seven days.');
         } elseif ($this->option('revoked')) {
             Passport::token()->where('revoked', 1)->delete();
             Passport::authCode()->where('revoked', 1)->delete();
             Passport::refreshToken()->where('revoked', 1)->delete();
-            Passport::refreshToken()->whereDoesntHave('accessToken')->delete();
 
-            $this->info('Purged invalid refresh tokens and revoked tokens.');
+            $this->info('Purged revoked items.');
         } elseif ($this->option('expired')) {
             Passport::token()->whereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->whereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->whereDate('expires_at', '<', $expired)->delete();
-            Passport::refreshToken()->whereDoesntHave('accessToken')->delete();
 
-            $this->info('Purged invalid refresh tokens and tokens expired for more than seven days.');
+            $this->info('Purged items expired for more than seven days.');
         }
     }
 }
