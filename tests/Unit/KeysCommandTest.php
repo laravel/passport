@@ -6,7 +6,6 @@ use Illuminate\Container\Container;
 use Laravel\Passport\Console\KeysCommand;
 use Laravel\Passport\Passport;
 use Mockery as m;
-use phpseclib\Crypt\RSA;
 use PHPUnit\Framework\TestCase;
 
 class KeysCommandTest extends TestCase
@@ -41,9 +40,7 @@ class KeysCommandTest extends TestCase
 
         Container::getInstance()->instance('path.storage', self::KEYS);
 
-        $rsa = new RSA();
-
-        $command->handle($rsa);
+        $command->handle();
 
         $this->assertFileExists(self::PUBLIC_KEY);
         $this->assertFileExists(self::PRIVATE_KEY);
@@ -59,7 +56,7 @@ class KeysCommandTest extends TestCase
             ->with('Encryption keys generated successfully.')
             ->getMock();
 
-        $command->handle(new RSA);
+        $command->handle();
 
         $this->assertFileExists(self::PUBLIC_KEY);
         $this->assertFileExists(self::PRIVATE_KEY);
@@ -79,6 +76,6 @@ class KeysCommandTest extends TestCase
         $command->shouldReceive('error')
             ->with('Encryption keys already exist. Use the --force option to overwrite them.');
 
-        $command->handle(new RSA);
+        $command->handle();
     }
 }

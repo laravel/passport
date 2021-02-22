@@ -35,6 +35,8 @@ class PersonalAccessTokenFactory
      * The JWT token parser instance.
      *
      * @var \Lcobucci\JWT\Parser
+     *
+     * @deprecated This property will be removed in a future Passport version.
      */
     protected $jwt;
 
@@ -127,7 +129,7 @@ class PersonalAccessTokenFactory
     protected function findAccessToken(array $response)
     {
         return $this->tokens->find(
-            $this->jwt->parse($response['access_token'])->getClaim('jti')
+            $this->jwt->parse($response['access_token'])->claims()->get('jti')
         );
     }
 }

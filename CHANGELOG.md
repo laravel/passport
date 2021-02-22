@@ -1,12 +1,27 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.0.0...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.1.0...master)
+
+
+## [v10.1.0 (2020-11-26)](https://github.com/laravel/passport/compare/v10.0.1...v10.1.0)
+
+### Added
+- PHP 8 Support ([#1373](https://github.com/laravel/passport/pull/1373))
+
+### Removed
+- Remove Vue components ([#1352](https://github.com/laravel/passport/pull/1352))
+
+
+## [v10.0.1 (2020-09-15)](https://github.com/laravel/passport/compare/v10.0.0...v10.0.1)
+
+### Fixed
+- Use newFactory to properly reference factory ([#1349](https://github.com/laravel/passport/pull/1349))
 
 
 ## [v10.0.0 (2020-09-08)](https://github.com/laravel/passport/compare/v9.3.2...v10.0.0)
 
 ### Added
-- Support Laravel 8 ([#1336](https://github.com/laravel/passport/pull/1336))
+- Support Laravel 8 & drop PHP 7.2 support ([#1336](https://github.com/laravel/passport/pull/1336))
 
 ### Changed
 - `forceFill` new auth code attributes ([#1266](https://github.com/laravel/passport/pull/1266))
