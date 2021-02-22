@@ -44,8 +44,6 @@ abstract class PassportTestCase extends TestCase
 
         $app['config']->set('database.default', 'testbench');
 
-        $app['config']->set('passport.storage.database.connection', 'testbench');
-
         $app['config']->set('database.connections.testbench', [
             'driver'   => 'sqlite',
             'database' => ':memory:',
