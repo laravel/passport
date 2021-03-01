@@ -50,9 +50,8 @@ class CreateFreshApiToken
         $response = $next($request);
 
         if ($this->shouldReceiveFreshToken($request, $response)) {
-            $providerName = $this->getProviderName($request->user($this->guard));
             $response->withCookie($this->cookieFactory->make(
-                $providerName . '#' . $request->user($this->guard)->getAuthIdentifier(), $request->session()->token()
+                $request->user($this->guard)->getAuthIdentifier(), $request->session()->token()
             ));
         }
 
@@ -113,16 +112,5 @@ class CreateFreshApiToken
         }
 
         return false;
-    }
-
-    protected function getProviderName($user)
-    {
-        foreach (config('auth.providers') as $providerName => $config) {
-            if ($config['model'] == get_class($user)) {
-                return $providerName;
-            }
-        }
-
-        return '';
     }
 }
