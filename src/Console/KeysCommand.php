@@ -5,8 +5,8 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Laravel\Passport\Passport;
-use phpseclib3\Crypt\RSA;
 use phpseclib\Crypt\RSA as LegacyRSA;
+use phpseclib3\Crypt\RSA;
 
 class KeysCommand extends Command
 {
