@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.1.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.1.2...master)
+
+
+## [v10.1.2 (2021-03-02)](https://github.com/laravel/passport/compare/v10.1.1...v10.1.2)
+
+### Fixed
+- Backport phpseclib v2 ([#1418](https://github.com/laravel/passport/pull/1418))
 
 
 ## [v10.1.1 (2021-02-23)](https://github.com/laravel/passport/compare/v10.1.0...v10.1.1)
