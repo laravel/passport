@@ -87,15 +87,15 @@ class TokenGuard
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    protected function hasValidProvider(Request $request)
+    protected function hasValidProvider(Request $request, $psr = null)
     {
-        $client = $this->client($request);
+        $client = $this->client($request, $psr);
 
         if ($client && ! $client->provider) {
             return true;
         }
 
-        return $client && $client->provider === $this->provider->getProviderName();
+        return $client && $client->provider === $this->provider->getProviderName() ? $client : null;
     }
 
     /**
@@ -119,13 +119,9 @@ class TokenGuard
      * @param  \Illuminate\Http\Request  $request
      * @return mixed
      */
-    public function client(Request $request)
+    public function client(Request $request, $psr = null)
     {
         if ($request->bearerToken()) {
-            if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
-                return;
-            }
-
             return $this->clients->findActive(
                 $psr->getAttribute('oauth_client_id')
             );
@@ -134,6 +130,29 @@ class TokenGuard
                 return $this->clients->findActive($token['aud']);
             }
         }
+    }
+
+    /**
+     * Group similar function calls into one in order to stop using 2 extra queries
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function validateProvider($request, $psr){
+        $client = $this->hasValidProvider($request, $psr);
+       
+        if (!$client) {
+            return;
+        }
+
+        // If the access token is valid we will retrieve the user according to the user ID
+        // associated with the token. We will use the provider implementation which may
+        // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
+        $user = $this->provider->retrieveById(
+            $psr->getAttribute('oauth_user_id') ?: null
+        );
+       
+        return [$client, $user];
     }
 
     /**
@@ -148,18 +167,10 @@ class TokenGuard
             return;
         }
 
-        if (! $this->hasValidProvider($request)) {
-            return;
-        }
+        //Get Client (oauthClients table), User (users table)
+        list($client, $user) = $this->validateProvider($request, $psr);
 
-        // If the access token is valid we will retrieve the user according to the user ID
-        // associated with the token. We will use the provider implementation which may
-        // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->provider->retrieveById(
-            $psr->getAttribute('oauth_user_id') ?: null
-        );
-
-        if (! $user) {
+        if (!$user) {
             return;
         }
 
@@ -170,12 +181,10 @@ class TokenGuard
             $psr->getAttribute('oauth_access_token_id')
         );
 
-        $clientId = $psr->getAttribute('oauth_client_id');
-
         // Finally, we will verify if the client that issued this token is still valid and
         // its tokens may still be used. If not, we will bail out since we don't want a
         // user to be able to send access tokens for deleted or revoked applications.
-        if ($this->clients->revoked($clientId)) {
+        if ($this->clients->revoked($client)) {
             return;
         }
 
