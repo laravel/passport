@@ -133,12 +133,17 @@ class TokenGuard
     }
 
     /**
-     * Group similar function calls into one in order to stop using 2 extra queries
+     * Authenticate the incoming request via the Bearer token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
+     * @return mixed
      */
-    protected function validateProvider($request, $psr){
+    protected function authenticateViaBearerToken($request)
+    {
+        if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
+            return;
+        }
+
         $client = $this->hasValidProvider($request, $psr);
        
         if (!$client) {
@@ -151,24 +156,6 @@ class TokenGuard
         $user = $this->provider->retrieveById(
             $psr->getAttribute('oauth_user_id') ?: null
         );
-       
-        return [$client, $user];
-    }
-
-    /**
-     * Authenticate the incoming request via the Bearer token.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return mixed
-     */
-    protected function authenticateViaBearerToken($request)
-    {
-        if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
-            return;
-        }
-
-        //Get Client (oauthClients table), User (users table)
-        list($client, $user) = $this->validateProvider($request, $psr);
 
         if (!$user) {
             return;
