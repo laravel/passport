@@ -146,7 +146,7 @@ class TokenGuard
 
         $client = $this->hasValidProvider($request, $psr);
        
-        if (!$client) {
+        if (! $client) {
             return;
         }
 
@@ -157,7 +157,7 @@ class TokenGuard
             $psr->getAttribute('oauth_user_id') ?: null
         );
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
