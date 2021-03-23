@@ -92,7 +92,7 @@ class TokenGuard
         $client = $this->client($request, $psr);
 
         if ($client && ! $client->provider) {
-            return true;
+            return $client;
         }
 
         return $client && $client->provider === $this->provider->getProviderName() ? $client : null;
