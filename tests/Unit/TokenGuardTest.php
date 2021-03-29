@@ -48,7 +48,7 @@ class TokenGuardTest extends TestCase
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
         $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
-        $clients->shouldReceive('revoked')->with(1)->andReturn(false);
+        $clients->shouldReceive('revoked')->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user($request);

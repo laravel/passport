@@ -85,17 +85,18 @@ class TokenGuard
      * Determine if the requested provider matches the client's provider.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return bool
+     * @param \Psr\Http\Message\ServerRequestInterface
+     * @return mixed
      */
-    protected function hasValidProvider(Request $request)
+    protected function hasValidProvider(Request $request, $psr = null)
     {
-        $client = $this->client($request);
+        $client = $this->client($request, $psr);
 
         if ($client && ! $client->provider) {
-            return true;
+            return $client;
         }
 
-        return $client && $client->provider === $this->provider->getProviderName();
+        return $client && $client->provider === $this->provider->getProviderName() ? $client : null;
     }
 
     /**
@@ -117,13 +118,16 @@ class TokenGuard
      * Get the client for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param   mixed
      * @return mixed
      */
-    public function client(Request $request)
+    public function client(Request $request, $psr = null)
     {
         if ($request->bearerToken()) {
-            if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
-                return;
+            if(! $psr){
+                if(! $psr = $this->getPsrRequestViaBearerToken($request)){
+                    return;
+                }
             }
 
             return $this->clients->findActive(
@@ -148,7 +152,9 @@ class TokenGuard
             return;
         }
 
-        if (! $this->hasValidProvider($request)) {
+        $client = $this->hasValidProvider($request, $psr);
+        
+        if (! $client) {
             return;
         }
 
@@ -170,12 +176,10 @@ class TokenGuard
             $psr->getAttribute('oauth_access_token_id')
         );
 
-        $clientId = $psr->getAttribute('oauth_client_id');
-
         // Finally, we will verify if the client that issued this token is still valid and
         // its tokens may still be used. If not, we will bail out since we don't want a
         // user to be able to send access tokens for deleted or revoked applications.
-        if ($this->clients->revoked($clientId)) {
+        if ($this->clients->revoked($client)) {
             return;
         }
 

@@ -221,13 +221,11 @@ class ClientRepository
     /**
      * Determine if the given client is revoked.
      *
-     * @param  int  $id
+     * @param mixed $client
      * @return bool
      */
-    public function revoked($id)
+    public function revoked($client)
     {
-        $client = $this->find($id);
-
         return is_null($client) || $client->revoked;
     }
 
