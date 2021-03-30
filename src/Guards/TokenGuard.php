@@ -124,8 +124,8 @@ class TokenGuard
     public function client(Request $request, $psr = null)
     {
         if ($request->bearerToken()) {
-            if(! $psr){
-                if(! $psr = $this->getPsrRequestViaBearerToken($request)){
+            if(! $psr) {
+                if(! $psr = $this->getPsrRequestViaBearerToken($request)) {
                     return;
                 }
             }
@@ -153,6 +153,7 @@ class TokenGuard
         }
 
         $client = $this->hasValidProvider($request, $psr);
+
         
         if (! $client) {
             return;
