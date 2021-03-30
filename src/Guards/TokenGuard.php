@@ -154,7 +154,6 @@ class TokenGuard
 
         $client = $this->hasValidProvider($request, $psr);
 
-
         if (! $client) {
             return;
         }
