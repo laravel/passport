@@ -284,7 +284,7 @@ class PassportServiceProvider extends ServiceProvider
         Auth::resolved(function ($auth) {
             $auth->extend('passport', function ($app, $name, array $config) {
                 return tap($this->makeGuard($config), function ($guard) {
-                    $this->app->refresh('request', $guard, 'setRequest');
+                    app()->refresh('request', $guard, 'setRequest');
                 });
             });
         });
