@@ -249,9 +249,9 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerResourceServer()
     {
-        $this->app->singleton(ResourceServer::class, function () {
+        $this->app->singleton(ResourceServer::class, function ($container) {
             return new ResourceServer(
-                $this->app->make(Bridge\AccessTokenRepository::class),
+                $container->make(Bridge\AccessTokenRepository::class),
                 $this->makeCryptKey('public')
             );
         });
