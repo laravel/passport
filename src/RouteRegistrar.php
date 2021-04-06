@@ -12,7 +12,7 @@ class RouteRegistrar
      * @var \Illuminate\Contracts\Routing\Registrar
      */
     protected $router;
-    
+
     /**
      * The middleware to use for authentication.
      *
@@ -30,9 +30,9 @@ class RouteRegistrar
     {
         $this->router = $router;
     }
-    
+
     /**
-     * Change thee middleware to use for authentication.
+     * Change the middleware to use for authentication.
      *
      * @param string $middleware
      * @return void
