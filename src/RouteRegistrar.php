@@ -32,7 +32,7 @@ class RouteRegistrar
     }
     
     /**
-     * Create a new route registrar instance.
+     * Change thee middleware to use for authentication.
      *
      * @param string $middleware
      * @return void
