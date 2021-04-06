@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.1.2...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.1.3...10.x)
+
+
+## [v10.1.3 (2021-04-06)](https://github.com/laravel/passport/compare/v10.1.2...v10.1.3)
+
+### Changed
+- Use app helper ([3d1e6bb](https://github.com/laravel/passport/commit/3d1e6bbdedf71efb147f3b5205259e8b20c2e6ad))
+  
+### Fixed
+- Fix binding ([e3478de](https://github.com/laravel/passport/commit/e3478dedd938671b7598239cc8554f77de9ab9c7))
 
 
 ## [v10.1.2 (2021-03-02)](https://github.com/laravel/passport/compare/v10.1.1...v10.1.2)
