@@ -58,6 +58,10 @@ class AuthorizationController
                               ClientRepository $clients,
                               TokenRepository $tokens)
     {
+        if ($request->get('prompt') === 'login') {
+            $request->session()->flush();
+        }
+
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
         });
