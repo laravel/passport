@@ -135,13 +135,9 @@ class TokenGuard
             $psr->getAttribute('oauth_client_id')
         );
 
-        // Verify if the client that issued this token exists and is still valid
-        if (! $client) {
-            return;
-        }
-
-        // Verify if the client that issued this token matches the requested provider.
-        if ($client->provider && $client->provider !== $this->provider->getProviderName()) {
+        if (! $client ||
+            ($client->provider &&
+             $client->provider !== $this->provider->getProviderName())) {
             return;
         }
 
