@@ -82,23 +82,6 @@ class TokenGuard
     }
 
     /**
-     * Determine if the requested provider matches the client's provider.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
-     */
-    protected function hasValidProvider(Request $request)
-    {
-        $client = $this->client($request);
-
-        if ($client && ! $client->provider) {
-            return true;
-        }
-
-        return $client && $client->provider === $this->provider->getProviderName();
-    }
-
-    /**
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -148,7 +131,17 @@ class TokenGuard
             return;
         }
 
-        if (! $this->hasValidProvider($request)) {
+        $client = $this->clients->findActive(
+            $psr->getAttribute('oauth_client_id')
+        );
+
+        // Verify if the client that issued this token exists and is still valid
+        if (! $client) {
+            return;
+        }
+
+        // Verify if the client that issued this token matches the requested provider.
+        if ($client->provider && $client->provider !== $this->provider->getProviderName()) {
             return;
         }
 
@@ -169,15 +162,6 @@ class TokenGuard
         $token = $this->tokens->find(
             $psr->getAttribute('oauth_access_token_id')
         );
-
-        $clientId = $psr->getAttribute('oauth_client_id');
-
-        // Finally, we will verify if the client that issued this token is still valid and
-        // its tokens may still be used. If not, we will bail out since we don't want a
-        // user to be able to send access tokens for deleted or revoked applications.
-        if ($this->clients->revoked($clientId)) {
-            return;
-        }
 
         return $token ? $user->withAccessToken($token) : null;
     }
