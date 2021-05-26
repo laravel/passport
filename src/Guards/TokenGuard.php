@@ -82,21 +82,6 @@ class TokenGuard
     }
 
     /**
-     * Determine if the requested provider matches the client's provider.
-     *
-     * @param \Laravel\Passport\Client $client
-     * @return bool
-     */
-    protected function checkClientProvider($client)
-    {
-        if (! $client->provider) {
-            return true;
-        }
-
-        return $client->provider === $this->provider->getProviderName();
-    }
-
-    /**
      * Get the user for the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -150,10 +135,13 @@ class TokenGuard
             $psr->getAttribute('oauth_client_id')
         );
 
-        // Verify if the client that issued this token is still valid and matches
-        // the requested provider. If not, we will bail out since we don't want a
-        // user to be able to send access tokens for deleted or revoked applications.
-        if (! $client || ! $this->checkClientProvider($client)) {
+        // Verify if the client that issued this token exists and is still valid
+        if (! $client) {
+            return;
+        }
+
+        // Verify if the client that issued this token matches the requested provider.
+        if ($client->provider && $client->provider !== $this->provider->getProviderName()) {
             return;
         }
 
