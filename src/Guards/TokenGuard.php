@@ -150,6 +150,9 @@ class TokenGuard
             $psr->getAttribute('oauth_client_id')
         );
 
+        // Verify if the client that issued this token is still valid and matches
+        // the requested provider. If not, we will bail out since we don't want a
+        // user to be able to send access tokens for deleted or revoked applications.
         if (! $client || ! $this->checkClientProvider($client)) {
             return;
         }
@@ -171,13 +174,6 @@ class TokenGuard
         $token = $this->tokens->find(
             $psr->getAttribute('oauth_access_token_id')
         );
-
-        // Finally, we will verify if the client that issued this token is still valid and
-        // its tokens may still be used. If not, we will bail out since we don't want a
-        // user to be able to send access tokens for deleted or revoked applications.
-        if ($client->revoked) {
-            return;
-        }
 
         return $token ? $user->withAccessToken($token) : null;
     }
