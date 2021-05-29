@@ -73,7 +73,7 @@ class TokenRepository
      * @param  \Laravel\Passport\Token  $token
      * @return void
      */
-    public function save(Token $token)
+    public function save($token)
     {
         $token->save();
     }
