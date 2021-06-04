@@ -40,12 +40,12 @@ class PassportServiceProviderTest extends TestCase
 
     public function test_can_use_crypto_keys_from_local_disk()
     {
+        Passport::loadKeysFrom(__DIR__.'/../keys');
+
         $privateKey = openssl_pkey_new();
 
         openssl_pkey_export_to_file($privateKey, __DIR__.'/../keys/oauth-private.key');
         openssl_pkey_export($privateKey, $privateKeyString);
-
-        Passport::loadKeysFrom(__DIR__.'/../keys');
 
         $config = m::mock(Config::class, function ($config) {
             $config->shouldReceive('get')->with('passport.private_key')->andReturn(null);
