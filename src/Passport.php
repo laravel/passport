@@ -146,6 +146,13 @@ class Passport
     public static $withInheritedScopes = false;
 
     /**
+     * Indicates if refresh tokens should be revoked.
+     *
+     * @var bool
+     */
+    public static $revokeRefreshTokens = true;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -650,5 +657,26 @@ class Passport
         static::$unserializesCookies = false;
 
         return new static;
+    }
+
+    /**
+     * Determine if refresh tokens must be revoked.
+     *
+     * @return bool
+     */
+    public static function revokeRefreshTokens()
+    {
+        return static::$revokeRefreshTokens;
+    }
+
+    /**
+     * Specify if refresh tokens should be revoked.
+     *
+     * @param  bool  $value
+     * @return void
+     */
+    public static function setRevokeRefreshTokens(bool $value)
+    {
+        static::$revokeRefreshTokens = $value;
     }
 }
