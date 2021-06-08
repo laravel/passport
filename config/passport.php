@@ -63,4 +63,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Refresh token revocation
+    |--------------------------------------------------------------------------
+    |
+    | This configuration value allows you to switch revocation of oauth refresh
+    | tokens on or off. By default refresh tokens will always be revoked when
+    | used.
+    |
+    */
+
+    'revoke_refresh_tokens' => env('PASSPORT_REVOKE_REFRESH_TOKENS', true),
 ];

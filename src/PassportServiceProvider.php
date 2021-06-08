@@ -93,6 +93,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
         Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
+        Passport::setRevokeRefreshTokens($this->app->make(Config::class)->get('passport.revoke_refresh_tokens'));
 
         $this->registerAuthorizationServer();
         $this->registerResourceServer();
@@ -136,6 +137,8 @@ class PassportServiceProvider extends ServiceProvider
                         $this->makeImplicitGrant(), Passport::tokensExpireIn()
                     );
                 }
+
+                $server->revokeRefreshTokens(Passport::revokeRefreshTokens());
             });
         });
     }
