@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Guards;
 
 use Exception;
-use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -11,6 +10,7 @@ use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Jwt\Decoder;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
 use Laravel\Passport\TokenRepository;
@@ -131,7 +131,7 @@ class TokenGuard
             );
         } elseif ($request->cookie(Passport::cookie())) {
             if ($token = $this->getTokenViaCookie($request)) {
-                return $this->clients->findActive($token['aud']);
+                return $this->clients->findActive($token['aud'][0]);
             }
         }
     }
@@ -267,11 +267,10 @@ class TokenGuard
      */
     protected function decodeJwtTokenCookie($request)
     {
-        return (array) JWT::decode(
-            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
-            $this->encrypter->getKey(),
-            ['HS256']
-        );
+        return Container::getInstance()->make(Decoder::class)->decode(CookieValuePrefix::remove(
+            $this->encrypter->decrypt($request->cookie(Passport::cookie()),
+                Passport::$unserializesCookies)
+        ), $this->encrypter->getKey());
     }
 
     /**

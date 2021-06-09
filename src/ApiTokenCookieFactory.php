@@ -3,9 +3,10 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
-use Firebase\JWT\JWT;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Laravel\Passport\Jwt\Encoder;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class ApiTokenCookieFactory
@@ -73,7 +74,7 @@ class ApiTokenCookieFactory
      */
     protected function createToken($userId, $csrfToken, Carbon $expiration)
     {
-        return JWT::encode([
+        return Container::getInstance()->make(Encoder::class)->encode([
             'sub' => $userId,
             'csrf' => $csrfToken,
             'expiry' => $expiration->getTimestamp(),
