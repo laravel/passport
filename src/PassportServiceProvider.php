@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
@@ -34,13 +35,61 @@ class PassportServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
+        $this->registerRoutes();
+        $this->registerResources();
+        $this->registerMigrations();
+        $this->registerPublishing();
+        $this->registerCommands();
 
         $this->deleteCookieOnLogout();
+    }
 
+    /**
+     * Register the Passport routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes()
+    {
+        Route::group([
+            'as' => 'passport.',
+            'prefix' => config('passport.path', 'oauth'),
+            'namespace' => 'Laravel\Passport\Http\Controllers',
+        ], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+    }
+
+    /**
+     * Register Passport's migration files.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if ($this->app->runningInConsole() && Passport::$runsMigrations && ! config('passport.client_uuids')) {
+            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        }
+    }
+
+    /**
+     * Register the Passport resources.
+     *
+     * @return void
+     */
+    protected function registerResources()
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
+    }
+
+    /**
+     * Register the package's publishable resources.
+     *
+     * @return void
+     */
+    protected function registerPublishing()
+    {
         if ($this->app->runningInConsole()) {
-            $this->registerMigrations();
-
             $this->publishes([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'passport-migrations');
@@ -52,7 +101,17 @@ class PassportServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/passport.php' => config_path('passport.php'),
             ], 'passport-config');
+        }
+    }
 
+    /**
+     * Register the Passport Artisan commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\InstallCommand::class,
                 Console\ClientCommand::class,
@@ -60,18 +119,6 @@ class PassportServiceProvider extends ServiceProvider
                 Console\KeysCommand::class,
                 Console\PurgeCommand::class,
             ]);
-        }
-    }
-
-    /**
-     * Register Passport's migration files.
-     *
-     * @return void
-     */
-    protected function registerMigrations()
-    {
-        if (Passport::$runsMigrations && ! config('passport.client_uuids')) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
 

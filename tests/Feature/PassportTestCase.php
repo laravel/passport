@@ -4,7 +4,6 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
 use Orchestra\Testbench\TestCase;
 
@@ -21,8 +20,6 @@ abstract class PassportTestCase extends TestCase
         parent::setUp();
 
         $this->artisan('migrate:fresh');
-
-        Passport::routes();
 
         @unlink(self::PUBLIC_KEY);
         @unlink(self::PRIVATE_KEY);
