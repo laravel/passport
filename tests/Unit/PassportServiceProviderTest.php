@@ -13,10 +13,14 @@ class PassportServiceProviderTest extends TestCase
 {
     public function test_can_use_crypto_keys_from_config()
     {
-        $config = m::mock(Config::class, function ($config) {
+        $privateKey = openssl_pkey_new();
+
+        openssl_pkey_export($privateKey, $privateKeyString);
+
+        $config = m::mock(Config::class, function ($config) use ($privateKeyString) {
             $config->shouldReceive('get')
                 ->with('passport.private_key')
-                ->andReturn('-----BEGIN RSA PRIVATE KEY-----\nconfig\n-----END RSA PRIVATE KEY-----');
+                ->andReturn($privateKeyString);
         });
 
         $provider = new PassportServiceProvider(
@@ -29,7 +33,7 @@ class PassportServiceProviderTest extends TestCase
         })->call($provider);
 
         $this->assertSame(
-            "-----BEGIN RSA PRIVATE KEY-----\nconfig\n-----END RSA PRIVATE KEY-----",
+            $privateKeyString,
             file_get_contents($cryptKey->getKeyPath())
         );
     }
@@ -38,10 +42,10 @@ class PassportServiceProviderTest extends TestCase
     {
         Passport::loadKeysFrom(__DIR__.'/../keys');
 
-        file_put_contents(
-            __DIR__.'/../keys/oauth-private.key',
-            "-----BEGIN RSA PRIVATE KEY-----\ndisk\n-----END RSA PRIVATE KEY-----"
-        );
+        $privateKey = openssl_pkey_new();
+
+        openssl_pkey_export_to_file($privateKey, __DIR__.'/../keys/oauth-private.key');
+        openssl_pkey_export($privateKey, $privateKeyString);
 
         $config = m::mock(Config::class, function ($config) {
             $config->shouldReceive('get')->with('passport.private_key')->andReturn(null);
@@ -57,7 +61,7 @@ class PassportServiceProviderTest extends TestCase
         })->call($provider);
 
         $this->assertSame(
-            "-----BEGIN RSA PRIVATE KEY-----\ndisk\n-----END RSA PRIVATE KEY-----",
+            $privateKeyString,
             file_get_contents($cryptKey->getKeyPath())
         );
 
