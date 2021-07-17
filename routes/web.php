@@ -8,13 +8,12 @@ Route::post('/token', [
     'middleware' => 'throttle',
 ]);
 
-Route::post('/token/refresh', [
-    'middleware' => ['web', 'auth'],
-    'uses' => 'TransientTokenController@refresh',
-    'as' => 'token.refresh',
-]);
-
 Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/token/refresh', [
+        'uses' => 'TransientTokenController@refresh',
+        'as' => 'token.refresh',
+    ]);
+    
     Route::get('/authorize', [
         'uses' => 'AuthorizationController@authorize',
         'as' => 'authorizations.authorize',
