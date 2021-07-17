@@ -13,7 +13,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         'uses' => 'TransientTokenController@refresh',
         'as' => 'token.refresh',
     ]);
-    
+
     Route::get('/authorize', [
         'uses' => 'AuthorizationController@authorize',
         'as' => 'authorizations.authorize',
