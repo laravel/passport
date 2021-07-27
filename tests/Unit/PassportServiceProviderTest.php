@@ -34,7 +34,7 @@ class PassportServiceProviderTest extends TestCase
 
         $this->assertSame(
             $privateKeyString,
-            file_get_contents($cryptKey->getKeyPath())
+            $cryptKey->getKeyContents()
         );
     }
 

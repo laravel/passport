@@ -216,11 +216,11 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayNotHasKey('expires_in', $decodedResponse);
         $this->assertArrayNotHasKey('access_token', $decodedResponse);
         $this->assertArrayNotHasKey('refresh_token', $decodedResponse);
+        $this->assertArrayNotHasKey('hint', $decodedResponse);
 
         $this->assertArrayHasKey('error', $decodedResponse);
         $this->assertSame('invalid_grant', $decodedResponse['error']);
         $this->assertArrayHasKey('error_description', $decodedResponse);
-        $this->assertArrayHasKey('hint', $decodedResponse);
         $this->assertArrayHasKey('message', $decodedResponse);
 
         $this->assertSame(0, Token::count());
