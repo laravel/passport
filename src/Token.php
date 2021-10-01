@@ -32,14 +32,14 @@ class Token extends Model
      *
      * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'scopes' => 'array',
         'revoked' => 'bool',
     ];
@@ -49,7 +49,7 @@ class Token extends Model
      *
      * @var array
      */
-    protected $dates = [
+    protected array $dates = [
         'expires_at',
     ];
 
