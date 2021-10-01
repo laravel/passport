@@ -32,14 +32,14 @@ class RefreshToken extends Model
      *
      * @var array
      */
-    protected $guarded = [];
+    protected array $guarded = [];
 
     /**
      * The attributes that should be cast to native types.
      *
      * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'revoked' => 'bool',
     ];
 
@@ -48,7 +48,7 @@ class RefreshToken extends Model
      *
      * @var array
      */
-    protected $dates = [
+    protected array $dates = [
         'expires_at',
     ];
 
