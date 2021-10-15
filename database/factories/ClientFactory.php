@@ -44,6 +44,7 @@ class ClientFactory extends Factory
     {
         if (Passport::clientUuids()) {
             $keyName = (new $this->model)->getKeyName();
+
             $data[$keyName] = (string) Str::orderedUuid();
         }
 
