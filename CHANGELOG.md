@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.1.3...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.1.4...10.x)
+
+
+## [v10.1.4 (2021-10-19)](https://github.com/laravel/passport/compare/v10.1.3...v10.1.4)
+
+### Fixed
+- Ensure client model factory always creates models with a primary key ([#1492](https://github.com/laravel/passport/pull/1492)
 
 
 ## [v10.1.3 (2021-04-06)](https://github.com/laravel/passport/compare/v10.1.2...v10.1.3)
