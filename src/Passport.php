@@ -2,9 +2,7 @@
 
 namespace Laravel\Passport;
 
-use Carbon\Carbon;
 use DateInterval;
-use DateTimeInterface;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
@@ -36,23 +34,23 @@ class Passport
     ];
 
     /**
-     * The date when access tokens expire.
+     * The date interval when access tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateInterval|null
      */
     public static $tokensExpireAt;
 
     /**
      * The date when refresh tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateInterval|null
      */
     public static $refreshTokensExpireAt;
 
     /**
      * The date when personal access tokens expire.
      *
-     * @var \DateTimeInterface|null
+     * @var DateInterval|null
      */
     public static $personalAccessTokensExpireAt;
 
@@ -253,20 +251,18 @@ class Passport
     }
 
     /**
-     * Get or set when access tokens expire.
+     * Get or set access tokens lifetime.
      *
-     * @param  \DateTimeInterface|null  $date
-     * @return \DateInterval|static
+     * @param  DateInterval|null  $dateInterval
+     * @return DateInterval|static
      */
-    public static function tokensExpireIn(DateTimeInterface $date = null)
+    public static function tokensExpireIn(DateInterval $dateInterval = null)
     {
-        if (is_null($date)) {
-            return static::$tokensExpireAt
-                            ? Carbon::now()->diff(static::$tokensExpireAt)
-                            : new DateInterval('P1Y');
+        if ($dateInterval === null) {
+            return static::$tokensExpireAt ?: new DateInterval('P1Y');
         }
 
-        static::$tokensExpireAt = $date;
+        static::$tokensExpireAt = $dateInterval;
 
         return new static;
     }
@@ -274,18 +270,16 @@ class Passport
     /**
      * Get or set when refresh tokens expire.
      *
-     * @param  \DateTimeInterface|null  $date
-     * @return \DateInterval|static
+     * @param  DateInterval|null  $dateInterval
+     * @return DateInterval|static
      */
-    public static function refreshTokensExpireIn(DateTimeInterface $date = null)
+    public static function refreshTokensExpireIn(DateInterval $dateInterval = null)
     {
-        if (is_null($date)) {
-            return static::$refreshTokensExpireAt
-                            ? Carbon::now()->diff(static::$refreshTokensExpireAt)
-                            : new DateInterval('P1Y');
+        if ($dateInterval === null) {
+            return static::$refreshTokensExpireAt ?: new DateInterval('P1Y');
         }
 
-        static::$refreshTokensExpireAt = $date;
+        static::$refreshTokensExpireAt = $dateInterval;
 
         return new static;
     }
@@ -293,18 +287,16 @@ class Passport
     /**
      * Get or set when personal access tokens expire.
      *
-     * @param  \DateTimeInterface|null  $date
-     * @return \DateInterval|static
+     * @param  DateInterval|null  $dateInterval
+     * @return DateInterval|static
      */
-    public static function personalAccessTokensExpireIn(DateTimeInterface $date = null)
+    public static function personalAccessTokensExpireIn(DateInterval $dateInterval = null)
     {
-        if (is_null($date)) {
-            return static::$personalAccessTokensExpireAt
-                ? Carbon::now()->diff(static::$personalAccessTokensExpireAt)
-                : new DateInterval('P1Y');
+        if ($dateInterval === null) {
+            return static::$personalAccessTokensExpireAt ?: new DateInterval('P1Y');
         }
 
-        static::$personalAccessTokensExpireAt = $date;
+        static::$personalAccessTokensExpireAt = $dateInterval;
 
         return new static;
     }
@@ -317,7 +309,7 @@ class Passport
      */
     public static function cookie($cookie = null)
     {
-        if (is_null($cookie)) {
+        if ($cookie === null) {
             return static::$cookie;
         }
 
