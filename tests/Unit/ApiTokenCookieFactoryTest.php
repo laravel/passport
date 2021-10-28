@@ -38,7 +38,7 @@ class ApiTokenCookieFactoryTest extends TestCase
 
     public function test_cookie_can_be_successfully_created_when_using_a_custom_encryption_key()
     {
-        Passport::encryptUsing(function(EncrypterContract $encrypter) {
+        Passport::encryptTokenUsing(function(EncrypterContract $encrypter) {
             return $encrypter->getKey() . '.mykey';
         });
 
@@ -58,6 +58,6 @@ class ApiTokenCookieFactoryTest extends TestCase
         $this->assertInstanceOf(Cookie::class, $cookie);
 
         // Revert to the default encryption method
-        Passport::encryptUsing(null);
+        Passport::encryptTokenUsing(null);
     }
 }

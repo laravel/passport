@@ -629,7 +629,7 @@ class Passport
      *
      * @return static
      */
-    public static function encryptUsing($callback)
+    public static function encryptTokenUsing($callback)
     {
         static::$encryptsKeys = $callback;
 

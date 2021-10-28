@@ -232,7 +232,7 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_header_when_using_a_custom_encryption_key()
     {
-        Passport::encryptUsing(function(EncrypterContract $encrypter) {
+        Passport::encryptTokenUsing(function(EncrypterContract $encrypter) {
             return $encrypter->getKey() . '.mykey';
         });
 
@@ -267,7 +267,7 @@ class TokenGuardTest extends TestCase
         $this->assertEquals($expectedUser, $user);
 
         // Revert to the default encryption method
-        Passport::encryptUsing(null);
+        Passport::encryptTokenUsing(null);
     }
 
     public function test_xsrf_token_cookie_without_a_token_header_is_not_accepted()
