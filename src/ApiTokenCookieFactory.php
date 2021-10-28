@@ -77,6 +77,6 @@ class ApiTokenCookieFactory
             'sub' => $userId,
             'csrf' => $csrfToken,
             'expiry' => $expiration->getTimestamp(),
-        ], $this->encrypter->getKey());
+        ], Passport::encryptionKey($this->encrypter));
     }
 }

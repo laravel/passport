@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
+use Illuminate\Contracts\Encryption\Encrypter;
 
 class Passport
 {
@@ -137,6 +138,11 @@ class Passport
      * @var bool
      */
     public static $hashesClientSecrets = false;
+
+    /**
+     * @var callable
+     */
+    public static $encryptsKeys;
 
     /**
      * Indicates the scope should inherit its parent scope.
@@ -614,6 +620,34 @@ class Passport
         static::$hashesClientSecrets = true;
 
         return new static;
+    }
+
+    /**
+     * Make Passport use your own encryption key when encrypting tokens.
+     *
+     * @param callable $callback
+     *
+     * @return static
+     */
+    public static function encryptUsing($callback)
+    {
+        static::$encryptsKeys = $callback;
+
+        return new static;
+    }
+
+    /**
+     * Generates a token encryption key.
+     *
+     * @param \Illuminate\Contracts\Encryption\Encrypter $encrypter
+     *
+     * @return string
+     */
+    public static function encryptionKey(Encrypter $encrypter)
+    {
+        return is_callable(static::$encryptsKeys) ?
+            (static::$encryptsKeys)($encrypter) :
+            $encrypter->getKey();
     }
 
     /**
