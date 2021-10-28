@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
@@ -19,7 +20,6 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
 class TokenGuardTest extends TestCase
 {
@@ -232,8 +232,8 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_header_when_using_a_custom_encryption_key()
     {
-        Passport::encryptTokenUsing(function(EncrypterContract $encrypter) {
-            return $encrypter->getKey() . '.mykey';
+        Passport::encryptTokenUsing(function (EncrypterContract $encrypter) {
+            return $encrypter->getKey().'.mykey';
         });
 
         $resourceServer = m::mock(ResourceServer::class);
@@ -252,11 +252,11 @@ class TokenGuardTest extends TestCase
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
-                    'sub' => 1,
-                    'aud' => 1,
-                    'csrf' => 'token',
-                    'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-                ], Passport::encryptionKey($encrypter)), false)
+                'sub' => 1,
+                'aud' => 1,
+                'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], Passport::encryptionKey($encrypter)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);

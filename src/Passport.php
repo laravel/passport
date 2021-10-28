@@ -5,11 +5,11 @@ namespace Laravel\Passport;
 use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
-use Illuminate\Contracts\Encryption\Encrypter;
 
 class Passport
 {
@@ -625,8 +625,7 @@ class Passport
     /**
      * Make Passport use your own encryption key when encrypting tokens.
      *
-     * @param callable $callback
-     *
+     * @param  callable  $callback
      * @return static
      */
     public static function encryptTokenUsing($callback)
@@ -639,8 +638,7 @@ class Passport
     /**
      * Generates a token encryption key.
      *
-     * @param \Illuminate\Contracts\Encryption\Encrypter $encrypter
-     *
+     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return string
      */
     public static function encryptionKey(Encrypter $encrypter)

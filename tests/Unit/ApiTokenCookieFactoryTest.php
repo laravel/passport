@@ -2,14 +2,14 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Laravel\Passport\Passport;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
+use Laravel\Passport\Passport;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
-use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
 class ApiTokenCookieFactoryTest extends TestCase
 {
@@ -38,8 +38,8 @@ class ApiTokenCookieFactoryTest extends TestCase
 
     public function test_cookie_can_be_successfully_created_when_using_a_custom_encryption_key()
     {
-        Passport::encryptTokenUsing(function(EncrypterContract $encrypter) {
-            return $encrypter->getKey() . '.mykey';
+        Passport::encryptTokenUsing(function (EncrypterContract $encrypter) {
+            return $encrypter->getKey().'.mykey';
         });
 
         $config = m::mock(Repository::class);
