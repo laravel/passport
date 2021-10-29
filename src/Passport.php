@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Facades\Route;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
@@ -161,9 +162,18 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * Indicates if client secrets will be hashed.
+     *
      * @var bool
      */
     public static $hashesClientSecrets = false;
+
+    /**
+     * The callback that should be used to generate JWT encryption keys.
+     *
+     * @var callable
+     */
+    public static $tokenEncryptionKeyCallback;
 
     /**
      * Indicates the scope should inherit its parent scope.
@@ -638,6 +648,32 @@ class Passport
         static::$hashesClientSecrets = true;
 
         return new static;
+    }
+
+    /**
+     * Specify the callback that should be invoked to generate encryption keys for encrypting JWT tokens.
+     *
+     * @param  callable  $callback
+     * @return static
+     */
+    public static function encryptTokensUsing($callback)
+    {
+        static::$tokenEncryptionKeyCallback = $callback;
+
+        return new static;
+    }
+
+    /**
+     * Generate an encryption key for encrypting JWT tokens.
+     *
+     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
+     * @return string
+     */
+    public static function tokenEncryptionKey(Encrypter $encrypter)
+    {
+        return is_callable(static::$tokenEncryptionKeyCallback) ?
+            (static::$tokenEncryptionKeyCallback)($encrypter) :
+            $encrypter->getKey();
     }
 
     /**
