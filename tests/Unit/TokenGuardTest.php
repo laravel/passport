@@ -232,7 +232,7 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_header_when_using_a_custom_encryption_key()
     {
-        Passport::encryptTokenUsing(function (EncrypterContract $encrypter) {
+        Passport::encryptTokensUsing(function (EncrypterContract $encrypter) {
             return $encrypter->getKey().'.mykey';
         });
 
@@ -256,7 +256,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], Passport::encryptionKey($encrypter)), false)
+            ], Passport::tokenEncryptionKey($encrypter)), false)
         );
 
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
@@ -267,7 +267,7 @@ class TokenGuardTest extends TestCase
         $this->assertEquals($expectedUser, $user);
 
         // Revert to the default encryption method
-        Passport::encryptTokenUsing(null);
+        Passport::encryptTokensUsing(null);
     }
 
     public function test_xsrf_token_cookie_without_a_token_header_is_not_accepted()

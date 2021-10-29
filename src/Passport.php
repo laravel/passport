@@ -135,14 +135,18 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * Indicates if client secrets will be hashed.
+     *
      * @var bool
      */
     public static $hashesClientSecrets = false;
 
     /**
+     * The callback that should be used to generate JWT encryption keys.
+     *
      * @var callable
      */
-    public static $encryptsKeys;
+    public static $tokenEncryptionKeyCallback;
 
     /**
      * Indicates the scope should inherit its parent scope.
@@ -623,28 +627,28 @@ class Passport
     }
 
     /**
-     * Make Passport use your own encryption key when encrypting tokens.
+     * Specify the callback that should be invoked to generate encryption keys for encrypting JWT tokens.
      *
      * @param  callable  $callback
      * @return static
      */
-    public static function encryptTokenUsing($callback)
+    public static function encryptTokensUsing($callback)
     {
-        static::$encryptsKeys = $callback;
+        static::$tokenEncryptionKeyCallback = $callback;
 
         return new static;
     }
 
     /**
-     * Generates a token encryption key.
+     * Generate an encryption key for encrypting JWT tokens.
      *
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return string
      */
-    public static function encryptionKey(Encrypter $encrypter)
+    public static function tokenEncryptionKey(Encrypter $encrypter)
     {
-        return is_callable(static::$encryptsKeys) ?
-            (static::$encryptsKeys)($encrypter) :
+        return is_callable(static::$tokenEncryptionKeyCallback) ?
+            (static::$tokenEncryptionKeyCallback)($encrypter) :
             $encrypter->getKey();
     }
 
