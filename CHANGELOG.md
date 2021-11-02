@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.1.4...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.2.0...10.x)
+
+
+## [v10.2.0 (2021-11-02)](https://github.com/laravel/passport/compare/v10.1.4...v10.2.0)
+
+### Added
+- Add custom encryption key for JWT tokens ([#1501](https://github.com/laravel/passport/pull/1501))
+
+### Changed
+- Refactor expiry dates to intervals ([#1500](https://github.com/laravel/passport/pull/1500))
 
 
 ## [v10.1.4 (2021-10-19)](https://github.com/laravel/passport/compare/v10.1.3...v10.1.4)
