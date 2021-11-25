@@ -58,6 +58,40 @@ class TokenGuardTest extends TestCase
         $this->assertEquals($token, $user->token());
     }
 
+    public function test_user_is_resolved_only_once()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
+
+        $request = Request::create('/');
+        $request->headers->set('Authorization', 'Bearer token');
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
+
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
+        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
+        $clients->shouldReceive('revoked')->with(1)->andReturn(false);
+        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+
+        $user = $guard->user();
+
+        $userProvider->shouldReceive('retrieveById')->never();
+
+        $user2 = $guard->user();
+
+        $this->assertInstanceOf(TokenGuardTestUser::class, $user);
+        $this->assertEquals($token, $user->token());
+        $this->assertSame($user, $user2);
+    }
+
     public function test_no_user_is_returned_when_oauth_throws_exception()
     {
         $container = new Container;
@@ -375,6 +409,33 @@ class TokenGuardTest extends TestCase
         $client = $guard->client();
 
         $this->assertInstanceOf(TokenGuardTestClient::class, $client);
+    }
+
+    public function test_client_is_resolved_only_once()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
+
+        $request = Request::create('/');
+        $request->headers->set('Authorization', 'Bearer token');
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
+
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
+        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+
+        $client = $guard->client();
+
+        $clients->shouldReceive('findActive')->never();
+
+        $client2 = $guard->client();
+
+        $this->assertInstanceOf(TokenGuardTestClient::class, $client);
+        $this->assertSame($client, $client2);
     }
 
     public function test_no_client_is_returned_when_oauth_throws_exception()
