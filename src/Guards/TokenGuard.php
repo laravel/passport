@@ -146,6 +146,10 @@ class TokenGuard implements Guard
      */
     public function client()
     {
+        if (! is_null($this->client)) {
+            return $this->client;
+        }
+
         if ($this->request->bearerToken()) {
             if (! $psr = $this->getPsrRequestViaBearerToken($this->request)) {
                 return;
