@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Container\Container;
+use Illuminate\Foundation\Application;
 use Laravel\Passport\Console\KeysCommand;
 use Laravel\Passport\Passport;
 use Mockery as m;
@@ -38,7 +39,13 @@ class KeysCommandTest extends TestCase
             ->with('Encryption keys generated successfully.')
             ->getMock();
 
-        Container::getInstance()->instance('path.storage', self::KEYS);
+        if (version_compare(Application::VERSION, '9.0.0', '>=')) {
+            Container::getInstance()->bindMethod('storagePath', function () {
+                return self::KEYS;
+            });
+        } else {
+            Container::getInstance()->instance('path.storage', self::KEYS);
+        }
 
         $command->handle();
 
