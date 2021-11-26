@@ -39,7 +39,7 @@ class KeysCommandTest extends TestCase
             ->with('Encryption keys generated successfully.')
             ->getMock();
 
-        if (version_compare(Application::VERSION, '9.0.0', '>=')) {
+        if (Application::VERSION === '9.x-dev' || version_compare(Application::VERSION, '9.0.0', '>=')) {
             Container::getInstance()->bindMethod('storagePath', function () {
                 return self::KEYS;
             });
