@@ -4,7 +4,6 @@ namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Auth\RequestGuard;
 use Illuminate\Config\Repository as Config;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -341,19 +340,18 @@ class PassportServiceProvider extends ServiceProvider
      * Make an instance of the token guard.
      *
      * @param  array  $config
-     * @return \Illuminate\Auth\RequestGuard
+     * @return \Laravel\Passport\Guards\TokenGuard
      */
     protected function makeGuard(array $config)
     {
-        return new RequestGuard(function ($request) use ($config) {
-            return (new TokenGuard(
-                $this->app->make(ResourceServer::class),
-                new PassportUserProvider(Auth::createUserProvider($config['provider']), $config['provider']),
-                $this->app->make(TokenRepository::class),
-                $this->app->make(ClientRepository::class),
-                $this->app->make('encrypter')
-            ))->user($request);
-        }, $this->app['request']);
+        return new TokenGuard(
+            $this->app->make(ResourceServer::class),
+            new PassportUserProvider(Auth::createUserProvider($config['provider']), $config['provider']),
+            $this->app->make(TokenRepository::class),
+            $this->app->make(ClientRepository::class),
+            $this->app->make('encrypter'),
+            $this->app->make('request')
+        );
     }
 
     /**
