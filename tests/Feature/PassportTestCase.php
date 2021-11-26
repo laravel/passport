@@ -12,7 +12,7 @@ abstract class PassportTestCase extends TestCase
 {
     use RefreshDatabase;
 
-    const KEYS = __DIR__.'/keys';
+    const KEYS = __DIR__.'/../keys';
     const PUBLIC_KEY = self::KEYS.'/oauth-public.key';
     const PRIVATE_KEY = self::KEYS.'/oauth-private.key';
 
@@ -23,6 +23,8 @@ abstract class PassportTestCase extends TestCase
         $this->artisan('migrate:fresh');
 
         Passport::routes();
+
+        Passport::loadKeysFrom(self::KEYS);
 
         @unlink(self::PUBLIC_KEY);
         @unlink(self::PRIVATE_KEY);
