@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.2.0...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.2.1...10.x)
+
+
+## [v10.2.1 (2021-12-07)](https://github.com/laravel/passport/compare/v10.2.0...v10.2.1)
+
+### Fixed
+- Fix `str_replace` error when third parameter ($subject) is null ([#1511](https://github.com/laravel/passport/pull/1511))
 
 
 ## [v10.2.0 (2021-11-02)](https://github.com/laravel/passport/compare/v10.1.4...v10.2.0)
