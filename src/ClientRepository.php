@@ -106,7 +106,7 @@ class ClientRepository
     /**
      * Get the personal access token client for the application.
      *
-     * @param  int|null $clientId
+     * @param  int|null  $clientId
      * @return \Laravel\Passport\Client
      *
      * @throws \RuntimeException
