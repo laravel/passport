@@ -57,9 +57,9 @@ trait HasApiTokens
     /**
      * Create a new personal access token for the user.
      *
-     * @param  int|null $clientId
-     * @param  string   $name
-     * @param  array    $scopes
+     * @param  int|null  $clientId
+     * @param  string  $name
+     * @param  array  $scopes
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
     public function createToken($name, array $scopes = [], $clientId = null)
