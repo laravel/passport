@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.2.2...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.3.0...10.x)
+
+
+## [v10.3.0 (2022-01-12)](https://github.com/laravel/passport/compare/v10.2.2...v10.3.0)
+
+### Changed
+- Laravel 9 Support ([#1516](https://github.com/laravel/passport/pull/1516))
 
 
 ## [v10.2.2 (2021-12-07)](https://github.com/laravel/passport/compare/v10.2.1...v10.2.2)
