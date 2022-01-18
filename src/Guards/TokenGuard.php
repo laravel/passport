@@ -13,6 +13,7 @@ use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Traits\Macroable;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
@@ -352,5 +353,18 @@ class TokenGuard implements Guard
     public static function serialized()
     {
         return EncryptCookies::serialized('XSRF-TOKEN');
+    }
+
+    /**
+     * Set the client for the current request.
+     *
+     * @param  \Laravel\Passport\Client  $client
+     * @return $this
+     */
+    public function setClient(Client $client)
+    {
+        $this->client = $client;
+
+        return $this;
     }
 }
