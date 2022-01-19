@@ -7,7 +7,6 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use League\OAuth2\Server\ResourceServer;
-use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
 

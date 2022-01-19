@@ -316,7 +316,7 @@ class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenRes
     protected $idToken;
 
     /**
-     * @param string $idToken
+     * @param  string  $idToken
      */
     public function __construct($idToken)
     {
@@ -329,7 +329,7 @@ class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenRes
     protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken)
     {
         return [
-            'id_token' => $this->idToken
+            'id_token' => $this->idToken,
         ];
     }
 }
