@@ -7,6 +7,7 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use League\OAuth2\Server\ResourceServer;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -34,6 +35,13 @@ class Passport
     public static $scopes = [
         //
     ];
+
+    /**
+     * The authorization server response formatter.
+     *
+     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
+     */
+    public static $authorizationServerResponseType = null;
 
     /**
      * The date when access tokens expire.
