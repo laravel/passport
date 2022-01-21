@@ -37,13 +37,6 @@ class Passport
     ];
 
     /**
-     * The authorization server response formatter.
-     *
-     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
-     */
-    public static $authorizationServerResponseType;
-
-    /**
      * The date when access tokens expire.
      *
      * @var \DateTimeInterface|null
@@ -188,6 +181,13 @@ class Passport
      * @var bool
      */
     public static $withInheritedScopes = false;
+
+    /**
+     * The authorization server response type.
+     *
+     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
+     */
+    public static $authorizationServerResponseType;
 
     /**
      * Enable the implicit grant type.
