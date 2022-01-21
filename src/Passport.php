@@ -183,6 +183,13 @@ class Passport
     public static $withInheritedScopes = false;
 
     /**
+     * The authorization server response type.
+     *
+     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
+     */
+    public static $authorizationServerResponseType;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
