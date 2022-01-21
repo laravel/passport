@@ -37,6 +37,13 @@ class Passport
     ];
 
     /**
+     * The authorization server response formatter.
+     *
+     * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
+     */
+    public static $authorizationServerResponseType = null;
+
+    /**
      * The date when access tokens expire.
      *
      * @var \DateTimeInterface|null
