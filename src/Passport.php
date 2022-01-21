@@ -41,7 +41,7 @@ class Passport
      *
      * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
      */
-    public static $authorizationServerResponseType = null;
+    public static $authorizationServerResponseType;
 
     /**
      * The date when access tokens expire.
