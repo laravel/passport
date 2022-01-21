@@ -381,7 +381,7 @@ class Passport
      *
      * @param  \Laravel\Passport\Client  $client
      * @param  array  $scopes
-     * @param  string $guard
+     * @param  string  $guard
      * @return \Laravel\Passport\Client
      */
     public static function actingAsClient($client, $scopes = [], $guard = 'api')

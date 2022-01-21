@@ -7,7 +7,6 @@ use Laravel\Passport\Client;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 use Laravel\Passport\Passport;
-use Orchestra\Testbench\TestCase;
 
 class ActingAsClientTest extends PassportTestCase
 {
