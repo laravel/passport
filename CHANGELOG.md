@@ -1,6 +1,18 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.2.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.3.0...master)
+
+
+## [v10.3.0 (2022-01-12)](https://github.com/laravel/passport/compare/v10.2.2...v10.3.0)
+
+### Changed
+- Laravel 9 Support ([#1516](https://github.com/laravel/passport/pull/1516))
+
+
+## [v10.2.2 (2021-12-07)](https://github.com/laravel/passport/compare/v10.2.1...v10.2.2)
+
+### Fixed
+- Fix jsonSerialize PHP 8.1 issue ([#1512](https://github.com/laravel/passport/pull/1512))
 
 
 ## [v10.2.1 (2021-12-07)](https://github.com/laravel/passport/compare/v10.2.0...v10.2.1)
