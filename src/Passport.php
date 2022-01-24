@@ -388,9 +388,10 @@ class Passport
      *
      * @param  \Laravel\Passport\Client  $client
      * @param  array  $scopes
+     * @param  string  $guard
      * @return \Laravel\Passport\Client
      */
-    public static function actingAsClient($client, $scopes = [])
+    public static function actingAsClient($client, $scopes = [], $guard = 'api')
     {
         $token = app(self::tokenModel());
 
@@ -413,6 +414,10 @@ class Passport
         $mock->shouldReceive('find')->andReturn($token);
 
         app()->instance(TokenRepository::class, $mock);
+
+        app('auth')->guard($guard)->setClient($client);
+
+        app('auth')->shouldUse($guard);
 
         return $client;
     }
