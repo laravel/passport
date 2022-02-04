@@ -16,7 +16,7 @@ Laravel 8.0 is now the minimum required version.
 
 PR: https://github.com/laravel/passport/pull/1325
 
-The personal client configuration methods have been removed from the `Passport` class since they are no longer necessary. You should remove calls to these methods from your `AuthServiceProvider`.
+The personal client configuration methods have been removed from the `Passport` class since they are no longer necessary. You should remove any calls to these methods from your application's service providers.
 
 ## Upgrading To 9.0 From 8.x
 
