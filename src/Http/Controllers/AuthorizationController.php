@@ -105,7 +105,7 @@ class AuthorizationController
      * Approve the authorization request.
      *
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
-     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Jenssegers\Mongodb\Eloquent\Model  $user
      * @return \Illuminate\Http\Response
      */
     protected function approveRequest($authRequest, $user)

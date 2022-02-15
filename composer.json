@@ -1,5 +1,5 @@
 {
-    "name": "laravel/passport",
+    "name": "laravel/passport-mybos",
     "description": "Laravel Passport provides OAuth2 server support to Laravel.",
     "keywords": ["laravel", "passport", "oauth"],
     "license": "MIT",
