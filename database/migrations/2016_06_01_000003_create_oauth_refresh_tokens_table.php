@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOauthRefreshTokensTable extends Migration
+return new class extends Migration
 {
     /**
      * The database schema.
@@ -57,4 +57,4 @@ class CreateOauthRefreshTokensTable extends Migration
     {
         return config('passport.storage.database.connection');
     }
-}
+};
