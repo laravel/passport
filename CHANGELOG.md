@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.3.2...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.3.3...10.x)
+
+## [v10.3.3](https://github.com/laravel/passport/compare/v10.3.2...v10.3.3) - 2022-03-08
+
+### Changed
+
+- Use anonymous migrations by @mmachatschek in https://github.com/laravel/passport/pull/1531
 
 ## [v10.3.2](https://github.com/laravel/passport/compare/v10.3.1...v10.3.2) - 2022-02-22
 
