@@ -2,16 +2,16 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Laravel\Passport\Bridge\User;
-use Laravel\Passport\ClientRepository;
+use Illuminate\Http\Request;
 use Laravel\Passport\Passport;
+use Laravel\Passport\Bridge\User;
 use Laravel\Passport\TokenRepository;
-use League\OAuth2\Server\AuthorizationServer;
+use Laravel\Passport\ClientRepository;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
+use League\OAuth2\Server\AuthorizationServer;
+use Illuminate\Contracts\Routing\ResponseFactory;
 
 class AuthorizationController
 {
@@ -53,10 +53,11 @@ class AuthorizationController
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return \Illuminate\Http\Response
      */
-    public function authorize(ServerRequestInterface $psrRequest,
-                              Request $request,
-                              ClientRepository $clients,
-                              TokenRepository $tokens)
+    public function authorize(
+        ServerRequestInterface $psrRequest,
+        Request $request,
+        ClientRepository $clients,
+        TokenRepository $tokens)
     {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
@@ -64,16 +65,31 @@ class AuthorizationController
 
         $scopes = $this->parseScopes($authRequest);
 
-        $token = $tokens->findValidToken(
-            $user = $request->user(),
-            $client = $clients->find($authRequest->getClient()->getIdentifier())
-        );
+        $client = $clients->find($authRequest->getClient()->getIdentifier());
+
+        if(!is_null($request->user())){
+            $token = $tokens->findValidToken(
+                $user = $request->user(),
+                $client
+            );
+        } else {
+            $user = null;
+            $tokenId = Str::random(100);
+            while(!is_null($tokens->find($tokenId))){
+                $tokenId = Str::random(100);
+            }
+            $token = $tokens->create([
+                'id' => $tokenId,
+                'scopes' => $scopes,
+                'client_id' => $client->id,
+                'revoked' => false
+            ]);
+        }
 
         if (($token && $token->scopes === collect($scopes)->pluck('id')->all()) ||
             $client->skipsAuthorization()) {
             return $this->approveRequest($authRequest, $user);
         }
-
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('authRequest', $authRequest);
 
@@ -110,7 +126,9 @@ class AuthorizationController
      */
     protected function approveRequest($authRequest, $user)
     {
-        $authRequest->setUser(new User($user->getAuthIdentifier()));
+        if(!is_null($user)){
+            $authRequest->setUser(new User($user->getAuthIdentifier()));
+        }
 
         $authRequest->setAuthorizationApproved(true);
 
