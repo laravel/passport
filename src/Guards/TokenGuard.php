@@ -4,6 +4,7 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -269,8 +270,7 @@ class TokenGuard
     {
         return (array) JWT::decode(
             CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
-            Passport::tokenEncryptionKey($this->encrypter),
-            ['HS256']
+            new Key(Passport::tokenEncryptionKey($this->encrypter), 'HS256')
         );
     }
 
