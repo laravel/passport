@@ -13,6 +13,12 @@
             "email": "taylor@laravel.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/JamieSTV/oauth2-server.git"
+        }
+    ],
     "require": {
         "php": "^7.3|^8.0",
         "ext-json": "*",
@@ -27,7 +33,7 @@
         "illuminate/http": "^8.37|^9.0",
         "illuminate/support": "^8.37|^9.0",
         "lcobucci/jwt": "^3.4|^4.0",
-        "league/oauth2-server": "^8.2",
+        "league/oauth2-server": "dev-guest-auth",
         "nyholm/psr7": "^1.3",
         "phpseclib/phpseclib": "^2.0|^3.0",
         "symfony/psr-http-message-bridge": "^2.0"
