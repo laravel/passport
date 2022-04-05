@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.3.3...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.4.0...10.x)
+
+## [v10.4.0](https://github.com/laravel/passport/compare/v10.3.3...v10.4.0) - 2022-03-30
+
+### Changed
+
+- Upgrade firebase/php-jwt to ^6.0 by @prufrock in https://github.com/laravel/passport/pull/1538
 
 ## [v10.3.3](https://github.com/laravel/passport/compare/v10.3.2...v10.3.3) - 2022-03-08
 
