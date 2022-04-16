@@ -4,7 +4,6 @@ namespace Laravel\Passport\Http\Rules;
 
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Rule;
-use Laravel\Passport\Http\Rules\UriRule;
 
 class RedirectRule implements Rule
 {
