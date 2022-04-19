@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.4.0...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.4.1...10.x)
+
+## [v10.4.1](https://github.com/laravel/passport/compare/v10.4.0...v10.4.1) - 2022-04-16
+
+### Changed
+
+- Add new URI Rule to validate URI and use it to RedirectRule. by @victorbalssa in https://github.com/laravel/passport/pull/1544
 
 ## [v10.4.0](https://github.com/laravel/passport/compare/v10.3.3...v10.4.0) - 2022-03-30
 
