@@ -48,7 +48,7 @@ class RouteRegistrar
 
         $this->router->get('/authorize/guest', [
             'uses' => 'AuthorizationController@authorize',
-            'as' => 'passport.authorizations.authorize',
+            'as' => 'passport.authorizations.authorizeGuest',
         ]);
 
         $this->router->group(['middleware' => ['web', 'auth']], function ($router) {
