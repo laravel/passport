@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Route;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope;
 use Laravel\Passport\Http\Middleware\CheckScopes;
@@ -59,6 +60,40 @@ class ActingAsTest extends PassportTestCase
         })->middleware(CheckForAnyScope::class.':admin,footest');
 
         Passport::actingAs(new PassportUser(), ['footest']);
+
+        $response = $this->get('/foo');
+        $response->assertSuccessful();
+        $response->assertSee('bar');
+    }
+
+    public function testActingAsWhenTheRouteIsProtectedByCheckScopesMiddlewareWithInheritance()
+    {
+        Passport::$withInheritedScopes = true;
+
+        $this->withoutExceptionHandling();
+
+        Route::middleware(CheckScopes::class.':foo:bar,baz:qux')->get('/foo', function () {
+            return 'bar';
+        });
+
+        Passport::actingAs(new PassportUser(), ['foo', 'baz']);
+
+        $response = $this->get('/foo');
+        $response->assertSuccessful();
+        $response->assertSee('bar');
+    }
+
+    public function testActingAsWhenTheRouteIsProtectedByCheckForAnyScopeMiddlewareWithInheritance()
+    {
+        Passport::$withInheritedScopes = true;
+
+        $this->withoutExceptionHandling();
+
+        Route::middleware(CheckForAnyScope::class.':foo:baz,baz:qux')->get('/foo', function () {
+            return 'bar';
+        });
+
+        Passport::actingAs(new PassportUser(), ['foo']);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
