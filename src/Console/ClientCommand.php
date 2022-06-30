@@ -168,6 +168,6 @@ class ClientCommand extends Command
         }
 
         $this->line('<comment>Client ID:</comment> '.$client->id);
-        $this->line('<comment>Client secret:</comment> '.$client->plainSecret);
+        $this->line('<comment>Client secret:</comment> '.$client->getPlainSecretAttribute());
     }
 }
