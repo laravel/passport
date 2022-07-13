@@ -365,6 +365,7 @@ class Passport
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
         $token = app(self::tokenModel());
+
         $token->scopes = $scopes;
 
         $user->withAccessToken($token);
