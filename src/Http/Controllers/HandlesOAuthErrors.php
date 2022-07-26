@@ -13,7 +13,7 @@ trait HandlesOAuthErrors
     /**
      * Perform the given callback with exception handling.
      *
-     * @param  \Closure  $callback
+     * @param \Closure $callback
      * @return mixed
      *
      * @throws \Laravel\Passport\Exceptions\OAuthServerException

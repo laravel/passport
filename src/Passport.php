@@ -148,6 +148,16 @@ class Passport
     public static $refreshTokenModel = 'Laravel\Passport\RefreshToken';
 
     /**
+     * The device code model class name
+     */
+    public static $deviceCodeModel = 'Laravel\Passport\DeviceCode';
+
+    /**
+     * The device code verification uri
+     */
+    public static $deviceCodeVerificationUri = '/pair';
+
+    /**
      * Indicates if Passport migrations will be run.
      *
      * @var bool
@@ -681,6 +691,37 @@ class Passport
         return is_callable(static::$tokenEncryptionKeyCallback) ?
             (static::$tokenEncryptionKeyCallback)($encrypter) :
             $encrypter->getKey();
+    }
+
+    /**
+     * Set the device code model class name.
+     *
+     * @param string $deviceCodeModel
+     * @return void
+     */
+    public static function useDeviceCodeModel($deviceCodeModel)
+    {
+        static::$deviceCodeModel = $deviceCodeModel;
+    }
+
+    /**
+     * Get the device code model class name.
+     *
+     * @return string
+     */
+    public static function deviceCodeModel()
+    {
+        return static::$deviceCodeModel;
+    }
+
+    /**
+     * Get a new device code model instance.
+     *
+     * @return \Laravel\Passport\DeviceCode
+     */
+    public static function deviceCode()
+    {
+        return new static::$deviceCodeModel;
     }
 
     /**

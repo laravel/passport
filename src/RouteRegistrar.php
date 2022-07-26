@@ -36,6 +36,7 @@ class RouteRegistrar
         $this->forTransientTokens();
         $this->forClients();
         $this->forPersonalAccessTokens();
+        $this->forDeviceAuthorization();
     }
 
     /**
@@ -161,5 +162,19 @@ class RouteRegistrar
                 'as' => 'passport.personal.tokens.destroy',
             ]);
         });
+    }
+
+    /**
+     * Register the routes for issuing device codes
+     *
+     * @return void
+     */
+    public function forDeviceAuthorization()
+    {
+        $this->router->post('/device_authorization', [
+            'uses' => 'DeviceAuthorizationController@authorize',
+            'as' => 'passport.authorizations.authorize_device',
+            'middleware' => 'throttle',
+        ]);
     }
 }

@@ -29,6 +29,7 @@ class Client implements ClientEntityInterface
      * @param  string  $identifier
      * @param  string  $name
      * @param  string  $redirectUri
+     * @param  string|null  $provider
      * @param  bool  $isConfidential
      * @param  string|null  $provider
      * @return void

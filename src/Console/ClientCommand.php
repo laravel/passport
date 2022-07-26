@@ -22,7 +22,8 @@ class ClientCommand extends Command
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
             {--user_id= : The user ID the client should be assigned to }
-            {--public : Create a public client (Auth code grant type only) }';
+            {--public : Create a public client (Auth code grant type only) }
+            {--device : Create a device code grant client}';
 
     /**
      * The console command description.
@@ -45,6 +46,8 @@ class ClientCommand extends Command
             $this->createPasswordClient($clients);
         } elseif ($this->option('client')) {
             $this->createClientCredentialsClient($clients);
+        } elseif ($this->option('device')) {
+            $this->createDeviceCodeClient($clients);
         } else {
             $this->createAuthCodeClient($clients);
         }
@@ -60,7 +63,7 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the personal access client?',
-            config('app.name').' Personal Access Client'
+            config('app.name') . ' Personal Access Client'
         );
 
         $client = $clients->createPersonalAccessClient(
@@ -82,7 +85,15 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the password grant client?',
-            config('app.name').' Password Grant Client'
+            config('app.name') . ' Password Grant Client'
+        );
+
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
         );
 
         $providers = array_keys(config('auth.providers'));
@@ -112,7 +123,7 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the client?',
-            config('app.name').' ClientCredentials Grant Client'
+            config('app.name') . ' ClientCredentials Grant Client'
         );
 
         $client = $clients->create(
@@ -150,6 +161,36 @@ class ClientCommand extends Command
         );
 
         $this->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
+     * Create a new password grant client.
+     *
+     * @param \Laravel\Passport\ClientRepository $clients
+     * @return void
+     */
+    protected function createDeviceCodeClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the device code grant client?',
+            config('app.name') . ' Device Code Grant Client'
+        );
+
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
+
+        $client = $clients->createDeviceCodeGrantClient(
+            null, $name, '', $provider,
+        );
+
+        $this->info('Device code grant client created successfully.');
 
         $this->outputClientDetails($client);
     }
