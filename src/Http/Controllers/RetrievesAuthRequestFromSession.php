@@ -12,7 +12,7 @@ trait RetrievesAuthRequestFromSession
     /**
      * Make sure the auth token matches the one in the session.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\InvalidAuthTokenException
@@ -29,7 +29,7 @@ trait RetrievesAuthRequestFromSession
     /**
      * Get the authorization request from the session.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest
      *
      * @throws \Exception
@@ -37,7 +37,7 @@ trait RetrievesAuthRequestFromSession
     protected function getAuthRequestFromSession(Request $request)
     {
         return tap($request->session()->get('authRequest'), function ($authRequest) use ($request) {
-            if (!$authRequest) {
+            if (! $authRequest) {
                 throw new Exception('Authorization request was not present in the session.');
             }
 

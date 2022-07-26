@@ -1,7 +1,10 @@
 ---
 name: "Bug report"
-about: 'Report a general library issue. Please ensure your version is still supported: https://laravel.com/docs/releases#support-policy'
+about: "Report something that's broken. Please ensure your Laravel version is still supported: https://laravel.com/docs/releases#support-policy"
 ---
+
+<!-- DO NOT THROW THIS AWAY -->
+<!-- Fill out the FULL versions with patch versions -->
 
 - Passport Version: #.#.#
 - Laravel Version: #.#.#
@@ -12,3 +15,6 @@ about: 'Report a general library issue. Please ensure your version is still supp
 
 
 ### Steps To Reproduce:
+
+<!-- If possible, please provide a GitHub repository to demonstrate your issue -->
+<!-- laravel new bug-report --github="--public" -->

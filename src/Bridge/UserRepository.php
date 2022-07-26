@@ -19,7 +19,7 @@ class UserRepository implements UserRepositoryInterface
     /**
      * Create a new repository instance.
      *
-     * @param \Illuminate\Contracts\Hashing\Hasher  $hasher
+     * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
      * @return void
      */
     public function __construct(Hasher $hasher)
@@ -34,14 +34,14 @@ class UserRepository implements UserRepositoryInterface
     {
         $provider = $clientEntity->provider ?: config('auth.guards.api.provider');
 
-        if (is_null($model = config('auth.providers.'. $provider .'.model'))) {
+        if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
             throw new RuntimeException('Unable to determine authentication model from configuration.');
         }
 
         if (method_exists($model, 'findAndValidateForPassport')) {
             $user = (new $model)->findAndValidateForPassport($username, $password);
 
-            if (!$user) {
+            if (! $user) {
                 return;
             }
 

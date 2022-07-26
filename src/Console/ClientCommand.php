@@ -5,6 +5,7 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Passport;
 
 class ClientCommand extends Command
 {
@@ -95,6 +96,14 @@ class ClientCommand extends Command
             in_array('users', $providers) ? 'users' : null
         );
 
+        $providers = array_keys(config('auth.providers'));
+
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
+
         $client = $clients->createPasswordGrantClient(
             null, $name, 'http://localhost', $provider
         );
@@ -148,7 +157,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->create(
-            $userId, $name, $redirect, null, false, false, !$this->option('public')
+            $userId, $name, $redirect, null, false, false, ! $this->option('public')
         );
 
         $this->info('New client created successfully.');
@@ -199,7 +208,7 @@ class ClientCommand extends Command
             $this->line('');
         }
 
-        $this->line('<comment>Client ID:</comment> ' . $client->id);
-        $this->line('<comment>Client secret:</comment> ' . $client->plainSecret);
+        $this->line('<comment>Client ID:</comment> '.$client->id);
+        $this->line('<comment>Client secret:</comment> '.$client->plainSecret);
     }
 }

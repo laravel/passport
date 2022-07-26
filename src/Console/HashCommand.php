@@ -28,7 +28,7 @@ class HashCommand extends Command
      */
     public function handle()
     {
-        if (!Passport::$hashesClientSecrets) {
+        if (! Passport::$hashesClientSecrets) {
             $this->warn('Please enable client hashing yet in your AppServiceProvider before continuing.');
 
             return;

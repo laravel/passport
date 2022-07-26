@@ -35,9 +35,9 @@ class ClientController
     /**
      * Create a client controller instance.
      *
-     * @param \Laravel\Passport\ClientRepository $clients
-     * @param \Illuminate\Contracts\Validation\Factory $validation
-     * @param \Laravel\Passport\Http\Rules\RedirectRule $redirectRule
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Illuminate\Contracts\Validation\Factory  $validation
+     * @param  \Laravel\Passport\Http\Rules\RedirectRule  $redirectRule
      * @return void
      */
     public function __construct(
@@ -53,7 +53,7 @@ class ClientController
     /**
      * Get all of the clients for the authenticated user.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function forUser(Request $request)
@@ -72,7 +72,7 @@ class ClientController
     /**
      * Store a new client.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Laravel\Passport\Client|array
      */
     public function store(Request $request)
@@ -85,7 +85,7 @@ class ClientController
 
         $client = $this->clients->create(
             $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
-            null, false, false, (bool)$request->input('confidential', true)
+            null, false, false, (bool) $request->input('confidential', true)
         );
 
         if (Passport::$hashesClientSecrets) {
@@ -98,15 +98,15 @@ class ClientController
     /**
      * Update the given client.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string $clientId
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $clientId
      * @return \Illuminate\Http\Response|\Laravel\Passport\Client
      */
     public function update(Request $request, $clientId)
     {
         $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
 
-        if (!$client) {
+        if (! $client) {
             return new Response('', 404);
         }
 
@@ -123,15 +123,15 @@ class ClientController
     /**
      * Delete the given client.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string $clientId
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $clientId
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, $clientId)
     {
         $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
 
-        if (!$client) {
+        if (! $client) {
             return new Response('', 404);
         }
 

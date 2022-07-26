@@ -43,18 +43,17 @@ class PersonalAccessTokenFactory
     /**
      * Create a new personal access token factory instance.
      *
-     * @param \League\OAuth2\Server\AuthorizationServer $server
-     * @param \Laravel\Passport\ClientRepository $clients
-     * @param \Laravel\Passport\TokenRepository $tokens
-     * @param \Lcobucci\JWT\Parser $jwt
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
-    public function __construct(
-        AuthorizationServer $server,
-        ClientRepository $clients,
-        TokenRepository $tokens,
-        JwtParser $jwt
-    ) {
+    public function __construct(AuthorizationServer $server,
+                                ClientRepository $clients,
+                                TokenRepository $tokens,
+                                JwtParser $jwt)
+    {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
@@ -64,9 +63,9 @@ class PersonalAccessTokenFactory
     /**
      * Create a new personal access token.
      *
-     * @param mixed $userId
-     * @param string $name
-     * @param array $scopes
+     * @param  mixed  $userId
+     * @param  string  $name
+     * @param  array  $scopes
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
     public function make($userId, $name, array $scopes = [])
@@ -90,9 +89,9 @@ class PersonalAccessTokenFactory
     /**
      * Create a request instance for the given client.
      *
-     * @param \Laravel\Passport\Client $client
-     * @param mixed $userId
-     * @param array $scopes
+     * @param  \Laravel\Passport\Client  $client
+     * @param  mixed  $userId
+     * @param  array  $scopes
      * @return \Psr\Http\Message\ServerRequestInterface
      */
     protected function createRequest($client, $userId, array $scopes)
@@ -111,7 +110,7 @@ class PersonalAccessTokenFactory
     /**
      * Dispatch the given request to the authorization server.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param  \Psr\Http\Message\ServerRequestInterface  $request
      * @return array
      */
     protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request)
@@ -124,7 +123,7 @@ class PersonalAccessTokenFactory
     /**
      * Get the access token instance for the parsed response.
      *
-     * @param array $response
+     * @param  array  $response
      * @return \Laravel\Passport\Token
      */
     protected function findAccessToken(array $response)

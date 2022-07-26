@@ -46,6 +46,9 @@ class ClientRepository implements ClientRepositoryInterface
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function validateClient($clientIdentifier, $clientSecret, $grantType)
     {
         // First, we will verify that the client exists and is authorized to create personal
@@ -57,7 +60,7 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        return !$record->confidential() || $this->verifySecret((string)$clientSecret, $record->secret);
+        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret);
     }
 
     /**
@@ -82,8 +85,6 @@ class ClientRepository implements ClientRepositoryInterface
                 return $record->password_client;
             case 'client_credentials':
                 return $record->confidential();
-            case 'device_code':
-                return $record->device_client;
             default:
                 return true;
         }
@@ -92,14 +93,14 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * Verify the client secret is valid.
      *
-     * @param string $clientSecret
-     * @param string $storedHash
+     * @param  string  $clientSecret
+     * @param  string  $storedHash
      * @return bool
      */
     protected function verifySecret($clientSecret, $storedHash)
     {
         return Passport::$hashesClientSecrets
-            ? password_verify($clientSecret, $storedHash)
-            : hash_equals($storedHash, $clientSecret);
+                    ? password_verify($clientSecret, $storedHash)
+                    : hash_equals($storedHash, $clientSecret);
     }
 }

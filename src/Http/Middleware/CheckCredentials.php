@@ -29,8 +29,8 @@ abstract class CheckCredentials
     /**
      * Create a new middleware instance.
      *
-     * @param \League\OAuth2\Server\ResourceServer $server
-     * @param \Laravel\Passport\TokenRepository $repository
+     * @param  \League\OAuth2\Server\ResourceServer  $server
+     * @param  \Laravel\Passport\TokenRepository  $repository
      * @return void
      */
     public function __construct(ResourceServer $server, TokenRepository $repository)
@@ -42,9 +42,9 @@ abstract class CheckCredentials
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @param mixed ...$scopes
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @param  mixed  ...$scopes
      * @return mixed
      *
      * @throws \Illuminate\Auth\AuthenticationException
@@ -72,8 +72,8 @@ abstract class CheckCredentials
     /**
      * Validate the scopes and token on the incoming request.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $psr
-     * @param array $scopes
+     * @param  \Psr\Http\Message\ServerRequestInterface  $psr
+     * @param  array  $scopes
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException|\Illuminate\Auth\AuthenticationException
@@ -90,7 +90,7 @@ abstract class CheckCredentials
     /**
      * Validate token credentials.
      *
-     * @param \Laravel\Passport\Token $token
+     * @param  \Laravel\Passport\Token  $token
      * @return void
      *
      * @throws \Illuminate\Auth\AuthenticationException
@@ -100,8 +100,8 @@ abstract class CheckCredentials
     /**
      * Validate token scopes.
      *
-     * @param \Laravel\Passport\Token $token
-     * @param array $scopes
+     * @param  \Laravel\Passport\Token  $token
+     * @param  array  $scopes
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException

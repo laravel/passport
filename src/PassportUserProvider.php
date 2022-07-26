@@ -24,8 +24,8 @@ class PassportUserProvider implements UserProvider
     /**
      * Create a new passport user provider.
      *
-     * @param \Illuminate\Contracts\Auth\UserProvider $provider
-     * @param string $providerName
+     * @param  \Illuminate\Contracts\Auth\UserProvider  $provider
+     * @param  string  $providerName
      * @return void
      */
     public function __construct(UserProvider $provider, $providerName)

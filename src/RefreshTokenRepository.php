@@ -7,7 +7,7 @@ class RefreshTokenRepository
     /**
      * Creates a new refresh token.
      *
-     * @param array $attributes
+     * @param  array  $attributes
      * @return \Laravel\Passport\RefreshToken
      */
     public function create($attributes)
@@ -18,7 +18,7 @@ class RefreshTokenRepository
     /**
      * Gets a refresh token by the given ID.
      *
-     * @param string $id
+     * @param  string  $id
      * @return \Laravel\Passport\RefreshToken
      */
     public function find($id)
@@ -29,7 +29,7 @@ class RefreshTokenRepository
     /**
      * Stores the given token instance.
      *
-     * @param \Laravel\Passport\RefreshToken $token
+     * @param  \Laravel\Passport\RefreshToken  $token
      * @return void
      */
     public function save(RefreshToken $token)
@@ -40,7 +40,7 @@ class RefreshTokenRepository
     /**
      * Revokes the refresh token.
      *
-     * @param string $id
+     * @param  string  $id
      * @return mixed
      */
     public function revokeRefreshToken($id)
@@ -51,7 +51,7 @@ class RefreshTokenRepository
     /**
      * Revokes refresh tokens by access token id.
      *
-     * @param string $tokenId
+     * @param  string  $tokenId
      * @return void
      */
     public function revokeRefreshTokensByAccessTokenId($tokenId)
@@ -62,7 +62,7 @@ class RefreshTokenRepository
     /**
      * Checks if the refresh token has been revoked.
      *
-     * @param string $id
+     * @param  string  $id
      * @return bool
      */
     public function isRefreshTokenRevoked($id)

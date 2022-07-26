@@ -32,7 +32,7 @@ class PurgeCommand extends Command
         $expired = Carbon::now()->subDays(7);
 
         if (($this->option('revoked') && $this->option('expired')) ||
-            (!$this->option('revoked') && !$this->option('expired'))) {
+            (! $this->option('revoked') && ! $this->option('expired'))) {
             Passport::token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();

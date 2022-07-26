@@ -24,8 +24,8 @@ class ClientRepository
     /**
      * Create a new client repository.
      *
-     * @param int|string|null $personalAccessClientId
-     * @param string|null $personalAccessClientSecret
+     * @param  int|string|null  $personalAccessClientId
+     * @param  string|null  $personalAccessClientSecret
      * @return void
      */
     public function __construct($personalAccessClientId = null, $personalAccessClientSecret = null)
@@ -131,7 +131,7 @@ class ClientRepository
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
-     * @param string|null $provider
+     * @param  string|null  $provider
      * @param  bool  $personalAccess
      * @param  bool  $password
      * @param  bool  $device
@@ -205,7 +205,7 @@ class ClientRepository
     /**
      * Update the given client.
      *
-     * @param  Client  $client
+     * @param  \Laravel\Passport\Client  $client
      * @param  string  $name
      * @param  string  $redirect
      * @return \Laravel\Passport\Client

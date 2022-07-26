@@ -79,7 +79,7 @@ class Token extends Model
     {
         $provider = config('auth.guards.api.provider');
 
-        $model = config('auth.providers.' . $provider . '.model');
+        $model = config('auth.providers.'.$provider.'.model');
 
         return $this->belongsTo($model, 'user_id', (new $model)->getKeyName());
     }
@@ -87,7 +87,7 @@ class Token extends Model
     /**
      * Determine if the token has a given scope.
      *
-     * @param string $scope
+     * @param  string  $scope
      * @return bool
      */
     public function can($scope)
@@ -112,7 +112,7 @@ class Token extends Model
     /**
      * Resolve all possible scopes.
      *
-     * @param string $scope
+     * @param  string  $scope
      * @return array
      */
     protected function resolveInheritedScopes($scope)
@@ -133,12 +133,12 @@ class Token extends Model
     /**
      * Determine if the token is missing a given scope.
      *
-     * @param string $scope
+     * @param  string  $scope
      * @return bool
      */
     public function cant($scope)
     {
-        return !$this->can($scope);
+        return ! $this->can($scope);
     }
 
     /**

@@ -14,6 +14,7 @@ class CheckForAnyScope
      * @param  \Closure  $next
      * @param  mixed  ...$scopes
      * @return \Illuminate\Http\Response
+     *
      * @throws \Illuminate\Auth\AuthenticationException|\Laravel\Passport\Exceptions\MissingScopeException
      */
     public function handle($request, $next, ...$scopes)

@@ -4,10 +4,13 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
 {
     use HasFactory;
+
     /**
      * The database table used by the model.
      *
@@ -61,7 +64,7 @@ class Client extends Model
 
         static::creating(function ($model) {
             if (config('passport.client_uuids')) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string)Str::orderedUuid();
+                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
             }
         });
     }
@@ -115,14 +118,14 @@ class Client extends Model
     /**
      * Set the value of the secret attribute.
      *
-     * @param string|null $value
+     * @param  string|null  $value
      * @return void
      */
     public function setSecretAttribute($value)
     {
         $this->plainSecret = $value;
 
-        if (is_null($value) || !Passport::$hashesClientSecrets) {
+        if (is_null($value) || ! Passport::$hashesClientSecrets) {
             $this->attributes['secret'] = $value;
 
             return;

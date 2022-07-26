@@ -17,7 +17,9 @@ class Client implements ClientEntityInterface
     protected $identifier;
 
     /**
-     * @var string|null
+     * The client's provider.
+     *
+     * @var string
      */
     public $provider;
 
@@ -29,6 +31,7 @@ class Client implements ClientEntityInterface
      * @param  string  $redirectUri
      * @param  string|null  $provider
      * @param  bool  $isConfidential
+     * @param  string|null  $provider
      * @return void
      */
     public function __construct($identifier, $name, $redirectUri, $isConfidential = false, $provider = null)
@@ -55,6 +58,7 @@ class Client implements ClientEntityInterface
      * Set the client's identifier.
      *
      * @param  string  $identifier
+     * @return void
      */
     public function setIdentifier($identifier)
     {

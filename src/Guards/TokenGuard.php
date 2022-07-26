@@ -4,7 +4,7 @@ namespace Laravel\Passport\Guards;
 
 use Exception;
 use Firebase\JWT\JWT;
-use Illuminate\Auth\AuthManager;
+use Firebase\JWT\Key;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -62,18 +62,19 @@ class TokenGuard
      * Create a new token guard instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param \Laravel\Passport\PassportUserProvider  $provider
+     * @param  \Laravel\Passport\PassportUserProvider  $provider
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @return void
      */
-    public function __construct(ResourceServer $server,
-                                PassportUserProvider $provider,
-                                TokenRepository $tokens,
-                                ClientRepository $clients,
-                                Encrypter $encrypter)
-    {
+    public function __construct(
+        ResourceServer $server,
+        PassportUserProvider $provider,
+        TokenRepository $tokens,
+        ClientRepository $clients,
+        Encrypter $encrypter
+    ) {
         $this->server = $server;
         $this->tokens = $tokens;
         $this->clients = $clients;
@@ -84,14 +85,14 @@ class TokenGuard
     /**
      * Determine if the requested provider matches the client's provider.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
     protected function hasValidProvider(Request $request)
     {
         $client = $this->client($request);
 
-        if ($client && !$client->provider) {
+        if ($client && ! $client->provider) {
             return true;
         }
 
@@ -144,11 +145,11 @@ class TokenGuard
      */
     protected function authenticateViaBearerToken($request)
     {
-        if (!$psr = $this->getPsrRequestViaBearerToken($request)) {
+        if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
             return;
         }
 
-        if (!$this->hasValidProvider($request)) {
+        if (! $this->hasValidProvider($request)) {
             return;
         }
 
@@ -159,7 +160,7 @@ class TokenGuard
             $psr->getAttribute('oauth_user_id') ?: null
         );
 
-        if (!$user) {
+        if (! $user) {
             return;
         }
 
@@ -219,7 +220,7 @@ class TokenGuard
      */
     protected function authenticateViaCookie($request)
     {
-        if (!$token = $this->getTokenViaCookie($request)) {
+        if (! $token = $this->getTokenViaCookie($request)) {
             return;
         }
 
@@ -251,8 +252,8 @@ class TokenGuard
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (!Passport::$ignoreCsrfToken && (!$this->validCsrf($token, $request) ||
-                time() >= $token['expiry'])) {
+        if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
+            time() >= $token['expiry'])) {
             return;
         }
 
@@ -267,11 +268,9 @@ class TokenGuard
      */
     protected function decodeJwtTokenCookie($request)
     {
-        return (array)JWT::decode(
-            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()),
-                Passport::$unserializesCookies)),
-            $this->encrypter->getKey(),
-            ['HS256']
+        return (array) JWT::decode(
+            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
+            new Key(Passport::tokenEncryptionKey($this->encrypter), 'HS256')
         );
     }
 
@@ -285,8 +284,8 @@ class TokenGuard
     protected function validCsrf($token, $request)
     {
         return isset($token['csrf']) && hash_equals(
-                $token['csrf'], (string)$this->getTokenFromRequest($request)
-            );
+            $token['csrf'], (string) $this->getTokenFromRequest($request)
+        );
     }
 
     /**
@@ -299,7 +298,7 @@ class TokenGuard
     {
         $token = $request->header('X-CSRF-TOKEN');
 
-        if (!$token && $header = $request->header('X-XSRF-TOKEN')) {
+        if (! $token && $header = $request->header('X-XSRF-TOKEN')) {
             $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
         }
 

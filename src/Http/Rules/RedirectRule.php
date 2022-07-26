@@ -17,7 +17,7 @@ class RedirectRule implements Rule
     /**
      * Create a new rule instance.
      *
-     * @param \Illuminate\Contracts\Validation\Factory $validator
+     * @param  \Illuminate\Contracts\Validation\Factory  $validator
      * @return void
      */
     public function __construct(Factory $validator)
@@ -31,7 +31,7 @@ class RedirectRule implements Rule
     public function passes($attribute, $value)
     {
         foreach (explode(',', $value) as $redirect) {
-            $validator = $this->validator->make(['redirect' => $redirect], ['redirect' => 'url']);
+            $validator = $this->validator->make(['redirect' => $redirect], ['redirect' => new UriRule]);
 
             if ($validator->fails()) {
                 return false;
@@ -46,6 +46,6 @@ class RedirectRule implements Rule
      */
     public function message()
     {
-        return 'One or more redirects have an invalid url format.';
+        return 'One or more redirects have an invalid URI format.';
     }
 }

@@ -33,6 +33,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      *
      * @param  \Laravel\Passport\TokenRepository  $tokenRepository
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @return void
      */
     public function __construct(TokenRepository $tokenRepository, Dispatcher $events)
     {
