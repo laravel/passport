@@ -87,6 +87,12 @@ class RouteRegistrar
                 'as' => 'passport.tokens.destroy',
             ]);
         });
+
+        $this->router->delete('/token', [
+            'middleware' => 'auth:api',
+            'uses' => 'RevokeAccessTokenController@revokeToken',
+            'as' => 'passport.token.destroy',
+        ]);
     }
 
     /**
