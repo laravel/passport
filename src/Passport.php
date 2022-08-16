@@ -36,15 +36,6 @@ class Passport
     ];
 
     /**
-     * The date when access tokens expire.
-     *
-     * @var \DateTimeInterface|null
-     *
-     * @deprecated Will be removed in the next major Passport release.
-     */
-    public static $tokensExpireAt;
-
-    /**
      * The interval when access tokens expire.
      *
      * @var \DateInterval|null
@@ -54,27 +45,9 @@ class Passport
     /**
      * The date when refresh tokens expire.
      *
-     * @var \DateTimeInterface|null
-     *
-     * @deprecated Will be removed in the next major Passport release.
-     */
-    public static $refreshTokensExpireAt;
-
-    /**
-     * The date when refresh tokens expire.
-     *
      * @var \DateInterval|null
      */
     public static $refreshTokensExpireIn;
-
-    /**
-     * The date when personal access tokens expire.
-     *
-     * @var \DateTimeInterface|null
-     *
-     * @deprecated Will be removed in the next major Passport release.
-     */
-    public static $personalAccessTokensExpireAt;
 
     /**
      * The date when personal access tokens expire.
@@ -282,7 +255,6 @@ class Passport
             return static::$tokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$tokensExpireAt = $date;
         static::$tokensExpireIn = Carbon::now()->diff($date);
 
         return new static;
@@ -300,7 +272,6 @@ class Passport
             return static::$refreshTokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$refreshTokensExpireAt = $date;
         static::$refreshTokensExpireIn = Carbon::now()->diff($date);
 
         return new static;
@@ -318,7 +289,6 @@ class Passport
             return static::$personalAccessTokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$personalAccessTokensExpireAt = $date;
         static::$personalAccessTokensExpireIn = Carbon::now()->diff($date);
 
         return new static;
