@@ -166,7 +166,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)), false)
+            ], str_repeat('a', 16), 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -199,7 +199,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)), false)
+            ], str_repeat('a', 16), 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -228,7 +228,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16), 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -254,7 +254,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16), 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -288,7 +288,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], Passport::tokenEncryptionKey($encrypter)), false)
+            ], Passport::tokenEncryptionKey($encrypter), 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -320,7 +320,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16), 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -346,7 +346,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)))
+            ], str_repeat('a', 16), 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -376,7 +376,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)), false)
+            ], str_repeat('a', 16), 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -502,7 +502,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16)), false)
+            ], str_repeat('a', 16), 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
