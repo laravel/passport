@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.4.1...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.4.1...11.x)
 
 ## [v10.4.1](https://github.com/laravel/passport/compare/v10.4.0...v10.4.1) - 2022-04-16
 
