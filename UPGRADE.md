@@ -2,6 +2,50 @@
 
 ## General Notes
 
+## Upgrading To 11.0 From 10.x
+
+### Minimum PHP Version
+
+PHP 8.0 is now the minimum required version.
+
+### Minimum Laravel Version
+
+Laravel 9.0 is now the minimum required version.
+
+### Reverting Model DB Connection Customization
+
+PR: https://github.com/laravel/passport/pull/1412
+
+The customization for model DB connections through the migration files have been reverted. This was first introduced in [this PR](https://github.com/laravel/passport/pull/1255). 
+
+If you need to customize the DB connection for a model you may overwrite models [as explained in the documentation](https://laravel.com/docs/9.x/passport#overriding-default-models).
+
+### Allow timestamps on Token model
+
+PR: https://github.com/laravel/passport/pull/1425
+
+Timestamps are now allowed again on the `Token` model. If you specifically didn't want these to be touched then you may override the `Token` model [as explained in the documentation](https://laravel.com/docs/9.x/passport#overriding-default-models).
+
+### Refactor routes to dedicated file
+
+PR: https://github.com/laravel/passport/pull/1464
+
+Passport's routes have been moved to a dedicated route file so Passport can be on par with how other first paryt packages handle routes. You can remove the `Passport::routes()` call from your service provider.
+
+If you previously relied on overwriting routes using `routes($callback = null, array $options = [])` you may now do the same by simply overwriting the routes in your own app's `web.php` route file.
+
+### Stubbing Client In Tests
+
+PR: https://github.com/laravel/passport/pull/1519
+
+Previously, a stubbed client through `Passport::actingAsClient(...)` wasn't retrieved when calling the `->client()` method on the API guard. This has been fixed in Passport v11 to reflect real-app situations and you may need to accommodate for this behavior in your tests.
+
+### Scope Inheritance In Tests
+
+PR: https://github.com/laravel/passport/pull/1551
+
+Previously, scopes weren't inherited when using `Passport::actingAs(...)`. This has been fixed in Passport v11 to reflect real-app situations and you may need to accommodate for this behavior in your tests.
+
 ## Upgrading To 10.0 From 9.x
 
 ### Minimum PHP Version
