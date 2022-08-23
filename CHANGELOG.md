@@ -1,6 +1,30 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.4.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.0.0...11.x)
+
+## [v11.0.0](https://github.com/laravel/passport/compare/v10.4.1...v11.0.0) - 2022-08-19
+
+### Added
+
+- Allow authenticated client to be retrieved from the guard by @axlon in https://github.com/laravel/passport/pull/1508
+
+### Changed
+
+- Revert model DB connection customization by @driesvints in https://github.com/laravel/passport/pull/1412
+- Allow timestamps on Token model by @driesvints in https://github.com/laravel/passport/pull/1425
+- Improve authenticateViaBearerToken() performance by @alecpl in https://github.com/laravel/passport/pull/1447
+- Refactor routes to dedicated file by @driesvints in https://github.com/laravel/passport/pull/1464
+
+### Fixed
+
+- Stub client on guard when calling Passport::actingAsClient() by @axlon in https://github.com/laravel/passport/pull/1519
+- Fix scope inheritance when using Passport::actingAs() by @axlon in https://github.com/laravel/passport/pull/1551
+
+### Removed
+
+- Drop PHP 7.x and Laravel v8 by @driesvints in https://github.com/laravel/passport/pull/1558
+- Remove deprecated properties by @driesvints in https://github.com/laravel/passport/pull/1560
+- Remove deprecated functionality and simplify some feature tests by @driesvints in https://github.com/laravel/passport/pull/1559
 
 ## [v10.4.1](https://github.com/laravel/passport/compare/v10.4.0...v10.4.1) - 2022-04-16
 
