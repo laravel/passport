@@ -2,6 +2,14 @@
 
 ## General Notes
 
+## Upgrading To 11.0 From 10.x
+
+### Routes refactored
+
+Remove the Passport::routes() in app/Providers/AuthServiceProvider.php
+
+PR: https://github.com/laravel/passport/pull/1464
+
 ## Upgrading To 10.0 From 9.x
 
 ### Minimum PHP Version
