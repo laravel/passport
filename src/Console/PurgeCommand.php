@@ -15,7 +15,8 @@ class PurgeCommand extends Command
      */
     protected $signature = 'passport:purge
                             {--revoked : Only purge revoked tokens and authentication codes}
-                            {--expired : Only purge expired tokens and authentication codes}';
+                            {--expired : Only purge expired tokens and authentication codes}
+                            {--hours= : The number of hours to retain expired tokens}';
 
     /**
      * The console command description.
@@ -29,7 +30,9 @@ class PurgeCommand extends Command
      */
     public function handle()
     {
-        $expired = Carbon::now()->subDays(7);
+        $expired = $this->option('hours')
+            ? Carbon::now()->subHours($this->option('hours'))
+            : Carbon::now()->subDays(7);
 
         if (($this->option('revoked') && $this->option('expired')) ||
             (! $this->option('revoked') && ! $this->option('expired'))) {
