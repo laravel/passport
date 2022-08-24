@@ -31,7 +31,7 @@ class PurgeCommand extends Command
      */
     public function handle()
     {
-        if($this->option('hours')){
+        if ($this->option('hours')) {
             $expired = Carbon::now()->subHours($this->option('hours'));
         } else {
             $expired = Carbon::now()->subHours($this->option('days'));
