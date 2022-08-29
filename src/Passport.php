@@ -162,6 +162,13 @@ class Passport
     public static $authorizationServerResponseType;
 
     /**
+     * Indicates if Passport routes will be registered.
+     *
+     * @var bool
+     */
+    public static $registersRoutes = true;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -628,6 +635,18 @@ class Passport
         return is_callable(static::$tokenEncryptionKeyCallback) ?
             (static::$tokenEncryptionKeyCallback)($encrypter) :
             $encrypter->getKey();
+    }
+
+    /**
+     * Configure Passport to not register its routes.
+     *
+     * @return static
+     */
+    public static function ignoreRoutes()
+    {
+        static::$registersRoutes = false;
+
+        return new static;
     }
 
     /**

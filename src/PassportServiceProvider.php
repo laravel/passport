@@ -50,13 +50,15 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        Route::group([
-            'as' => 'passport.',
-            'prefix' => config('passport.path', 'oauth'),
-            'namespace' => 'Laravel\Passport\Http\Controllers',
-        ], function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        });
+        if (Passport::$registersRoutes) {
+            Route::group([
+                'as' => 'passport.',
+                'prefix' => config('passport.path', 'oauth'),
+                'namespace' => 'Laravel\Passport\Http\Controllers',
+            ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+            });
+        }
     }
 
     /**
