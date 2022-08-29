@@ -638,6 +638,18 @@ class Passport
     }
 
     /**
+     * Configure Passport to not register its routes.
+     *
+     * @return static
+     */
+    public static function ignoreRoutes()
+    {
+        static::$registersRoutes = false;
+
+        return new static;
+    }
+
+    /**
      * Configure Passport to not register its migrations.
      *
      * @return static
@@ -669,18 +681,6 @@ class Passport
     public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
-
-        return new static;
-    }
-
-    /**
-     * Configure Passport to not register its routes.
-     *
-     * @return static
-     */
-    public static function ignoreRoutes()
-    {
-        static::$registersRoutes = false;
 
         return new static;
     }
