@@ -162,6 +162,13 @@ class Passport
     public static $authorizationServerResponseType;
 
     /**
+     * Indicates if Passport routes will be registered.
+     *
+     * @var bool
+     */
+    public static $registersRoutes = true;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -662,6 +669,18 @@ class Passport
     public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
+
+        return new static;
+    }
+
+    /**
+     * Configure Passport to not register its routes.
+     *
+     * @return static
+     */
+    public static function ignoreRoutes()
+    {
+        static::$registersRoutes = false;
 
         return new static;
     }
