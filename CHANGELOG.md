@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.0.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.0.1...11.x)
+
+## [v11.0.1](https://github.com/laravel/passport/compare/v11.0.0...v11.0.1) - 2022-08-29
+
+### Changed
+
+- Custom days and hours to passport purge command by @rubengg86 in https://github.com/laravel/passport/pull/1563
+- Allow for bootstrapping without loading routes by @axlon in https://github.com/laravel/passport/pull/1564
 
 ## [v11.0.0](https://github.com/laravel/passport/compare/v10.4.1...v11.0.0) - 2022-08-19
 
