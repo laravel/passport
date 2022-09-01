@@ -99,7 +99,7 @@ class AuthorizationController
     }
 
     /**
-     * Check if a valid token exists for the given user, client and scopes.
+     * Determine if a valid token exists for the given user, client, and scopes.
      *
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Illuminate\Database\Eloquent\Model  $user
