@@ -46,6 +46,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $request->shouldReceive('user')->andReturn($user = m::mock());
+        $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
         $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
@@ -116,6 +117,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
+        $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -123,11 +125,13 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
         $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('find')->with(1)->andReturn('client');
+        $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
+
+        $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
         $tokens = m::mock(TokenRepository::class);
         $tokens->shouldReceive('findValidToken')
-            ->with($user, 'client')
+            ->with($user, $client)
             ->andReturn($token = m::mock(Token::class));
         $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['scope-1']);
 
@@ -158,6 +162,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
+        $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -177,5 +182,49 @@ class AuthorizationControllerTest extends TestCase
         $this->assertSame('approved', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         )->getContent());
+    }
+
+    public function test_authorization_view_is_presented_if_request_has_prompt_equals_to_consent()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
+
+        $controller = new AuthorizationController($server, $response);
+        $server->shouldReceive('validateAuthorizationRequest')
+            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $session->shouldReceive('put')->withSomeOfArgs('authToken');
+        $session->shouldReceive('put')->with('authRequest', $authRequest);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $request->shouldReceive('get')->with('prompt')->andReturn('consent');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
+        $client->shouldReceive('skipsAuthorization')->andReturn(false);
+
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldNotReceive('findValidToken');
+
+        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
+            $this->assertSame('passport::authorize', $view);
+            $this->assertEquals($client, $data['client']);
+            $this->assertEquals($user, $data['user']);
+            $this->assertSame('description', $data['scopes'][0]->description);
+
+            return 'view';
+        });
+
+        $this->assertSame('view', $controller->authorize(
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+        ));
     }
 }

@@ -63,14 +63,11 @@ class AuthorizationController
         });
 
         $scopes = $this->parseScopes($authRequest);
+        $user = $request->user();
+        $client = $clients->find($authRequest->getClient()->getIdentifier());
 
-        $token = $tokens->findValidToken(
-            $user = $request->user(),
-            $client = $clients->find($authRequest->getClient()->getIdentifier())
-        );
-
-        if (($token && $token->scopes === collect($scopes)->pluck('id')->all()) ||
-            $client->skipsAuthorization()) {
+        if ($request->get('prompt') !== 'consent' &&
+            ($client->skipsAuthorization() || $this->hasValidToken($tokens, $user, $client, $scopes))) {
             return $this->approveRequest($authRequest, $user);
         }
 
@@ -99,6 +96,22 @@ class AuthorizationController
                 return $scope->getIdentifier();
             })->unique()->all()
         );
+    }
+
+    /**
+     * Determine if a valid token exists for the given user, client, and scopes.
+     *
+     * @param  \Laravel\Passport\TokenRepository  $tokens
+     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Laravel\Passport\Client  $client
+     * @param  array  $scopes
+     * @return bool
+     */
+    protected function hasValidToken($tokens, $user, $client, $scopes)
+    {
+        $token = $tokens->findValidToken($user, $client);
+
+        return $token && $token->scopes === collect($scopes)->pluck('id')->all();
     }
 
     /**
