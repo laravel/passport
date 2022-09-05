@@ -227,4 +227,47 @@ class AuthorizationControllerTest extends TestCase
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         ));
     }
+
+    public function test_authorization_denied_if_request_has_prompt_equals_to_none()
+    {
+        $this->expectException('Laravel\Passport\Exceptions\OAuthServerException');
+
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(ResponseFactory::class);
+
+        $controller = new AuthorizationController($server, $response);
+        $server->shouldReceive('validateAuthorizationRequest')
+            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+        $server->shouldReceive('completeAuthorizationRequest')
+            ->with($authRequest, m::type(ResponseInterface::class))
+            ->once()
+            ->andThrow('League\OAuth2\Server\Exception\OAuthServerException');
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $request->shouldReceive('get')->with('prompt')->andReturn('none');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
+        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
+
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
+        $client->shouldReceive('skipsAuthorization')->andReturn(false);
+
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldReceive('findValidToken')
+            ->with($user, $client)
+            ->andReturnNull();
+
+        $controller->authorize(
+            m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+        );
+    }
 }
