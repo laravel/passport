@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.0.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.1.0...11.x)
+
+## [v11.1.0](https://github.com/laravel/passport/compare/v11.0.1...v11.1.0) - 2022-09-05
+
+### Added
+
+- Support prompting re-consent when redirecting for authorization by @hafezdivandari in https://github.com/laravel/passport/pull/1567
+- Support disabling prompt when redirecting for authorization by @hafezdivandari in https://github.com/laravel/passport/pull/1569
 
 ## [v11.0.1](https://github.com/laravel/passport/compare/v11.0.0...v11.0.1) - 2022-08-29
 
