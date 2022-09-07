@@ -2,12 +2,13 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
+use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 class DenyAuthorizationControllerTest extends TestCase
 {
@@ -18,130 +19,34 @@ class DenyAuthorizationControllerTest extends TestCase
 
     public function test_authorization_can_be_denied()
     {
-        $response = m::mock(ResponseFactory::class);
+        $this->expectException('Laravel\Passport\Exceptions\OAuthServerException');
 
-        $controller = new DenyAuthorizationController($response);
-
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
-        $request->shouldReceive('input')->with('state')->andReturn('state');
-        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
-
-        $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
-            AuthorizationRequest::class
-        ));
-
-        $authRequest->shouldReceive('setUser')->once();
-        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
-
-        $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
-            return $url;
-        });
-
-        $this->assertSame('http://localhost?error=access_denied&state=state', $controller->deny($request));
-    }
-
-    public function test_authorization_can_be_denied_with_multiple_redirect_uris()
-    {
-        $response = m::mock(ResponseFactory::class);
-
-        $controller = new DenyAuthorizationController($response);
+        $server = m::mock(AuthorizationServer::class);
+        $controller = new DenyAuthorizationController($server);
 
         $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
-        $request->shouldReceive('input')->with('state')->andReturn('state');
-        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
-
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
-            AuthorizationRequest::class
-        ));
-
-        $authRequest->shouldReceive('setUser')->once();
-        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn(['http://localhost.localdomain', 'http://localhost']);
-
-        $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
-        $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
-            return $url;
-        });
-
-        $this->assertSame('http://localhost?error=access_denied&state=state', $controller->deny($request));
-    }
-
-    public function test_authorization_can_be_denied_implicit()
-    {
-        $response = m::mock(ResponseFactory::class);
-
-        $controller = new DenyAuthorizationController($response);
-
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
-        $request->shouldReceive('input')->with('state')->andReturn('state');
         $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
+        $session->shouldReceive('get')
+            ->once()
+            ->with('authRequest')
+            ->andReturn($authRequest = m::mock(
             AuthorizationRequest::class
-        ));
+            ));
 
         $authRequest->shouldReceive('setUser')->once();
-        $authRequest->shouldReceive('getGrantTypeId')->andReturn('implicit');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
+        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
 
-        $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
-            return $url;
-        });
+        $server->shouldReceive('completeAuthorizationRequest')
+            ->with($authRequest, m::type(ResponseInterface::class))
+            ->andThrow('League\OAuth2\Server\Exception\OAuthServerException');
 
-        $this->assertSame('http://localhost#error=access_denied&state=state', $controller->deny($request));
-    }
-
-    public function test_authorization_can_be_denied_with_existing_query_string()
-    {
-        $response = m::mock(ResponseFactory::class);
-
-        $controller = new DenyAuthorizationController($response);
-
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
-        $request->shouldReceive('input')->with('state')->andReturn('state');
-        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
-
-        $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('get')->once()->with('authRequest')->andReturn($authRequest = m::mock(
-            AuthorizationRequest::class
-        ));
-
-        $authRequest->shouldReceive('setUser')->once();
-        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
-        $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost?action=some_action');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost?action=some_action');
-
-        $response->shouldReceive('redirectTo')->once()->andReturnUsing(function ($url) {
-            return $url;
-        });
-
-        $this->assertSame('http://localhost?action=some_action&error=access_denied&state=state', $controller->deny($request));
+        $controller->deny($request);
     }
 
     public function test_auth_request_should_exist()
@@ -149,9 +54,9 @@ class DenyAuthorizationControllerTest extends TestCase
         $this->expectException('Exception');
         $this->expectExceptionMessage('Authorization request was not present in the session.');
 
-        $response = m::mock(ResponseFactory::class);
+        $server = m::mock(AuthorizationServer::class);
 
-        $controller = new DenyAuthorizationController($response);
+        $controller = new DenyAuthorizationController($server);
 
         $request = m::mock(Request::class);
 
@@ -164,7 +69,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('get')->once()->with('authRequest')->andReturnNull();
 
-        $response->shouldReceive('redirectTo')->never();
+        $server->shouldReceive('completeAuthorizationRequest')->never();
 
         $controller->deny($request);
     }
