@@ -318,6 +318,7 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
         $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
         $authRequest->shouldReceive('getState')->andReturn('state');
+        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
 
         $clients = m::mock(ClientRepository::class);
         $tokens = m::mock(TokenRepository::class);

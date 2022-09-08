@@ -188,7 +188,9 @@ class AuthorizationController
                     ? $authRequest->getClient()->getRedirectUri()[0]
                     : $authRequest->getClient()->getRedirectUri());
 
-            $uri = $uri.(str_contains($uri, '?') ? '&' : '?').'state='.$authRequest->getState();
+            $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : '?';
+
+            $uri = $uri.(str_contains($uri, $separator) ? '&' : $separator).'state='.$authRequest->getState();
 
             return $this->withErrorHandling(function () use ($uri) {
                 throw OAuthServerException::accessDenied('Unauthenticated', $uri);
