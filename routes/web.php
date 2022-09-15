@@ -54,6 +54,11 @@ Route::middleware(['web', 'auth'])->group(function () {
         'as' => 'clients.update',
     ]);
 
+    Route::put('/clients/{client_id}/generate-secret', [
+        'uses' => 'ClientController@generateSecret',
+        'as' => 'clients.update.secret',
+    ]);
+
     Route::delete('/clients/{client_id}', [
         'uses' => 'ClientController@destroy',
         'as' => 'clients.destroy',

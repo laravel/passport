@@ -97,7 +97,7 @@ class ClientRepository implements ClientRepositoryInterface
      * @param  string  $storedHash
      * @return bool
      */
-    protected function verifySecret($clientSecret, $storedHash)
+    public function verifySecret($clientSecret, $storedHash)
     {
         return Passport::$hashesClientSecrets
                     ? password_verify($clientSecret, $storedHash)

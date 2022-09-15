@@ -148,6 +148,62 @@ class ClientControllerTest extends TestCase
         $this->assertSame('response', $controller->update($request, 1));
     }
 
+    public function test_clients_secret_can_be_regenerated_for_a_valid_client_and_old_secret()
+    {
+        $request = Request::create('/clients/1/generate-secret', 'PUT', ['old_secret' => 'abcd1234']);
+
+        $request->setUserResolver(function () {
+            $user = m::mock();
+            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
+            return $user;
+        });
+
+        $client = m::mock(Client::class, ['secret' => 'abcd1234']);
+        $clients = m::mock(ClientRepository::class);
+
+        // returns incorrect old secret first and then correct one.
+        $client->shouldReceive('getAttribute')->with('secret')->andReturn('incorrect', 'abcd1234');
+
+        // Returns null first simulating invalid client.
+        $clients->shouldReceive('findForUser')->with(1, 1)->andReturn(null, $client, $client);
+
+        $clients->shouldReceive('regenerateSecret')->once()->with($client)->andReturn($client = new Client());
+
+        $redirectRule = m::mock(RedirectRule::class);
+
+        $validator = m::mock(Factory::class);
+
+        $validator->shouldReceive('make')->twice()->with([
+            'old_secret' => 'abcd1234',
+        ], [
+            'old_secret' => 'required',
+        ])->andReturn($validator);
+
+        $validator->shouldReceive('validate')->twice();
+
+        $controller = new ClientController(
+            $clients, $validator, $redirectRule
+        );
+
+        $response = $controller->generateSecret($request, 1);
+
+        // Expect first invocation to return 404 when the specified client is invalid
+        // or does not belong to the user.
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(404, $response->getStatusCode());
+
+        $response = $controller->generateSecret($request, 1);
+
+        // Expect second invocation to return 401 when the provided old secret is
+        // incorrect.
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(401, $response->getStatusCode());
+
+        // Expect third invocation to succeed
+        $this->assertEquals($client, $controller->generateSecret($request, 1));
+    }
+
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
         $clients = m::mock(ClientRepository::class);

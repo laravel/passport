@@ -5,6 +5,7 @@ namespace Laravel\Passport\Http\Controllers;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Rules\RedirectRule;
 use Laravel\Passport\Passport;
@@ -118,6 +119,43 @@ class ClientController
         return $this->clients->update(
             $client, $request->name, $request->redirect
         );
+    }
+
+    /**
+     * Generate new secret for the given client.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $clientId
+     * @return \Illuminate\Http\Response|\Laravel\Passport\Client|array
+     */
+    public function generateSecret(Request $request, $clientId)
+    {
+        $client = $this->clients->findForUser($clientId, $request->user()->getAuthIdentifier());
+
+        if (! $client) {
+            return new Response('', 404);
+        }
+
+        $this->validation->make($request->all(), [
+            'old_secret' => 'required',
+        ])->validate();
+
+        // Verify client's old secret before generating new one.
+
+        /** @var BridgeClientRepository */
+        $bridgeClient = resolve(BridgeClientRepository::class);
+
+        if (! $bridgeClient->verifySecret($request->input('old_secret'), $client->secret)) {
+            return new Response('', 401);
+        }
+
+        $client = $this->clients->regenerateSecret($client);
+
+        if (Passport::$hashesClientSecrets) {
+            return ['plainSecret' => $client->plainSecret] + $client->toArray();
+        }
+
+        return $client->makeVisible('secret');
     }
 
     /**
