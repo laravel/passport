@@ -8,7 +8,7 @@ use Nyholm\Psr7\Response as Psr7Response;
 
 class ApproveAuthorizationController
 {
-    use ConvertsPsrResponses, RetrievesAuthRequestFromSession;
+    use ConvertsPsrResponses, HandlesOAuthErrors, RetrievesAuthRequestFromSession;
 
     /**
      * The authorization server.
@@ -40,8 +40,12 @@ class ApproveAuthorizationController
 
         $authRequest = $this->getAuthRequestFromSession($request);
 
-        return $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        );
+        $authRequest->setAuthorizationApproved(true);
+
+        return $this->withErrorHandling(function () use ($authRequest) {
+            return $this->convertResponse(
+                $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
+            );
+        });
     }
 }
