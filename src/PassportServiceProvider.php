@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use DateInterval;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Config\Repository as Config;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Event;
@@ -133,6 +134,10 @@ class PassportServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
         Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
+
+        $this->app->bind(StatefulGuard::class, function () {
+            return Auth::guard();
+        });
 
         $this->registerAuthorizationServer();
         $this->registerClientRepository();
