@@ -144,7 +144,7 @@ class TokenGuard implements Guard
     /**
      * Get the client for the incoming request.
      *
-     * @return mixed
+     * @return \Laravel\Passport\Client|null
      */
     public function client()
     {
