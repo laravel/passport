@@ -15,6 +15,7 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
+use Laravel\Passport\Http\Controllers\AuthorizationController;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Parser;
 use League\OAuth2\Server\AuthorizationServer;
@@ -135,9 +136,9 @@ class PassportServiceProvider extends ServiceProvider
 
         Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
 
-        $this->app->bind(StatefulGuard::class, function () {
-            return Auth::guard();
-        });
+        $this->app->when(AuthorizationController::class)
+                ->needs(StatefulGuard::class)
+                ->give(fn () => Auth::guard(config('passport.guard', null)));
 
         $this->registerAuthorizationServer();
         $this->registerClientRepository();

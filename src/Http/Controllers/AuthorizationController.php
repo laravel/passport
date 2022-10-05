@@ -77,25 +77,21 @@ class AuthorizationController
         });
 
         if ($this->guard->guest()) {
-            if ($request->get('prompt') === 'none') {
-                return $this->denyRequest($authRequest);
-            }
-
-            return $this->promptLogin($request);
+            return $request->get('prompt') === 'none'
+                    ? $this->denyRequest($authRequest)
+                    : $this->promptForLogin($request);
         }
 
         if ($request->get('prompt') === 'login' &&
-            ! $request->session()->get('authLoginPrompted', false)) {
+            ! $request->session()->get('promptedForLogin', false)) {
             $this->guard->logout();
-
             $request->session()->invalidate();
-
             $request->session()->regenerateToken();
 
-            return $this->promptLogin($request);
+            return $this->promptForLogin($request);
         }
 
-        $request->session()->forget('authLoginPrompted');
+        $request->session()->forget('promptedForLogin');
 
         $scopes = $this->parseScopes($authRequest);
         $user = $request->user();
@@ -177,7 +173,7 @@ class AuthorizationController
      * Deny the authorization request.
      *
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
-     * @param  null|\Illuminate\Database\Eloquent\Model  $user
+     * @param  \Illuminate\Database\Eloquent\Model|null  $user
      * @return \Illuminate\Http\Response
      */
     protected function denyRequest($authRequest, $user = null)
@@ -209,15 +205,15 @@ class AuthorizationController
     }
 
     /**
-     * Prompt login.
+     * Prompt the user to login by throwing an AuthenticationException.
      *
      * @param  \Illuminate\Http\Request  $request
      *
      * @throws \Illuminate\Auth\AuthenticationException
      */
-    protected function promptLogin($request)
+    protected function promptForLogin($request)
     {
-        $request->session()->put('authLoginPrompted', true);
+        $request->session()->put('promptedForLogin', true);
 
         throw new AuthenticationException;
     }

@@ -48,7 +48,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
-        $session->shouldReceive('forget')->with('authLoginPrompted')->once();
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('user')->andReturn($user = m::mock());
         $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
@@ -124,7 +124,7 @@ class AuthorizationControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $session->shouldReceive('forget')->with('authLoginPrompted')->once();
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
@@ -174,7 +174,7 @@ class AuthorizationControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $session->shouldReceive('forget')->with('authLoginPrompted')->once();
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
@@ -220,7 +220,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
-        $session->shouldReceive('forget')->with('authLoginPrompted')->once();
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('user')->andReturn($user = m::mock());
         $request->shouldReceive('get')->with('prompt')->andReturn('consent');
 
@@ -272,7 +272,7 @@ class AuthorizationControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $session->shouldReceive('forget')->with('authLoginPrompted')->once();
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('user')->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldReceive('get')->with('prompt')->andReturn('none');
@@ -353,9 +353,9 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('invalidate')->once();
         $session->shouldReceive('regenerateToken')->once();
-        $session->shouldReceive('get')->with('authLoginPrompted', false)->once()->andReturn(false);
-        $session->shouldReceive('put')->with('authLoginPrompted', true)->once();
-        $session->shouldNotReceive('forget')->with('authLoginPrompted');
+        $session->shouldReceive('get')->with('promptedForLogin', false)->once()->andReturn(false);
+        $session->shouldReceive('put')->with('promptedForLogin', true)->once();
+        $session->shouldNotReceive('forget')->with('promptedForLogin');
         $request->shouldReceive('get')->with('prompt')->andReturn('login');
 
         $clients = m::mock(ClientRepository::class);
@@ -382,8 +382,8 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldNotReceive('user');
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $session->shouldReceive('put')->with('authLoginPrompted', true)->once();
-        $session->shouldNotReceive('forget')->with('authLoginPrompted');
+        $session->shouldReceive('put')->with('promptedForLogin', true)->once();
+        $session->shouldNotReceive('forget')->with('promptedForLogin');
         $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
         $clients = m::mock(ClientRepository::class);
