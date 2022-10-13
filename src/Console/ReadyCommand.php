@@ -55,8 +55,8 @@ class ReadyCommand extends Command
     private function clientExists(string $name)
     {
         try {
-            return DB::table("oauth_clients")
-                ->where("name", config('app.name').' '.$name)
+            return DB::table('oauth_clients')
+                ->where('name', config('app.name').' '.$name)
                 ->exists();
         } catch (QueryException $e) {
             $this->error('Passport migrations have not been run. Please run "php artisan migrate" to run them');

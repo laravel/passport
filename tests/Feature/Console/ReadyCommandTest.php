@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Feature\Console;
 
-use Laravel\Passport\Passport;
 use Laravel\Passport\Tests\Feature\PassportTestCase;
 use Mockery as m;
 
