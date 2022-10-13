@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Exception;
 use Laravel\Passport\AuthCode;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
@@ -50,12 +51,17 @@ class PassportTest extends TestCase
 
     public function test_missing_personal_access_client_is_reported()
     {
-        $this->expectException('RuntimeException');
-
         Passport::usePersonalAccessClientModel(PersonalAccessClientStub::class);
 
         $clientRepository = new ClientRepository;
-        $clientRepository->personalAccessClient();
+
+        try {
+            $clientRepository->personalAccessClient();
+        } catch (Exception $e) {
+            $this->assertInstanceOf('RuntimeException', $e);
+        }
+
+        Passport::usePersonalAccessClientModel(PersonalAccessClient::class);
     }
 
     public function test_token_instance_can_be_created()

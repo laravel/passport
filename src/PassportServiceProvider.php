@@ -121,6 +121,7 @@ class PassportServiceProvider extends ServiceProvider
                 Console\HashCommand::class,
                 Console\KeysCommand::class,
                 Console\PurgeCommand::class,
+                Console\ReadyCommand::class,
             ]);
         }
     }
