@@ -57,6 +57,7 @@ class PassportTest extends TestCase
 
         try {
             $clientRepository->personalAccessClient();
+            $this->fail('Exception was not thrown');
         } catch (Exception $e) {
             $this->assertInstanceOf('RuntimeException', $e);
         }
