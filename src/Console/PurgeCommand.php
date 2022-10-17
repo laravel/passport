@@ -41,8 +41,8 @@ class PurgeCommand extends Command
             Passport::refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
 
             $this->option('hours')
-			    ? $this->info('Purged revoked items and items expired for more than '.$this->option('hours').' hours.')
-				: $this->info('Purged revoked items and items expired for more than seven days.');
+                ? $this->info('Purged revoked items and items expired for more than '.$this->option('hours').' hours.')
+                : $this->info('Purged revoked items and items expired for more than seven days.');
         } elseif ($this->option('revoked')) {
             Passport::token()->where('revoked', 1)->delete();
             Passport::authCode()->where('revoked', 1)->delete();
@@ -55,8 +55,8 @@ class PurgeCommand extends Command
             Passport::refreshToken()->whereDate('expires_at', '<', $expired)->delete();
 
             $this->option('hours')
-			    ? $this->info('Purged items expired for more than '.$this->option('hours').' hours.')
-				: $this->info('Purged items expired for more than seven days.');
+                ? $this->info('Purged items expired for more than '.$this->option('hours').' hours.')
+                : $this->info('Purged items expired for more than seven days.');
         }
     }
 }
