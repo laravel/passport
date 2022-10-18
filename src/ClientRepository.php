@@ -37,7 +37,7 @@ class ClientRepository
     /**
      * Get a client by the given ID.
      *
-     * @param  int  $id
+     * @param  int|string  $id
      * @return \Laravel\Passport\Client|null
      */
     public function find($id)
@@ -50,7 +50,7 @@ class ClientRepository
     /**
      * Get an active client by the given ID.
      *
-     * @param  int  $id
+     * @param  int|string  $id
      * @return \Laravel\Passport\Client|null
      */
     public function findActive($id)
@@ -63,7 +63,7 @@ class ClientRepository
     /**
      * Get a client instance for the given ID and user ID.
      *
-     * @param  int  $clientId
+     * @param  int|string  $clientId
      * @param  mixed  $userId
      * @return \Laravel\Passport\Client|null
      */
@@ -221,7 +221,7 @@ class ClientRepository
     /**
      * Determine if the given client is revoked.
      *
-     * @param  int  $id
+     * @param  int|string  $id
      * @return bool
      */
     public function revoked($id)
