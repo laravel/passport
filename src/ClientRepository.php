@@ -128,7 +128,7 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param  int  $userId
+     * @param  int|null  $userId
      * @param  string  $name
      * @param  string  $redirect
      * @param  string|null  $provider
