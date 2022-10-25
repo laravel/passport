@@ -1,6 +1,18 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.2.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.3.0...11.x)
+
+## [v11.3.0](https://github.com/laravel/passport/compare/v11.2.1...v11.3.0) - 2022-10-22
+
+### Added
+
+- Support prompting login when redirecting for authorization by @hafezdivandari in https://github.com/laravel/passport/pull/1577
+
+### Changed
+
+- Update PurgeCommand.php by @fatoskurtishi in https://github.com/laravel/passport/pull/1586
+- Fix ClientRepository doc blocks by @axlon in https://github.com/laravel/passport/pull/1587
+- Update docblock by @mnabialek in https://github.com/laravel/passport/pull/1588
 
 ## [v11.2.1](https://github.com/laravel/passport/compare/v11.2.0...v11.2.1) - 2022-09-29
 
