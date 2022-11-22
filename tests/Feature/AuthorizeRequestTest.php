@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use Illuminate\Contracts\Routing\Registrar;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
-use Illuminate\Contracts\Routing\Registrar;
 
 class AuthorizeRequestTest extends PassportTestCase
 {
