@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use Illuminate\Contracts\Routing\Registrar;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
 
@@ -15,13 +14,6 @@ class AuthorizeRequestTest extends PassportTestCase
         $this->app->when(AuthorizationController::class)
             ->needs('$loginUrl')
             ->give($redirectTo);
-
-        // /** @var Registrar $router */
-        // $router = $this->app->make(Registrar::class);
-
-        // $router->get('/login', function () {
-        //     return 'login';
-        // })->name('login');
 
         $client = Client::factory()->create();
 
@@ -41,4 +33,3 @@ class AuthorizeRequestTest extends PassportTestCase
         $response->assertRedirect($redirectTo);
     }
 }
-
