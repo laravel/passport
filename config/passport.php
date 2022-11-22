@@ -46,4 +46,17 @@ return [
         'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Authorize Login Redirection
+    |--------------------------------------------------------------------------
+    |
+    | By default, Passport will redirect to the `login` named route when the
+    | user is not authenticated. However, you can configure Passport to
+    | redirect to a specific URL when prompt for logging in.
+    |
+    */
+
+    'login_url' => null,
+
 ];

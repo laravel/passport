@@ -42,6 +42,13 @@ class AuthorizationController
     protected $guard;
 
     /**
+     * The login url to redirect to.
+     *
+     * @var ?string
+     */
+    protected $loginUrl;
+
+    /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
@@ -49,13 +56,16 @@ class AuthorizationController
      * @param  \Illuminate\Contracts\Auth\StatefulGuard  $guard
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                ResponseFactory $response,
-                                StatefulGuard $guard)
-    {
+    public function __construct(
+        AuthorizationServer $server,
+        ResponseFactory $response,
+        StatefulGuard $guard,
+        ?string $loginUrl = null,
+    ) {
         $this->server = $server;
         $this->response = $response;
         $this->guard = $guard;
+        $this->loginUrl = $loginUrl;
     }
 
     /**
@@ -215,6 +225,8 @@ class AuthorizationController
     {
         $request->session()->put('promptedForLogin', true);
 
-        throw new AuthenticationException;
+        throw new AuthenticationException(
+            redirectTo: $this->loginUrl,
+        );
     }
 }

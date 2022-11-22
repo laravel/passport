@@ -140,6 +140,10 @@ class PassportServiceProvider extends ServiceProvider
                 ->needs(StatefulGuard::class)
                 ->give(fn () => Auth::guard(config('passport.guard', null)));
 
+        $this->app->when(AuthorizationController::class)
+            ->needs('$loginUrl')
+            ->give(config('passport.login_url'));
+
         $this->registerAuthorizationServer();
         $this->registerClientRepository();
         $this->registerJWTParser();
