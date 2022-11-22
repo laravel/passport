@@ -16,12 +16,12 @@ class AuthorizeRequestTest extends PassportTestCase
             ->needs('$loginUrl')
             ->give($redirectTo);
 
-        /** @var Registrar $router */
-        $router = $this->app->make(Registrar::class);
+        // /** @var Registrar $router */
+        // $router = $this->app->make(Registrar::class);
 
-        $router->get('/login', function () {
-            return 'login';
-        })->name('login');
+        // $router->get('/login', function () {
+        //     return 'login';
+        // })->name('login');
 
         $client = Client::factory()->create();
 
