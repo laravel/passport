@@ -108,7 +108,7 @@ class TokenGuard implements Guard
     /**
      * Get the user for the incoming request.
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function user()
     {
