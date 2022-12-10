@@ -69,7 +69,7 @@ trait HasApiTokens
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
             $this->getKey(),
-            $name, 
+            $name,
             $scopes,
             $this->getProvider(),
         );
