@@ -106,11 +106,12 @@ class ClientRepository
     /**
      * Get the personal access token client for the application.
      *
+     * @param  string|null  $provider
      * @return \Laravel\Passport\Client
      *
      * @throws \RuntimeException
      */
-    public function personalAccessClient()
+    public function personalAccessClient($provider = null)
     {
         if ($this->personalAccessClientId) {
             return $this->find($this->personalAccessClientId);
@@ -118,11 +119,18 @@ class ClientRepository
 
         $client = Passport::personalAccessClient();
 
-        if (! $client->exists()) {
+        $personalAccessClient = $client
+            ->when($provider, function ($query, $provider) {
+                $query->whereRelation('client', 'provider', $provider);
+            })
+            ->latest($client->getKeyName())
+            ->first();
+
+        if (is_null($personalAccessClient)) {
             throw new RuntimeException('Personal access client not found. Please create one.');
         }
 
-        return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
+        return $client->client;
     }
 
     /**
@@ -161,11 +169,12 @@ class ClientRepository
      * @param  int  $userId
      * @param  string  $name
      * @param  string  $redirect
+     * @param  string|null  $provider
      * @return \Laravel\Passport\Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect)
+    public function createPersonalAccessClient($userId, $name, $redirect, $provider = null)
     {
-        return tap($this->create($userId, $name, $redirect, null, true), function ($client) {
+        return tap($this->create($userId, $name, $redirect, $provider, true), function ($client) {
             $accessClient = Passport::personalAccessClient();
             $accessClient->client_id = $client->id;
             $accessClient->save();
