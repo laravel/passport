@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Passport\Http\Controllers\Responses;
+namespace Laravel\Passport\Http\Responses;
 
 class AuthorizationViewResponse
 {
