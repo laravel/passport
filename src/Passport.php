@@ -688,28 +688,6 @@ class Passport
     }
 
 	/**
-	 * Register the views for Passport using conventional names under the given namespace.
-	 *
-	 * @param  string  $namespace
-	 * @return void
-	 */
-	public static function viewNamespace(string $namespace)
-	{
-		static::viewPrefix($namespace.'::');
-	}
-
-	/**
-	 * Register the views for Passport using conventional names under the given prefix.
-	 *
-	 * @param  string  $prefix
-	 * @return void
-	 */
-	public static function viewPrefix(string $prefix)
-	{
-		static::authorizationView($prefix.'authorize');
-	}
-
-	/**
 	 * Specify which view should be used as the authorization view.
 	 *
 	 * @param  callable|string  $view
@@ -717,8 +695,8 @@ class Passport
 	 */
 	public static function authorizationView($view)
 	{
-		app()->singleton(AuthorizationViewResponseContract::class, function () use ($view) {
-			return new AuthorizationViewResponse($view);
+		app()->singleton(AuthorizationViewResponseContract::class, function ($app, $parameters) use ($view) {
+			return new AuthorizationViewResponse($view, $parameters);
 		});
 	}
 }

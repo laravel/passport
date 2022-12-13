@@ -14,40 +14,11 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
 	protected $view;
 
 	/**
-	 * The name of the view or the callable used to generate the view.
+	 * An array of arguments that may be passed to the view response and used in the view.
 	 *
 	 * @var string
 	 */
-	protected $client;
-
-	/**
-	 * The name of the view or the callable used to generate the view.
-	 *
-	 * @var string
-	 */
-	protected $user;
-
-	/**
-	 * The name of the view or the callable used to generate the view.
-	 *
-	 * @var string
-	 */
-	protected $scopes;
-
-	/**
-	 * The name of the view or the callable used to generate the view.
-	 *
-	 * @var string
-	 */
-	protected $request;
-
-	/**
-	 * The name of the view or the callable used to generate the view.
-	 *
-	 * @var string
-	 */
-	protected $authToken;
-
+	protected $parameters;
 
 	/**
 	 * Create a new response instance.
@@ -55,14 +26,10 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
 	 * @param  callable|string  $view
 	 * @return void
 	 */
-	public function __construct($view, $client = null, $user = null, $scopes = null, $request = null, $authToken = null)
+	public function __construct($view, $parameters = array())
 	{
 		$this->view = $view;
-		$this->client = $client;
-		$this->user = $user;
-		$this->scopes = $scopes;
-		$this->request = $request;
-		$this->authToken = $authToken;
+		$this->parameters = $parameters;
 	}
 
 	/**
@@ -74,10 +41,10 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
 	public function toResponse($request)
 	{
 		if (! is_callable($this->view) || is_string($this->view)) {
-			return view($this->view, ['request' => $request]);
+			return view($this->view, $this->parameters);
 		}
 
-		$response = call_user_func($this->view, $this->client, $this->user, $this->scopes, $this->request, $this->authToken);
+		$response = call_user_func($this->view, $this->parameters);
 
 		if ($response instanceof Responsable) {
 			return $response->toResponse($request);
