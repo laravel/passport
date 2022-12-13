@@ -2,7 +2,9 @@
 
 namespace Laravel\Passport\Http\Responses;
 
-class AuthorizationViewResponse
+use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+
+class AuthorizationViewResponse implements AuthorizationViewResponseContract
 {
 	/**
 	 * The name of the view or the callable used to generate the view.
