@@ -117,14 +117,6 @@ class AuthorizationController
 	        'request' => $request,
 	        'authToken' => $authToken,
         ]);
-
-        return $this->response->view('passport::authorize', [
-            'client' => $client,
-            'user' => $user,
-            'scopes' => $scopes,
-            'request' => $request,
-            'authToken' => $authToken,
-        ]);
     }
 
     /**
