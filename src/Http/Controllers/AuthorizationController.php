@@ -66,12 +66,12 @@ class AuthorizationController
      * @param  \Illuminate\Http\Request  $request
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
-     * @return \Laravel\Passport\Contracts\AuthorizationViewResponse
+     * @return \Laravel\Passport\Contracts\AuthorizationViewResponse|mixed|void
      */
     public function authorize(ServerRequestInterface $psrRequest,
                               Request $request,
                               ClientRepository $clients,
-                              TokenRepository $tokens): AuthorizationViewResponse
+                              TokenRepository $tokens)
     {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
