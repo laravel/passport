@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Http\Controllers\Responses\AuthorizationViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -684,4 +686,39 @@ class Passport
 
         return new static;
     }
+
+	/**
+	 * Register the views for Passport using conventional names under the given namespace.
+	 *
+	 * @param  string  $namespace
+	 * @return void
+	 */
+	public static function viewNamespace(string $namespace)
+	{
+		static::viewPrefix($namespace.'::');
+	}
+
+	/**
+	 * Register the views for Passport using conventional names under the given prefix.
+	 *
+	 * @param  string  $prefix
+	 * @return void
+	 */
+	public static function viewPrefix(string $prefix)
+	{
+		static::authorizationView($prefix.'authorize');
+	}
+
+	/**
+	 * Specify which view should be used as the authorization view.
+	 *
+	 * @param  callable|string  $view
+	 * @return void
+	 */
+	public static function authorizationView($view)
+	{
+		app()->singleton(AuthorizationViewResponseContract::class, function () use ($view) {
+			return new AuthorizationViewResponse($view);
+		});
+	}
 }

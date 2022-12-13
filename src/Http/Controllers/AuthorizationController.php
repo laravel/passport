@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
@@ -65,12 +66,12 @@ class AuthorizationController
      * @param  \Illuminate\Http\Request  $request
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
-     * @return \Illuminate\Http\Response
+     * @return \Laravel\Passport\Contracts\AuthorizationViewResponse
      */
     public function authorize(ServerRequestInterface $psrRequest,
                               Request $request,
                               ClientRepository $clients,
-                              TokenRepository $tokens)
+                              TokenRepository $tokens): AuthorizationViewResponse
     {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
@@ -108,6 +109,14 @@ class AuthorizationController
 
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('authRequest', $authRequest);
+
+        return app(AuthorizationViewResponse::class, [
+	        'client' => $client,
+	        'user' => $user,
+	        'scopes' => $scopes,
+	        'request' => $request,
+	        'authToken' => $authToken,
+        ]);
 
         return $this->response->view('passport::authorize', [
             'client' => $client,
