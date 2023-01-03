@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.3.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.4.0...11.x)
+
+## [v11.4.0](https://github.com/laravel/passport/compare/v11.3.1...v11.4.0) - 2023-01-03
+
+### Changed
+
+- Uses PHP Native Type Declarations 🐘 by @nunomaduro in https://github.com/laravel/passport/pull/1594
 
 ## [v11.3.1](https://github.com/laravel/passport/compare/v11.3.0...v11.3.1) - 2022-12-02
 
