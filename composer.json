@@ -26,6 +26,8 @@
         "illuminate/encryption": "^9.0",
         "illuminate/http": "^9.0",
         "illuminate/support": "^9.0",
+
+        "firebase/php-jwt": "^6.3.1",
         "lcobucci/jwt": "^3.4|^4.0",
         "league/oauth2-server": "^8.2",
         "nyholm/psr7": "^1.3",
