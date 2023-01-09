@@ -18,7 +18,7 @@ use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery as m;
 use Nyholm\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

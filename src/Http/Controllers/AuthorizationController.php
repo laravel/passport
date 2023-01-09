@@ -94,7 +94,7 @@ class AuthorizationController
         $request->session()->forget('promptedForLogin');
 
         $scopes = $this->parseScopes($authRequest);
-        $user = $request->user();
+        $user = $request->user(config('passport.guard'));
         $client = $clients->find($authRequest->getClient()->getIdentifier());
 
         if ($request->get('prompt') !== 'consent' &&
