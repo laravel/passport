@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.4.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.5.0...11.x)
+
+## [v11.5.0](https://github.com/laravel/passport/compare/v11.4.0...v11.5.0) - 2023-01-09
+
+### Added
+
+- Laravel v10 Support by @driesvints in https://github.com/laravel/passport/pull/1615
 
 ## [v11.4.0](https://github.com/laravel/passport/compare/v11.3.1...v11.4.0) - 2023-01-03
 
