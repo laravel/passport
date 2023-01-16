@@ -54,7 +54,7 @@ class TokenRepository
     /**
      * Get a valid token instance for the given user and client.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Laravel\Passport\Client  $client
      * @return \Laravel\Passport\Token|null
      */
@@ -107,7 +107,7 @@ class TokenRepository
     /**
      * Find a valid token for the given user and client.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Laravel\Passport\Client  $client
      * @return \Laravel\Passport\Token|null
      */
