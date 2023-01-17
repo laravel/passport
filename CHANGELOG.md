@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.5.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.5.1...11.x)
+
+## [v11.5.1](https://github.com/laravel/passport/compare/v11.5.0...v11.5.1) - 2023-01-16
+
+### Fixed
+
+- Get authenticated user from the guard by @hafezdivandari in https://github.com/laravel/passport/pull/1617
 
 ## [v11.5.0](https://github.com/laravel/passport/compare/v11.4.0...v11.5.0) - 2023-01-09
 
