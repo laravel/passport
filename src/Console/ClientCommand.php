@@ -133,7 +133,7 @@ class ClientCommand extends Command
     protected function createAuthCodeClient(ClientRepository $clients)
     {
         $userId = $this->option('user_id') ?: $this->ask(
-            'Which user ID should the client be assigned to?'
+            'Which user ID should the client be assigned to? (Optional)'
         );
 
         $name = $this->option('name') ?: $this->ask(
