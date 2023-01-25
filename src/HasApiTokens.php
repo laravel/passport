@@ -71,7 +71,7 @@ trait HasApiTokens
     /**
      * Set the current access token for the user.
      *
-     * @param  \Laravel\Passport\Token  $accessToken
+     * @param  \Laravel\Passport\Token|\Laravel\Passport\TransientToken  $accessToken
      * @return $this
      */
     public function withAccessToken($accessToken)
