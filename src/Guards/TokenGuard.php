@@ -329,6 +329,10 @@ class TokenGuard implements Guard
             $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
         }
 
+        if (! $token && $encrypted = $request->cookie('X-XSRF-TOKEN')) {
+            $token = CookieValuePrefix::remove($this->encrypter->decrypt($encrypted, static::serialized()));
+        }
+
         return $token;
     }
 

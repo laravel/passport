@@ -212,6 +212,45 @@ class TokenGuardTest extends TestCase
         $this->assertEquals($expectedUser, $user);
     }
 
+    public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_cookie()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = new Encrypter(str_repeat('a', 16));
+
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
+
+        $request = Request::create('/');
+        $request->cookies->set('X-XSRF-TOKEN',
+            $encrypter->encrypt(CookieValuePrefix::create(
+                'X-XSRF-TOKEN',
+                $encrypter->getKey()).'token',
+                false
+            )
+        );
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
+                'sub' => 1,
+                'aud' => 1,
+                'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16), 'HS256'), false)
+        );
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
+
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
+        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+
+        $user = $guard->user();
+
+        $this->assertEquals($expectedUser, $user);
+    }
+
     public function test_cookie_xsrf_is_verified_against_csrf_token_header()
     {
         $resourceServer = m::mock(ResourceServer::class);
@@ -248,6 +287,32 @@ class TokenGuardTest extends TestCase
 
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('wrong_token', false));
+        $request->cookies->set('laravel_token',
+            $encrypter->encrypt(JWT::encode([
+                'sub' => 1,
+                'aud' => 1,
+                'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], str_repeat('a', 16), 'HS256'))
+        );
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
+
+        $userProvider->shouldReceive('retrieveById')->never();
+
+        $this->assertNull($guard->user());
+    }
+
+    public function test_cookie_xsrf_is_verified_against_xsrf_token_cookie()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = new Encrypter(str_repeat('a', 16));
+
+        $request = Request::create('/');
+        $request->cookies->set('X-XSRF-TOKEN', $encrypter->encrypt('wrong_token', false));
         $request->cookies->set('laravel_token',
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
