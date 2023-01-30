@@ -167,7 +167,7 @@ class ClientCommand extends Command
             $this->line('');
         }
 
-        $this->line('<comment>Client ID:</comment> '.$client->id);
+        $this->line('<comment>Client ID:</comment> '.$client->getKey());
         $this->line('<comment>Client secret:</comment> '.$client->plainSecret);
     }
 }
