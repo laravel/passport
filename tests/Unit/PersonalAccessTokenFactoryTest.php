@@ -15,6 +15,7 @@ use Lcobucci\JWT\Token\Signature;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Laravel\Passport\Client;
 
 class PersonalAccessTokenFactoryTest extends TestCase
 {
@@ -56,7 +57,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
     }
 }
 
-class PersonalAccessTokenFactoryTestClientStub
+class PersonalAccessTokenFactoryTestClientStub extends Client
 {
     public $id = 1;
 
