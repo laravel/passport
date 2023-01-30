@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\PersonalAccessTokenResult;
@@ -15,7 +16,6 @@ use Lcobucci\JWT\Token\Signature;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Laravel\Passport\Client;
 
 class PersonalAccessTokenFactoryTest extends TestCase
 {
