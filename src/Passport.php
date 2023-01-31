@@ -370,7 +370,7 @@ class Passport
     {
         $token = app(self::tokenModel());
 
-        $token->client_id = $client->id;
+        $token->client_id = $client->getKey();
         $token->setRelation('client', $client);
 
         $token->scopes = $scopes;
