@@ -1,6 +1,17 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.5.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.6.0...11.x)
+
+## [v11.6.0](https://github.com/laravel/passport/compare/v11.5.1...v11.6.0) - 2023-01-31
+
+### Changed
+
+- Update ClientCommand.php's user_id description by @Smoggert in https://github.com/laravel/passport/pull/1619
+- Get model PK instead of forcibly id column by @lucaspanik in https://github.com/laravel/passport/pull/1626
+
+### Fixed
+
+- Fix doc block for `withAccessToken()` by @axlon in https://github.com/laravel/passport/pull/1620
 
 ## [v11.5.1](https://github.com/laravel/passport/compare/v11.5.0...v11.5.1) - 2023-01-16
 
