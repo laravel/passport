@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.6.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.6.1...11.x)
+
+## [v11.6.1](https://github.com/laravel/passport/compare/v11.6.0...v11.6.1) - 2023-02-03
+
+### Changed
+
+- Indicate current token can be `TransientToken` by @axlon in https://github.com/laravel/passport/pull/1627
 
 ## [v11.6.0](https://github.com/laravel/passport/compare/v11.5.1...v11.6.0) - 2023-01-31
 
