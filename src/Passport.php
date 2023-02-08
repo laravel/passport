@@ -726,8 +726,8 @@ class Passport
      */
     public static function authorizationView($view)
     {
-        app()->singleton(AuthorizationViewResponseContract::class, function ($app, $parameters) use ($view) {
-            return new AuthorizationViewResponse($view, $parameters);
+        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
+            return new AuthorizationViewResponse($view);
         });
     }
 }
