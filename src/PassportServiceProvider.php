@@ -150,7 +150,7 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the authorization server.`
+     * Register the authorization server.
      *
      * @return void
      */

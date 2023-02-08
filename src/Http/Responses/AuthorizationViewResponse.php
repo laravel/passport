@@ -33,7 +33,7 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
     }
 
     /**
-     * Add parameters to response
+     * Add parameters to response.
      *
      * @param $parameters
      * @return $this|mixed
@@ -54,7 +54,7 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
     public function toResponse($request)
     {
         if (! is_callable($this->view) || is_string($this->view)) {
-            return view($this->view, ...$this->parameters);
+            return view($this->view, [...$this->parameters]);
         }
 
         $response = call_user_func($this->view, ...$this->parameters);
