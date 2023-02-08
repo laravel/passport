@@ -10,6 +10,7 @@ use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
@@ -36,7 +37,7 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -57,20 +58,19 @@ class AuthorizationControllerTest extends TestCase
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
-
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
-            $this->assertSame('passport::authorize', $view);
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
+
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
+            $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return 'view';
         });
-
-        $tokens = m::mock(TokenRepository::class);
-        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
 
         $this->assertSame('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
@@ -207,7 +207,7 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -234,10 +234,10 @@ class AuthorizationControllerTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $tokens->shouldNotReceive('findValidToken');
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
-            $this->assertSame('passport::authorize', $view);
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
+            $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return 'view';

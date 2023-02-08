@@ -4,7 +4,6 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
@@ -29,9 +28,9 @@ class AuthorizationController
     protected $server;
 
     /**
-     * The response factory implementation.
+     * The response implementation.
      *
-     * @var \Illuminate\Contracts\Routing\ResponseFactory
+     * @var \Laravel\Passport\Contracts\AuthorizationViewResponse
      */
     protected $response;
 
@@ -46,12 +45,12 @@ class AuthorizationController
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
+     * @param  \Laravel\Passport\Contracts\AuthorizationViewResponse  $response
      * @param  \Illuminate\Contracts\Auth\StatefulGuard  $guard
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-                                ResponseFactory $response,
+                                AuthorizationViewResponse $response,
                                 StatefulGuard $guard)
     {
         $this->server = $server;
@@ -110,7 +109,7 @@ class AuthorizationController
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('authRequest', $authRequest);
 
-        return app(AuthorizationViewResponse::class, [
+        return $this->response->withParameters([
             'client' => $client,
             'user' => $user,
             'scopes' => $scopes,
