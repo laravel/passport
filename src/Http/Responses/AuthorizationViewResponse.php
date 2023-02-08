@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Responses;
 
+use Illuminate\Contracts\Support\Responsable;
 use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
 
 class AuthorizationViewResponse implements AuthorizationViewResponseContract

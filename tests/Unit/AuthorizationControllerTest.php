@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Client;
@@ -80,7 +79,7 @@ class AuthorizationControllerTest extends TestCase
     public function test_authorization_exceptions_are_handled()
     {
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -108,7 +107,7 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -158,7 +157,7 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -257,7 +256,7 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -299,7 +298,7 @@ class AuthorizationControllerTest extends TestCase
     public function test_authorization_denied_if_unauthenticated_and_request_has_prompt_equals_to_none()
     {
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -340,7 +339,7 @@ class AuthorizationControllerTest extends TestCase
         $this->expectException('Illuminate\Auth\AuthenticationException');
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
@@ -371,7 +370,7 @@ class AuthorizationControllerTest extends TestCase
         $this->expectException('Illuminate\Auth\AuthenticationException');
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
         $controller = new AuthorizationController($server, $response, $guard);
