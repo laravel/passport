@@ -295,8 +295,12 @@ class TokenGuard implements Guard
      */
     protected function decodeJwtTokenCookie($request)
     {
+        $jwt = $request->cookie(Passport::cookie());
+
         return (array) JWT::decode(
-            CookieValuePrefix::remove($this->encrypter->decrypt($request->cookie(Passport::cookie()), Passport::$unserializesCookies)),
+            Passport::$decryptsCookies
+                ? CookieValuePrefix::remove($this->encrypter->decrypt($jwt, Passport::$unserializesCookies))
+                : $jwt,
             new Key(Passport::tokenEncryptionKey($this->encrypter), 'HS256')
         );
     }
