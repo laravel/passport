@@ -42,6 +42,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $response, $guard);
 
         $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock());
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
 
         $request = m::mock(Request::class);
@@ -49,7 +50,6 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('user')->andReturn($user = m::mock());
         $request->shouldReceive('get')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
@@ -114,6 +114,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $response, $guard);
 
         $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock());
         $psrResponse = new Response();
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
@@ -125,7 +126,6 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
         $request->shouldReceive('get')->with('prompt')->andReturn(null);
@@ -164,6 +164,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $response, $guard);
 
         $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock());
         $psrResponse = new Response();
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
@@ -175,7 +176,6 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('user')->once()->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
         $request->shouldReceive('get')->with('prompt')->andReturn(null);
@@ -213,6 +213,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $response, $guard);
 
         $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock());
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
 
@@ -221,7 +222,6 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('user')->andReturn($user = m::mock());
         $request->shouldReceive('get')->with('prompt')->andReturn('consent');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
@@ -263,6 +263,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $response, $guard);
 
         $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock());
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
         $server->shouldReceive('completeAuthorizationRequest')
@@ -273,7 +274,6 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('user')->andReturn($user = m::mock());
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldReceive('get')->with('prompt')->andReturn('none');
 

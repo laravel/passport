@@ -304,6 +304,48 @@ class TokenGuardTest extends TestCase
         Passport::encryptTokensUsing(null);
     }
 
+    public function test_users_may_be_retrieved_from_cookies_without_encryption()
+    {
+        Passport::withoutCookieEncryption();
+        Passport::encryptTokensUsing(function (EncrypterContract $encrypter) {
+            return $encrypter->getKey().'.mykey';
+        });
+
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $tokens = m::mock(TokenRepository::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = new Encrypter(str_repeat('a', 16));
+
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
+
+        $request = Request::create('/');
+        $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
+        $request->cookies->set('laravel_token',
+            JWT::encode([
+                'sub' => 1,
+                'aud' => 1,
+                'csrf' => 'token',
+                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+            ], Passport::tokenEncryptionKey($encrypter), 'HS256')
+        );
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
+
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
+        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+
+        $user = $guard->user();
+
+        $this->assertEquals($expectedUser, $user);
+
+        // Revert to the default encryption method
+        Passport::withCookieEncryption();
+        Passport::encryptTokensUsing(null);
+    }
+
     public function test_xsrf_token_cookie_without_a_token_header_is_not_accepted()
     {
         $resourceServer = m::mock(ResourceServer::class);

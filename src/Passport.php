@@ -136,6 +136,13 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * Indicates if Passport should decrypt cookies.
+     *
+     * @var bool
+     */
+    public static $decryptsCookies = true;
+
+    /**
      * Indicates if client secrets will be hashed.
      *
      * @var bool
@@ -372,7 +379,7 @@ class Passport
     {
         $token = app(self::tokenModel());
 
-        $token->client_id = $client->id;
+        $token->client_id = $client->getKey();
         $token->setRelation('client', $client);
 
         $token->scopes = $scopes;
@@ -683,6 +690,30 @@ class Passport
     public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to enable cookie encryption.
+     *
+     * @return static
+     */
+    public static function withCookieEncryption()
+    {
+        static::$decryptsCookies = true;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to disable cookie encryption.
+     *
+     * @return static
+     */
+    public static function withoutCookieEncryption()
+    {
+        static::$decryptsCookies = false;
 
         return new static;
     }

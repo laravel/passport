@@ -95,7 +95,7 @@ class AuthorizationController
         $request->session()->forget('promptedForLogin');
 
         $scopes = $this->parseScopes($authRequest);
-        $user = $request->user();
+        $user = $this->guard->user();
         $client = $clients->find($authRequest->getClient()->getIdentifier());
 
         if ($request->get('prompt') !== 'consent' &&
@@ -138,7 +138,7 @@ class AuthorizationController
      * Determine if a valid token exists for the given user, client, and scopes.
      *
      * @param  \Laravel\Passport\TokenRepository  $tokens
-     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Laravel\Passport\Client  $client
      * @param  array  $scopes
      * @return bool
@@ -154,7 +154,7 @@ class AuthorizationController
      * Approve the authorization request.
      *
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
-     * @param  \Illuminate\Database\Eloquent\Model  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @return \Illuminate\Http\Response
      */
     protected function approveRequest($authRequest, $user)
@@ -174,7 +174,7 @@ class AuthorizationController
      * Deny the authorization request.
      *
      * @param  \League\OAuth2\Server\RequestTypes\AuthorizationRequest  $authRequest
-     * @param  \Illuminate\Database\Eloquent\Model|null  $user
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|null  $user
      * @return \Illuminate\Http\Response
      */
     protected function denyRequest($authRequest, $user = null)

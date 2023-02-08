@@ -50,13 +50,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
             ]
         );
@@ -93,13 +93,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret.'foo',
             ]
         );
@@ -137,13 +137,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
                 'username' => $user->email,
                 'password' => $password,
@@ -184,13 +184,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
                 'username' => $user->email,
                 'password' => $password.'foo',
@@ -227,13 +227,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret.'foo',
                 'username' => $user->email,
                 'password' => $password,
@@ -274,13 +274,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
             ]
         );
