@@ -111,11 +111,11 @@ class AuthorizationController
         $request->session()->put('authRequest', $authRequest);
 
         return app(AuthorizationViewResponse::class, [
-	        'client' => $client,
-	        'user' => $user,
-	        'scopes' => $scopes,
-	        'request' => $request,
-	        'authToken' => $authToken,
+            'client' => $client,
+            'user' => $user,
+            'scopes' => $scopes,
+            'request' => $request,
+            'authToken' => $authToken,
         ]);
     }
 
