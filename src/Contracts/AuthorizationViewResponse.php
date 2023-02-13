@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Responsable;
 interface AuthorizationViewResponse extends Responsable
 {
     /**
-     * @param $parameters
+     * @param  array  $parameters
      * @return mixed
      */
     public function withParameters($parameters = []);
