@@ -36,7 +36,7 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
      * Add parameters to response.
      *
      * @param $parameters
-     * @return $this|mixed
+     * @return $this
      */
     public function withParameters($parameters = [])
     {
