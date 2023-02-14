@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.6.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.7.0...11.x)
+
+## [v11.7.0](https://github.com/laravel/passport/compare/v11.6.1...v11.7.0) - 2023-02-08
+
+### Added
+
+- Add support for `EncryptCookies` middleware by @axlon in https://github.com/laravel/passport/pull/1628
 
 ## [v11.6.1](https://github.com/laravel/passport/compare/v11.6.0...v11.6.1) - 2023-02-03
 
