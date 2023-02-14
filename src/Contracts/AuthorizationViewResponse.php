@@ -8,7 +8,7 @@ interface AuthorizationViewResponse extends Responsable
 {
     /**
      * @param  array  $parameters
-     * @return mixed
+     * @return $this
      */
     public function withParameters($parameters = []);
 }
