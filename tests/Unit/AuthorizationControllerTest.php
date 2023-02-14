@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
 use Laravel\Passport\Passport;
@@ -337,7 +338,7 @@ class AuthorizationControllerTest extends TestCase
 
     public function test_logout_and_prompt_login_if_request_has_prompt_equals_to_login()
     {
-        $this->expectException('Illuminate\Auth\AuthenticationException');
+        $this->expectException(AuthenticationException::class);
 
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
@@ -368,7 +369,7 @@ class AuthorizationControllerTest extends TestCase
 
     public function test_user_should_be_authenticated()
     {
-        $this->expectException('Illuminate\Auth\AuthenticationException');
+        $this->expectException(AuthenticationException::class);
 
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(ResponseFactory::class);
