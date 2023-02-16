@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -642,6 +644,19 @@ class Passport
         return is_callable(static::$tokenEncryptionKeyCallback) ?
             (static::$tokenEncryptionKeyCallback)($encrypter) :
             $encrypter->getKey();
+    }
+
+    /**
+     * Specify which view should be used as the authorization view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function authorizationView($view)
+    {
+        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
+            return new AuthorizationViewResponse($view);
+        });
     }
 
     /**

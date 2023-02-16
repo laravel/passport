@@ -3,7 +3,6 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Client;
@@ -11,6 +10,7 @@ use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
@@ -37,10 +37,10 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
@@ -58,20 +58,19 @@ class AuthorizationControllerTest extends TestCase
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
-
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
-            $this->assertSame('passport::authorize', $view);
+        $tokens = m::mock(TokenRepository::class);
+        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
+
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
+            $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return 'view';
         });
-
-        $tokens = m::mock(TokenRepository::class);
-        $tokens->shouldReceive('findValidToken')->with($user, $client)->andReturnNull();
 
         $this->assertSame('view', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
@@ -81,10 +80,10 @@ class AuthorizationControllerTest extends TestCase
     public function test_authorization_exceptions_are_handled()
     {
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(LeagueException::invalidCredentials());
@@ -109,10 +108,10 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
@@ -159,10 +158,10 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
@@ -208,10 +207,10 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
@@ -235,10 +234,10 @@ class AuthorizationControllerTest extends TestCase
         $tokens = m::mock(TokenRepository::class);
         $tokens->shouldNotReceive('findValidToken');
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
-            $this->assertSame('passport::authorize', $view);
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
+            $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return 'view';
@@ -258,10 +257,10 @@ class AuthorizationControllerTest extends TestCase
         ]);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
@@ -300,10 +299,10 @@ class AuthorizationControllerTest extends TestCase
     public function test_authorization_denied_if_unauthenticated_and_request_has_prompt_equals_to_none()
     {
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(true);
         $server->shouldReceive('validateAuthorizationRequest')
@@ -341,10 +340,10 @@ class AuthorizationControllerTest extends TestCase
         $this->expectException(AuthenticationException::class);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
         $server->shouldReceive('validateAuthorizationRequest')->once();
@@ -372,10 +371,10 @@ class AuthorizationControllerTest extends TestCase
         $this->expectException(AuthenticationException::class);
 
         $server = m::mock(AuthorizationServer::class);
-        $response = m::mock(ResponseFactory::class);
+        $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $controller = new AuthorizationController($server, $response, $guard);
+        $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(true);
         $server->shouldReceive('validateAuthorizationRequest')->once();

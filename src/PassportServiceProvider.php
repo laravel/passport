@@ -145,6 +145,8 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
+
+        Passport::authorizationView('passport::authorize');
     }
 
     /**
