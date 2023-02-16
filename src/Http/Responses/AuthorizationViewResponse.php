@@ -54,10 +54,10 @@ class AuthorizationViewResponse implements AuthorizationViewResponseContract
     public function toResponse($request)
     {
         if (! is_callable($this->view) || is_string($this->view)) {
-            return view($this->view, [...$this->parameters]);
+            return response()->view($this->view, $this->parameters);
         }
 
-        $response = call_user_func($this->view, ...$this->parameters);
+        $response = call_user_func($this->view, $this->parameters);
 
         if ($response instanceof Responsable) {
             return $response->toResponse($request);

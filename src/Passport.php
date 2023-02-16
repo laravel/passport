@@ -647,6 +647,19 @@ class Passport
     }
 
     /**
+     * Specify which view should be used as the authorization view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function authorizationView($view)
+    {
+        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
+            return new AuthorizationViewResponse($view);
+        });
+    }
+
+    /**
      * Configure Passport to not register its routes.
      *
      * @return static
@@ -716,18 +729,5 @@ class Passport
         static::$decryptsCookies = false;
 
         return new static;
-    }
-
-    /**
-     * Specify which view should be used as the authorization view.
-     *
-     * @param  callable|string  $view
-     * @return void
-     */
-    public static function authorizationView($view)
-    {
-        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
-            return new AuthorizationViewResponse($view);
-        });
     }
 }

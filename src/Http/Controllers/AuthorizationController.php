@@ -28,13 +28,6 @@ class AuthorizationController
     protected $server;
 
     /**
-     * The response implementation.
-     *
-     * @var \Laravel\Passport\Contracts\AuthorizationViewResponse
-     */
-    protected $response;
-
-    /**
      * The guard implementation.
      *
      * @var \Illuminate\Contracts\Auth\StatefulGuard
@@ -42,20 +35,26 @@ class AuthorizationController
     protected $guard;
 
     /**
+     * The authorization view response implementation.
+     *
+     * @var \Laravel\Passport\Contracts\AuthorizationViewResponse
+     */
+    protected $response;
+
+    /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\Contracts\AuthorizationViewResponse  $response
      * @param  \Illuminate\Contracts\Auth\StatefulGuard  $guard
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-                                AuthorizationViewResponse $response,
-                                StatefulGuard $guard)
+                                StatefulGuard $guard,
+                                AuthorizationViewResponse $response)
     {
         $this->server = $server;
-        $this->response = $response;
         $this->guard = $guard;
+        $this->response = $response;
     }
 
     /**
