@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.7.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.0...11.x)
+
+## [v11.8.0](https://github.com/laravel/passport/compare/v11.7.0...v11.8.0) - 2023-02-17
+
+- Move AuthenticationException into the scope of Laravel Passport by @chrispage1 in https://github.com/laravel/passport/pull/1633
+- Custom authorization view response by @JonErickson in https://github.com/laravel/passport/pull/1629
+- Fix deprecated $dates property by @TonyWong9527 in https://github.com/laravel/passport/pull/1636
 
 ## [v11.7.0](https://github.com/laravel/passport/compare/v11.6.1...v11.7.0) - 2023-02-08
 
