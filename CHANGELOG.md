@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.1...11.x)
+
+## [v11.8.1](https://github.com/laravel/passport/compare/v11.8.0...v11.8.1) - 2023-02-20
+
+- Revert "Move AuthenticationException into the scope of Laravel Passport" by @driesvints in https://github.com/laravel/passport/commit/db543b0cc13ed3f56f1bffda04707fbe2a8c7ab5
 
 ## [v11.8.0](https://github.com/laravel/passport/compare/v11.7.0...v11.8.0) - 2023-02-17
 
