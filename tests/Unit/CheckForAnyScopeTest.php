@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as CheckScopes;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -48,7 +47,7 @@ class CheckForAnyScopeTest extends TestCase
 
     public function test_exception_is_thrown_if_no_authenticated_user()
     {
-        $this->expectException(AuthenticationException::class);
+        $this->expectException('Illuminate\Auth\AuthenticationException');
 
         $middleware = new CheckScopes;
         $request = m::mock();
@@ -61,7 +60,7 @@ class CheckForAnyScopeTest extends TestCase
 
     public function test_exception_is_thrown_if_no_token()
     {
-        $this->expectException(AuthenticationException::class);
+        $this->expectException('Illuminate\Auth\AuthenticationException');
 
         $middleware = new CheckScopes;
         $request = m::mock();
