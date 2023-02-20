@@ -7,13 +7,11 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Passport\Client;
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
+use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\Token;
-use Laravel\Passport\TokenRepository;
-use Lcobucci\JWT\Configuration;
 
 class AccessTokenControllerTest extends PassportTestCase
 {
@@ -52,13 +50,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
             ]
         );
@@ -78,10 +76,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
-        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->claims()->get('aud'))->is($client));
-
-        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->claims()->get('jti'));
+        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
         $this->assertInstanceOf(Token::class, $token);
         $this->assertTrue($token->client->is($client));
         $this->assertFalse($token->revoked);
@@ -98,13 +93,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret.'foo',
             ]
         );
@@ -142,13 +137,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
                 'username' => $user->email,
                 'password' => $password,
@@ -171,11 +166,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
 
-        $jwtAccessToken = Configuration::forUnsecuredSigner()->parser()->parse($decodedResponse['access_token']);
-        $this->assertTrue($this->app->make(ClientRepository::class)->findActive($jwtAccessToken->claims()->get('aud'))->is($client));
-        $this->assertTrue($this->app->make('auth')->createUserProvider()->retrieveById($jwtAccessToken->claims()->get('sub'))->is($user));
-
-        $token = $this->app->make(TokenRepository::class)->find($jwtAccessToken->claims()->get('jti'));
+        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
         $this->assertInstanceOf(Token::class, $token);
         $this->assertFalse($token->revoked);
         $this->assertTrue($token->user->is($user));
@@ -193,13 +184,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
                 'username' => $user->email,
                 'password' => $password.'foo',
@@ -236,13 +227,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'password',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret.'foo',
                 'username' => $user->email,
                 'password' => $password,
@@ -283,13 +274,13 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->save();
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->id]);
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
 
         $response = $this->post(
             '/oauth/token',
             [
                 'grant_type' => 'client_credentials',
-                'client_id' => $client->id,
+                'client_id' => $client->getKey(),
                 'client_secret' => $client->secret,
             ]
         );

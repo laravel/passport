@@ -8,15 +8,18 @@ Route::post('/token', [
     'middleware' => 'throttle',
 ]);
 
-Route::middleware(['web', 'auth'])->group(function () {
+Route::get('/authorize', [
+    'uses' => 'AuthorizationController@authorize',
+    'as' => 'authorizations.authorize',
+    'middleware' => 'web',
+]);
+
+$guard = config('passport.guard', null);
+
+Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () {
     Route::post('/token/refresh', [
         'uses' => 'TransientTokenController@refresh',
         'as' => 'token.refresh',
-    ]);
-
-    Route::get('/authorize', [
-        'uses' => 'AuthorizationController@authorize',
-        'as' => 'authorizations.authorize',
     ]);
 
     Route::post('/authorize', [

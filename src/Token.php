@@ -42,15 +42,7 @@ class Token extends Model
     protected $casts = [
         'scopes' => 'array',
         'revoked' => 'bool',
-    ];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'expires_at',
+        'expires_at' => 'datetime',
     ];
 
     /**

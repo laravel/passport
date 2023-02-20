@@ -2,30 +2,30 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use League\OAuth2\Server\AuthorizationServer;
+use Nyholm\Psr7\Response as Psr7Response;
 
 class DenyAuthorizationController
 {
-    use RetrievesAuthRequestFromSession;
+    use ConvertsPsrResponses, HandlesOAuthErrors, RetrievesAuthRequestFromSession;
 
     /**
-     * The response factory implementation.
+     * The authorization server.
      *
-     * @var \Illuminate\Contracts\Routing\ResponseFactory
+     * @var \League\OAuth2\Server\AuthorizationServer
      */
-    protected $response;
+    protected $server;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \Illuminate\Contracts\Routing\ResponseFactory  $response
+     * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @return void
      */
-    public function __construct(ResponseFactory $response)
+    public function __construct(AuthorizationServer $server)
     {
-        $this->response = $response;
+        $this->server = $server;
     }
 
     /**
@@ -40,16 +40,12 @@ class DenyAuthorizationController
 
         $authRequest = $this->getAuthRequestFromSession($request);
 
-        $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
+        $authRequest->setAuthorizationApproved(false);
 
-        if (! in_array($uri = $authRequest->getRedirectUri(), $clientUris)) {
-            $uri = Arr::first($clientUris);
-        }
-
-        $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : (strstr($uri, '?') ? '&' : '?');
-
-        return $this->response->redirectTo(
-            $uri.$separator.'error=access_denied&state='.$request->input('state')
-        );
+        return $this->withErrorHandling(function () use ($authRequest) {
+            return $this->convertResponse(
+                $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
+            );
+        });
     }
 }

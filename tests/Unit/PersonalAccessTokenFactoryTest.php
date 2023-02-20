@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\PersonalAccessTokenResult;
@@ -56,7 +57,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
     }
 }
 
-class PersonalAccessTokenFactoryTestClientStub
+class PersonalAccessTokenFactoryTestClientStub extends Client
 {
     public $id = 1;
 

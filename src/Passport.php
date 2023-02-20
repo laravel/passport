@@ -6,6 +6,8 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -134,6 +136,13 @@ class Passport
     public static $unserializesCookies = false;
 
     /**
+     * Indicates if Passport should decrypt cookies.
+     *
+     * @var bool
+     */
+    public static $decryptsCookies = true;
+
+    /**
      * Indicates if client secrets will be hashed.
      *
      * @var bool
@@ -160,6 +169,13 @@ class Passport
      * @var \League\OAuth2\Server\ResponseTypes\ResponseTypeInterface|null
      */
     public static $authorizationServerResponseType;
+
+    /**
+     * Indicates if Passport routes will be registered.
+     *
+     * @var bool
+     */
+    public static $registersRoutes = true;
 
     /**
      * Enable the implicit grant type.
@@ -363,7 +379,7 @@ class Passport
     {
         $token = app(self::tokenModel());
 
-        $token->client_id = $client->id;
+        $token->client_id = $client->getKey();
         $token->setRelation('client', $client);
 
         $token->scopes = $scopes;
@@ -631,6 +647,31 @@ class Passport
     }
 
     /**
+     * Specify which view should be used as the authorization view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function authorizationView($view)
+    {
+        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
+            return new AuthorizationViewResponse($view);
+        });
+    }
+
+    /**
+     * Configure Passport to not register its routes.
+     *
+     * @return static
+     */
+    public static function ignoreRoutes()
+    {
+        static::$registersRoutes = false;
+
+        return new static;
+    }
+
+    /**
      * Configure Passport to not register its migrations.
      *
      * @return static
@@ -662,6 +703,30 @@ class Passport
     public static function withoutCookieSerialization()
     {
         static::$unserializesCookies = false;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to enable cookie encryption.
+     *
+     * @return static
+     */
+    public static function withCookieEncryption()
+    {
+        static::$decryptsCookies = true;
+
+        return new static;
+    }
+
+    /**
+     * Instruct Passport to disable cookie encryption.
+     *
+     * @return static
+     */
+    public static function withoutCookieEncryption()
+    {
+        static::$decryptsCookies = false;
 
         return new static;
     }
