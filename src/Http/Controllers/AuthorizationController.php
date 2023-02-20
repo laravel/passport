@@ -2,13 +2,13 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
+use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
@@ -208,7 +208,7 @@ class AuthorizationController
      *
      * @param  \Illuminate\Http\Request  $request
      *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws \Laravel\Passport\Exceptions\AuthenticationException
      */
     protected function promptForLogin($request)
     {
