@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.2...11.x)
+
+## [v11.8.2](https://github.com/laravel/passport/compare/v11.8.1...v11.8.2) - 2023-02-20
+
+- Re-apply "Added AuthenticationException to extend the behaviour of Laravel's default exception handler" by @driesvints in https://github.com/laravel/passport/commit/67c3e336af163f6eba5dbca8e5db46275ff0e433
 
 ## [v11.8.1](https://github.com/laravel/passport/compare/v11.8.0...v11.8.1) - 2023-02-20
 
