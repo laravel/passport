@@ -80,6 +80,13 @@ class Passport
     public static $keyPath;
 
     /**
+     * The access token entity class name.
+     *
+     * @var string
+     */
+    public static $accessTokenEntity = 'Laravel\Passport\Bridge\AccessToken';
+
+    /**
      * The auth code model class name.
      *
      * @var string
@@ -430,6 +437,17 @@ class Passport
         return static::$keyPath
             ? rtrim(static::$keyPath, '/\\').DIRECTORY_SEPARATOR.$file
             : storage_path($file);
+    }
+
+    /**
+     * Set the access token entity class name.
+     *
+     * @param  string  $accessTokenEntity
+     * @return void
+     */
+    public static function useAccessTokenEntity($accessTokenEntity)
+    {
+        static::$accessTokenEntity = $accessTokenEntity;
     }
 
     /**
