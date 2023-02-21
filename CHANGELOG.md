@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v10.4.1...10.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v10.4.2...10.x)
+
+## [v10.4.2](https://github.com/laravel/passport/compare/v10.4.1...v10.4.2) - 2023-02-21
+
+- Fix migrations for Laravel 9.x by @ricky-perchpeek in https://github.com/laravel/passport/pull/1639
 
 ## [v10.4.1](https://github.com/laravel/passport/compare/v10.4.0...v10.4.1) - 2022-04-16
 
