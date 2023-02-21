@@ -4,25 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+return new class() extends Migration
 {
-    /**
-     * The database schema.
-     *
-     * @var \Illuminate\Database\Schema\Builder
-     */
-    protected $schema;
-
-    /**
-     * Create a new migration instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->schema = Schema::connection($this->getConnection());
-    }
-
     /**
      * Get the migration connection name.
      *
@@ -40,7 +23,9 @@ return new class extends Migration
      */
     public function up()
     {
-        $this->schema->create('oauth_clients', function (Blueprint $table) {
+        $schema = Schema::connection($this->getConnection());
+
+        $schema->create('oauth_clients', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->nullable()->index();
             $table->string('name');
@@ -61,6 +46,8 @@ return new class extends Migration
      */
     public function down()
     {
-        $this->schema->dropIfExists('oauth_clients');
+        $schema = Schema::connection($this->getConnection());
+
+        $schema->dropIfExists('oauth_clients');
     }
 };
