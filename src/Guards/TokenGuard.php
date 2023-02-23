@@ -214,7 +214,7 @@ class TokenGuard implements Guard
      * Authenticate and get the incoming PSR-7 request via the Bearer token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @return \Psr\Http\Message\ServerRequestInterface|null
      */
     protected function getPsrRequestViaBearerToken($request)
     {
