@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.2...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.3...11.x)
+
+## [v11.8.3](https://github.com/laravel/passport/compare/v11.8.2...v11.8.3) - 2023-03-01
+
+- Allow overriding the `AccessToken` class by @hafezdivandari in https://github.com/laravel/passport/pull/1638
+- Make `$userId` nullable in `ClientRepository->createPersonalAccessClient` by @bram-pkg in https://github.com/laravel/passport/pull/1642
 
 ## [v11.8.2](https://github.com/laravel/passport/compare/v11.8.1...v11.8.2) - 2023-02-20
 
