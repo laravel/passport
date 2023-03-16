@@ -137,7 +137,7 @@ class TokenGuard implements Guard
             $this->tokens,
             $this->clients,
             $this->encrypter,
-            $credentials['request'],
+            $credentials['request'] ?? app()->make('request'),
         ))->user());
     }
 
