@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.3...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.4...11.x)
+
+## [v11.8.4](https://github.com/laravel/passport/compare/v11.8.3...v11.8.4) - 2023-03-18
+
+- Removed deprecated `dates` property from `RefreshToken` model by @siarheipashkevich in https://github.com/laravel/passport/pull/1645
+- Removed deprecated `dates` property from `AuthCode` model by @siarheipashkevich in https://github.com/laravel/passport/pull/1644
+- Fix doc block types by @hafezdivandari in https://github.com/laravel/passport/pull/1647
 
 ## [v11.8.3](https://github.com/laravel/passport/compare/v11.8.2...v11.8.3) - 2023-03-01
 
