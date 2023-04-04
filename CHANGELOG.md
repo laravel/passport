@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.4...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.5...11.x)
+
+## [v11.8.5](https://github.com/laravel/passport/compare/v11.8.4...v11.8.5) - 2023-04-04
+
+- Allow `lcobucci/jwt` v5 and cleaned up version constraints by @GrahamCampbell in https://github.com/laravel/passport/pull/1649
+- Pass user identifier through to finalize scopes in personal access grant by @GrahamCampbell in https://github.com/laravel/passport/pull/1650
 
 ## [v11.8.4](https://github.com/laravel/passport/compare/v11.8.3...v11.8.4) - 2023-03-18
 
