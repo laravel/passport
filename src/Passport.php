@@ -87,6 +87,13 @@ class Passport
     public static $accessTokenEntity = 'Laravel\Passport\Bridge\AccessToken';
 
     /**
+     * The bearer token validator class name.
+     *
+     * @var string
+     */
+    public static $bearerTokenValidator = 'League\OAuth2\Server\AuthorizationValidators\BearerTokenValidator';
+
+    /**
      * The auth code model class name.
      *
      * @var string
@@ -448,6 +455,17 @@ class Passport
     public static function useAccessTokenEntity($accessTokenEntity)
     {
         static::$accessTokenEntity = $accessTokenEntity;
+    }
+
+    /**
+     * Set the custom bearer token validator class name.
+     *
+     * @param  string  $bearerTokenValidator
+     * @return void
+     */
+    public static function useBearerTokenValidator($bearerTokenValidator)
+    {
+        static::$bearerTokenValidator = $bearerTokenValidator;
     }
 
     /**
