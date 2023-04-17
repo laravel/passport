@@ -310,7 +310,8 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, function ($container) {
             return new ResourceServer(
                 $container->make(Bridge\AccessTokenRepository::class),
-                $this->makeCryptKey('public')
+                $this->makeCryptKey('public'),
+                Passport::$authorizationValidator
             );
         });
     }

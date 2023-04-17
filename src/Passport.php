@@ -178,6 +178,13 @@ class Passport
     public static $authorizationServerResponseType;
 
     /**
+     * The authorization validator.
+     *
+     * @var \League\OAuth2\Server\AuthorizationValidators\AuthorizationValidatorInterface|null
+     */
+    public static $authorizationValidator;
+
+    /**
      * Indicates if Passport routes will be registered.
      *
      * @var bool
