@@ -63,8 +63,10 @@ class ClientCommand extends Command
             config('app.name').' Personal Access Client'
         );
 
+        $provider = $this->promptForProvider();
+
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
+            null, $name, 'http://localhost', $provider
         );
 
         $this->info('Personal access client created successfully.');
@@ -85,13 +87,7 @@ class ClientCommand extends Command
             config('app.name').' Password Grant Client'
         );
 
-        $providers = array_keys(config('auth.providers'));
-
-        $provider = $this->option('provider') ?: $this->choice(
-            'Which user provider should this client use to retrieve users?',
-            $providers,
-            in_array('users', $providers) ? 'users' : null
-        );
+        $provider = $this->promptForProvider();
 
         $client = $clients->createPasswordGrantClient(
             null, $name, 'http://localhost', $provider
@@ -152,6 +148,22 @@ class ClientCommand extends Command
         $this->info('New client created successfully.');
 
         $this->outputClientDetails($client);
+    }
+
+    /**
+     * Ask the user what user provider should be used.
+     *
+     * @return string
+     */
+    protected function promptForProvider()
+    {
+        $providers = array_keys(config('auth.providers'));
+
+        return $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
     }
 
     /**
