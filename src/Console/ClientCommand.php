@@ -63,7 +63,7 @@ class ClientCommand extends Command
             config('app.name').' Personal Access Client'
         );
 
-        $provider = $this->choiceProvider();
+        $provider = $this->promptForProvider();
 
         $client = $clients->createPersonalAccessClient(
             null, $name, 'http://localhost', $provider
@@ -87,7 +87,7 @@ class ClientCommand extends Command
             config('app.name').' Password Grant Client'
         );
 
-        $provider = $this->choiceProvider();
+        $provider = $this->promptForProvider();
 
         $client = $clients->createPasswordGrantClient(
             null, $name, 'http://localhost', $provider
@@ -151,6 +151,22 @@ class ClientCommand extends Command
     }
 
     /**
+     * Ask the user what user provider should be used.
+     *
+     * @return string
+     */
+    protected function promptForProvider()
+    {
+        $providers = array_keys(config('auth.providers'));
+
+        return $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            $providers,
+            in_array('users', $providers) ? 'users' : null
+        );
+    }
+
+    /**
      * Output the client's ID and secret key.
      *
      * @param  \Laravel\Passport\Client  $client
@@ -165,21 +181,5 @@ class ClientCommand extends Command
 
         $this->line('<comment>Client ID:</comment> '.$client->getKey());
         $this->line('<comment>Client secret:</comment> '.$client->plainSecret);
-    }
-
-    /**
-     * Choice what the provider.
-     *
-     * @return string
-     */
-    protected function choiceProvider()
-    {
-        $providers = array_keys(config('auth.providers'));
-
-        return $this->option('provider') ?: $this->choice(
-            'Which user provider should this client use to retrieve users?',
-            $providers,
-            in_array('users', $providers) ? 'users' : null
-        );
     }
 }
