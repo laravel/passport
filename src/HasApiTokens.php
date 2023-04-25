@@ -30,7 +30,11 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(Passport::tokenModel(), 'user_id')
+            ->when($this->getProvider(), function ($query, $provider) {
+                $query->whereRelation('client', 'provider', $provider);
+            })
+            ->latest('created_at');
     }
 
     /**
@@ -64,7 +68,7 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes
+            $this->getKey(), $name, $scopes, $this->getProvider(),
         );
     }
 
@@ -79,5 +83,25 @@ trait HasApiTokens
         $this->accessToken = $accessToken;
 
         return $this;
+    }
+
+    /**
+     * Get the provider name of the model.
+     *
+     * @return string|null
+     */
+    protected function getProvider()
+    {
+        foreach (config('auth.providers', []) as $name => $config) {
+            if ($config['driver'] == 'eloquent' && is_a($this, $config['model'])) {
+                return $name;
+            }
+
+            if ($config['driver'] == 'database' && $this->getTable() == $config['table']) {
+                return $name;
+            }
+        }
+
+        return null;
     }
 }
