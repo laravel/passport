@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\PersonalAccessTokenFactory;
@@ -31,8 +32,9 @@ class HasApiTokensTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
+        $container->instance('config', new Repository);
         $container->instance(PersonalAccessTokenFactory::class, $factory = m::mock());
-        $factory->shouldReceive('make')->once()->with(1, 'name', ['scopes']);
+        $factory->shouldReceive('make')->once()->with(1, 'name', ['scopes'], null);
         $user = new HasApiTokensTestStub;
 
         $user->createToken('name', ['scopes']);

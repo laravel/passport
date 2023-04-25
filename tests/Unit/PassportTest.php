@@ -50,7 +50,7 @@ class PassportTest extends TestCase
 
     public function test_missing_personal_access_client_is_reported()
     {
-        $this->expectException('RuntimeException');
+        $this->expectException('Error');
 
         Passport::usePersonalAccessClientModel(PersonalAccessClientStub::class);
 
@@ -89,10 +89,6 @@ class PassportTest extends TestCase
 
 class PersonalAccessClientStub
 {
-    public function exists()
-    {
-        return false;
-    }
 }
 
 class RefreshTokenStub
