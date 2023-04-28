@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.5...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.6...11.x)
+
+## [v11.8.6](https://github.com/laravel/passport/compare/v11.8.5...v11.8.6) - 2023-04-24
+
+- Add Provider Guard to ClientRepository for Personal Access Clients by @michaelnabil230 in https://github.com/laravel/passport/pull/1655
 
 ## [v11.8.5](https://github.com/laravel/passport/compare/v11.8.4...v11.8.5) - 2023-04-04
 
