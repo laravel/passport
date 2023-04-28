@@ -66,7 +66,7 @@ class ClientCommand extends Command
         $provider = $this->promptForProvider();
 
         $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost',  $provider
+            null, $name, 'http://localhost', $provider
         );
 
         $this->info('Personal access client created successfully.');
