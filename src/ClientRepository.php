@@ -130,7 +130,7 @@ class ClientRepository
             throw new RuntimeException('Personal access client not found. Please create one.');
         }
 
-        return $client->client;
+        return $personalAccessClient->client;
     }
 
     /**
