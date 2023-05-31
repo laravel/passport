@@ -7,6 +7,9 @@ use Illuminate\Support\Str;
 use Laravel\Passport\Client;
 use Laravel\Passport\Passport;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Laravel\Passport\Client>
+ */
 class ClientFactory extends Factory
 {
     /**
