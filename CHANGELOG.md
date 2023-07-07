@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.7...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.8.8...11.x)
+
+## [v11.8.8](https://github.com/laravel/passport/compare/v11.8.7...v11.8.8) - 2023-07-07
+
+- Add generics to client factory by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1669
+- Update composer.json by [@Smoggert](https://github.com/Smoggert) in https://github.com/laravel/passport/pull/1674
+- Update composer.json by [@drhoussem](https://github.com/drhoussem) in https://github.com/laravel/passport/pull/1677
 
 ## [v11.8.7](https://github.com/laravel/passport/compare/v11.8.6...v11.8.7) - 2023-04-28
 
