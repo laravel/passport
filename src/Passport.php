@@ -187,6 +187,13 @@ class Passport
     public static $registersRoutes = true;
 
     /**
+     * Indicates if Passport validates and uses default scopes within the issued token
+     *
+     * @var bool
+     */
+    public static $useDefaultScopes = false;
+
+    /**
      * Enable the implicit grant type.
      *
      * @return static
@@ -196,6 +203,16 @@ class Passport
         static::$implicitGrantEnabled = true;
 
         return new static;
+    }
+
+    /**
+     * Use and validate default scopes
+     *
+     * @return void
+     */
+    public static function useDefaultScopes()
+    {
+        static::$useDefaultScopes = true;
     }
 
     /**
@@ -227,7 +244,9 @@ class Passport
      */
     public static function hasScope($id)
     {
-        return $id === '*' || array_key_exists($id, static::$scopes) || array_key_exists($id, static::$defaultScope);
+        $hasDefaultScope = static::$useDefaultScopes && array_key_exists($id, static::$defaultScope);
+
+        return $id === '*' || array_key_exists($id, static::$scopes) || $hasDefaultScope;
     }
 
     /**
@@ -240,7 +259,7 @@ class Passport
         return collect(static::$scopes)->map(function ($description, $id) {
             return new Scope($id, $description);
         })->when(
-            !blank(static::$defaultScope),
+            static::$useDefaultScopes && !blank(static::$defaultScope),
             fn ($collection, $scope) => $collection->merge(static::defaultScopes())
         )->values();
     }

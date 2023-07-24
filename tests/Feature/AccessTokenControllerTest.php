@@ -136,6 +136,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $user->password = $this->app->make(Hasher::class)->make('foobar123');
         $user->save();
 
+        Passport::useDefaultScopes();
         Passport::setDefaultScope([
             'foo' => 'It requests foo access',
             'bar' => 'it requests bar access'

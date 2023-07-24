@@ -94,11 +94,22 @@ class PassportTest extends TestCase
 
     public function test_default_scopes_can_be_managed()
     {
+        Passport::useDefaultScopes();
         Passport::setDefaultScope([
             'foo' => 'It requests foo access'
         ]);
 
         $this->assertTrue(Passport::hasScope('foo'));
+    }
+
+    public function test_default_scopes_are_not_included_if_use_default_is_not_true()
+    {
+        Passport::$useDefaultScopes = false;
+        Passport::setDefaultScope([
+            'foo' => 'It requests foo access'
+        ]);
+
+        $this->assertFalse(Passport::hasScope('foo'));
     }
 }
 
