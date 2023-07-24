@@ -13,6 +13,12 @@ use PHPUnit\Framework\TestCase;
 
 class PassportTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Passport::setDefaultScope([]);
+        parent::tearDown();
+    }
+
     public function test_scopes_can_be_managed()
     {
         Passport::tokensCan([
@@ -84,6 +90,15 @@ class PassportTest extends TestCase
         $this->assertInstanceOf(Passport::refreshTokenModel(), $refreshToken);
 
         Passport::useRefreshTokenModel(RefreshToken::class);
+    }
+
+    public function test_default_scopes_can_be_managed()
+    {
+        Passport::setDefaultScope([
+            'foo' => 'It requests foo access'
+        ]);
+
+        $this->assertTrue(Passport::hasScope('foo'));
     }
 }
 

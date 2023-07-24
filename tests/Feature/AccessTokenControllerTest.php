@@ -31,6 +31,7 @@ class AccessTokenControllerTest extends PassportTestCase
     protected function tearDown(): void
     {
         Schema::dropIfExists('users');
+        Passport::setDefaultScope([]);
 
         parent::tearDown();
     }
@@ -124,6 +125,57 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame('Client authentication failed', $decodedResponse['message']);
 
         $this->assertSame(0, Token::count());
+    }
+
+    public function testGettingAccessTokenWithClientCredentialsGrantUsingDefaultScope()
+    {
+        $this->withoutExceptionHandling();
+
+        $user = new User();
+        $user->email = 'foo@gmail.com';
+        $user->password = $this->app->make(Hasher::class)->make('foobar123');
+        $user->save();
+
+        Passport::setDefaultScope([
+            'foo' => 'It requests foo access',
+            'bar' => 'it requests bar access'
+        ]);
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+
+        $response = $this->post(
+            '/oauth/token',
+            [
+                'grant_type' => 'client_credentials',
+                'client_id' => $client->getKey(),
+                'client_secret' => $client->secret,
+            ]
+        );
+
+        $response->assertOk();
+
+        $response->assertHeader('pragma', 'no-cache');
+        $response->assertHeader('cache-control', 'no-store, private');
+        $response->assertHeader('content-type', 'application/json; charset=UTF-8');
+
+        $decodedResponse = $response->decodeResponseJson()->json();
+
+        $this->assertArrayHasKey('token_type', $decodedResponse);
+        $this->assertArrayHasKey('expires_in', $decodedResponse);
+        $this->assertArrayHasKey('access_token', $decodedResponse);
+        $this->assertSame('Bearer', $decodedResponse['token_type']);
+        $expiresInSeconds = 31622400;
+        $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
+
+        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
+        $this->assertInstanceOf(Token::class, $token);
+        $this->assertTrue($token->client->is($client));
+        $this->assertFalse($token->revoked);
+        $this->assertNull($token->name);
+        $this->assertNull($token->user_id);
+        $this->assertEquals(['foo', 'bar'], $token->scopes);
+        $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
     }
 
     public function testGettingAccessTokenWithPasswordGrant()

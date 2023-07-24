@@ -22,11 +22,13 @@ class Passport
     public static $implicitGrantEnabled = false;
 
     /**
-     * The default scope.
+     * The default(s) scope(s) defined for the application.
      *
-     * @var string
+     * @var array
      */
-    public static $defaultScope;
+    public static $defaultScope = [
+        //
+    ];
 
     /**
      * All of the scopes defined for the application.
@@ -199,12 +201,12 @@ class Passport
     /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
-     * @param  array|string  $scope
+     * @param  array $scopes
      * @return void
      */
-    public static function setDefaultScope($scope)
+    public static function setDefaultScope($scopes)
     {
-        static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
+        static::$defaultScope = $scopes;
     }
 
     /**
@@ -225,7 +227,7 @@ class Passport
      */
     public static function hasScope($id)
     {
-        return $id === '*' || array_key_exists($id, static::$scopes);
+        return $id === '*' || array_key_exists($id, static::$scopes) || array_key_exists($id, static::$defaultScope);
     }
 
     /**
@@ -237,7 +239,22 @@ class Passport
     {
         return collect(static::$scopes)->map(function ($description, $id) {
             return new Scope($id, $description);
-        })->values();
+        })->when(
+            !blank(static::$defaultScope),
+            fn ($collection, $scope) => $collection->merge(static::defaultScopes())
+        )->values();
+    }
+
+    /**
+     * Get all of the default scopes defined for the application.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public static function defaultScopes()
+    {
+        return collect(static::$defaultScope)->map(function ($description, $id) {
+            return new Scope($id, $description);
+        });
     }
 
     /**
