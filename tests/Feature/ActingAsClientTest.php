@@ -61,7 +61,7 @@ class ActingAsClientTest extends PassportTestCase
 
         Passport::setDefaultScope([
             'foo' => 'It requests foo access',
-            'bar' => 'it requests bar access'
+            'bar' => 'it requests bar access',
         ]);
 
         $router->get('/foo', function () {
@@ -84,7 +84,7 @@ class ActingAsClientTest extends PassportTestCase
 
         Passport::setDefaultScope([
             'foo' => 'It requests foo access',
-            'bar' => 'it requests bar access'
+            'bar' => 'it requests bar access',
         ]);
 
         $defaultScopes = Passport::defaultScopes()->pluck('id')->values()->toArray();

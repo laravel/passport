@@ -187,7 +187,7 @@ class Passport
     public static $registersRoutes = true;
 
     /**
-     * Indicates if Passport validates and uses default scopes within the issued token
+     * Indicates if Passport validates and uses default scopes within the issued token.
      *
      * @var bool
      */
@@ -206,7 +206,7 @@ class Passport
     }
 
     /**
-     * Use and validate default scopes
+     * Use and validate default scopes.
      *
      * @return void
      */
@@ -218,7 +218,7 @@ class Passport
     /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
-     * @param  array $scopes
+     * @param  array  $scopes
      * @return void
      */
     public static function setDefaultScope($scopes)
@@ -259,7 +259,7 @@ class Passport
         return collect(static::$scopes)->map(function ($description, $id) {
             return new Scope($id, $description);
         })->when(
-            static::$useDefaultScopes && !blank(static::$defaultScope),
+            static::$useDefaultScopes && ! blank(static::$defaultScope),
             fn ($collection, $scope) => $collection->merge(static::defaultScopes())
         )->values();
     }

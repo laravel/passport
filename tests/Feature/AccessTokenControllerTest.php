@@ -139,7 +139,7 @@ class AccessTokenControllerTest extends PassportTestCase
         Passport::useDefaultScopes();
         Passport::setDefaultScope([
             'foo' => 'It requests foo access',
-            'bar' => 'it requests bar access'
+            'bar' => 'it requests bar access',
         ]);
 
         /** @var Client $client */

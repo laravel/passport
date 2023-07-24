@@ -96,7 +96,7 @@ class PassportTest extends TestCase
     {
         Passport::useDefaultScopes();
         Passport::setDefaultScope([
-            'foo' => 'It requests foo access'
+            'foo' => 'It requests foo access',
         ]);
 
         $this->assertTrue(Passport::hasScope('foo'));
@@ -106,7 +106,7 @@ class PassportTest extends TestCase
     {
         Passport::$useDefaultScopes = false;
         Passport::setDefaultScope([
-            'foo' => 'It requests foo access'
+            'foo' => 'It requests foo access',
         ]);
 
         $this->assertFalse(Passport::hasScope('foo'));
