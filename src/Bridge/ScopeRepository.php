@@ -2,12 +2,31 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
+    /**
+     * The client repository.
+     *
+     * @var \Laravel\Passport\ClientRepository
+     */
+    protected ClientRepository $clients;
+
+    /**
+     * Create a new scope repository.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    public function __construct(ClientRepository $clients)
+    {
+        $this->clients = $clients;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -31,8 +50,11 @@ class ScopeRepository implements ScopeRepositoryInterface
             })->values()->all();
         }
 
-        return collect($scopes)->filter(function ($scope) {
-            return Passport::hasScope($scope->getIdentifier());
+        $client = $this->clients->findActive($clientEntity->getIdentifier());
+
+        return collect($scopes)->filter(function ($scope) use ($client) {
+            return Passport::hasScope($scope->getIdentifier())
+                && $client->hasScope($scope->getIdentifier());
         })->values()->all();
     }
 }
