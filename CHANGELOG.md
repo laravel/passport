@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.8...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.9.0...11.x)
+
+## [v11.9.0](https://github.com/laravel/passport/compare/v11.8.8...v11.9.0) - 2023-08-29
+
+- [11.x] Add the ability to limit scopes by client by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1682
+- [11.x] Add support for inherited scopes when limiting scopes on clients by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1683
 
 ## [v11.8.8](https://github.com/laravel/passport/compare/v11.8.7...v11.8.8) - 2023-07-07
 
