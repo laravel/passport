@@ -13,6 +13,11 @@ use PHPUnit\Framework\TestCase;
 
 class BridgeScopeRepositoryTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Passport::$withInheritedScopes = false;
+    }
+
     public function test_invalid_scopes_are_removed()
     {
         Passport::tokensCan([
@@ -72,6 +77,31 @@ class BridgeScopeRepositoryTest extends TestCase
 
         $scopes = $repository->finalizeScopes(
             [$scope1 = new Scope('scope-1'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
+        );
+
+        $this->assertEquals([$scope1], $scopes);
+    }
+
+    public function test_scopes_disallowed_for_client_are_removed_but_inherited_scopes_are_not()
+    {
+        Passport::$withInheritedScopes = true;
+
+        Passport::tokensCan([
+            'scope-1' => 'description',
+            'scope-1:limited-access' => 'description',
+            'scope-2' => 'description',
+        ]);
+
+        $client = Mockery::mock(ClientModel::class)->makePartial();
+        $client->scopes = ['scope-1'];
+
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+
+        $repository = new ScopeRepository($clients);
+
+        $scopes = $repository->finalizeScopes(
+            [$scope1 = new Scope('scope-1:limited-access'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
         );
 
         $this->assertEquals([$scope1], $scopes);

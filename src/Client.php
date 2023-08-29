@@ -10,6 +10,7 @@ use Laravel\Passport\Database\Factories\ClientFactory;
 class Client extends Model
 {
     use HasFactory;
+    use ResolvesInheritedScopes;
 
     /**
      * The database table used by the model.
@@ -163,7 +164,21 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
-        return ! is_array($this->scopes) || in_array($scope, $this->scopes);
+        if (! is_array($this->scopes)) {
+            return true;
+        }
+
+        $scopes = Passport::$withInheritedScopes
+            ? $this->resolveInheritedScopes($scope)
+            : [$scope];
+
+        foreach ($scopes as $scope) {
+            if (in_array($scope, $this->scopes)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
