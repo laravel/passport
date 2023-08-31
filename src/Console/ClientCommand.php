@@ -94,7 +94,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost', $provider
+            null, $name, url(''), $provider
         );
 
         $this->info('Password grant client created successfully.');
