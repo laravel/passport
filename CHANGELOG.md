@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.9.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.9.1...11.x)
+
+## [v11.9.1](https://github.com/laravel/passport/compare/v11.9.0...v11.9.1) - 2023-09-01
+
+- [11.x] Allow scope repository to be constructed without parameters by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1686
 
 ## [v11.9.0](https://github.com/laravel/passport/compare/v11.8.8...v11.9.0) - 2023-08-29
 
