@@ -1,0 +1,6 @@
+providers:
+  - Laravel\Passport\PassportServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
