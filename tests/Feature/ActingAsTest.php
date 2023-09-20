@@ -3,12 +3,11 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Route;
-use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope;
 use Laravel\Passport\Http\Middleware\CheckScopes;
 use Laravel\Passport\Passport;
+use Workbench\App\Models\User;
 
 class ActingAsTest extends PassportTestCase
 {
@@ -23,7 +22,7 @@ class ActingAsTest extends PassportTestCase
             return 'bar';
         })->middleware('auth:api');
 
-        Passport::actingAs(new PassportUser());
+        Passport::actingAs(new User());
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
@@ -41,7 +40,7 @@ class ActingAsTest extends PassportTestCase
             return 'bar';
         })->middleware(CheckScopes::class.':admin,footest');
 
-        Passport::actingAs(new PassportUser(), ['admin', 'footest']);
+        Passport::actingAs(new User(), ['admin', 'footest']);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
@@ -59,7 +58,7 @@ class ActingAsTest extends PassportTestCase
             return 'bar';
         })->middleware(CheckForAnyScope::class.':admin,footest');
 
-        Passport::actingAs(new PassportUser(), ['footest']);
+        Passport::actingAs(new User(), ['footest']);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
@@ -76,7 +75,7 @@ class ActingAsTest extends PassportTestCase
             return 'bar';
         });
 
-        Passport::actingAs(new PassportUser(), ['foo', 'baz']);
+        Passport::actingAs(new User(), ['foo', 'baz']);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
@@ -93,17 +92,10 @@ class ActingAsTest extends PassportTestCase
             return 'bar';
         });
 
-        Passport::actingAs(new PassportUser(), ['foo']);
+        Passport::actingAs(new User(), ['foo']);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();
         $response->assertSee('bar');
     }
-}
-
-class PassportUser extends User
-{
-    use HasApiTokens;
-
-    protected $table = 'users';
 }
