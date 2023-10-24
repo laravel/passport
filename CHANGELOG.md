@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.9.1...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.9.2...11.x)
+
+## [v11.9.2](https://github.com/laravel/passport/compare/v11.9.1...v11.9.2) - 2023-10-16
+
+- Add return to revokeRefreshTokensByAccessTokenId method by [@aminkhoshzahmat](https://github.com/aminkhoshzahmat) in https://github.com/laravel/passport/pull/1693
 
 ## [v11.9.1](https://github.com/laravel/passport/compare/v11.9.0...v11.9.1) - 2023-09-01
 
