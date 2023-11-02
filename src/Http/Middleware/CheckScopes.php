@@ -35,11 +35,11 @@ class CheckScopes
     /**
      * Generate a string representation of the middleware with specified scopes.
      *
-     * @param  array  $scopes
+     * @param  array|string  $scopes
      * @return string
      */
-    public static function using(...$scopes)
+    public static function using($scopes)
     {
-        return static::class.':'.implode(',', $scopes);
+        return static::class.':'. implode(',', func_get_args());
     }
 }
