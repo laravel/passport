@@ -17,9 +17,9 @@ class CheckForAnyScope
     {
         if (is_array($scopes[0])) {
             return static::class.':'.implode(',', $scopes[0]);
-        } else {
-            return static::class.':'.implode(',', $scopes);
         }
+
+        return static::class.':'.implode(',', $scopes);
     }
 
     /**
