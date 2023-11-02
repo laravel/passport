@@ -40,6 +40,21 @@ abstract class CheckCredentials
     }
 
     /**
+     * Specify the scopes for the middleware.
+     *
+     * @param  array|string  $scopes
+     * @return string
+     */
+    public static function using(...$scopes)
+    {
+        if (is_array($scopes[0])) {
+            return static::class.':'.implode(',', $scopes[0]);
+        } else {
+            return static::class.':'.implode(',', $scopes);
+        }
+    }
+
+    /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -67,17 +82,6 @@ abstract class CheckCredentials
         $this->validate($psr, $scopes);
 
         return $next($request);
-    }
-
-    /**
-     * Generate a string representation of the middleware with specified scopes.
-     *
-     * @param  array|string  $scopes
-     * @return string
-     */
-    public static function using($scopes)
-    {
-        return static::class.':'.implode(',', func_get_args());
     }
 
     /**

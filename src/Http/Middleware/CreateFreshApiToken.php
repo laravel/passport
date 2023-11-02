@@ -36,6 +36,19 @@ class CreateFreshApiToken
     }
 
     /**
+     * Specify the guard for the middleware.
+     *
+     * @param  string|null  $guard
+     * @return string
+     */
+    public static function using($guard = null)
+    {
+        $guard = is_null($guard) ? '' : ':'.$guard;
+
+        return static::class.$guard;
+    }
+
+    /**
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -56,19 +69,6 @@ class CreateFreshApiToken
         }
 
         return $response;
-    }
-
-    /**
-     * Specify the guard for the middleware.
-     *
-     * @param  string|null  $guard
-     * @return string
-     */
-    public static function using($guard = null)
-    {
-        $args = is_null($guard) ? '' : ':'.$guard;
-
-        return static::class.$args;
     }
 
     /**

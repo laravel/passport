@@ -8,6 +8,21 @@ use Laravel\Passport\Exceptions\MissingScopeException;
 class CheckForAnyScope
 {
     /**
+     * Specify the scopes for the middleware.
+     *
+     * @param  array|string  $scopes
+     * @return string
+     */
+    public static function using(...$scopes)
+    {
+        if (is_array($scopes[0])) {
+            return static::class.':'.implode(',', $scopes[0]);
+        } else {
+            return static::class.':'.implode(',', $scopes);
+        }
+    }
+
+    /**
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -30,16 +45,5 @@ class CheckForAnyScope
         }
 
         throw new MissingScopeException($scopes);
-    }
-
-    /**
-     * Generate a string representation of the middleware with specified scopes.
-     *
-     * @param  array|string  $scopes
-     * @return string
-     */
-    public static function using($scopes)
-    {
-        return static::class.':'.implode(',', func_get_args());
     }
 }
