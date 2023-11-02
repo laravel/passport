@@ -59,6 +59,19 @@ class CreateFreshApiToken
     }
 
     /**
+     * Specify the guard for the middleware.
+     *
+     * @param  string|null  $guard 
+     * @return string
+     */
+    public static function using($guard = null)
+    {
+        $args = is_null($guard) ? '' : ':' . $guard;
+
+        return static::class . $args;
+    }
+
+    /**
      * Determine if the given request should receive a fresh token.
      *
      * @param  \Illuminate\Http\Request  $request

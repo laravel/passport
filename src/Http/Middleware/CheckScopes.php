@@ -31,4 +31,15 @@ class CheckScopes
 
         return $next($request);
     }
+
+    /**
+     * Generate a string representation of the middleware with specified scopes.
+     *
+     * @param  array  $scopes 
+     * @return string
+     */
+    public static function using(...$scopes)
+    {
+        return static::class . ':' . implode(',', $scopes);
+    }
 }

@@ -70,6 +70,17 @@ abstract class CheckCredentials
     }
 
     /**
+     * Generate a string representation of the middleware with specified scopes.
+     *
+     * @param  array  $scopes 
+     * @return string
+     */
+    public static function using(...$scopes)
+    {
+        return static::class . ':' . implode(',', $scopes);
+    }
+
+    /**
      * Validate the scopes and token on the incoming request.
      *
      * @param  \Psr\Http\Message\ServerRequestInterface  $psr
