@@ -47,6 +47,21 @@ class ActingAsTest extends PassportTestCase
         $response->assertSee('bar');
     }
 
+    public function testItCanGenerateDefinitionViaStaticMethod()
+    {
+        $signature = (string) CheckScopes::using('admin');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckScopes:admin', $signature);
+
+        $signature = (string) CheckScopes::using('admin', 'footest');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckScopes:admin,footest', $signature);
+
+        $signature = (string) CheckForAnyScope::using('admin');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckForAnyScope:admin', $signature);
+
+        $signature = (string) CheckForAnyScope::using('admin', 'footest');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckForAnyScope:admin,footest', $signature);
+    }
+
     public function testActingAsWhenTheRouteIsProtectedByCheckForAnyScopeMiddleware()
     {
         $this->withoutExceptionHandling();
