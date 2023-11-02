@@ -61,14 +61,14 @@ class CreateFreshApiToken
     /**
      * Specify the guard for the middleware.
      *
-     * @param  string|null  $guard 
+     * @param  string|null  $guard
      * @return string
      */
     public static function using($guard = null)
     {
-        $args = is_null($guard) ? '' : ':' . $guard;
+        $args = is_null($guard) ? '' : ':'.$guard;
 
-        return static::class . $args;
+        return static::class.$args;
     }
 
     /**
