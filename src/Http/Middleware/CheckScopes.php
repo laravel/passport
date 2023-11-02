@@ -40,6 +40,6 @@ class CheckScopes
      */
     public static function using($scopes)
     {
-        return static::class.':'. implode(',', func_get_args());
+        return static::class.':'.implode(',', func_get_args());
     }
 }
