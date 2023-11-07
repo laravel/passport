@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.9.2...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.0...11.x)
+
+## [v11.10.0](https://github.com/laravel/passport/compare/v11.9.2...v11.10.0) - 2023-11-02
+
+- [11.x] Named static methods for middleware by [@michaelnabil230](https://github.com/michaelnabil230) in https://github.com/laravel/passport/pull/1695
+- Simplify Conditional Statement by [@michaelnabil230](https://github.com/michaelnabil230) in https://github.com/laravel/passport/pull/1696
 
 ## [v11.9.2](https://github.com/laravel/passport/compare/v11.9.1...v11.9.2) - 2023-10-16
 
