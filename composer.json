@@ -27,7 +27,7 @@
         "illuminate/http": "^9.0|^10.0",
         "illuminate/support": "^9.0|^10.0",
         "lcobucci/jwt": "^4.3|^5.0",
-        "league/oauth2-server": "dev-device-flow-grant-update2",,
+        "league/oauth2-server": "dev-device-flow-grant-update2",
         "nyholm/psr7": "^1.5",
         "phpseclib/phpseclib": "^2.0|^3.0",
         "symfony/psr-http-message-bridge": "^2.1"
