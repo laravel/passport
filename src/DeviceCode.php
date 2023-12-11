@@ -4,14 +4,14 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AuthCode extends Model
+class DeviceCode extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'oauth_auth_codes';
+    protected $table = 'oauth_device_codes';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -33,8 +33,17 @@ class AuthCode extends Model
      * @var array
      */
     protected $casts = [
+        'scopes' => 'array',
         'revoked' => 'bool',
-        'expires_at' => 'datetime',
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'expires_at',
     ];
 
     /**

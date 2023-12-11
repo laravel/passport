@@ -45,6 +45,7 @@ class Client extends Model
         'scopes' => 'array',
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
+        'device_client' => 'bool',
         'revoked' => 'bool',
     ];
 

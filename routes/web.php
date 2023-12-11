@@ -14,6 +14,12 @@ Route::get('/authorize', [
     'middleware' => 'web',
 ]);
 
+Route::post('/device_authorization', [
+    'uses' => 'DeviceAuthorizationController@authorize',
+    'as' => 'authorizations.authorize_device',
+    'middleware' => 'throttle',
+]);
+
 $guard = config('passport.guard', null);
 
 Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () {

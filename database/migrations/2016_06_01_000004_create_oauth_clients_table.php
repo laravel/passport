@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -20,6 +19,7 @@ return new class extends Migration
             $table->text('redirect');
             $table->boolean('personal_access_client');
             $table->boolean('password_client');
+            $table->boolean('device_client');
             $table->boolean('revoked');
             $table->timestamps();
         });
