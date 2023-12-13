@@ -1,0 +1,5 @@
+providers:
+  - Laravel\Passport\PassportServiceProvider
+
+migrations: true
+

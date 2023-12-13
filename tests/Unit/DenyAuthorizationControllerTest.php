@@ -36,7 +36,7 @@ class DenyAuthorizationControllerTest extends TestCase
             ->once()
             ->with('authRequest')
             ->andReturn($authRequest = m::mock(
-            AuthorizationRequest::class
+                AuthorizationRequest::class
             ));
 
         $authRequest->shouldReceive('setUser')->once();

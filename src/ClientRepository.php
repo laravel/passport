@@ -158,7 +158,7 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      *
-     * @param  int  $userId
+     * @param  int|null  $userId
      * @param  string  $name
      * @param  string  $redirect
      * @return \Laravel\Passport\Client
@@ -175,7 +175,7 @@ class ClientRepository
     /**
      * Store a new password grant client.
      *
-     * @param  int  $userId
+     * @param  int|null  $userId
      * @param  string  $name
      * @param  string  $redirect
      * @param  string|null  $provider

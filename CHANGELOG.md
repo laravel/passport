@@ -1,6 +1,62 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.8.0...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.0...master)
+
+## [v11.10.0](https://github.com/laravel/passport/compare/v11.9.2...v11.10.0) - 2023-11-02
+
+- [11.x] Named static methods for middleware by [@michaelnabil230](https://github.com/michaelnabil230) in https://github.com/laravel/passport/pull/1695
+- Simplify Conditional Statement by [@michaelnabil230](https://github.com/michaelnabil230) in https://github.com/laravel/passport/pull/1696
+
+## [v11.9.2](https://github.com/laravel/passport/compare/v11.9.1...v11.9.2) - 2023-10-16
+
+- Add return to revokeRefreshTokensByAccessTokenId method by [@aminkhoshzahmat](https://github.com/aminkhoshzahmat) in https://github.com/laravel/passport/pull/1693
+
+## [v11.9.1](https://github.com/laravel/passport/compare/v11.9.0...v11.9.1) - 2023-09-01
+
+- [11.x] Allow scope repository to be constructed without parameters by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1686
+
+## [v11.9.0](https://github.com/laravel/passport/compare/v11.8.8...v11.9.0) - 2023-08-29
+
+- [11.x] Add the ability to limit scopes by client by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1682
+- [11.x] Add support for inherited scopes when limiting scopes on clients by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1683
+
+## [v11.8.8](https://github.com/laravel/passport/compare/v11.8.7...v11.8.8) - 2023-07-07
+
+- Add generics to client factory by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1669
+- Update composer.json by [@Smoggert](https://github.com/Smoggert) in https://github.com/laravel/passport/pull/1674
+- Update composer.json by [@drhoussem](https://github.com/drhoussem) in https://github.com/laravel/passport/pull/1677
+
+## [v11.8.7](https://github.com/laravel/passport/compare/v11.8.6...v11.8.7) - 2023-04-28
+
+- Revert "[11.x] Add Provider Guard to ClientRepository for Personal Access Clients" by @driesvints in https://github.com/laravel/passport/pull/1658
+
+## [v11.8.6](https://github.com/laravel/passport/compare/v11.8.5...v11.8.6) - 2023-04-24
+
+- Add Provider Guard to ClientRepository for Personal Access Clients by @michaelnabil230 in https://github.com/laravel/passport/pull/1655
+
+## [v11.8.5](https://github.com/laravel/passport/compare/v11.8.4...v11.8.5) - 2023-04-04
+
+- Allow `lcobucci/jwt` v5 and cleaned up version constraints by @GrahamCampbell in https://github.com/laravel/passport/pull/1649
+- Pass user identifier through to finalize scopes in personal access grant by @GrahamCampbell in https://github.com/laravel/passport/pull/1650
+
+## [v11.8.4](https://github.com/laravel/passport/compare/v11.8.3...v11.8.4) - 2023-03-18
+
+- Removed deprecated `dates` property from `RefreshToken` model by @siarheipashkevich in https://github.com/laravel/passport/pull/1645
+- Removed deprecated `dates` property from `AuthCode` model by @siarheipashkevich in https://github.com/laravel/passport/pull/1644
+- Fix doc block types by @hafezdivandari in https://github.com/laravel/passport/pull/1647
+
+## [v11.8.3](https://github.com/laravel/passport/compare/v11.8.2...v11.8.3) - 2023-03-01
+
+- Allow overriding the `AccessToken` class by @hafezdivandari in https://github.com/laravel/passport/pull/1638
+- Make `$userId` nullable in `ClientRepository->createPersonalAccessClient` by @bram-pkg in https://github.com/laravel/passport/pull/1642
+
+## [v11.8.2](https://github.com/laravel/passport/compare/v11.8.1...v11.8.2) - 2023-02-20
+
+- Re-apply "Added AuthenticationException to extend the behaviour of Laravel's default exception handler" by @driesvints in https://github.com/laravel/passport/commit/67c3e336af163f6eba5dbca8e5db46275ff0e433
+
+## [v11.8.1](https://github.com/laravel/passport/compare/v11.8.0...v11.8.1) - 2023-02-20
+
+- Revert "Move AuthenticationException into the scope of Laravel Passport" by @driesvints in https://github.com/laravel/passport/commit/db543b0cc13ed3f56f1bffda04707fbe2a8c7ab5
 
 ## [v11.8.0](https://github.com/laravel/passport/compare/v11.7.0...v11.8.0) - 2023-02-17
 

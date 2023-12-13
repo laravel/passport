@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
+use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
@@ -85,7 +86,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
 
     public function test_exception_is_thrown_when_oauth_throws_exception()
     {
-        $this->expectException('Illuminate\Auth\AuthenticationException');
+        $this->expectException(AuthenticationException::class);
 
         $tokenRepository = m::mock(TokenRepository::class);
         $resourceServer = m::mock(ResourceServer::class);

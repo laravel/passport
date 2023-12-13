@@ -42,7 +42,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
         $parsedToken = new PlainToken(
             new DataSet([], ''),
             new DataSet([RegisteredClaims::ID => 'token'], ''),
-            Signature::fromEmptyData()
+            new Signature('', '')
         );
 
         $jwt->shouldReceive('parse')->with('foo')->andReturn($parsedToken);

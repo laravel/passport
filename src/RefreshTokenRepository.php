@@ -52,11 +52,11 @@ class RefreshTokenRepository
      * Revokes refresh tokens by access token id.
      *
      * @param  string  $tokenId
-     * @return void
+     * @return mixed
      */
     public function revokeRefreshTokensByAccessTokenId($tokenId)
     {
-        Passport::refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
+        return Passport::refreshToken()->where('access_token_id', $tokenId)->update(['revoked' => true]);
     }
 
     /**
