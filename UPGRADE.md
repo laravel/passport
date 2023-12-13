@@ -2,6 +2,16 @@
 
 ## General Notes
 
+## Upgrading To 12.0 From 11.x
+
+### Migration Changes
+
+Passport 12.0 no longer automatically loads migrations from its own migrations directory. Instead, you should run the following command to publish Passport's migrations to your application:
+
+```bash
+php artisan vendor:publish --tag=passport-migrations
+```
+
 ## Upgrading To 11.0 From 10.x
 
 ### Minimum PHP Version

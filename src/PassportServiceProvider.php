@@ -39,7 +39,6 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->registerRoutes();
         $this->registerResources();
-        $this->registerMigrations();
         $this->registerPublishing();
         $this->registerCommands();
 
@@ -72,18 +71,6 @@ class PassportServiceProvider extends ServiceProvider
     protected function registerResources()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
-    }
-
-    /**
-     * Register the Passport migration files.
-     *
-     * @return void
-     */
-    protected function registerMigrations()
-    {
-        if ($this->app->runningInConsole() && Passport::$runsMigrations && ! config('passport.client_uuids')) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        }
     }
 
     /**

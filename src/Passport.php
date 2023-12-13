@@ -129,13 +129,6 @@ class Passport
     public static $refreshTokenModel = 'Laravel\Passport\RefreshToken';
 
     /**
-     * Indicates if Passport migrations will be run.
-     *
-     * @var bool
-     */
-    public static $runsMigrations = true;
-
-    /**
      * Indicates if Passport should unserializes cookies.
      *
      * @var bool
@@ -685,18 +678,6 @@ class Passport
     public static function ignoreRoutes()
     {
         static::$registersRoutes = false;
-
-        return new static;
-    }
-
-    /**
-     * Configure Passport to not register its migrations.
-     *
-     * @return static
-     */
-    public static function ignoreMigrations()
-    {
-        static::$runsMigrations = false;
 
         return new static;
     }

@@ -1,5 +1,5 @@
 providers:
   - Laravel\Passport\PassportServiceProvider
 
-migrations: true
-
+migrations:
+  - database/migrations
