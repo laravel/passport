@@ -35,9 +35,13 @@ class InstallCommand extends Command
 
         $this->call('passport:keys', ['--force' => $this->option('force'), '--length' => $this->option('length')]);
 
+        $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
+
         if ($this->option('uuids')) {
             $this->configureUuids();
         }
+
+        $this->call('migrate');
 
         $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
         $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client', '--provider' => $provider]);
@@ -51,22 +55,15 @@ class InstallCommand extends Command
     protected function configureUuids()
     {
         $this->call('vendor:publish', ['--tag' => 'passport-config']);
-        $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
 
         config(['passport.client_uuids' => true]);
         Passport::setClientUuids(true);
 
         $this->replaceInFile(config_path('passport.php'), '\'client_uuids\' => false', '\'client_uuids\' => true');
-        $this->replaceInFile(database_path('migrations/2016_06_01_000001_create_oauth_auth_codes_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
-        $this->replaceInFile(database_path('migrations/2016_06_01_000002_create_oauth_access_tokens_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
-        $this->replaceInFile(database_path('migrations/2016_06_01_000004_create_oauth_clients_table.php'), '$table->bigIncrements(\'id\');', '$table->uuid(\'id\')->primary();');
-        $this->replaceInFile(database_path('migrations/2016_06_01_000005_create_oauth_personal_access_clients_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
-
-        if ($this->confirm('In order to finish configuring client UUIDs, we need to rebuild the Passport database tables. Would you like to rollback and re-run your last migration?')) {
-            $this->call('migrate:rollback');
-            $this->call('migrate');
-            $this->line('');
-        }
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_auth_codes_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_access_tokens_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_clients_table.php'), '$table->bigIncrements(\'id\');', '$table->uuid(\'id\')->primary();');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_personal_access_clients_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
     }
 
     /**
@@ -79,9 +76,11 @@ class InstallCommand extends Command
      */
     protected function replaceInFile($path, $search, $replace)
     {
-        file_put_contents(
-            $path,
-            str_replace($search, $replace, file_get_contents($path))
-        );
+        foreach (glob($path) as $file) {
+            file_put_contents(
+                $file,
+                str_replace($search, $replace, file_get_contents($file))
+            );
+        }
     }
 }
