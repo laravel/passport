@@ -106,6 +106,16 @@ class Client extends Model
     }
 
     /**
+     * Get the grant types the client can use.
+     *
+     * @return array|null
+     */
+    public function getGrantTypesAttribute()
+    {
+        return $this->attributes['grant_types'] ?? null;
+    }
+
+    /**
      * The temporary non-hashed client secret.
      *
      * This is only available once during the request that created the client.
