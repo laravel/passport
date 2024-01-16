@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.0...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.1...11.x)
+
+## [v11.10.1](https://github.com/laravel/passport/compare/v11.10.0...v11.10.1) - 2024-01-10
+
+* [11.x] Allow unsetting a user's access token by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1698
+* [11.x] Add getGrantTypesAttribute method to fix Eloquent strict mode error by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1705
 
 ## [v11.10.0](https://github.com/laravel/passport/compare/v11.9.2...v11.10.0) - 2023-11-02
 
