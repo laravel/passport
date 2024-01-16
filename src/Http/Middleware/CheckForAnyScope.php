@@ -35,7 +35,7 @@ class CheckForAnyScope
     public function handle($request, $next, ...$scopes)
     {
         if (! $request->user() || ! $request->user()->token()) {
-            throw new AuthenticationException;
+            throw AuthenticationException::make();
         }
 
         foreach ($scopes as $scope) {

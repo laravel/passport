@@ -76,7 +76,7 @@ abstract class CheckCredentials
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
         } catch (OAuthServerException $e) {
-            throw new AuthenticationException;
+            throw AuthenticationException::make();
         }
 
         $this->validate($psr, $scopes);

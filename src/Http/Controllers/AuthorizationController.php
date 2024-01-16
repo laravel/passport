@@ -215,6 +215,6 @@ class AuthorizationController
     {
         $request->session()->put('promptedForLogin', true);
 
-        throw new AuthenticationException;
+        throw AuthenticationException::make();
     }
 }

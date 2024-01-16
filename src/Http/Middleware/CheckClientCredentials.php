@@ -18,7 +18,7 @@ class CheckClientCredentials extends CheckCredentials
     protected function validateCredentials($token)
     {
         if (! $token) {
-            throw new AuthenticationException;
+            throw AuthenticationException::make();
         }
     }
 

@@ -343,6 +343,16 @@ class AuthorizationControllerTest extends TestCase
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
+        // Mock the URL generator...
+        $urlGenerator = m::mock(\Illuminate\Contracts\Routing\UrlGenerator::class);
+        app()->instance('url', $urlGenerator);
+        $urlGenerator->shouldReceive('route')->with('login', [], true)->andReturn('login');
+
+        // Mock the config class...
+        $config = m::mock('alias:config');
+        $config->shouldReceive('get')->with('passport.login_route', 'login')->andReturn('login');
+        app()->instance('config', $config);
+
         $controller = new AuthorizationController($server, $guard, $response);
 
         $guard->shouldReceive('guest')->andReturn(false);
@@ -370,6 +380,16 @@ class AuthorizationControllerTest extends TestCase
     {
         $this->expectException(AuthenticationException::class);
 
+        // Mock the URL generator...
+        $urlGenerator = m::mock(\Illuminate\Contracts\Routing\UrlGenerator::class);
+        app()->instance('url', $urlGenerator);
+        $urlGenerator->shouldReceive('route')->with('login', [], true)->andReturn('login');
+
+        // Mock the config class...
+        $config = m::mock('alias:config');
+        $config->shouldReceive('get')->with('passport.login_route', 'login')->andReturn('login');
+        app()->instance('config', $config);
+
         $server = m::mock(AuthorizationServer::class);
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
@@ -392,5 +412,47 @@ class AuthorizationControllerTest extends TestCase
         $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients, $tokens
         );
+    }
+
+    public function test_user_redirected_to_configured_login_url_when_unauthenticated()
+    {
+        $this->expectException(AuthenticationException::class);
+
+        // Mock the URL generator...
+        $urlGenerator = m::mock(\Illuminate\Contracts\Routing\UrlGenerator::class);
+        app()->instance('url', $urlGenerator);
+        $urlGenerator->shouldReceive('route')->with('login', [], true)->andReturn('custom_login');
+
+        // Mock the config class
+        $config = m::mock('alias:config');
+        $config->shouldReceive('get')->with('passport.login_route', 'custom_login')->andReturn('custom_login_uri');
+        app()->instance('config', $config);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(AuthorizationViewResponse::class);
+        $guard = m::mock(StatefulGuard::class);
+
+        $controller = new AuthorizationController($server, $guard, $response);
+
+        $guard->shouldReceive('guest')->andReturn(true);
+        $server->shouldReceive('validateAuthorizationRequest')->once();
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $session->shouldReceive('put')->with('promptedForLogin', true)->once();
+        $request->shouldReceive('get')->with('prompt')->andReturn(null);
+
+        $clients = m::mock(ClientRepository::class);
+        $tokens = m::mock(TokenRepository::class);
+
+        try {
+            $controller->authorize(
+                m::mock(ServerRequestInterface::class), $request, $clients, $tokens
+            );
+        } catch (AuthenticationException $exception) {
+            $this->assertEquals('custom_login_uri', $exception->redirectTo());
+
+            throw $exception;
+        }
     }
 }

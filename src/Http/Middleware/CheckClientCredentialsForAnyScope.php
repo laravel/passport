@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Middleware;
 
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
@@ -18,7 +19,7 @@ class CheckClientCredentialsForAnyScope extends CheckCredentials
     protected function validateCredentials($token)
     {
         if (! $token) {
-            throw new AuthenticationException;
+            throw AuthenticationException::make();
         }
     }
 
