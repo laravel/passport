@@ -116,6 +116,27 @@ class Client extends Model
     }
 
     /**
+     * Get the scopes for the client.
+     *
+     * @return array|null
+     */
+    public function getScopesAttribute()
+    {
+        return $this->attributes['scopes'] ?? null;
+    }
+
+    /**
+     * Set the scopes for the client.
+     *
+     * @param  array|null  $scopes
+     * @return void
+     */
+    public function setScopesAttribute(?array $scopes)
+    {
+        $this->attributes['scopes'] = $scopes;
+    }
+
+    /**
      * The temporary non-hashed client secret.
      *
      * This is only available once during the request that created the client.
