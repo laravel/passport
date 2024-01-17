@@ -116,7 +116,7 @@ class Client extends Model
     }
 
     /**
-     * Get the scopes requested.
+     * Get the scopes for the client.
      *
      * @return array|null
      */
@@ -126,9 +126,9 @@ class Client extends Model
     }
 
     /**
-     * Set the value of the scopes attribute.
+     * Set the scopes for the client.
      *
-     * @@param  array|null  $scopes
+     * @param  array|null  $scopes
      * @return void
      */
     public function setScopesAttribute(?array $scopes)
