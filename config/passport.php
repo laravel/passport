@@ -59,4 +59,15 @@ return [
         'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Route prefix
+    |--------------------------------------------------------------------------
+    |
+    | All routes start with this. Default is `oauth`.
+    |
+    */
+
+    'path' => 'oauth',
+
 ];
