@@ -65,7 +65,7 @@ class Client extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            if (config('passport.client_uuids')) {
+            if (Passport::clientUuids()) {
                 $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
             }
         });
@@ -103,6 +103,37 @@ class Client extends Model
     public function tokens()
     {
         return $this->hasMany(Passport::tokenModel(), 'client_id');
+    }
+
+    /**
+     * Get the grant types the client can use.
+     *
+     * @return array|null
+     */
+    public function getGrantTypesAttribute()
+    {
+        return $this->attributes['grant_types'] ?? null;
+    }
+
+    /**
+     * Get the scopes for the client.
+     *
+     * @return array|null
+     */
+    public function getScopesAttribute()
+    {
+        return $this->attributes['scopes'] ?? null;
+    }
+
+    /**
+     * Set the scopes for the client.
+     *
+     * @param  array|null  $scopes
+     * @return void
+     */
+    public function setScopesAttribute(?array $scopes)
+    {
+        $this->attributes['scopes'] = $scopes;
     }
 
     /**

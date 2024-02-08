@@ -1,6 +1,20 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.0...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.4...master)
+
+## [v11.10.4](https://github.com/laravel/passport/compare/v11.10.2...v11.10.4) - 2024-01-30
+
+* Consistently retrieve client uuids value from Passport by [@rojtjo](https://github.com/rojtjo) in https://github.com/laravel/passport/pull/1711
+* [11.x] Allow developers to disable the password grant type by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1712
+
+## [v11.10.2](https://github.com/laravel/passport/compare/v11.10.1...v11.10.2) - 2024-01-17
+
+* Add getScopesAttribute and getScopesAttribute methods by [@uintaam](https://github.com/uintaam) in https://github.com/laravel/passport/pull/1709
+
+## [v11.10.1](https://github.com/laravel/passport/compare/v11.10.0...v11.10.1) - 2024-01-10
+
+* [11.x] Allow unsetting a user's access token by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1698
+* [11.x] Add getGrantTypesAttribute method to fix Eloquent strict mode error by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1705
 
 ## [v11.10.0](https://github.com/laravel/passport/compare/v11.9.2...v11.10.0) - 2023-11-02
 
