@@ -197,6 +197,18 @@ class Passport
     }
 
     /**
+     * Enable the password grant type.
+     *
+     * @return static
+     */
+    public static function enablePasswordGrant()
+    {
+        static::$passwordGrantEnabled = true;
+
+        return new static;
+    }
+
+    /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
      * @param  array|string  $scope
