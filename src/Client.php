@@ -106,37 +106,6 @@ class Client extends Model
     }
 
     /**
-     * Get the grant types the client can use.
-     *
-     * @return array|null
-     */
-    public function getGrantTypesAttribute()
-    {
-        return $this->attributes['grant_types'] ?? null;
-    }
-
-    /**
-     * Get the scopes for the client.
-     *
-     * @return array|null
-     */
-    public function getScopesAttribute()
-    {
-        return $this->attributes['scopes'] ?? null;
-    }
-
-    /**
-     * Set the scopes for the client.
-     *
-     * @param  array|null  $scopes
-     * @return void
-     */
-    public function setScopesAttribute(?array $scopes)
-    {
-        $this->attributes['scopes'] = $scopes;
-    }
-
-    /**
      * The temporary non-hashed client secret.
      *
      * This is only available once during the request that created the client.
@@ -188,6 +157,21 @@ class Client extends Model
     }
 
     /**
+     * Determine if the client has the given grant type.
+     *
+     * @param  string  $grantType
+     * @return bool
+     */
+    public function hasGrantType($grantType)
+    {
+        if (! isset($this->grant_types) || ! is_array($this->grant_types)) {
+            return true;
+        }
+
+        return in_array($grantType, $this->grant_types);
+    }
+
+    /**
      * Determine whether the client has the given scope.
      *
      * @param  string  $scope
@@ -195,7 +179,7 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
-        if (! is_array($this->scopes)) {
+        if (! isset($this->scopes) || ! is_array($this->scopes)) {
             return true;
         }
 
