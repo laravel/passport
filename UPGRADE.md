@@ -13,7 +13,8 @@ php artisan vendor:publish --tag=passport-migrations
 ```
 
 ### Password Grant Type
-Password grant type is disabled by default. You may enable it by calling the `enablePasswordGrant` method in the `boot` method of your application's `App\Providers\AuthServiceProvider` class:
+
+The password grant type is disabled by default. You may enable it by calling the `enablePasswordGrant` method in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
 
 ```php
 public function boot(): void
