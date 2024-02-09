@@ -106,6 +106,8 @@ class AccessTokenControllerTest extends PassportTestCase
     {
         $this->withoutExceptionHandling();
 
+        Passport::enablePasswordGrant();
+
         $password = 'foobar123';
         $user = UserFactory::new()->create([
             'email' => 'foo@gmail.com',
@@ -153,6 +155,8 @@ class AccessTokenControllerTest extends PassportTestCase
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidPassword()
     {
+        Passport::enablePasswordGrant();
+
         $password = 'foobar123';
         $user = UserFactory::new()->create([
             'email' => 'foo@gmail.com',
@@ -196,6 +200,8 @@ class AccessTokenControllerTest extends PassportTestCase
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidClientSecret()
     {
+        Passport::enablePasswordGrant();
+
         $password = 'foobar123';
         $user = UserFactory::new()->create([
             'email' => 'foo@gmail.com',

@@ -12,6 +12,17 @@ Passport 12.0 no longer automatically loads migrations from its own migrations d
 php artisan vendor:publish --tag=passport-migrations
 ```
 
+### Password Grant Type
+
+The password grant type is disabled by default. You may enable it by calling the `enablePasswordGrant` method in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+
+```php
+public function boot(): void
+{
+    Passport::enablePasswordGrant();
+}
+```
+
 ## Upgrading To 11.0 From 10.x
 
 ### Minimum PHP Version

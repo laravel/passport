@@ -26,7 +26,7 @@ class Passport
      *
      * @var bool|null
      */
-    public static $passwordGrantEnabled = true;
+    public static $passwordGrantEnabled = false;
 
     /**
      * The default scope.
@@ -192,6 +192,18 @@ class Passport
     public static function enableImplicitGrant()
     {
         static::$implicitGrantEnabled = true;
+
+        return new static;
+    }
+
+    /**
+     * Enable the password grant type.
+     *
+     * @return static
+     */
+    public static function enablePasswordGrant()
+    {
+        static::$passwordGrantEnabled = true;
 
         return new static;
     }
