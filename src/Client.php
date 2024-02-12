@@ -51,9 +51,11 @@ class Client extends Model
     /**
      * The temporary plain-text client secret.
      *
+     * This is only available during the request that created the client.
+     *
      * @var string|null
      */
-    protected $plainSecret;
+    public $plainSecret;
 
     /**
      * Bootstrap the model and its traits.
@@ -134,18 +136,6 @@ class Client extends Model
     public function setScopesAttribute(?array $scopes)
     {
         $this->attributes['scopes'] = $scopes;
-    }
-
-    /**
-     * The temporary non-hashed client secret.
-     *
-     * This is only available once during the request that created the client.
-     *
-     * @return string|null
-     */
-    public function getPlainSecretAttribute()
-    {
-        return $this->plainSecret;
     }
 
     /**
