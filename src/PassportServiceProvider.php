@@ -309,7 +309,7 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Create a CryptKey instance without permissions check.
+     * Create a CryptKey instance.
      *
      * @param  string  $type
      * @return \League\OAuth2\Server\CryptKey
@@ -322,7 +322,7 @@ class PassportServiceProvider extends ServiceProvider
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
         }
 
-        return new CryptKey($key, null, false);
+        return new CryptKey($key, null, Passport::$validateKeyPermissions && ! windows_os());
     }
 
     /**

@@ -15,6 +15,13 @@ use Psr\Http\Message\ServerRequestInterface;
 class Passport
 {
     /**
+     * Indicates if Passport should validate the permissions of its encryption keys.
+     *
+     * @var bool
+     */
+    public static $validateKeyPermissions = true;
+
+    /**
      * Indicates if the implicit grant type is enabled.
      *
      * @var bool|null
