@@ -55,6 +55,11 @@ class KeysCommand extends Command
                 file_put_contents($privateKey, (string) $key);
             }
 
+            if (! windows_os()) {
+                chmod($publicKey, 0660);
+                chmod($privateKey, 0600);
+            }
+
             $this->info('Encryption keys generated successfully.');
         }
 

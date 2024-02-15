@@ -11,6 +11,13 @@ use PHPUnit\Framework\TestCase;
 
 class PassportServiceProviderTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        @unlink(__DIR__.'/../keys/oauth-private.key');
+    }
+
     public function test_can_use_crypto_keys_from_config()
     {
         $privateKey = openssl_pkey_new();
@@ -46,6 +53,7 @@ class PassportServiceProviderTest extends TestCase
 
         openssl_pkey_export_to_file($privateKey, __DIR__.'/../keys/oauth-private.key');
         openssl_pkey_export($privateKey, $privateKeyString);
+        chmod(__DIR__.'/../keys/oauth-private.key', 0600);
 
         $config = m::mock(Config::class, function ($config) {
             $config->shouldReceive('get')->with('passport.private_key')->andReturn(null);
@@ -64,7 +72,5 @@ class PassportServiceProviderTest extends TestCase
             $privateKeyString,
             file_get_contents($cryptKey->getKeyPath())
         );
-
-        @unlink(__DIR__.'/../keys/oauth-private.key');
     }
 }
