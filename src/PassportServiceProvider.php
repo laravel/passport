@@ -322,7 +322,7 @@ class PassportServiceProvider extends ServiceProvider
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
         }
 
-        return new CryptKey($key, null, Passport::$checkKeyPermissions && ! windows_os());
+        return new CryptKey($key, null, Passport::$validateKeyPermissions && ! windows_os());
     }
 
     /**
