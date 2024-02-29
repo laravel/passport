@@ -179,7 +179,7 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
-        if (! isset($this->scopes) || ! is_array($this->scopes)) {
+        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
             return true;
         }
 
