@@ -164,7 +164,7 @@ class Client extends Model
      */
     public function hasGrantType($grantType)
     {
-        if (! isset($this->grant_types) || ! is_array($this->grant_types)) {
+        if (! isset($this->attributes['grant_types']) || ! is_array($this->grant_types)) {
             return true;
         }
 
