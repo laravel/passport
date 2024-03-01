@@ -207,4 +207,13 @@ class BridgeClientRepositoryTestClientStub
     {
         return ! empty($this->secret);
     }
+
+    public function hasGrantType($grantType)
+    {
+        if (! isset($this->grant_types) || ! is_array($this->grant_types)) {
+            return true;
+        }
+
+        return in_array($grantType, $this->grant_types);
+    }
 }

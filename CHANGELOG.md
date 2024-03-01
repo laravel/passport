@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.4...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.5...master)
+
+## [v11.10.5](https://github.com/laravel/passport/compare/v11.10.4...v11.10.5) - 2024-02-09
+
+* [11.x] Fix getting/setting client scopes and grant types by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1717
 
 ## [v11.10.4](https://github.com/laravel/passport/compare/v11.10.2...v11.10.4) - 2024-01-30
 
