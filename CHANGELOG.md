@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.5...11.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.6...11.x)
+
+## [v11.10.6](https://github.com/laravel/passport/compare/v11.10.5...v11.10.6) - 2024-03-01
+
+* Check that properties `grant_types` and  `scopes` exist by [@uintaam](https://github.com/uintaam) in https://github.com/laravel/passport/pull/1722
 
 ## [v11.10.5](https://github.com/laravel/passport/compare/v11.10.4...v11.10.5) - 2024-02-09
 
