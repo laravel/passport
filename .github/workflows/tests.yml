@@ -24,8 +24,6 @@ jobs:
           - php: 8.3
             laravel: 9
 
-
-
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
     steps:
