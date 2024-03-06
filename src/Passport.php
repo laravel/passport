@@ -19,7 +19,7 @@ class Passport
      *
      * @var bool
      */
-    public static $validateKeyPermissions = true;
+    public static $validateKeyPermissions = false;
 
     /**
      * Indicates if the implicit grant type is enabled.
