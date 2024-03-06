@@ -12,6 +12,12 @@ Passport 12.0 no longer automatically loads migrations from its own migrations d
 php artisan vendor:publish --tag=passport-migrations
 ```
 
+### Encryption Keys UNIX Permission
+
+In previous versions, the `passport:keys` Artisan command generated the encryption keys (`oauth-private.key` and `oauth-public.key`) with incorrect UNIX permission settings.
+
+In Passport version 12.x, there is a new check to ensure existing encryption keys have the correct permissions; therefore, you should verify that your existing keys are set to permissions 600 or 660.
+
 ### Password Grant Type
 
 The password grant type is disabled by default. You may enable it by calling the `enablePasswordGrant` method in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
