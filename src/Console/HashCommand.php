@@ -29,7 +29,7 @@ class HashCommand extends Command
     public function handle()
     {
         if (! Passport::$hashesClientSecrets) {
-            $this->warn('Please enable client hashing yet in your AppServiceProvider before continuing.');
+            $this->components->warn('Please enable client hashing yet in your AppServiceProvider before continuing.');
 
             return;
         }
@@ -49,7 +49,7 @@ class HashCommand extends Command
                 ])->save();
             }
 
-            $this->info('All client secrets were successfully hashed.');
+            $this->components->info('All client secrets were successfully hashed.');
         }
     }
 }

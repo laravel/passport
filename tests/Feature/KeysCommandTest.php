@@ -14,6 +14,6 @@ class KeysCommandTest extends PassportTestCase
     {
         $this->artisan('passport:keys')
             ->assertFailed()
-            ->expectsOutput('Encryption keys already exist. Use the --force option to overwrite them.');
+            ->expectsOutputToContain('Encryption keys already exist. Use the --force option to overwrite them.');
     }
 }

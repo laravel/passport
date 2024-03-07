@@ -39,7 +39,7 @@ class KeysCommand extends Command
         ];
 
         if ((file_exists($publicKey) || file_exists($privateKey)) && ! $this->option('force')) {
-            $this->error('Encryption keys already exist. Use the --force option to overwrite them.');
+            $this->components->error('Encryption keys already exist. Use the --force option to overwrite them.');
 
             return 1;
         } else {
@@ -60,7 +60,7 @@ class KeysCommand extends Command
                 chmod($privateKey, 0600);
             }
 
-            $this->info('Encryption keys generated successfully.');
+            $this->components->info('Encryption keys generated successfully.');
         }
 
         return 0;
