@@ -36,7 +36,7 @@
         "mockery/mockery": "^1.0",
         "orchestra/testbench": "^7.35|^8.14|^9.0",
         "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^9.3|^10.4"
+        "phpunit/phpunit": "^9.3|^10.5"
     },
     "autoload": {
         "psr-4": {
