@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.6...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.0.0...12.x)
+
+## [v12.0.0](https://github.com/laravel/passport/compare/v11.10.6...v12.0.0) - 2024-03-12
+
+* [12.x] Adds Laravel 11 support by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/passport/pull/1702
+* [12.x] Disable password grant by default by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1715
+* [12.x] Make `Client::$plainSecret` public by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1719
+* [12.x] Use more secure key permissions by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1721
+* [12.x] Enhance console commands by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1724
 
 ## [v11.10.6](https://github.com/laravel/passport/compare/v11.10.5...v11.10.6) - 2024-03-01
 
