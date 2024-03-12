@@ -1,6 +1,6 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v11.10.6...master)
+## [Unreleased](https://github.com/laravel/passport/compare/v11.10.6...12.x)
 
 ## [v11.10.6](https://github.com/laravel/passport/compare/v11.10.5...v11.10.6) - 2024-03-01
 
