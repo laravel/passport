@@ -48,7 +48,7 @@ class ApiTokenCookieFactory
     {
         $config = $this->config->get('session');
 
-        $expiration = Carbon::now()->addMinutes($config['lifetime']);
+        $expiration = Carbon::now()->addMinutes((int) $config['lifetime']);
 
         return new Cookie(
             Passport::cookie(),
