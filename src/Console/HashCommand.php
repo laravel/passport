@@ -34,7 +34,7 @@ class HashCommand extends Command
             return;
         }
 
-        if ($this->option('force') || $this->confirm('Are you sure you want to hash all client secrets? This cannot be undone.')) {
+        if ($this->option('force') || $this->components->confirm('Are you sure you want to hash all client secrets? This cannot be undone.')) {
             $model = Passport::clientModel();
 
             foreach ((new $model)->whereNotNull('secret')->cursor() as $client) {
