@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.0.0...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.0.1...12.x)
+
+## [v12.0.1](https://github.com/laravel/passport/compare/v12.0.0...v12.0.1) - 2024-03-14
+
+* [12.x] Cast session lifetime to int by [@kindslayer](https://github.com/kindslayer) in https://github.com/laravel/passport/pull/1727
+* [12.x] Fixes used version of L9 by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/passport/pull/1730
 
 ## [v12.0.0](https://github.com/laravel/passport/compare/v11.10.6...v12.0.0) - 2024-03-12
 
