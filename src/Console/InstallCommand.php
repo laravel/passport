@@ -15,7 +15,9 @@ class InstallCommand extends Command
     protected $signature = 'passport:install
                             {--uuids : Use UUIDs for all client IDs}
                             {--force : Overwrite keys they already exist}
-                            {--length=4096 : The length of the private key}';
+                            {--length=4096 : The length of the private key}
+                            {--without-migration-prompt : Do not prompt to run pending migrations}
+                            {--without-client-prompt : Do not prompt to create the "personal access" and "password grant" clients}';
 
     /**
      * The console command description.
@@ -39,15 +41,19 @@ class InstallCommand extends Command
             $this->configureUuids();
         }
 
-        if ($this->confirm('Would you like to run all pending database migrations?', true)) {
-            $this->call('migrate');
+        if (! $this->option('without-migration-prompt')) {
+            if ($this->confirm('Would you like to run all pending database migrations?', true)) {
+                $this->call('migrate');
+            }
         }
 
-        if ($this->confirm('Would you like to create the "personal access" and "password grant" clients?', true)) {
-            $provider = in_array('users', array_keys(config('auth.providers'))) ? 'users' : null;
+        if (! $this->option('without-client-prompt')) {
+            if ($this->confirm('Would you like to create the "personal access" and "password grant" clients?', true)) {
+                $provider = in_array('users', array_keys(config('auth.providers'))) ? 'users' : null;
 
-            $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
-            $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client', '--provider' => $provider]);
+                $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
+                $this->call('passport:client', ['--password' => true, '--name' => config('app.name').' Password Grant Client', '--provider' => $provider]);
+            }
         }
     }
 
