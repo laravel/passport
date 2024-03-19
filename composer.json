@@ -30,6 +30,7 @@
         "league/oauth2-server": "^8.5.3",
         "nyholm/psr7": "^1.5",
         "phpseclib/phpseclib": "^2.0|^3.0",
+        "symfony/console": "^6.0|^7.0",
         "symfony/psr-http-message-bridge": "^2.1|^6.0|^7.0"
     },
     "require-dev": {
