@@ -5,7 +5,9 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Laravel\Passport\Passport;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'passport:purge')]
 class PurgeCommand extends Command
 {
     /**

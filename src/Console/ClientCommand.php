@@ -6,7 +6,9 @@ use Illuminate\Console\Command;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'passport:client')]
 class ClientCommand extends Command
 {
     /**

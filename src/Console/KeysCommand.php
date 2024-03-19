@@ -7,7 +7,9 @@ use Illuminate\Support\Arr;
 use Laravel\Passport\Passport;
 use phpseclib\Crypt\RSA as LegacyRSA;
 use phpseclib3\Crypt\RSA;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'passport:keys')]
 class KeysCommand extends Command
 {
     /**
