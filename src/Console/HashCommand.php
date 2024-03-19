@@ -4,7 +4,9 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Laravel\Passport\Passport;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'passport:hash')]
 class HashCommand extends Command
 {
     /**
