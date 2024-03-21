@@ -288,16 +288,18 @@ class Passport
     /**
      * Get or set when access tokens expire.
      *
-     * @param  \DateTimeInterface|null  $date
+     * @param  \DateTimeInterface|\DateInterval|null  $date
      * @return \DateInterval|static
      */
-    public static function tokensExpireIn(DateTimeInterface $date = null)
+    public static function tokensExpireIn(DateTimeInterface|DateInterval $date = null)
     {
         if (is_null($date)) {
             return static::$tokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$tokensExpireIn = Carbon::now()->diff($date);
+        static::$tokensExpireIn = $date instanceof DateTimeInterface
+            ? Carbon::now()->diff($date)
+            : $date;
 
         return new static;
     }
@@ -305,16 +307,18 @@ class Passport
     /**
      * Get or set when refresh tokens expire.
      *
-     * @param  \DateTimeInterface|null  $date
+     * @param  \DateTimeInterface|\DateInterval|null  $date
      * @return \DateInterval|static
      */
-    public static function refreshTokensExpireIn(DateTimeInterface $date = null)
+    public static function refreshTokensExpireIn(DateTimeInterface|DateInterval $date = null)
     {
         if (is_null($date)) {
             return static::$refreshTokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$refreshTokensExpireIn = Carbon::now()->diff($date);
+        static::$refreshTokensExpireIn = $date instanceof DateTimeInterface
+            ? Carbon::now()->diff($date)
+            : $date;
 
         return new static;
     }
@@ -322,16 +326,18 @@ class Passport
     /**
      * Get or set when personal access tokens expire.
      *
-     * @param  \DateTimeInterface|null  $date
+     * @param  \DateTimeInterface|\DateInterval|null  $date
      * @return \DateInterval|static
      */
-    public static function personalAccessTokensExpireIn(DateTimeInterface $date = null)
+    public static function personalAccessTokensExpireIn(DateTimeInterface|DateInterval $date = null)
     {
         if (is_null($date)) {
             return static::$personalAccessTokensExpireIn ?? new DateInterval('P1Y');
         }
 
-        static::$personalAccessTokensExpireIn = Carbon::now()->diff($date);
+        static::$personalAccessTokensExpireIn = $date instanceof DateTimeInterface
+            ? Carbon::now()->diff($date)
+            : $date;
 
         return new static;
     }
