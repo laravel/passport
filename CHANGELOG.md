@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.0.1...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.0.2...12.x)
+
+## [v12.0.2](https://github.com/laravel/passport/compare/v12.0.1...v12.0.2) - 2024-03-21
+
+* [12.x] Make commands lazy by [@timacdonald](https://github.com/timacdonald) in https://github.com/laravel/passport/pull/1731
+* [12.x] Allow token "expires in" to be defined as date interval by [@jacobmllr95](https://github.com/jacobmllr95) in https://github.com/laravel/passport/pull/1733
 
 ## [v12.0.1](https://github.com/laravel/passport/compare/v12.0.0...v12.0.1) - 2024-03-14
 
