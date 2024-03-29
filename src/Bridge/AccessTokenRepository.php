@@ -41,8 +41,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
         ClientEntityInterface $clientEntity,
         array $scopes,
         mixed $userIdentifier = null
-    ): AccessTokenEntityInterface
-    {
+    ): AccessTokenEntityInterface {
         return new Passport::$accessTokenEntity($userIdentifier, $scopes, $clientEntity);
     }
 

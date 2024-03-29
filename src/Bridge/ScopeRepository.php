@@ -44,8 +44,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         ClientEntityInterface $clientEntity,
         string|int|null $userIdentifier = null,
         ?string $authCodeId = null
-    ): array
-    {
+    ): array {
         if (! in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
