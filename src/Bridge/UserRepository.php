@@ -31,8 +31,7 @@ class UserRepository implements UserRepositoryInterface
         string $password,
         string $grantType,
         ClientEntityInterface $clientEntity
-    ): ?UserEntityInterface
-    {
+    ): ?UserEntityInterface {
         $provider = $clientEntity->provider ?: config('auth.guards.api.provider');
 
         if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
