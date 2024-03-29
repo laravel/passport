@@ -16,6 +16,7 @@ use Lcobucci\JWT\Token\Signature;
 use League\OAuth2\Server\AuthorizationServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 
 class PersonalAccessTokenFactoryTest extends TestCase
 {
@@ -34,7 +35,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
         $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
 
         $clients->shouldReceive('personalAccessClient')->andReturn($client = new PersonalAccessTokenFactoryTestClientStub);
-        $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock());
+        $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock(ResponseInterface::class));
         $response->shouldReceive('getBody->__toString')->andReturn(json_encode([
             'access_token' => 'foo',
         ]));

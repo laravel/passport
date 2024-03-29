@@ -12,24 +12,16 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
      * The refresh token repository instance.
-     *
-     * @var \Illuminate\Database\Connection
      */
-    protected $refreshTokenRepository;
+    protected PassportRefreshTokenRepository $refreshTokenRepository;
 
     /**
      * The event dispatcher instance.
-     *
-     * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    protected $events;
+    protected Dispatcher $events;
 
     /**
      * Create a new repository instance.
-     *
-     * @param  \Laravel\Passport\RefreshTokenRepository  $refreshTokenRepository
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     * @return void
      */
     public function __construct(PassportRefreshTokenRepository $refreshTokenRepository, Dispatcher $events)
     {
@@ -40,7 +32,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getNewRefreshToken()
+    public function getNewRefreshToken(): ?RefreshTokenEntityInterface
     {
         return new RefreshToken;
     }
@@ -48,7 +40,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
+    public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
         $this->refreshTokenRepository->create([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
@@ -63,7 +55,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function revokeRefreshToken($tokenId)
+    public function revokeRefreshToken(string $tokenId): void
     {
         $this->refreshTokenRepository->revokeRefreshToken($tokenId);
     }
@@ -71,7 +63,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function isRefreshTokenRevoked($tokenId)
+    public function isRefreshTokenRevoked(string $tokenId): bool
     {
         return $this->refreshTokenRepository->isRefreshTokenRevoked($tokenId);
     }

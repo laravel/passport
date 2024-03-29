@@ -182,7 +182,7 @@ class BridgeClientRepositoryTest extends TestCase
     }
 }
 
-class BridgeClientRepositoryTestClientStub
+class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 {
     public $name = 'Client';
 

@@ -17,6 +17,7 @@ use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Mockery as m;
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
@@ -44,7 +45,7 @@ class AuthorizationControllerTest extends TestCase
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock());
-        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock());
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock(AuthorizationRequestInterface::class));
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
@@ -269,7 +270,7 @@ class AuthorizationControllerTest extends TestCase
         $server->shouldReceive('completeAuthorizationRequest')
             ->with($authRequest, m::type(ResponseInterface::class))
             ->once()
-            ->andThrow('League\OAuth2\Server\Exception\OAuthServerException');
+            ->andReturn(new \League\OAuth2\Server\Exception\OAuthServerException('', 0, ''));
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());

@@ -13,7 +13,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getNewAuthCode()
+    public function getNewAuthCode(): AuthCodeEntityInterface
     {
         return new AuthCode;
     }
@@ -21,7 +21,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
+    public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity): void
     {
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
@@ -38,7 +38,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function revokeAuthCode($codeId)
+    public function revokeAuthCode(string $codeId): void
     {
         Passport::authCode()->where('id', $codeId)->update(['revoked' => true]);
     }
@@ -46,7 +46,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function isAuthCodeRevoked($codeId)
+    public function isAuthCodeRevoked(string $codeId): bool
     {
         return Passport::authCode()->where('id', $codeId)->where('revoked', 1)->exists();
     }

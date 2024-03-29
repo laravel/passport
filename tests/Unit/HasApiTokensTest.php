@@ -29,6 +29,8 @@ class HasApiTokensTest extends TestCase
 
     public function test_token_can_be_created()
     {
+        $this->expectNotToPerformAssertions();
+
         $container = new Container;
         Container::setInstance($container);
         $container->instance(PersonalAccessTokenFactory::class, $factory = m::mock());
