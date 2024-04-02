@@ -4,7 +4,6 @@ namespace Laravel\Passport\Bridge;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
 use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
@@ -16,7 +15,7 @@ class AccessToken implements AccessTokenEntityInterface
     /**
      * Create a new token instance.
      *
-     * @param  ScopeEntityInterface[]  $scopes
+     * @param  \League\OAuth2\Server\Entities\ScopeEntityInterface[]  $scopes
      */
     public function __construct(string|int $userIdentifier, array $scopes, ClientEntityInterface $client)
     {

@@ -2,14 +2,12 @@
 
 namespace Laravel\Passport\Bridge;
 
-use League\OAuth2\Server\Entities\ScopeEntityInterface;
-
 trait FormatsScopesForStorage
 {
     /**
      * Format the given scopes for storage.
      *
-     * @param  ScopeEntityInterface[]  $scopes
+     * @param  \League\OAuth2\Server\Entities\ScopeEntityInterface[]  $scopes
      */
     public function formatScopesForStorage(array $scopes): string
     {
@@ -19,7 +17,7 @@ trait FormatsScopesForStorage
     /**
      * Get an array of scope identifiers for storage.
      *
-     * @param  ScopeEntityInterface[]  $scopes
+     * @param  \League\OAuth2\Server\Entities\ScopeEntityInterface[]  $scopes
      * @return string[]
      */
     public function scopesToArray(array $scopes): array
