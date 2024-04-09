@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.0.2...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.0.3...12.x)
+
+## [v12.0.3](https://github.com/laravel/passport/compare/v12.0.2...v12.0.3) - 2024-04-05
+
+* Adjust newFactory method visibility by [@brandonfarber](https://github.com/brandonfarber) in https://github.com/laravel/passport/pull/1735
 
 ## [v12.0.2](https://github.com/laravel/passport/compare/v12.0.1...v12.0.2) - 2024-03-21
 
