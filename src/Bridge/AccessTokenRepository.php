@@ -40,7 +40,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function getNewToken(
         ClientEntityInterface $clientEntity,
         array $scopes,
-        mixed $userIdentifier = null
+        string|int|null $userIdentifier = null
     ): AccessTokenEntityInterface {
         return new Passport::$accessTokenEntity($userIdentifier, $scopes, $clientEntity);
     }
