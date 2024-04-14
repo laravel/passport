@@ -44,7 +44,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $server->shouldReceive('completeAuthorizationRequest')
             ->with($authRequest, m::type(ResponseInterface::class))
-            ->andReturnUsing(function() {
+            ->andReturnUsing(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 
