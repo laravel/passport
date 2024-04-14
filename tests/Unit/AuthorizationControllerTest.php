@@ -270,7 +270,9 @@ class AuthorizationControllerTest extends TestCase
         $server->shouldReceive('completeAuthorizationRequest')
             ->with($authRequest, m::type(ResponseInterface::class))
             ->once()
-            ->andReturn(new \League\OAuth2\Server\Exception\OAuthServerException('', 0, ''));
+            ->andReturnUsing(function() {
+                throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
+            });
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
