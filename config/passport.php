@@ -35,9 +35,9 @@ return [
     | Passport Database Connection
     |--------------------------------------------------------------------------
     |
-    | By default, Passport's models will use your application's default
-    | database connection. If you wish to use a different connection
-    | you may specify it here.
+    | By default, Passport's models will utilize your application's default
+    | database connection. If you wish to use a different connection you
+    | may specify the configured name of the database connection here.
     |
     */
 
