@@ -32,6 +32,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Passport Database Connection
+    |--------------------------------------------------------------------------
+    |
+    | By default, Passport's models will use your application's default
+    | database connection. If you wish to use a different connection
+    | you may specify it here.
+    |
+    */
+
+    'connection' => env('PASSPORT_CONNECTION'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Client UUIDs
     |--------------------------------------------------------------------------
     |
