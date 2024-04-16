@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.0.3...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.1.0...12.x)
+
+## [v12.1.0](https://github.com/laravel/passport/compare/v12.0.3...v12.1.0) - 2024-04-15
+
+* [12.x] Make Passport's database connection configurable by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1738
 
 ## [v12.0.3](https://github.com/laravel/passport/compare/v12.0.2...v12.0.3) - 2024-04-05
 
