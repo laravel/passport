@@ -58,7 +58,7 @@ class Token extends Model
     }
 
     /**
-     * Get the refresh token that the token belongs to.
+     * Get the refresh token associated with the token.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
