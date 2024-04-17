@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope;
 use Laravel\Passport\Http\Middleware\CheckScopes;
 use Laravel\Passport\Passport;
+use Laravel\Passport\RefreshToken;
+use Laravel\Passport\Token;
 use Workbench\App\Models\User;
 
 class ActingAsTest extends PassportTestCase
@@ -112,5 +114,17 @@ class ActingAsTest extends PassportTestCase
         $response = $this->get('/foo');
         $response->assertSuccessful();
         $response->assertSee('bar');
+    }
+
+    public function testActingAsCreatesAccessTokenAndRefreshToken()
+    {
+        Passport::actingAs(new User(), ['foo']);
+
+        $this->assertInstanceOf(User::class, auth()->user());
+        $this->assertInstanceOf(Token::class, auth()->user()->token());
+        $this->assertTrue(auth()->user()->token()->exists);
+        $this->assertSame(['foo'], auth()->user()->token()->scopes);
+        $this->assertInstanceOf(RefreshToken::class, $refreshToken = RefreshToken::firstWhere('access_token_id', auth()->user()->token()->id));
+        $this->assertTrue($refreshToken->exists);
     }
 }

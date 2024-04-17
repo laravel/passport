@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Support\Str;
 use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
 use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use League\OAuth2\Server\ResourceServer;
@@ -382,7 +383,22 @@ class Passport
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
-        $token = app(self::tokenModel());
+        $token = app(self::tokenModel())::create([
+            'id' => Str::random(),
+            'user_id' => $user->id,
+            'client_id' => Client::factory()->create()->id,
+            'scopes' => $scopes,
+            'revoked' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'expires_at' => now()->addYear(),
+        ]);
+        app(self::refreshTokenModel())::create([
+            'id' => Str::random(),
+            'access_token_id' => $token->id,
+            'revoked' => false,
+            'expires_at' => now()->addYear(),
+        ]);
 
         $token->scopes = $scopes;
 
