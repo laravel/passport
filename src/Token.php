@@ -58,6 +58,16 @@ class Token extends Model
     }
 
     /**
+     * Get the refresh token associated with the token.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function refreshToken()
+    {
+        return $this->hasOne(Passport::refreshTokenModel(), 'access_token_id');
+    }
+
+    /**
      * Get the user that the token belongs to.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
