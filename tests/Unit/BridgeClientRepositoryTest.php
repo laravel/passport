@@ -46,7 +46,7 @@ class BridgeClientRepositoryTest extends TestCase
         $client = $this->repository->getClientEntity(1);
 
         $this->assertInstanceOf(Client::class, $client);
-        $this->assertSame(1, $client->getIdentifier());
+        $this->assertSame('1', $client->getIdentifier());
         $this->assertSame('Client', $client->getName());
         $this->assertEquals(['http://localhost'], $client->getRedirectUri());
         $this->assertTrue($client->isConfidential());

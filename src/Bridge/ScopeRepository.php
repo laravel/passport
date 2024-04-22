@@ -42,7 +42,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes,
         string $grantType,
         ClientEntityInterface $clientEntity,
-        string|int|null $userIdentifier = null,
+        string|null $userIdentifier = null,
         ?string $authCodeId = null
     ): array {
         if (! in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
