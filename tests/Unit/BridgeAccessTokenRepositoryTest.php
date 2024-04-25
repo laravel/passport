@@ -28,9 +28,9 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $events = m::mock(Dispatcher::class);
 
         $tokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
-            $this->assertSame('1', $array['id']);
-            $this->assertSame('2', $array['user_id']);
-            $this->assertSame('client-id', $array['client_id']);
+            $this->assertEquals(1, $array['id']);
+            $this->assertEquals(2, $array['user_id']);
+            $this->assertEquals('client-id', $array['client_id']);
             $this->assertEquals(['scopes'], $array['scopes']);
             $this->assertEquals(false, $array['revoked']);
             $this->assertInstanceOf(DateTime::class, $array['created_at']);
@@ -56,13 +56,13 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $repository = new AccessTokenRepository($tokenRepository, $events);
         $client = new Client('client-id', 'name', 'redirect');
         $scopes = [new Scope('place-orders'), new Scope('check-status')];
-        $userIdentifier = '123';
+        $userIdentifier = 123;
 
         $token = $repository->getNewToken($client, $scopes, $userIdentifier);
 
         $this->assertInstanceOf(AccessToken::class, $token);
         $this->assertEquals($client, $token->getClient());
         $this->assertEquals($scopes, $token->getScopes());
-        $this->assertSame($userIdentifier, $token->getUserIdentifier());
+        $this->assertEquals($userIdentifier, $token->getUserIdentifier());
     }
 }
