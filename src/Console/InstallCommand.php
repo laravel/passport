@@ -35,8 +35,6 @@ class InstallCommand extends Command
     {
         $this->call('passport:keys', ['--force' => $this->option('force'), '--length' => $this->option('length')]);
 
-        $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
-
         if ($this->option('uuids')) {
             $this->configureUuids();
         }
