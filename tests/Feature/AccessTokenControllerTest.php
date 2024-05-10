@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Foundation\Application;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
@@ -277,6 +278,10 @@ class AccessTokenControllerTest extends PassportTestCase
 
     public function testRehashPasswordOnLoginWithPasswordGrant()
     {
+        if (version_compare(Application::VERSION, '11.0.0', '<')) {
+            $this->markTestSkipped('Only on Laravel 11 and later');
+        }
+
         $this->withoutExceptionHandling();
 
         $this->app['config']->set('hashing.rehash_on_login', true);
@@ -310,6 +315,10 @@ class AccessTokenControllerTest extends PassportTestCase
 
     public function testNoRehashPasswordOnLoginWithPasswordGrant()
     {
+        if (version_compare(Application::VERSION, '11.0.0', '<')) {
+            $this->markTestSkipped('Only on Laravel 11 and later');
+        }
+
         $this->withoutExceptionHandling();
 
         $this->app['config']->set('hashing.rehash_on_login', false);
