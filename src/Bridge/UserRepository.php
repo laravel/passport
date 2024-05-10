@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Bridge;
 
 use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Support\Facades\Auth;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use RuntimeException;
@@ -17,14 +18,24 @@ class UserRepository implements UserRepositoryInterface
     protected $hasher;
 
     /**
+     * Indicates if passwords should be rehashed on login if needed.
+     *
+     * @var bool
+     */
+    protected $rehashOnLogin;
+
+    /**
      * Create a new repository instance.
      *
-     * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
+     * @param \Illuminate\Contracts\Hashing\Hasher $hasher
+     * @param bool $rehashOnLogin
+     *
      * @return void
      */
-    public function __construct(Hasher $hasher)
+    public function __construct(Hasher $hasher, bool $rehashOnLogin = true)
     {
         $this->hasher = $hasher;
+        $this->rehashOnLogin = $rehashOnLogin;
     }
 
     /**
@@ -62,6 +73,10 @@ class UserRepository implements UserRepositoryInterface
             }
         } elseif (! $this->hasher->check($password, $user->getAuthPassword())) {
             return;
+        }
+
+        if ($this->rehashOnLogin) {
+            Auth::createUserProvider($provider)->rehashPasswordIfRequired($user, ['password' => $password]);
         }
 
         return new User($user->getAuthIdentifier());

@@ -231,7 +231,9 @@ class PassportServiceProvider extends ServiceProvider
     protected function makePasswordGrant()
     {
         $grant = new PasswordGrant(
-            $this->app->make(Bridge\UserRepository::class),
+            $this->app->make(Bridge\UserRepository::class, [
+                'rehashOnLogin' => $this->app['config']->get('hashing.rehash_on_login', true),
+            ]),
             $this->app->make(Bridge\RefreshTokenRepository::class)
         );
 

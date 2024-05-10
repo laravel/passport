@@ -10,6 +10,7 @@ use Laravel\Passport\Passport;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\Token;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
+use Workbench\App\Models\User;
 use Workbench\Database\Factories\UserFactory;
 
 class AccessTokenControllerTest extends PassportTestCase
@@ -273,6 +274,72 @@ class AccessTokenControllerTest extends PassportTestCase
 
         $this->assertArrayHasKey('id_token', $decodedResponse);
         $this->assertSame('foo_bar_open_id_token', $decodedResponse['id_token']);
+    }
+
+    public function testRehashPasswordOnLoginWithPasswordGrant()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->app['config']->set('hashing.rehash_on_login', true);
+
+        Passport::enablePasswordGrant();
+
+        $password = 'foobar123';
+        $user = UserFactory::new()->create([
+            'email' => 'foo@gmail.com',
+            'password' => $this->app->make(Hasher::class)->make($password, ['rounds' => 6]),
+        ]);
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+
+        $response = $this->post(
+            '/oauth/token',
+            [
+                'grant_type' => 'password',
+                'client_id' => $client->getKey(),
+                'client_secret' => $client->secret,
+                'username' => $user->email,
+                'password' => $password,
+            ]
+        );
+
+        $response->assertOk();
+
+        $this->assertNotSame($user->password, $user->fresh()->password);
+    }
+
+    public function testNoRehashPasswordOnLoginWithPasswordGrant()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->app['config']->set('hashing.rehash_on_login', false);
+
+        Passport::enablePasswordGrant();
+
+        $password = 'foobar123';
+        $user = UserFactory::new()->create([
+            'email' => 'foo@gmail.com',
+            'password' => $this->app->make(Hasher::class)->make($password, ['rounds' => 6]),
+        ]);
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+
+        $response = $this->post(
+            '/oauth/token',
+            [
+                'grant_type' => 'password',
+                'client_id' => $client->getKey(),
+                'client_secret' => $client->secret,
+                'username' => $user->email,
+                'password' => $password,
+            ]
+        );
+
+        $response->assertOk();
+
+        $this->assertSame($user->password, $user->fresh()->password);
     }
 }
 
