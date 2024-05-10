@@ -29,7 +29,6 @@ class UserRepository implements UserRepositoryInterface
      *
      * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
      * @param  bool  $rehashOnLogin
-     *
      * @return void
      */
     public function __construct(Hasher $hasher, bool $rehashOnLogin = true)
