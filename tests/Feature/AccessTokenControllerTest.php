@@ -10,7 +10,6 @@ use Laravel\Passport\Passport;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\Token;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
-use Workbench\App\Models\User;
 use Workbench\Database\Factories\UserFactory;
 
 class AccessTokenControllerTest extends PassportTestCase

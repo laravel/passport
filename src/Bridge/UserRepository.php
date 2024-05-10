@@ -27,8 +27,8 @@ class UserRepository implements UserRepositoryInterface
     /**
      * Create a new repository instance.
      *
-     * @param \Illuminate\Contracts\Hashing\Hasher $hasher
-     * @param bool $rehashOnLogin
+     * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
+     * @param  bool  $rehashOnLogin
      *
      * @return void
      */
@@ -75,7 +75,7 @@ class UserRepository implements UserRepositoryInterface
             return;
         }
 
-        if ($this->rehashOnLogin) {
+        if ($this->rehashOnLogin && method_exists(Auth::createUserProvider($provider), 'rehashPasswordIfRequired')) {
             Auth::createUserProvider($provider)->rehashPasswordIfRequired($user, ['password' => $password]);
         }
 
