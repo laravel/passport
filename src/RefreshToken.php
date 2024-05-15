@@ -80,4 +80,14 @@ class RefreshToken extends Model
     {
         return false;
     }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return $this->connection ?? config('passport.connection');
+    }
 }

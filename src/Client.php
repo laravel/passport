@@ -229,11 +229,21 @@ class Client extends Model
     }
 
     /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return $this->connection ?? config('passport.connection');
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public static function newFactory()
+    protected static function newFactory()
     {
         return ClientFactory::new();
     }
