@@ -4,10 +4,11 @@ namespace Laravel\Passport\Bridge;
 
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\Traits\EntityTrait;
+use League\OAuth2\Server\Entities\Traits\ScopeTrait;
 
 class Scope implements ScopeEntityInterface
 {
-    use EntityTrait;
+    use ScopeTrait, EntityTrait;
 
     /**
      * Create a new scope instance.
@@ -15,13 +16,5 @@ class Scope implements ScopeEntityInterface
     public function __construct(string $name)
     {
         $this->setIdentifier($name);
-    }
-
-    /**
-     * Get the data that should be serialized to JSON.
-     */
-    public function jsonSerialize(): string
-    {
-        return $this->getIdentifier();
     }
 }

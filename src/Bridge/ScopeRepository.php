@@ -13,12 +13,12 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * The client repository.
      */
-    protected ?ClientRepository $clients;
+    protected ClientRepository $clients;
 
     /**
      * Create a new scope repository.
      */
-    public function __construct(?ClientRepository $clients = null)
+    public function __construct(ClientRepository $clients)
     {
         $this->clients = $clients;
     }
@@ -51,7 +51,7 @@ class ScopeRepository implements ScopeRepositoryInterface
             })->values()->all();
         }
 
-        $client = $this->clients?->findActive($clientEntity->getIdentifier());
+        $client = $this->clients->findActive($clientEntity->getIdentifier());
 
         return collect($scopes)->filter(function ($scope) {
             return Passport::hasScope($scope->getIdentifier());

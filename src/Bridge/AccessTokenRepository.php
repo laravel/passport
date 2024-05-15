@@ -51,9 +51,9 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
         $this->tokenRepository->create([
-            'id' => $accessTokenEntity->getIdentifier(),
-            'user_id' => $accessTokenEntity->getUserIdentifier(),
-            'client_id' => $accessTokenEntity->getClient()->getIdentifier(),
+            'id' => $id = $accessTokenEntity->getIdentifier(),
+            'user_id' => $userId = $accessTokenEntity->getUserIdentifier(),
+            'client_id' => $clientId = $accessTokenEntity->getClient()->getIdentifier(),
             'scopes' => $this->scopesToArray($accessTokenEntity->getScopes()),
             'revoked' => false,
             'created_at' => new DateTime,
@@ -61,11 +61,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
         ]);
 
-        $this->events->dispatch(new AccessTokenCreated(
-            $accessTokenEntity->getIdentifier(),
-            $accessTokenEntity->getUserIdentifier(),
-            $accessTokenEntity->getClient()->getIdentifier()
-        ));
+        $this->events->dispatch(new AccessTokenCreated($id, $userId, $clientId));
     }
 
     /**

@@ -57,7 +57,7 @@ class ClientRepository implements ClientRepositoryInterface
             return false;
         }
 
-        return ! $record->confidential() || $this->verifySecret((string) $clientSecret, $record->secret);
+        return ! $record->confidential() || $this->verifySecret($clientSecret, $record->secret);
     }
 
     /**
