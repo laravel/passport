@@ -10,6 +10,12 @@ PR: https://github.com/laravel/passport/pull/1734
 
 PHP 8.1 is now the minimum required version.
 
+### OAuth2 Server
+
+PR: https://github.com/laravel/passport/pull/1734
+
+The underlying `league/oauth2-server` has been updated to v9. We also encourage you to view the changes in their [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
