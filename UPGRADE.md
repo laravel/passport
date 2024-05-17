@@ -14,7 +14,7 @@ PHP 8.1 is now the minimum required version.
 
 PR: https://github.com/laravel/passport/pull/1734
 
-Passport's underlying `league/oauth2-server` Composer package has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
+The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
 
 ## Upgrading To 12.0 From 11.x
 
