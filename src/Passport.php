@@ -40,7 +40,7 @@ class Passport
      *
      * @var string
      */
-    public static $defaultScope;
+    public static $defaultScope = '';
 
     /**
      * All of the scopes defined for the application.

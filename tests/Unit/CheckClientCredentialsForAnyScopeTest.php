@@ -12,6 +12,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 class CheckClientCredentialsForAnyScopeTest extends TestCase
 {
@@ -23,7 +24,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
     public function test_request_is_passed_along_if_token_is_valid()
     {
         $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -54,7 +55,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
     public function test_request_is_passed_along_if_token_has_any_required_scope()
     {
         $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -109,7 +110,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
 
         $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');

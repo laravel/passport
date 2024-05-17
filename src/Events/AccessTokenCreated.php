@@ -14,7 +14,7 @@ class AccessTokenCreated
     /**
      * The ID of the user associated with the token.
      *
-     * @var string
+     * @var string|null
      */
     public $userId;
 
@@ -29,7 +29,7 @@ class AccessTokenCreated
      * Create a new event instance.
      *
      * @param  string  $tokenId
-     * @param  string|int|null  $userId
+     * @param  string|null  $userId
      * @param  string  $clientId
      * @return void
      */

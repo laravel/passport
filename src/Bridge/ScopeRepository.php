@@ -5,24 +5,20 @@ namespace Laravel\Passport\Bridge;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 
 class ScopeRepository implements ScopeRepositoryInterface
 {
     /**
      * The client repository.
-     *
-     * @var \Laravel\Passport\ClientRepository|null
      */
-    protected ?ClientRepository $clients;
+    protected ClientRepository $clients;
 
     /**
      * Create a new scope repository.
-     *
-     * @param  \Laravel\Passport\ClientRepository|null  $clients
-     * @return void
      */
-    public function __construct(?ClientRepository $clients = null)
+    public function __construct(ClientRepository $clients)
     {
         $this->clients = $clients;
     }
@@ -30,27 +26,32 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getScopeEntityByIdentifier($identifier)
+    public function getScopeEntityByIdentifier(string $identifier): ?ScopeEntityInterface
     {
         if (Passport::hasScope($identifier)) {
             return new Scope($identifier);
         }
+
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
     public function finalizeScopes(
-        array $scopes, $grantType,
-        ClientEntityInterface $clientEntity, $userIdentifier = null)
-    {
+        array $scopes,
+        string $grantType,
+        ClientEntityInterface $clientEntity,
+        string|null $userIdentifier = null,
+        ?string $authCodeId = null
+    ): array {
         if (! in_array($grantType, ['password', 'personal_access', 'client_credentials'])) {
             $scopes = collect($scopes)->reject(function ($scope) {
                 return trim($scope->getIdentifier()) === '*';
             })->values()->all();
         }
 
-        $client = $this->clients?->findActive($clientEntity->getIdentifier());
+        $client = $this->clients->findActive($clientEntity->getIdentifier());
 
         return collect($scopes)->filter(function ($scope) {
             return Passport::hasScope($scope->getIdentifier());

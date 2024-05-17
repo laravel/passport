@@ -53,7 +53,7 @@ class HandlesOAuthErrorsTest extends TestCase
         $response = $e->render(new Request);
 
         $this->assertJsonStringEqualsJsonString(
-            '{"error":"fatal","error_description":"Error","message":"Error"}',
+            '{"error":"fatal","error_description":"Error"}',
             $response->getContent()
         );
     }

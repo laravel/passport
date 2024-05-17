@@ -4,6 +4,7 @@ namespace Laravel\Passport\Bridge;
 
 use Illuminate\Contracts\Hashing\Hasher;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use RuntimeException;
 
@@ -11,16 +12,11 @@ class UserRepository implements UserRepositoryInterface
 {
     /**
      * The hasher implementation.
-     *
-     * @var \Illuminate\Contracts\Hashing\Hasher
      */
-    protected $hasher;
+    protected Hasher $hasher;
 
     /**
      * Create a new repository instance.
-     *
-     * @param  \Illuminate\Contracts\Hashing\Hasher  $hasher
-     * @return void
      */
     public function __construct(Hasher $hasher)
     {
@@ -30,8 +26,12 @@ class UserRepository implements UserRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
-    {
+    public function getUserEntityByUserCredentials(
+        string $username,
+        string $password,
+        string $grantType,
+        ClientEntityInterface $clientEntity
+    ): ?UserEntityInterface {
         $provider = $clientEntity->provider ?: config('auth.guards.api.provider');
 
         if (is_null($model = config('auth.providers.'.$provider.'.model'))) {
@@ -42,7 +42,7 @@ class UserRepository implements UserRepositoryInterface
             $user = (new $model)->findAndValidateForPassport($username, $password);
 
             if (! $user) {
-                return;
+                return null;
             }
 
             return new User($user->getAuthIdentifier());
@@ -55,13 +55,13 @@ class UserRepository implements UserRepositoryInterface
         }
 
         if (! $user) {
-            return;
+            return null;
         } elseif (method_exists($user, 'validateForPassportPasswordGrant')) {
             if (! $user->validateForPassportPasswordGrant($password)) {
-                return;
+                return null;
             }
         } elseif (! $this->hasher->check($password, $user->getAuthPassword())) {
-            return;
+            return null;
         }
 
         return new User($user->getAuthIdentifier());

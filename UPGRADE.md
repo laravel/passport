@@ -2,6 +2,20 @@
 
 ## General Notes
 
+## Upgrading To 13.0 From 12.x
+
+### Minimum PHP Version
+
+PR: https://github.com/laravel/passport/pull/1734
+
+PHP 8.1 is now the minimum required version.
+
+### OAuth2 Server
+
+PR: https://github.com/laravel/passport/pull/1734
+
+The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
@@ -13,6 +27,8 @@ php artisan vendor:publish --tag=passport-migrations
 ```
 
 ### Password Grant Type
+
+PR: https://github.com/laravel/passport/pull/1715
 
 The password grant type is disabled by default. You may enable it by calling the `enablePasswordGrant` method in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
 

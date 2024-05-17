@@ -44,7 +44,12 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $repository = new ScopeRepository();
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')
+            ->with('id')
+            ->andReturn(Mockery::mock(ClientModel::class)->makePartial());
+
+        $repository = new ScopeRepository($clients);
 
         $scopes = $repository->finalizeScopes(
             [$scope1 = new Scope('scope-1'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
@@ -148,7 +153,12 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $repository = new ScopeRepository();
+        $clients = Mockery::mock(ClientRepository::class);
+        $clients->shouldReceive('findActive')
+            ->with('id')
+            ->andReturn(Mockery::mock(ClientModel::class)->makePartial());
+
+        $repository = new ScopeRepository($clients);
 
         $scopes = $repository->finalizeScopes(
             [$scope1 = new Scope('*')], 'refresh_token', new Client('id', 'name', 'http://localhost'), 1

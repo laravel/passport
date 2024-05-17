@@ -96,8 +96,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('error_description', $decodedResponse);
         $this->assertSame('Client authentication failed', $decodedResponse['error_description']);
         $this->assertArrayNotHasKey('hint', $decodedResponse);
-        $this->assertArrayHasKey('message', $decodedResponse);
-        $this->assertSame('Client authentication failed', $decodedResponse['message']);
 
         $this->assertSame(0, Token::count());
     }
@@ -193,7 +191,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('error', $decodedResponse);
         $this->assertSame('invalid_grant', $decodedResponse['error']);
         $this->assertArrayHasKey('error_description', $decodedResponse);
-        $this->assertArrayHasKey('message', $decodedResponse);
 
         $this->assertSame(0, Token::count());
     }
@@ -239,8 +236,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('error_description', $decodedResponse);
         $this->assertSame('Client authentication failed', $decodedResponse['error_description']);
         $this->assertArrayNotHasKey('hint', $decodedResponse);
-        $this->assertArrayHasKey('message', $decodedResponse);
-        $this->assertSame('Client authentication failed', $decodedResponse['message']);
 
         $this->assertSame(0, Token::count());
     }
@@ -294,7 +289,7 @@ class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenRes
     /**
      * @inheritdoc
      */
-    protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken)
+    protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken): array
     {
         return [
             'id_token' => $this->idToken,

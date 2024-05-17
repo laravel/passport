@@ -20,6 +20,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TokenGuardTest extends TestCase
 {
@@ -42,7 +43,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -71,7 +72,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -137,7 +138,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(null);
@@ -444,7 +445,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -466,7 +467,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -521,7 +522,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock());
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(null);
 
