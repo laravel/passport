@@ -115,20 +115,6 @@ class Passport
     public static $clientModel = 'Laravel\Passport\Client';
 
     /**
-     * Indicates if client's are identified by UUIDs.
-     *
-     * @var bool
-     */
-    public static $clientUuids = false;
-
-    /**
-     * The personal access client model class name.
-     *
-     * @var string
-     */
-    public static $personalAccessClientModel = 'Laravel\Passport\PersonalAccessClient';
-
-    /**
      * The token model class name.
      *
      * @var string
@@ -155,13 +141,6 @@ class Passport
      * @var bool
      */
     public static $decryptsCookies = true;
-
-    /**
-     * Indicates if client secrets will be hashed.
-     *
-     * @var bool
-     */
-    public static $hashesClientSecrets = false;
 
     /**
      * The callback that should be used to generate JWT encryption keys.
@@ -538,58 +517,6 @@ class Passport
     }
 
     /**
-     * Determine if clients are identified using UUIDs.
-     *
-     * @return bool
-     */
-    public static function clientUuids()
-    {
-        return static::$clientUuids;
-    }
-
-    /**
-     * Specify if clients are identified using UUIDs.
-     *
-     * @param  bool  $value
-     * @return void
-     */
-    public static function setClientUuids($value)
-    {
-        static::$clientUuids = $value;
-    }
-
-    /**
-     * Set the personal access client model class name.
-     *
-     * @param  string  $clientModel
-     * @return void
-     */
-    public static function usePersonalAccessClientModel($clientModel)
-    {
-        static::$personalAccessClientModel = $clientModel;
-    }
-
-    /**
-     * Get the personal access client model class name.
-     *
-     * @return string
-     */
-    public static function personalAccessClientModel()
-    {
-        return static::$personalAccessClientModel;
-    }
-
-    /**
-     * Get a new personal access client model instance.
-     *
-     * @return \Laravel\Passport\PersonalAccessClient
-     */
-    public static function personalAccessClient()
-    {
-        return new static::$personalAccessClientModel;
-    }
-
-    /**
      * Set the token model class name.
      *
      * @param  string  $tokenModel
@@ -649,18 +576,6 @@ class Passport
     public static function refreshToken()
     {
         return new static::$refreshTokenModel;
-    }
-
-    /**
-     * Configure Passport to hash client credential secrets.
-     *
-     * @return static
-     */
-    public static function hashClientSecrets()
-    {
-        static::$hashesClientSecrets = true;
-
-        return new static;
     }
 
     /**

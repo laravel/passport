@@ -6,8 +6,7 @@ use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Http\Rules\RedirectRule;
-use Laravel\Passport\Passport;
+use Laravel\Passport\Http\Rules\UriRule;
 
 class ClientController
 {
@@ -26,28 +25,18 @@ class ClientController
     protected $validation;
 
     /**
-     * The redirect validation rule.
-     *
-     * @var \Laravel\Passport\Http\Rules\RedirectRule
-     */
-    protected $redirectRule;
-
-    /**
      * Create a client controller instance.
      *
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Validation\Factory  $validation
-     * @param  \Laravel\Passport\Http\Rules\RedirectRule  $redirectRule
      * @return void
      */
     public function __construct(
         ClientRepository $clients,
         ValidationFactory $validation,
-        RedirectRule $redirectRule
     ) {
         $this->clients = $clients;
         $this->validation = $validation;
-        $this->redirectRule = $redirectRule;
     }
 
     /**
@@ -62,11 +51,7 @@ class ClientController
 
         $clients = $this->clients->activeForUser($userId);
 
-        if (Passport::$hashesClientSecrets) {
-            return $clients;
-        }
-
-        return $clients->makeVisible('secret');
+        return $clients;
     }
 
     /**
@@ -78,19 +63,20 @@ class ClientController
     public function store(Request $request)
     {
         $this->validation->make($request->all(), [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $this->redirectRule],
+            'name' => 'required|max:255',
+            'redirect_uris' => 'required|array|min:1',
+            'redirect_uris.*' => ['required', new UriRule],
             'confidential' => 'boolean',
         ])->validate();
 
-        $client = $this->clients->create(
-            $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
-            null, false, false, (bool) $request->input('confidential', true)
+        $client = $this->clients->createAuthorizationCodeGrantClient(
+            $request->name,
+            $request->redirect_uris,
+            (bool) $request->input('confidential', true),
+            $request->user()->getAuthIdentifier(),
         );
 
-        if (Passport::$hashesClientSecrets) {
-            return ['plainSecret' => $client->plainSecret] + $client->toArray();
-        }
+        $client->secret = $client->plainSecret;
 
         return $client->makeVisible('secret');
     }
@@ -111,12 +97,13 @@ class ClientController
         }
 
         $this->validation->make($request->all(), [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $this->redirectRule],
+            'name' => 'required|max:255',
+            'redirect_uris' => 'required|array|min:1',
+            'redirect_uris.*' => ['required', new UriRule],
         ])->validate();
 
         return $this->clients->update(
-            $client, $request->name, $request->redirect
+            $client, $request->name, $request->redirect_uris
         );
     }
 

@@ -25,6 +25,7 @@ class BridgeScopeRepositoryTest extends TestCase
         ]);
 
         $client = Mockery::mock(ClientModel::class)->makePartial();
+        $client->scopes = ['*'];
 
         $clients = Mockery::mock(ClientRepository::class);
         $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
@@ -38,46 +39,26 @@ class BridgeScopeRepositoryTest extends TestCase
         $this->assertEquals([$scope1], $scopes);
     }
 
-    public function test_invalid_scopes_are_removed_without_a_client_repository()
+    public function test_invalid_scopes_are_removed_with_client_scopes()
     {
         Passport::tokensCan([
             'scope-1' => 'description',
-        ]);
-
-        $clients = Mockery::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')
-            ->with('id')
-            ->andReturn(Mockery::mock(ClientModel::class)->makePartial());
-
-        $repository = new ScopeRepository($clients);
-
-        $scopes = $repository->finalizeScopes(
-            [$scope1 = new Scope('scope-1'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
-        );
-
-        $this->assertEquals([$scope1], $scopes);
-    }
-
-    public function test_clients_do_not_restrict_scopes_by_default()
-    {
-        Passport::tokensCan([
-            'scope-1' => 'description',
-            'scope-2' => 'description',
+            'scope-2' => 'description-2',
         ]);
 
         $client = Mockery::mock(ClientModel::class)->makePartial();
-        $client->scopes = null;
+        $client->scopes = ['scope-1'];
 
         $clients = Mockery::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients->shouldReceive('findActive')->with('id')->andReturn($client);
 
         $repository = new ScopeRepository($clients);
 
         $scopes = $repository->finalizeScopes(
-            [$scope1 = new Scope('scope-1'), $scope2 = new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
+            [$scope1 = new Scope('scope-1'), new Scope('scope-2')], 'client_credentials', new Client('id', 'name', 'http://localhost'), 1
         );
 
-        $this->assertEquals([$scope1, $scope2], $scopes);
+        $this->assertEquals([$scope1], $scopes);
     }
 
     public function test_scopes_disallowed_for_client_are_removed()

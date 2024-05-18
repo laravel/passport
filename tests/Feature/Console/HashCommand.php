@@ -15,12 +15,8 @@ class HashCommand extends PassportTestCase
         $client = factory(Client::class)->create(['secret' => $secret = Str::random(40)]);
         $hasher = $this->app->make(Hasher::class);
 
-        Passport::hashClientSecrets();
-
         $this->artisan('passport:hash', ['--force' => true]);
 
         $this->assertTrue($hasher->check($secret, $client->refresh()->secret));
-
-        Passport::$hashesClientSecrets = false;
     }
 }

@@ -2,14 +2,16 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
 {
     use HasFactory;
+    use HasUuids;
     use ResolvesInheritedScopes;
 
     /**
@@ -43,8 +45,7 @@ class Client extends Model
     protected $casts = [
         'grant_types' => 'array',
         'scopes' => 'array',
-        'personal_access_client' => 'bool',
-        'password_client' => 'bool',
+        'redirect_uris' => 'array',
         'revoked' => 'bool',
     ];
 
@@ -56,22 +57,6 @@ class Client extends Model
      * @var string|null
      */
     public $plainSecret;
-
-    /**
-     * Bootstrap the model and its traits.
-     *
-     * @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (Passport::clientUuids()) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
-            }
-        });
-    }
 
     /**
      * Get the user that the client belongs to.
@@ -129,13 +114,7 @@ class Client extends Model
     {
         $this->plainSecret = $value;
 
-        if (is_null($value) || ! Passport::$hashesClientSecrets) {
-            $this->attributes['secret'] = $value;
-
-            return;
-        }
-
-        $this->attributes['secret'] = password_hash($value, PASSWORD_BCRYPT);
+        $this->attributes['secret'] = is_null($value) ? $value : Hash::make($value);
     }
 
     /**
@@ -145,7 +124,7 @@ class Client extends Model
      */
     public function firstParty()
     {
-        return $this->personal_access_client || $this->password_client;
+        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
     }
 
     /**
@@ -166,10 +145,6 @@ class Client extends Model
      */
     public function hasGrantType($grantType)
     {
-        if (! isset($this->attributes['grant_types']) || ! is_array($this->grant_types)) {
-            return true;
-        }
-
         return in_array($grantType, $this->grant_types);
     }
 
@@ -181,7 +156,7 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
-        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
+        if (in_array('*', $this->scopes)) {
             return true;
         }
 
@@ -206,26 +181,6 @@ class Client extends Model
     public function confidential()
     {
         return ! empty($this->secret);
-    }
-
-    /**
-     * Get the auto-incrementing key type.
-     *
-     * @return string
-     */
-    public function getKeyType()
-    {
-        return Passport::clientUuids() ? 'string' : $this->keyType;
-    }
-
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
-     */
-    public function getIncrementing()
-    {
-        return Passport::clientUuids() ? false : $this->incrementing;
     }
 
     /**

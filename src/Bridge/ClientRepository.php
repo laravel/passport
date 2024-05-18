@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Client as ClientModel;
 use Laravel\Passport\ClientRepository as ClientModelRepository;
-use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 
@@ -16,11 +16,17 @@ class ClientRepository implements ClientRepositoryInterface
     protected ClientModelRepository $clients;
 
     /**
+     * The hasher implementation.
+     */
+    protected Hasher $hasher;
+
+    /**
      * Create a new repository instance.
      */
-    public function __construct(ClientModelRepository $clients)
+    public function __construct(ClientModelRepository $clients, Hasher $hasher)
     {
         $this->clients = $clients;
+        $this->hasher = $hasher;
     }
 
     /**
@@ -37,7 +43,7 @@ class ClientRepository implements ClientRepositoryInterface
         return new Client(
             $clientIdentifier,
             $record->name,
-            $record->redirect,
+            $record->redirect_uris,
             $record->confidential(),
             $record->provider
         );
@@ -65,17 +71,8 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function handlesGrant(ClientModel $record, string $grantType): bool
     {
-        if (! $record->hasGrantType($grantType)) {
-            return false;
-        }
-
-        return match ($grantType) {
-            'authorization_code' => ! $record->firstParty(),
-            'personal_access' => $record->personal_access_client && $record->confidential(),
-            'password' => $record->password_client,
-            'client_credentials' => $record->confidential(),
-            default => true,
-        };
+        return $record->hasGrantType($grantType) &&
+            (! in_array($grantType, ['personal_access', 'client_credentials']) || $record->confidential());
     }
 
     /**
@@ -83,8 +80,6 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function verifySecret(string $clientSecret, string $storedHash): bool
     {
-        return Passport::$hashesClientSecrets
-                    ? password_verify($clientSecret, $storedHash)
-                    : hash_equals($storedHash, $clientSecret);
+        return $this->hasher->check($clientSecret, $storedHash);
     }
 }

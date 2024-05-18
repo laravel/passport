@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Controllers\ClientController;
-use Laravel\Passport\Http\Rules\RedirectRule;
+use Laravel\Passport\Http\Rules\UriRule;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +31,6 @@ class ClientControllerTest extends TestCase
         $controller = new ClientController(
             $clients,
             m::mock(Factory::class),
-            m::mock(RedirectRule::class)
         );
 
         $this->assertEquals($client, $controller->forUser($request));
@@ -41,31 +40,30 @@ class ClientControllerTest extends TestCase
     {
         $clients = m::mock(ClientRepository::class);
 
-        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
+        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect_uris' => ['http://localhost']]);
         $request->setUserResolver(function () {
             return new ClientControllerFakeUser;
         });
 
-        $clients->shouldReceive('create')
+        $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
-            ->with(1, 'client name', 'http://localhost', null, false, false, true)
+            ->with('client name', ['http://localhost'], true, 1)
             ->andReturn($client = new Client);
-
-        $redirectRule = m::mock(RedirectRule::class);
 
         $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
-            'redirect' => 'http://localhost',
+            'redirect_uris' => ['http://localhost'],
         ], [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $redirectRule],
+            'name' => 'required|max:255',
+            'redirect_uris' => 'required|array|min:1',
+            'redirect_uris.*' => ['required', new UriRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
         $controller = new ClientController(
-            $clients, $validator, $redirectRule
+            $clients, $validator
         );
 
         $this->assertEquals($client, $controller->store($request));
@@ -78,33 +76,32 @@ class ClientControllerTest extends TestCase
         $request = Request::create(
             '/',
             'GET',
-            ['name' => 'client name', 'redirect' => 'http://localhost', 'confidential' => false]
+            ['name' => 'client name', 'redirect_uris' => ['http://localhost'], 'confidential' => false]
         );
         $request->setUserResolver(function () {
             return new ClientControllerFakeUser;
         });
 
-        $clients->shouldReceive('create')
+        $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
-            ->with(1, 'client name', 'http://localhost', null, false, false, false)
+            ->with('client name', ['http://localhost'], false, 1)
             ->andReturn($client = new Client);
-
-        $redirectRule = m::mock(RedirectRule::class);
 
         $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
-            'redirect' => 'http://localhost',
+            'redirect_uris' => ['http://localhost'],
             'confidential' => false,
         ], [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $redirectRule],
+            'name' => 'required|max:255',
+            'redirect_uris' => 'required|array|min:1',
+            'redirect_uris.*' => ['required', new UriRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
         $controller = new ClientController(
-            $clients, $validator, $redirectRule
+            $clients, $validator
         );
 
         $this->assertEquals($client, $controller->store($request));
@@ -116,7 +113,7 @@ class ClientControllerTest extends TestCase
         $client = m::mock(Client::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
 
-        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
+        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect_uris' => ['http://localhost']]);
 
         $request->setUserResolver(function () {
             $user = m::mock();
@@ -126,23 +123,22 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('update')->once()->with(
-            m::type(Client::class), 'client name', 'http://localhost'
+            m::type(Client::class), 'client name', ['http://localhost']
         )->andReturn('response');
-
-        $redirectRule = m::mock(RedirectRule::class);
 
         $validator = m::mock(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
-            'redirect' => 'http://localhost',
+            'redirect_uris' => ['http://localhost'],
         ], [
-            'name' => 'required|max:191',
-            'redirect' => ['required', $redirectRule],
+            'name' => 'required|max:255',
+            'redirect_uris' => 'required|array|min:1',
+            'redirect_uris.*' => ['required', new UriRule],
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
         $controller = new ClientController(
-            $clients, $validator, $redirectRule
+            $clients, $validator
         );
 
         $this->assertSame('response', $controller->update($request, 1));
@@ -153,7 +149,7 @@ class ClientControllerTest extends TestCase
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
 
-        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
+        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect_uris' => ['http://localhost']]);
 
         $request->setUserResolver(function () {
             $user = m::mock();
@@ -167,7 +163,7 @@ class ClientControllerTest extends TestCase
         $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator
         );
 
         $this->assertSame(404, $controller->update($request, 1)->status());
@@ -179,7 +175,7 @@ class ClientControllerTest extends TestCase
         $client = m::mock(Client::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
 
-        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
+        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect_uris' => ['http://localhost']]);
 
         $request->setUserResolver(function () {
             $user = m::mock();
@@ -195,7 +191,7 @@ class ClientControllerTest extends TestCase
         $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator
         );
 
         $response = $controller->destroy($request, 1);
@@ -208,7 +204,7 @@ class ClientControllerTest extends TestCase
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
 
-        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
+        $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect_uris' => ['http://localhost']]);
 
         $request->setUserResolver(function () {
             $user = m::mock();
@@ -222,7 +218,7 @@ class ClientControllerTest extends TestCase
         $validator = m::mock(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator
         );
 
         $this->assertSame(404, $controller->destroy($request, 1)->status());

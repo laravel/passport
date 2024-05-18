@@ -5,7 +5,6 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Passport;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'passport:client')]
@@ -20,11 +19,12 @@ class ClientCommand extends Command
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
+            {--implicit : Create a implicit grant client}
+            {--public : Create a public client (Auth code grant type only) }
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
-            {--user_id= : The user ID the client should be assigned to }
-            {--public : Create a public client (Auth code grant type only) }';
+            {--user_id= : The user ID the client should be assigned to }';
 
     /**
      * The console command description.
@@ -42,11 +42,13 @@ class ClientCommand extends Command
     public function handle(ClientRepository $clients)
     {
         if ($this->option('personal')) {
-            $this->createPersonalClient($clients);
+            $this->createPersonalAccessClient($clients);
         } elseif ($this->option('password')) {
             $this->createPasswordClient($clients);
         } elseif ($this->option('client')) {
             $this->createClientCredentialsClient($clients);
+        } elseif ($this->option('implicit')) {
+            $this->createImplicitClient($clients);
         } else {
             $this->createAuthCodeClient($clients);
         }
@@ -58,18 +60,20 @@ class ClientCommand extends Command
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @return void
      */
-    protected function createPersonalClient(ClientRepository $clients)
+    protected function createPersonalAccessClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the personal access client?',
             config('app.name').' Personal Access Client'
         );
 
-        $client = $clients->createPersonalAccessClient(
-            null, $name, 'http://localhost'
-        );
+        $client = $clients->createPersonalAccessGrantClient($name);
 
         $this->components->info('Personal access client created successfully.');
+
+        if (! config('passport.personal_access_client')) {
+            $this->components->info('You may set `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.');
+        }
 
         $this->outputClientDetails($client);
     }
@@ -92,12 +96,9 @@ class ClientCommand extends Command
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
             $providers,
-            in_array('users', $providers) ? 'users' : null
         );
 
-        $client = $clients->createPasswordGrantClient(
-            null, $name, 'http://localhost', $provider
-        );
+        $client = $clients->createPasswordGrantClient($name, $provider);
 
         $this->components->info('Password grant client created successfully.');
 
@@ -114,12 +115,34 @@ class ClientCommand extends Command
     {
         $name = $this->option('name') ?: $this->ask(
             'What should we name the client?',
-            config('app.name').' ClientCredentials Grant Client'
+            config('app.name').' Client Credentials Grant Client'
         );
 
-        $client = $clients->create(
-            null, $name, ''
+        $client = $clients->createClientCredentialsGrantClient($name);
+
+        $this->components->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
+     * Create an implicit grant client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function createImplicitClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the client?'
         );
+
+        $redirect = $this->option('redirect_uri') ?: $this->ask(
+            'Where should we redirect the request after authorization?',
+            url('/auth/callback')
+        );
+
+        $client = $clients->createImplicitGrantClient($name, explode(',', $redirect));
 
         $this->components->info('New client created successfully.');
 
@@ -147,8 +170,11 @@ class ClientCommand extends Command
             url('/auth/callback')
         );
 
-        $client = $clients->create(
-            $userId, $name, $redirect, null, false, false, ! $this->option('public')
+        $client = $clients->createAuthorizationCodeGrantClient(
+            $name,
+            explode(',', $redirect),
+            ! $this->option('public'),
+            $userId
         );
 
         $this->components->info('New client created successfully.');
@@ -164,12 +190,9 @@ class ClientCommand extends Command
      */
     protected function outputClientDetails(Client $client)
     {
-        if (Passport::$hashesClientSecrets) {
-            $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
-            $this->line('');
-        }
+        $this->components->warn('Here is your new client secret. This is the only time it will be shown so don\'t lose it!');
 
-        $this->components->twoColumnDetail('<comment>Client ID</comment>', $client->getKey());
-        $this->components->twoColumnDetail('<comment>Client secret</comment>', $client->plainSecret);
+        $this->components->twoColumnDetail('Client ID', $client->getKey());
+        $this->components->twoColumnDetail('Client Secret', $client->plainSecret);
     }
 }

@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
+use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
@@ -27,8 +28,8 @@ class PersonalAccessTokenControllerTest extends TestCase
         $token2 = new Token;
 
         $userTokens = m::mock();
-        $token1->client = (object) ['personal_access_client' => true];
-        $token2->client = (object) ['personal_access_client' => false];
+        $token1->client = new Client(['grant_types' => ['personal_access']]);
+        $token2->client = new Client(['grant_types' => []]);
         $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
             $token1, $token2,
         ]));
@@ -74,7 +75,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
         ], [
-            'name' => 'required|max:191',
+            'name' => 'required|max:255',
             'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();

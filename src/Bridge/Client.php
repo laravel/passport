@@ -21,7 +21,7 @@ class Client implements ClientEntityInterface
     public function __construct(
         string $identifier,
         string $name,
-        string $redirectUri,
+        string|array $redirectUri,
         bool $isConfidential = false,
         ?string $provider = null
     ) {
@@ -29,7 +29,7 @@ class Client implements ClientEntityInterface
 
         $this->name = $name;
         $this->isConfidential = $isConfidential;
-        $this->redirectUri = explode(',', $redirectUri);
+        $this->redirectUri = is_array($redirectUri) ? $redirectUri : [$redirectUri];
         $this->provider = $provider;
     }
 }

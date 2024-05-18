@@ -19,7 +19,7 @@ class PersonalAccessGrant extends AbstractGrant
     ): ResponseTypeInterface {
         // Validate request
         $client = $this->validateClient($request);
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $userIdentifier = $this->getRequestParameter('user_id', $request);
 
         // Finalize the requested scopes
