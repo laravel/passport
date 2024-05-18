@@ -49,7 +49,7 @@ class ClientControllerTest extends PassportTestCase
         $this->actingAs($user);
 
         $client = $this->post('/oauth/clients', [
-            'name' => 'new client', 'redirect_uris' => ['https://localhost']
+            'name' => 'new client', 'redirect_uris' => ['https://localhost'],
         ])->json();
 
         $response = $this->put(

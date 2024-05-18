@@ -5,7 +5,6 @@ namespace Laravel\Passport\Tests\Feature\Console;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Str;
 use Laravel\Passport\Client;
-use Laravel\Passport\Passport;
 use Laravel\Passport\Tests\Feature\PassportTestCase;
 
 class HashCommand extends PassportTestCase

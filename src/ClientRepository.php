@@ -134,8 +134,7 @@ class ClientRepository
         ?string $userId = null,
         bool $confidential = true,
         array $scopes = ['*']
-    ): Client
-    {
+    ): Client {
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
@@ -196,8 +195,7 @@ class ClientRepository
         array $redirectUris,
         bool $confidential = true,
         ?string $userId = null
-    ): Client
-    {
+    ): Client {
         return $this->create(
             $name, ['authorization_code', 'refresh_token'], $redirectUris, null, $userId, $confidential
         );
