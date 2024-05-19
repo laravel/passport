@@ -10,11 +10,97 @@ PR: https://github.com/laravel/passport/pull/1734
 
 PHP 8.1 is now the minimum required version.
 
+### Minimum Laravel Version
+
+PR: https://github.com/laravel/passport/pull/1744
+
+Laravel 10.0 is now the minimum required version.
+
 ### OAuth2 Server
 
 PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
+
+### Client Secret
+
+PR: https://github.com/laravel/passport/pull/1744
+
+Passport now always hashes clients' secret, you may call the following command if you need to hash your clients' secrets:
+
+    php artisan passport:hash
+
+### Client ID
+
+PR: https://github.com/laravel/passport/pull/1744
+
+Passport now uses UUID to identify clients. If you were already using client with UUIDs you don't have to make any changes, but if you were not using client with UUIDs you must change the type of client ID columns to `char(36)`. Your previous client IDs won't change and you will get UUID for newly created clients from now on:
+
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->char('id', 36)->change();
+});
+
+Schema::table('oauth_auth_codes', function (Blueprint $table) {
+    $table->char('client_id', 36)->index()->change();
+});
+
+Schema::table('oauth_access_tokens', function (Blueprint $table) {
+    $table->char('client_id', 36)->index()->change();
+});
+```
+
+### Clients Table
+
+PR: https://github.com/laravel/passport/pull/1744
+
+The `oauth_clients` table now requires `grant_types`, `scopes` and `redirect_uris` columns as JSON array and `personal_access_client` and `password_client` columns are removed:
+
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->after('name', function (Blueprint $table) {
+        $table->text('grant_types');
+        $table->text('scopes');
+        $table->text('redirect_uris');
+    });
+});
+
+foreach (Passport::client()->cursor() as $client) {
+    Model::withoutTimestamps(fn () => $client->forceFill([
+        'grant_types' => match (true) {
+            (bool) $client->personal_access_client => ['personal_access'],
+            (bool) $client->password_client => ['password', 'refresh_token'],
+            empty($client->secret) && ! empty($client->redirect) => ['authorization_code', 'implicit', 'refresh_token'],
+            ! empty($client->secret) && empty($client->redirect) => ['client_credentials'],
+            ! empty($client->secret) && ! empty($client->redirect) => ['authorization_code', 'implicit', 'refresh_token', 'client_credentials'],
+            default => [],
+        },
+        'scopes' => ['*'],
+        'redirect_uris' => explode(',', $client->redirect),
+    ])->save());
+}
+
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->dropColumn(['redirect', 'personal_access_client', 'password_client']);
+});
+```
+
+### Removed functionalities
+
+PR: https://github.com/laravel/passport/pull/1744
+
+The following list of properties and methods have been removed:
+
+* `Passport::$clientUuids` property.
+* `Passport::clientUuids()` method.
+* `Passport::setClientUuids()` method.
+* `'passport.client_uuids'` config property.
+* `Passport::$hashesClientSecrets` property.
+* `Passport::hashClientSecrets()` method.
+* `Passport::$personalAccessClientModel` property.
+* `Passport::usePersonalAccessClientModel()` method.
+* `Passport::personalAccessClientModel()` method.
+* `Passport::personalAccessClient()` method.
 
 ## Upgrading To 12.0 From 11.x
 
