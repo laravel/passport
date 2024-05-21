@@ -5,7 +5,6 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Passport;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'passport:client')]
@@ -164,12 +163,9 @@ class ClientCommand extends Command
      */
     protected function outputClientDetails(Client $client)
     {
-        if (Passport::$hashesClientSecrets) {
-            $this->line('<comment>Here is your new client secret. This is the only time it will be shown so don\'t lose it!</comment>');
-            $this->line('');
-        }
+        $this->components->warn('Here is your new client secret. This is the only time it will be shown so don\'t lose it!');
 
-        $this->components->twoColumnDetail('<comment>Client ID</comment>', $client->getKey());
-        $this->components->twoColumnDetail('<comment>Client secret</comment>', $client->plainSecret);
+        $this->components->twoColumnDetail('Client ID', $client->getKey());
+        $this->components->twoColumnDetail('Client Secret', $client->plainSecret);
     }
 }

@@ -35,6 +35,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
         $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
 
         $clients->shouldReceive('personalAccessClient')->andReturn($client = new PersonalAccessTokenFactoryTestClientStub);
+        $clients->shouldReceive('getPersonalAccessClientSecret')->andReturn('secret');
         $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock(ResponseInterface::class));
         $response->shouldReceive('getBody->__toString')->andReturn(json_encode([
             'access_token' => 'foo',
@@ -61,13 +62,9 @@ class PersonalAccessTokenFactoryTest extends TestCase
 class PersonalAccessTokenFactoryTestClientStub extends Client
 {
     public $id = 1;
-
-    public $secret = 'something';
 }
 
 class PersonalAccessTokenFactoryTestModelStub extends Token
 {
     public $id = 1;
-
-    public $secret = 'something';
 }
