@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
