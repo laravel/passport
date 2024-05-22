@@ -139,7 +139,8 @@ class ClientCommand extends Command
         );
 
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
+            'What should we name the client?',
+            config('app.name').' Auth Code Client'
         );
 
         $redirect = $this->option('redirect_uri') ?: $this->ask(
