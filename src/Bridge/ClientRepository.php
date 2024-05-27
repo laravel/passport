@@ -72,7 +72,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function handlesGrant($record, $grantType)
     {
-        if (! $record->hasGrantType($grantType)) {
+        if (is_array($record->grant_types) && ! in_array($grantType, $record->grant_types)) {
             return false;
         }
 
