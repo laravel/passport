@@ -10,25 +10,21 @@ PR: https://github.com/laravel/passport/pull/1734
 
 PHP 8.1 is now the minimum required version.
 
-### Minimum Laravel Version
-
-PR: https://github.com/laravel/passport/pull/1744
-
-Laravel 10.0 is now the minimum required version.
-
 ### OAuth2 Server
 
 PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
 
-### Client Secret
+### Client Secrets Hashed by Default
 
-PR: https://github.com/laravel/passport/pull/1744
+PR: https://github.com/laravel/passport/pull/1745
 
-Passport now always hashes clients' secret, you may call the following command if you need to hash your clients' secrets:
+Passport now always hashes client secrets using Laravel's `Hash` facade. If you are currently storing your client secrets in plain text, you may invoke the `passport:hash` Artisan command to hash all of your existing client secrets:
 
     php artisan passport:hash
+
+In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
 
 ### Client ID
 

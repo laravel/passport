@@ -69,7 +69,7 @@ class PersonalAccessTokenFactory
     public function make($userId, $name, array $scopes = [])
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($this->clients->personalAccessClient(), $userId, $scopes)
+            $this->createRequest($userId, $scopes)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
@@ -87,16 +87,15 @@ class PersonalAccessTokenFactory
     /**
      * Create a request instance for the given client.
      *
-     * @param  \Laravel\Passport\Client  $client
      * @param  mixed  $userId
      * @param  array  $scopes
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($client, $userId, array $scopes)
+    protected function createRequest($userId, array $scopes)
     {
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
-            'client_id' => $client->getKey(),
+            'client_id' => $this->clients->getPersonalAccessClientId(),
             'client_secret' => $this->clients->getPersonalAccessClientSecret(),
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),

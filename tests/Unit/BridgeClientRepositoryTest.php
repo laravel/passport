@@ -190,7 +190,7 @@ class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 
     public $redirect_uris = ['http://localhost'];
 
-    public $secret = '$2y$10$JBJdbMNY0PlXZaUMShpkgO2yfKtSMVo.ZZOBOue49jatGL49jBkgu'; // 'secret'
+    public $secret = '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG';
 
     public $provider = null;
 

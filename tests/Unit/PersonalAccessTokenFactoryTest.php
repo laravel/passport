@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\PersonalAccessTokenResult;
@@ -34,7 +33,7 @@ class PersonalAccessTokenFactoryTest extends TestCase
 
         $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
 
-        $clients->shouldReceive('personalAccessClient')->andReturn($client = new PersonalAccessTokenFactoryTestClientStub);
+        $clients->shouldReceive('getPersonalAccessClientId')->andReturn('1');
         $clients->shouldReceive('getPersonalAccessClientSecret')->andReturn('secret');
         $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock(ResponseInterface::class));
         $response->shouldReceive('getBody->__toString')->andReturn(json_encode([
@@ -57,11 +56,6 @@ class PersonalAccessTokenFactoryTest extends TestCase
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
     }
-}
-
-class PersonalAccessTokenFactoryTestClientStub extends Client
-{
-    public $id = 1;
 }
 
 class PersonalAccessTokenFactoryTestModelStub extends Token

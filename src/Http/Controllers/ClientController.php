@@ -49,9 +49,7 @@ class ClientController
     {
         $userId = $request->user()->getAuthIdentifier();
 
-        $clients = $this->clients->activeForUser($userId);
-
-        return $clients;
+        return $this->clients->activeForUser($userId);
     }
 
     /**
