@@ -33,7 +33,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'client_credentials',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret,
+                'client_secret' => $client->plainSecret,
             ]
         );
 
@@ -76,7 +76,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'client_credentials',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret.'foo',
+                'client_secret' => $client->plainSecret.'foo',
             ]
         );
 
@@ -120,7 +120,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'password',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret,
+                'client_secret' => $client->plainSecret,
                 'username' => $user->email,
                 'password' => $password,
             ]
@@ -169,7 +169,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'password',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret,
+                'client_secret' => $client->plainSecret,
                 'username' => $user->email,
                 'password' => $password.'foo',
             ]
@@ -213,7 +213,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'password',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret.'foo',
+                'client_secret' => $client->plainSecret.'foo',
                 'username' => $user->email,
                 'password' => $password,
             ]
@@ -258,7 +258,7 @@ class AccessTokenControllerTest extends PassportTestCase
             [
                 'grant_type' => 'client_credentials',
                 'client_id' => $client->getKey(),
-                'client_secret' => $client->secret,
+                'client_secret' => $client->plainSecret,
             ]
         );
 

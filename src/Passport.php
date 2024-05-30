@@ -157,13 +157,6 @@ class Passport
     public static $decryptsCookies = true;
 
     /**
-     * Indicates if client secrets will be hashed.
-     *
-     * @var bool
-     */
-    public static $hashesClientSecrets = false;
-
-    /**
      * The callback that should be used to generate JWT encryption keys.
      *
      * @var callable
@@ -649,18 +642,6 @@ class Passport
     public static function refreshToken()
     {
         return new static::$refreshTokenModel;
-    }
-
-    /**
-     * Configure Passport to hash client credential secrets.
-     *
-     * @return static
-     */
-    public static function hashClientSecrets()
-    {
-        static::$hashesClientSecrets = true;
-
-        return new static;
     }
 
     /**

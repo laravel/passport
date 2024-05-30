@@ -4,6 +4,7 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
@@ -129,13 +130,7 @@ class Client extends Model
     {
         $this->plainSecret = $value;
 
-        if (is_null($value) || ! Passport::$hashesClientSecrets) {
-            $this->attributes['secret'] = $value;
-
-            return;
-        }
-
-        $this->attributes['secret'] = password_hash($value, PASSWORD_BCRYPT);
+        $this->attributes['secret'] = is_null($value) ? $value : Hash::make($value);
     }
 
     /**
