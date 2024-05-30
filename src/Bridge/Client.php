@@ -30,7 +30,7 @@ class Client implements ClientEntityInterface
         if (! is_null($name)) {
             $this->name = $name;
         }
-        
+
         if (! is_null($redirectUri)) {
             $this->redirectUri = explode(',', $redirectUri);
         }

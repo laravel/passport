@@ -257,7 +257,6 @@ class PassportServiceProvider extends ServiceProvider
         return new ImplicitGrant(Passport::tokensExpireIn());
     }
 
-
     /**
      * Create and configure an instance of the Device Code grant.
      *
