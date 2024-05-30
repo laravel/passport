@@ -89,16 +89,6 @@ class Client extends Model
     }
 
     /**
-     * Get all of the authentication codes for the client.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function authCodes()
-    {
-        return $this->hasMany(Passport::authCodeModel(), 'client_id');
-    }
-
-    /**
      * Get all of the tokens that belong to the client.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

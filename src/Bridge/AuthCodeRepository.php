@@ -25,9 +25,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         $attributes = [
             'id' => $authCodeEntity->getIdentifier(),
-            'user_id' => $authCodeEntity->getUserIdentifier(),
-            'client_id' => $authCodeEntity->getClient()->getIdentifier(),
-            'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
         ];
