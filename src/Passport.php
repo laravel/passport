@@ -122,13 +122,6 @@ class Passport
     public static $clientUuids = false;
 
     /**
-     * The personal access client model class name.
-     *
-     * @var string
-     */
-    public static $personalAccessClientModel = 'Laravel\Passport\PersonalAccessClient';
-
-    /**
      * The token model class name.
      *
      * @var string
@@ -556,37 +549,6 @@ class Passport
     public static function setClientUuids($value)
     {
         static::$clientUuids = $value;
-    }
-
-    /**
-     * Set the personal access client model class name.
-     *
-     * @param  string  $clientModel
-     * @return void
-     */
-    public static function usePersonalAccessClientModel($clientModel)
-    {
-        static::$personalAccessClientModel = $clientModel;
-    }
-
-    /**
-     * Get the personal access client model class name.
-     *
-     * @return string
-     */
-    public static function personalAccessClientModel()
-    {
-        return static::$personalAccessClientModel;
-    }
-
-    /**
-     * Get a new personal access client model instance.
-     *
-     * @return \Laravel\Passport\PersonalAccessClient
-     */
-    public static function personalAccessClient()
-    {
-        return new static::$personalAccessClientModel;
     }
 
     /**

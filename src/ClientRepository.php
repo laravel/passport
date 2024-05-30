@@ -112,17 +112,11 @@ class ClientRepository
      */
     public function personalAccessClient()
     {
-        if ($this->personalAccessClientId) {
-            return $this->find($this->personalAccessClientId);
-        }
+        $client = $this->personalAccessClientId ? $this->find($this->personalAccessClientId) : null;
 
-        $client = Passport::personalAccessClient();
-
-        if (! $client->exists()) {
-            throw new RuntimeException('Personal access client not found. Please create one.');
-        }
-
-        return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
+        return $client ?? throw new RuntimeException(
+            'Personal access client not found. Please create one and set `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
+        );
     }
 
     /**
@@ -165,11 +159,7 @@ class ClientRepository
      */
     public function createPersonalAccessClient($userId, $name, $redirect)
     {
-        return tap($this->create($userId, $name, $redirect, null, true), function ($client) {
-            $accessClient = Passport::personalAccessClient();
-            $accessClient->client_id = $client->getKey();
-            $accessClient->save();
-        });
+        return $this->create($userId, $name, $redirect, null, true);
     }
 
     /**
