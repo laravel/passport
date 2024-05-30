@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\DeviceCodeRepository;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
@@ -23,6 +24,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -139,6 +141,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerGuard();
 
         Passport::authorizationView('passport::authorize');
+        Passport::deviceCodeView('passport::device');
     }
 
     /**
@@ -179,6 +182,10 @@ class PassportServiceProvider extends ServiceProvider
                         $this->makeImplicitGrant(), Passport::tokensExpireIn()
                     );
                 }
+
+                $server->enableGrantType(
+                    $this->makeDeviceCodeGrant(), Passport::tokensExpireIn()
+                );
             });
         });
     }
@@ -248,6 +255,29 @@ class PassportServiceProvider extends ServiceProvider
     protected function makeImplicitGrant()
     {
         return new ImplicitGrant(Passport::tokensExpireIn());
+    }
+
+
+    /**
+     * Create and configure an instance of the Device Code grant.
+     *
+     * @return \League\OAuth2\Server\Grant\DeviceCodeGrant
+     */
+    protected function makeDeviceCodeGrant()
+    {
+        $grant = new DeviceCodeGrant(
+            $this->app->make(DeviceCodeRepository::class),
+            $this->app->make(RefreshTokenRepository::class),
+            new DateInterval('PT10M'),
+            route('passport.device.code'),
+            5
+        );
+
+        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+        $grant->setIncludeVerificationUriComplete(true);
+        $grant->setIntervalVisibility(true);
+
+        return $grant;
     }
 
     /**

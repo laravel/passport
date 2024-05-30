@@ -2,12 +2,11 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response as Psr7Response;
 use Psr\Http\Message\ServerRequestInterface;
 
-class AccessTokenController
+class DeviceCodeController
 {
     use ConvertsPsrResponses, HandlesOAuthErrors;
 
@@ -19,37 +18,30 @@ class AccessTokenController
     protected $server;
 
     /**
-     * The token repository instance.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $tokens;
-
-    /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                TokenRepository $tokens)
+    public function __construct(AuthorizationServer $server)
     {
         $this->server = $server;
-        $this->tokens = $tokens;
     }
 
     /**
-     * Authorize a client to access the user's account.
+     * Issue a device code for the client.
      *
      * @param  \Psr\Http\Message\ServerRequestInterface  $request
      * @return \Illuminate\Http\Response
+     *
+     * @throws \Laravel\Passport\Exceptions\OAuthServerException
      */
-    public function issueToken(ServerRequestInterface $request)
+    public function issueDeviceCode(ServerRequestInterface $request)
     {
         return $this->withErrorHandling(function () use ($request) {
             return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($request, new Psr7Response)
+                $this->server->respondToDeviceAuthorizationRequest($request, new Psr7Response)
             );
         });
     }

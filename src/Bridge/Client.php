@@ -20,16 +20,22 @@ class Client implements ClientEntityInterface
      */
     public function __construct(
         string $identifier,
-        string $name,
-        string $redirectUri,
+        ?string $name = null,
+        ?string $redirectUri = null,
         bool $isConfidential = false,
         ?string $provider = null
     ) {
         $this->setIdentifier($identifier);
 
-        $this->name = $name;
+        if (! is_null($name)) {
+            $this->name = $name;
+        }
+        
+        if (! is_null($redirectUri)) {
+            $this->redirectUri = explode(',', $redirectUri);
+        }
+
         $this->isConfidential = $isConfidential;
-        $this->redirectUri = explode(',', $redirectUri);
         $this->provider = $provider;
     }
 }

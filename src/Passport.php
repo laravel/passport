@@ -7,7 +7,9 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Contracts\DeviceCodeViewResponse as DeviceCodeViewResponseContract;
 use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
+use Laravel\Passport\Http\Responses\DeviceCodeViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -106,6 +108,13 @@ class Passport
      * @var string
      */
     public static $authCodeModel = 'Laravel\Passport\AuthCode';
+
+    /**
+     * The device code model class name.
+     *
+     * @var string
+     */
+    public static $deviceCodeModel = 'Laravel\Passport\DeviceCode';
 
     /**
      * The client model class name.
@@ -500,6 +509,37 @@ class Passport
     }
 
     /**
+     * Set the device code model class name.
+     *
+     * @param  string  $deviceCodeModel
+     * @return void
+     */
+    public static function useDeviceCodeModel($deviceCodeModel)
+    {
+        static::$deviceCodeModel = $deviceCodeModel;
+    }
+
+    /**
+     * Get the device code model class name.
+     *
+     * @return string
+     */
+    public static function deviceCodeModel()
+    {
+        return static::$deviceCodeModel;
+    }
+
+    /**
+     * Get a new device code model instance.
+     *
+     * @return \Laravel\Passport\DeviceCode
+     */
+    public static function deviceCode()
+    {
+        return new static::$deviceCodeModel;
+    }
+
+    /**
      * Set the client model class name.
      *
      * @param  string  $clientModel
@@ -680,6 +720,19 @@ class Passport
     {
         app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
             return new AuthorizationViewResponse($view);
+        });
+    }
+
+    /**
+     * Specify which view should be used as the device code view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function deviceCodeView($view)
+    {
+        app()->singleton(DeviceCodeViewResponseContract::class, function ($app) use ($view) {
+            return new DeviceCodeViewResponse($view);
         });
     }
 

@@ -29,8 +29,8 @@ class ApproveAuthorizationControllerTest extends TestCase
         $request->shouldReceive('has')->with('auth_token')->andReturn(true);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
-        $session->shouldReceive('get')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('get')
+        $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
+        $session->shouldReceive('pull')
             ->once()
             ->with('authRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
@@ -50,6 +50,54 @@ class ApproveAuthorizationControllerTest extends TestCase
             ->andReturn($psrResponse);
 
         $this->assertSame('response', $controller->approve($request)->getContent());
+    }
+
+    public function test_auth_request_should_exist()
+    {
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('Authorization request was not present in the session.');
+
+        $server = m::mock(AuthorizationServer::class);
+
+        $controller = new ApproveAuthorizationController($server);
+
+        $request = m::mock(Request::class);
+
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('user')->never();
+        $request->shouldReceive('input')->never();
+        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
+        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
+
+        $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
+        $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();
+
+        $server->shouldReceive('completeAuthorizationRequest')->never();
+
+        $controller->approve($request);
+    }
+
+    public function test_auth_token_should_exist_on_request()
+    {
+        $this->expectException('\Laravel\Passport\Exceptions\InvalidAuthTokenException');
+        $this->expectExceptionMessage('The provided auth token for the request is different from the session auth token.');
+
+        $server = m::mock(AuthorizationServer::class);
+
+        $controller = new ApproveAuthorizationController($server);
+
+        $request = m::mock(Request::class);
+
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('user')->never();
+        $request->shouldReceive('input')->never();
+        $request->shouldReceive('has')->with('auth_token')->andReturn(false);
+
+        $session->shouldReceive('forget')->once()->with(['authToken', 'authRequest']);
+
+        $server->shouldReceive('completeAuthorizationRequest')->never();
+
+        $controller->approve($request);
     }
 }
 

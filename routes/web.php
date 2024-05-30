@@ -8,6 +8,12 @@ Route::post('/token', [
     'middleware' => 'throttle',
 ]);
 
+Route::post('/device/code', [
+    'uses' => 'DeviceCodeController@issueDeviceCode',
+    'as' => 'device.code',
+    'middleware' => 'throttle',
+]);
+
 Route::get('/authorize', [
     'uses' => 'AuthorizationController@authorize',
     'as' => 'authorizations.authorize',
@@ -30,6 +36,16 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
     Route::delete('/authorize', [
         'uses' => 'DenyAuthorizationController@deny',
         'as' => 'authorizations.deny',
+    ]);
+
+    Route::get('/device', [
+        'uses' => 'DeviceAuthorizationController@userCode',
+        'as' => 'device',
+    ]);
+
+    Route::get('/device', [
+        'uses' => 'DeviceAuthorizationController@authorize',
+        'as' => 'device.authorize',
     ]);
 
     Route::get('/tokens', [
