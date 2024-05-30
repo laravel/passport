@@ -97,11 +97,7 @@ class TokenRepository
      */
     public function isAccessTokenRevoked($id)
     {
-        if ($token = $this->find($id)) {
-            return $token->revoked;
-        }
-
-        return true;
+        return Passport::token()->where('id', $id)->where('revoked', 0)->doesntExist();
     }
 
     /**
