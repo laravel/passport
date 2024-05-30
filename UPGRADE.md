@@ -26,6 +26,16 @@ Passport now always hashes client secrets using Laravel's `Hash` facade. If you 
 
 In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
 
+### Personal Access Client Table and Model Removal
+
+PR: https://github.com/laravel/passport/pull/1749
+
+Passport removes redundant personal access client table and model.
+
+    Schema::drop('oauth_personal_access_clients');
+
+Therefore, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
