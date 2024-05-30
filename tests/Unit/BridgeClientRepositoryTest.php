@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Passport;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -23,15 +23,17 @@ class BridgeClientRepositoryTest extends TestCase
 
     protected function setUp(): void
     {
-        Passport::$hashesClientSecrets = false;
-
         $clientModelRepository = m::mock(ClientRepository::class);
         $clientModelRepository->shouldReceive('findActive')
             ->with(1)
-            ->andReturn(new BridgeClientRepositoryTestClientStub);
+            ->andReturn($client = new BridgeClientRepositoryTestClientStub);
+
+        $hasher = m::mock(Hasher::class);
+        $hasher->shouldReceive('check')->with('secret', $client->secret)->andReturn(true);
+        $hasher->shouldReceive('check')->withAnyArgs()->andReturn(false);
 
         $this->clientModelRepository = $clientModelRepository;
-        $this->repository = new BridgeClientRepository($clientModelRepository);
+        $this->repository = new BridgeClientRepository($clientModelRepository, $hasher);
     }
 
     protected function tearDown(): void
@@ -188,7 +190,7 @@ class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 
     public $redirect = 'http://localhost';
 
-    public $secret = 'secret';
+    public $secret = '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG';
 
     public $personal_access_client = false;
 

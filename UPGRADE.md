@@ -16,6 +16,16 @@ PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
 
+### Client Secrets Hashed by Default
+
+PR: https://github.com/laravel/passport/pull/1745
+
+Passport now always hashes client secrets using Laravel's `Hash` facade. If you are currently storing your client secrets in plain text, you may invoke the `passport:hash` Artisan command to hash all of your existing client secrets:
+
+    php artisan passport:hash
+
+In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
