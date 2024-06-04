@@ -30,11 +30,11 @@ In light of this change, the `Passport::$hashesClientSecrets` property and `Pass
 
 PR: https://github.com/laravel/passport/pull/1749
 
-Passport removes redundant personal access client table and model.
+Passport's `oauth_personal_access_clients` table has been redundant and unnecessary for several release cycles. Therefore, this release of Passport no longer interacts with this table or its corresponding model. If you wish, you may create a migration that drops this table:
 
     Schema::drop('oauth_personal_access_clients');
 
-Therefore, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
 ## Upgrading To 12.0 From 11.x
 
