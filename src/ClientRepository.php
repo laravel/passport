@@ -115,7 +115,7 @@ class ClientRepository
         $client = $this->personalAccessClientId ? $this->find($this->personalAccessClientId) : null;
 
         return $client ?? throw new RuntimeException(
-            'Personal access client not found. Please create one and set `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
+            'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
         );
     }
 
