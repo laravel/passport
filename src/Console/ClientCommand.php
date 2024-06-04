@@ -72,7 +72,7 @@ class ClientCommand extends Command
         $this->components->info('Personal access client created successfully.');
 
         if (! config('passport.personal_access_client')) {
-            $this->components->info('You may set `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.');
+            $this->components->info('Next, define the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables using the values below.');
         }
 
         $this->outputClientDetails($client);

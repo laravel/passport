@@ -76,14 +76,6 @@ class PassportTest extends TestCase
     }
 }
 
-class PersonalAccessClientStub
-{
-    public function exists()
-    {
-        return false;
-    }
-}
-
 class RefreshTokenStub
 {
 }

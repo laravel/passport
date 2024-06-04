@@ -32,6 +32,16 @@ Passport now always hashes client secrets using Laravel's `Hash` facade. If you 
 
 In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
 
+### Personal Access Client Table and Model Removal
+
+PR: https://github.com/laravel/passport/pull/1749
+
+Passport's `oauth_personal_access_clients` table has been redundant and unnecessary for several release cycles. Therefore, this release of Passport no longer interacts with this table or its corresponding model. If you wish, you may create a migration that drops this table:
+
+    Schema::drop('oauth_personal_access_clients');
+
+In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+
 ### Client ID
 
 PR: https://github.com/laravel/passport/pull/1744
@@ -51,6 +61,13 @@ Schema::table('oauth_access_tokens', function (Blueprint $table) {
     $table->char('client_id', 36)->index()->change();
 });
 ```
+
+The following list of properties and methods have been removed:
+
+* `Passport::$clientUuids` property.
+* `Passport::clientUuids()` method.
+* `Passport::setClientUuids()` method.
+* `'passport.client_uuids'` config property.
 
 ### Clients Table
 
@@ -86,23 +103,6 @@ Schema::table('oauth_clients', function (Blueprint $table) {
     $table->dropColumn(['redirect', 'personal_access_client', 'password_client']);
 });
 ```
-
-### Removed functionalities
-
-PR: https://github.com/laravel/passport/pull/1744
-
-The following list of properties and methods have been removed:
-
-* `Passport::$clientUuids` property.
-* `Passport::clientUuids()` method.
-* `Passport::setClientUuids()` method.
-* `'passport.client_uuids'` config property.
-* `Passport::$hashesClientSecrets` property.
-* `Passport::hashClientSecrets()` method.
-* `Passport::$personalAccessClientModel` property.
-* `Passport::usePersonalAccessClientModel()` method.
-* `Passport::personalAccessClientModel()` method.
-* `Passport::personalAccessClient()` method.
 
 ## Upgrading To 12.0 From 11.x
 
