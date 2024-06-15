@@ -36,6 +36,16 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
 
 In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
+### Redundant Columns Removal
+
+PR: https://github.com/laravel/passport/pull/1752
+
+The `user_id`, `client_id` and `scopes` columns of the Passport's `oauth_auth_codes` table have been removed. Therefore, you may create a migration that drops these columns:
+
+    Schema::table('users', function (Blueprint $table) {
+        $table->dropColumn(['user_id', 'client_id', 'scopes']);
+    });
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
