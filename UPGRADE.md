@@ -42,7 +42,7 @@ PR: https://github.com/laravel/passport/pull/1752
 
 The `user_id`, `client_id` and `scopes` columns of the Passport's `oauth_auth_codes` table have been removed. Therefore, you may create a migration that drops these columns:
 
-    Schema::table('users', function (Blueprint $table) {
+    Schema::table('oauth_auth_codes', function (Blueprint $table) {
         $table->dropColumn(['user_id', 'client_id', 'scopes']);
     });
 
