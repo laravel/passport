@@ -8,8 +8,6 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
-    use FormatsScopesForStorage;
-
     /**
      * {@inheritdoc}
      */
