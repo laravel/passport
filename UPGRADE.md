@@ -36,6 +36,12 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
 
 In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
+### The User's Token Instance
+
+PR: https://github.com/laravel/passport/pull/1755
+
+When authenticating user via bearer token, the `App\Models\User` model's `token` method now returns an instance of `Laravel\Passport\AccessToken` class instead of `Laravel\Passport\Token`.
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
