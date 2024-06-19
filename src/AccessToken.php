@@ -16,16 +16,16 @@ class AccessToken
     use ResolvesInheritedScopes, ForwardsCalls;
 
     /**
+     * The token instance.
+     */
+    protected ?Token $token;
+
+    /**
      * All the attributes set on the access token instance.
      *
      * @var array<string, mixed>
      */
     protected array $attributes = [];
-
-    /**
-     * The token instance.
-     */
-    protected ?Token $token;
 
     /**
      * Create a new access token instance.
@@ -102,11 +102,11 @@ class AccessToken
     }
 
     /**
-     * Pass dynamic methods onto the token instance.
+     * Dynamically determine if an attribute is set.
      */
-    public function __call(string $method, array $parameters): mixed
+    public function __isset(string $key): bool
     {
-        return $this->forwardCallTo($this->getToken(), $method, $parameters);
+        return isset($this->attributes[$key]) || isset($this->getToken()?->{$key});
     }
 
     /**
@@ -122,10 +122,10 @@ class AccessToken
     }
 
     /**
-     * Dynamically check if an attribute is set.
+     * Pass dynamic methods onto the token instance.
      */
-    public function __isset(string $key): bool
+    public function __call(string $method, array $parameters): mixed
     {
-        return isset($this->attributes[$key]) || isset($this->getToken()?->{$key});
+        return $this->forwardCallTo($this->getToken(), $method, $parameters);
     }
 }
