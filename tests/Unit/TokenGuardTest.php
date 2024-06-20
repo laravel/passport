@@ -10,6 +10,7 @@ use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\HasApiTokens;
@@ -47,16 +48,21 @@ class TokenGuardTest extends TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => [],
+        ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
         $clients->shouldReceive('revoked')->with(1)->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals($token, $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
     }
 
     public function test_user_is_resolved_only_once()
@@ -76,9 +82,14 @@ class TokenGuardTest extends TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => [],
+        ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $tokens->shouldReceive('find')->once()->with('token')->andReturn($token = m::mock());
         $clients->shouldReceive('revoked')->with(1)->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -89,7 +100,7 @@ class TokenGuardTest extends TestCase
         $user2 = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals($token, $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
         $this->assertSame($user, $user2);
     }
 

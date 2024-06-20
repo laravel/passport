@@ -14,6 +14,7 @@ use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Traits\Macroable;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
@@ -203,9 +204,7 @@ class TokenGuard implements Guard
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
-        $token = $this->tokens->find(
-            $psr->getAttribute('oauth_access_token_id')
-        );
+        $token = AccessToken::fromPsrRequest($psr);
 
         return $token ? $user->withAccessToken($token) : null;
     }

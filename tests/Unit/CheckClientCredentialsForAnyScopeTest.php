@@ -3,10 +3,8 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
-use Laravel\Passport\Client;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
-use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -25,20 +23,14 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['*']);
-
-        $client = m::mock(Client::class);
-        $client->shouldReceive('firstParty')->andReturnFalse();
-
-        $token = m::mock(Token::class);
-        $token->shouldReceive('getAttribute')->with('client')->andReturn($client);
-        $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['*']);
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => ['*'],
+        ]);
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('find')->with('token')->andReturn($token);
 
         $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
 
@@ -56,22 +48,14 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
     {
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['foo', 'bar', 'baz']);
-
-        $client = m::mock(Client::class);
-        $client->shouldReceive('firstParty')->andReturnFalse();
-
-        $token = m::mock(Token::class);
-        $token->shouldReceive('getAttribute')->with('client')->andReturn($client);
-        $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['foo', 'bar', 'baz']);
-        $token->shouldReceive('can')->with('notfoo')->andReturnFalse();
-        $token->shouldReceive('can')->with('bar')->andReturnTrue();
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => ['foo', 'bar', 'baz'],
+        ]);
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('find')->with('token')->andReturn($token);
 
         $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
 
@@ -111,22 +95,14 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
 
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttribute')->with('oauth_scopes')->andReturn(['foo', 'bar']);
-
-        $client = m::mock(Client::class);
-        $client->shouldReceive('firstParty')->andReturnFalse();
-
-        $token = m::mock(Token::class);
-        $token->shouldReceive('getAttribute')->with('client')->andReturn($client);
-        $token->shouldReceive('getAttribute')->with('scopes')->andReturn(['foo', 'bar']);
-        $token->shouldReceive('can')->with('baz')->andReturnFalse();
-        $token->shouldReceive('can')->with('notbar')->andReturnFalse();
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => ['foo', 'bar'],
+        ]);
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('find')->with('token')->andReturn($token);
 
         $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
 

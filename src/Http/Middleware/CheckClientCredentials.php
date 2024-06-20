@@ -10,7 +10,7 @@ class CheckClientCredentials extends CheckCredentials
     /**
      * Validate token credentials.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \Laravel\Passport\AccessToken  $token
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\AuthenticationException
@@ -25,7 +25,7 @@ class CheckClientCredentials extends CheckCredentials
     /**
      * Validate token credentials.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \Laravel\Passport\AccessToken  $token
      * @param  array  $scopes
      * @return void
      *
@@ -33,7 +33,7 @@ class CheckClientCredentials extends CheckCredentials
      */
     protected function validateScopes($token, $scopes)
     {
-        if (in_array('*', $token->scopes)) {
+        if (in_array('*', $token->oauth_scopes)) {
             return;
         }
 
