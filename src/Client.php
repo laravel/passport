@@ -59,19 +59,16 @@ class Client extends Model
     public $plainSecret;
 
     /**
-     * Bootstrap the model and its traits.
+     * Create a new Eloquent model instance.
      *
+     * @param  array  $attributes
      * @return void
      */
-    public static function boot()
+    public function __construct(array $attributes = [])
     {
-        parent::boot();
+        parent::__construct($attributes);
 
-        static::creating(function ($model) {
-            if (Passport::clientUuids()) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
-            }
-        });
+        $this->usesUniqueIds = Passport::clientUuids();
     }
 
     /**
@@ -201,6 +198,26 @@ class Client extends Model
     public function confidential()
     {
         return ! empty($this->secret);
+    }
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     *
+     * @return array
+     */
+    public function uniqueIds()
+    {
+        return Passport::clientUuids() ? [$this->getKeyName()] : [];
+    }
+
+    /**
+     * Generate a new key for the model.
+     *
+     * @return string
+     */
+    public function newUniqueId()
+    {
+        return Passport::clientUuids() ? (string) Str::orderedUuid() : null;
     }
 
     /**
