@@ -66,9 +66,9 @@ class InstallCommand extends Command
         Passport::setClientUuids(true);
 
         $this->replaceInFile(config_path('passport.php'), '\'client_uuids\' => false', '\'client_uuids\' => true');
-        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_auth_codes_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
-        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_access_tokens_table.php'), '$table->unsignedBigInteger(\'client_id\');', '$table->uuid(\'client_id\');');
-        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_clients_table.php'), '$table->bigIncrements(\'id\');', '$table->uuid(\'id\')->primary();');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_auth_codes_table.php'), '$table->foreignId(\'client_id\');', '$table->foreignUuid(\'client_id\');');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_access_tokens_table.php'), '$table->foreignId(\'client_id\');', '$table->foreignUuid(\'client_id\');');
+        $this->replaceInFile(database_path('migrations/****_**_**_******_create_oauth_clients_table.php'), '$table->id();', '$table->uuid(\'id\')->primary();');
     }
 
     /**
