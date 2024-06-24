@@ -5,7 +5,6 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -21,23 +20,14 @@ abstract class CheckCredentials
     protected $server;
 
     /**
-     * Token Repository.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $repository;
-
-    /**
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Laravel\Passport\TokenRepository  $repository
      * @return void
      */
-    public function __construct(ResourceServer $server, TokenRepository $repository)
+    public function __construct(ResourceServer $server)
     {
         $this->server = $server;
-        $this->repository = $repository;
     }
 
     /**

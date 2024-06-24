@@ -51,7 +51,7 @@ trait HasApiTokens
      */
     public function tokenCan($scope)
     {
-        return $this->accessToken ? $this->accessToken->can($scope) : false;
+        return $this->accessToken && $this->accessToken->can($scope);
     }
 
     /**
