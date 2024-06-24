@@ -111,8 +111,6 @@ class TokenGuard implements Guard
         } elseif ($this->request->cookie(Passport::cookie())) {
             return $this->user = $this->authenticateViaCookie($this->request);
         }
-
-        return null;
     }
 
     /**
@@ -145,7 +143,7 @@ class TokenGuard implements Guard
 
         if ($this->request->bearerToken()) {
             if (! $psr = $this->getPsrRequestViaBearerToken($this->request)) {
-                return null;
+                return;
             }
 
             return $this->client = $this->clients->findActive(
@@ -156,8 +154,6 @@ class TokenGuard implements Guard
                 return $this->client = $this->clients->findActive($token['aud']);
             }
         }
-
-        return null;
     }
 
     /**
@@ -169,7 +165,7 @@ class TokenGuard implements Guard
     protected function authenticateViaBearerToken($request)
     {
         if (! $psr = $this->getPsrRequestViaBearerToken($request)) {
-            return null;
+            return;
         }
 
         $client = $this->clients->findActive(
@@ -179,7 +175,7 @@ class TokenGuard implements Guard
         if (! $client ||
             ($client->provider &&
              $client->provider !== $this->provider->getProviderName())) {
-            return null;
+            return;
         }
 
         $this->setClient($client);
@@ -192,7 +188,7 @@ class TokenGuard implements Guard
         );
 
         if (! $user) {
-            return null;
+            return;
         }
 
         // Next, we will assign a token instance to this user which the developers may use
@@ -230,8 +226,6 @@ class TokenGuard implements Guard
                 ExceptionHandler::class
             )->report($e);
         }
-
-        return null;
     }
 
     /**
@@ -243,7 +237,7 @@ class TokenGuard implements Guard
     protected function authenticateViaCookie($request)
     {
         if (! $token = $this->getTokenViaCookie($request)) {
-            return null;
+            return;
         }
 
         // If this user exists, we will return this user and attach a "transient" token to
@@ -252,8 +246,6 @@ class TokenGuard implements Guard
         if ($user = $this->provider->retrieveById($token['sub'])) {
             return $user->withAccessToken(new TransientToken);
         }
-
-        return null;
     }
 
     /**
@@ -270,7 +262,7 @@ class TokenGuard implements Guard
         try {
             $token = $this->decodeJwtTokenCookie($request);
         } catch (Exception $e) {
-            return null;
+            return;
         }
 
         // We will compare the CSRF token in the decoded API token against the CSRF header
@@ -278,7 +270,7 @@ class TokenGuard implements Guard
         // a valid source and we won't authenticate the request for further handling.
         if (! Passport::$ignoreCsrfToken && (! $this->validCsrf($token, $request) ||
             time() >= $token['expiry'])) {
-            return null;
+            return;
         }
 
         return $token;
