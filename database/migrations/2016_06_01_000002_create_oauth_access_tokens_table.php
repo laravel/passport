@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->index();
             $table->foreignId('client_id');
             $table->string('name')->nullable();
-            $table->text('scopes');
+            $table->text('scopes')->nullable();
             $table->boolean('revoked');
             $table->timestamps();
             $table->dateTime('expires_at')->nullable();
