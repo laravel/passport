@@ -72,16 +72,6 @@ class RefreshToken extends Model
     }
 
     /**
-     * Determine if the token is a transient JWT token.
-     *
-     * @return bool
-     */
-    public function transient()
-    {
-        return false;
-    }
-
-    /**
      * Get the current connection name for the model.
      *
      * @return string|null

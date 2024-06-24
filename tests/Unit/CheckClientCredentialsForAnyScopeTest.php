@@ -5,7 +5,6 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Http\Request;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery as m;
@@ -30,9 +29,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
             'oauth_scopes' => ['*'],
         ]);
 
-        $tokenRepository = m::mock(TokenRepository::class);
-
-        $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
+        $middleware = new CheckClientCredentialsForAnyScope($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -55,9 +52,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
             'oauth_scopes' => ['foo', 'bar', 'baz'],
         ]);
 
-        $tokenRepository = m::mock(TokenRepository::class);
-
-        $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
+        $middleware = new CheckClientCredentialsForAnyScope($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -73,13 +68,12 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
     {
         $this->expectException(AuthenticationException::class);
 
-        $tokenRepository = m::mock(TokenRepository::class);
         $resourceServer = m::mock(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
             new OAuthServerException('message', 500, 'error type')
         );
 
-        $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
+        $middleware = new CheckClientCredentialsForAnyScope($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -102,9 +96,7 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
             'oauth_scopes' => ['foo', 'bar'],
         ]);
 
-        $tokenRepository = m::mock(TokenRepository::class);
-
-        $middleware = new CheckClientCredentialsForAnyScope($resourceServer, $tokenRepository);
+        $middleware = new CheckClientCredentialsForAnyScope($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
