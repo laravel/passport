@@ -2,16 +2,15 @@
 
 namespace Laravel\Passport;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
 {
     use HasFactory;
-    use HasUuids;
     use ResolvesInheritedScopes;
 
     /**
@@ -57,6 +56,19 @@ class Client extends Model
      * @var string|null
      */
     public $plainSecret;
+
+    /**
+     * Create a new Eloquent model instance.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->usesUniqueIds = Passport::clientUuids();
+    }
 
     /**
      * Get the user that the client belongs to.
@@ -183,6 +195,46 @@ class Client extends Model
     public function confidential()
     {
         return ! empty($this->secret);
+    }
+
+    /**
+     * Get the columns that should receive a unique identifier.
+     *
+     * @return array
+     */
+    public function uniqueIds()
+    {
+        return Passport::clientUuids() ? [$this->getKeyName()] : [];
+    }
+
+    /**
+     * Generate a new key for the model.
+     *
+     * @return string
+     */
+    public function newUniqueId()
+    {
+        return Passport::clientUuids() ? (string) Str::orderedUuid() : null;
+    }
+
+    /**
+     * Get the auto-incrementing key type.
+     *
+     * @return string
+     */
+    public function getKeyType()
+    {
+        return Passport::clientUuids() ? 'string' : $this->keyType;
+    }
+
+    /**
+     * Get the value indicating whether the IDs are incrementing.
+     *
+     * @return bool
+     */
+    public function getIncrementing()
+    {
+        return Passport::clientUuids() ? false : $this->incrementing;
     }
 
     /**

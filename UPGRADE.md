@@ -12,7 +12,7 @@ PHP 8.1 is now the minimum required version.
 
 ### Minimum Laravel Version
 
-PR: https://github.com/laravel/passport/pull/1744
+PR: https://github.com/laravel/passport/pull/1757
 
 Laravel 10.0 is now the minimum required version.
 
@@ -47,33 +47,6 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
     Schema::drop('oauth_personal_access_clients');
 
 In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
-
-### Client ID
-
-PR: https://github.com/laravel/passport/pull/1744
-
-Passport now uses UUID to identify clients. If you were already using client with UUIDs you don't have to make any changes, but if you were not using client with UUIDs you must change the type of client ID columns to `char(36)`. Your previous client IDs won't change and you will get UUID for newly created clients from now on:
-
-```php
-Schema::table('oauth_clients', function (Blueprint $table) {
-    $table->char('id', 36)->change();
-});
-
-Schema::table('oauth_auth_codes', function (Blueprint $table) {
-    $table->char('client_id', 36)->index()->change();
-});
-
-Schema::table('oauth_access_tokens', function (Blueprint $table) {
-    $table->char('client_id', 36)->index()->change();
-});
-```
-
-The following list of properties and methods have been removed:
-
-* `Passport::$clientUuids` property.
-* `Passport::clientUuids()` method.
-* `Passport::setClientUuids()` method.
-* `'passport.client_uuids'` config property.
 
 ### Clients Table
 
