@@ -67,10 +67,6 @@ class RefreshTokenRepository
      */
     public function isRefreshTokenRevoked($id)
     {
-        if ($token = $this->find($id)) {
-            return $token->revoked;
-        }
-
-        return true;
+        return Passport::refreshToken()->where('id', $id)->where('revoked', 0)->doesntExist();
     }
 }

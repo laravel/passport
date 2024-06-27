@@ -54,6 +54,8 @@ class AuthCode extends Model
     /**
      * Get the client that owns the authentication code.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function client()

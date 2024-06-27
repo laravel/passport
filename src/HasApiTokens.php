@@ -9,7 +9,7 @@ trait HasApiTokens
     /**
      * The current access token for the authentication user.
      *
-     * @var \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null
+     * @var \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
     protected $accessToken;
 
@@ -36,7 +36,7 @@ trait HasApiTokens
     /**
      * Get the current access token being used by the user.
      *
-     * @return \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null
+     * @return \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
     public function token()
     {
@@ -51,7 +51,7 @@ trait HasApiTokens
      */
     public function tokenCan($scope)
     {
-        return $this->accessToken ? $this->accessToken->can($scope) : false;
+        return $this->accessToken && $this->accessToken->can($scope);
     }
 
     /**
@@ -71,7 +71,7 @@ trait HasApiTokens
     /**
      * Set the current access token for the user.
      *
-     * @param  \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null  $accessToken
+     * @param  \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null  $accessToken
      * @return $this
      */
     public function withAccessToken($accessToken)

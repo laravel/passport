@@ -361,9 +361,10 @@ class Passport
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
-        $token = app(self::tokenModel());
-
-        $token->scopes = $scopes;
+        $token = new AccessToken([
+            'oauth_user_id' => $user->getKey(),
+            'oauth_scopes' => $scopes,
+        ]);
 
         $user->withAccessToken($token);
 
@@ -388,27 +389,14 @@ class Passport
      */
     public static function actingAsClient($client, $scopes = [], $guard = 'api')
     {
-        $token = app(self::tokenModel());
-
-        $token->client_id = $client->getKey();
-        $token->setRelation('client', $client);
-
-        $token->scopes = $scopes;
-
         $mock = Mockery::mock(ResourceServer::class);
         $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function (ServerRequestInterface $request) use ($token) {
-                return $request->withAttribute('oauth_client_id', $token->client->id)
-                    ->withAttribute('oauth_access_token_id', $token->id)
-                    ->withAttribute('oauth_scopes', $token->scopes);
+            ->andReturnUsing(function (ServerRequestInterface $request) use ($client, $scopes) {
+                return $request->withAttribute('oauth_client_id', $client->getKey())
+                    ->withAttribute('oauth_scopes', $scopes);
             });
 
         app()->instance(ResourceServer::class, $mock);
-
-        $mock = Mockery::mock(TokenRepository::class);
-        $mock->shouldReceive('find')->andReturn($token);
-
-        app()->instance(TokenRepository::class, $mock);
 
         app('auth')->guard($guard)->setClient($client);
 

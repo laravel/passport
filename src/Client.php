@@ -75,6 +75,8 @@ class Client extends Model
     /**
      * Get all of the authentication codes for the client.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function authCodes()
