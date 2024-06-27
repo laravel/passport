@@ -126,6 +126,8 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
+        Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
+
         $this->app->when(AuthorizationController::class)
                 ->needs(StatefulGuard::class)
                 ->give(fn () => Auth::guard(config('passport.guard', null)));
