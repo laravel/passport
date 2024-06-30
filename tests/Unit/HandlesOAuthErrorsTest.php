@@ -47,6 +47,7 @@ class HandlesOAuthErrorsTest extends TestCase
 
         $this->assertInstanceOf(OAuthServerException::class, $e);
         $this->assertSame('Error', $e->getMessage());
+        $this->assertSame(1, $e->getCode());
         $this->assertInstanceOf(LeagueException::class, $e->getPrevious());
 
         $response = $e->getResponse();
