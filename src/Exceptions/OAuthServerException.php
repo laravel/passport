@@ -28,7 +28,7 @@ class OAuthServerException extends HttpResponseException
      */
     public function render($request)
     {
-        return null;
+        //
     }
 
     /**
