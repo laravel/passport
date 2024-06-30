@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
