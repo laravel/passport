@@ -119,7 +119,7 @@ class Passport
      *
      * @var bool
      */
-    public static $clientUuids = false;
+    public static $clientUuids = true;
 
     /**
      * The token model class name.
@@ -509,27 +509,6 @@ class Passport
     public static function client()
     {
         return new static::$clientModel;
-    }
-
-    /**
-     * Determine if clients are identified using UUIDs.
-     *
-     * @return bool
-     */
-    public static function clientUuids()
-    {
-        return static::$clientUuids;
-    }
-
-    /**
-     * Specify if clients are identified using UUIDs.
-     *
-     * @param  bool  $value
-     * @return void
-     */
-    public static function setClientUuids($value)
-    {
-        static::$clientUuids = $value;
     }
 
     /**
