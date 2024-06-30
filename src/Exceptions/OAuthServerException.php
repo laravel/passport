@@ -17,7 +17,7 @@ class OAuthServerException extends HttpResponseException
      */
     public function __construct(LeagueException $e, Response $response)
     {
-        parent::__construct($response);
+        parent::__construct($response, $e);
     }
 
     /**
