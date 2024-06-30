@@ -32,11 +32,11 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
+    public function getClientEntity(string $clientIdentifier, ?string $grantType): ?ClientEntityInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        if (! $record) {
+        if (! $record || ! $this->handlesGrant($record, $grantType)) {
             return null;
         }
 
