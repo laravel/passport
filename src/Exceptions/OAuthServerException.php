@@ -9,7 +9,7 @@ use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 class OAuthServerException extends Exception
 {
     /**
-     * The response to render.
+     * The response instance.
      *
      * @var \Illuminate\Http\Response
      */
@@ -33,9 +33,19 @@ class OAuthServerException extends Exception
      * Render the exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Symfony\Component\HttpFoundation\Response|null
      */
     public function render($request)
+    {
+        return null;
+    }
+
+    /**
+     * Get the response instance.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getResponse()
     {
         return $this->response;
     }

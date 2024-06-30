@@ -50,7 +50,7 @@ class HandlesOAuthErrorsTest extends TestCase
         $this->assertSame('Error', $e->getMessage());
         $this->assertInstanceOf(LeagueException::class, $e->getPrevious());
 
-        $response = $e->render(new Request);
+        $response = $e->getResponse();
 
         $this->assertJsonStringEqualsJsonString(
             '{"error":"fatal","error_description":"Error"}',
