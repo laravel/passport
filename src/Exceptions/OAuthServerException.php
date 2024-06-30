@@ -2,19 +2,12 @@
 
 namespace Laravel\Passport\Exceptions;
 
-use Exception;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 
-class OAuthServerException extends Exception
+class OAuthServerException extends HttpResponseException
 {
-    /**
-     * The response instance.
-     *
-     * @var \Illuminate\Http\Response
-     */
-    protected $response;
-
     /**
      * Create a new OAuthServerException.
      *
@@ -24,9 +17,7 @@ class OAuthServerException extends Exception
      */
     public function __construct(LeagueException $e, Response $response)
     {
-        parent::__construct($e->getMessage(), $e->getCode(), $e);
-
-        $this->response = $response;
+        parent::__construct($response);
     }
 
     /**
@@ -38,16 +29,6 @@ class OAuthServerException extends Exception
     public function render($request)
     {
         return null;
-    }
-
-    /**
-     * Get the response instance.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function getResponse()
-    {
-        return $this->response;
     }
 
     /**
