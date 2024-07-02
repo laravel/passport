@@ -19,14 +19,4 @@ class OAuthServerException extends HttpResponseException
     {
         parent::__construct($response, $e);
     }
-
-    /**
-     * Get the HTTP response status code.
-     *
-     * @return int
-     */
-    public function statusCode()
-    {
-        return $this->response->getStatusCode();
-    }
 }
