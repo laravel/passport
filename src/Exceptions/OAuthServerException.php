@@ -21,17 +21,6 @@ class OAuthServerException extends HttpResponseException
     }
 
     /**
-     * Render the exception into an HTTP response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Symfony\Component\HttpFoundation\Response|null
-     */
-    public function render($request)
-    {
-        //
-    }
-
-    /**
      * Get the HTTP response status code.
      *
      * @return int
