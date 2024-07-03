@@ -68,7 +68,7 @@ class Client extends Model
     {
         parent::__construct($attributes);
 
-        $this->usesUniqueIds = Passport::clientUuids();
+        $this->usesUniqueIds = Passport::$clientUuids;
     }
 
     /**
@@ -209,7 +209,7 @@ class Client extends Model
      */
     public function uniqueIds()
     {
-        return Passport::clientUuids() ? [$this->getKeyName()] : [];
+        return $this->usesUniqueIds ? [$this->getKeyName()] : [];
     }
 
     /**
@@ -219,7 +219,7 @@ class Client extends Model
      */
     public function newUniqueId()
     {
-        return Passport::clientUuids() ? (string) Str::orderedUuid() : null;
+        return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
     }
 
     /**
@@ -229,7 +229,7 @@ class Client extends Model
      */
     public function getKeyType()
     {
-        return Passport::clientUuids() ? 'string' : $this->keyType;
+        return $this->usesUniqueIds ? 'string' : $this->keyType;
     }
 
     /**
@@ -239,7 +239,7 @@ class Client extends Model
      */
     public function getIncrementing()
     {
-        return Passport::clientUuids() ? false : $this->incrementing;
+        return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**
