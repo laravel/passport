@@ -26,14 +26,14 @@ The `league/oauth2-server` Composer package which is utilized internally by Pass
 
 PR: https://github.com/laravel/passport/pull/1764
 
-Passport now uses UUIDs to identify clients by default. You may keep using incremental integer IDs by setting `Passport::$clientUuids` to `false` on the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+By default, Passport now uses UUIDs to identify clients. You may keep using incremental integer IDs by setting `Passport::$clientUuids` to `false` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
 
     public function boot(): void
     {
         Passport::$clientUuids = false;
     }
 
-Therefore, the `'passport.client_uuids'` config property, `Passport::clientUuids()` and `Passport::setClientUuids()` methods have been removed.
+As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
 
 ### Client Secrets Hashed by Default
 
