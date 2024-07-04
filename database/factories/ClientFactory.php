@@ -40,7 +40,7 @@ class ClientFactory extends Factory
     }
 
     /**
-     * Use as as Password client.
+     * Use as a Password client.
      *
      * @return $this
      */
