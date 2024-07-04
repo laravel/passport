@@ -6,6 +6,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
+use Laravel\Passport\PersonalAccessTokenResult;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
@@ -33,10 +34,11 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
             'bar' => 'Do bar',
         ]);
 
-        $token = $user->createToken('test', ['bar'])->token;
+        $result = $user->createToken('test', ['bar']);
 
-        $this->assertSame($client->getKey(), $token->client_id);
-        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
-        $this->assertSame(['bar'], $token->scopes);
+        $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
+        $this->assertSame($client->getKey(), $result->token->client_id);
+        $this->assertSame($user->getAuthIdentifier(), $result->token->user_id);
+        $this->assertSame(['bar'], $result->token->scopes);
     }
 }
