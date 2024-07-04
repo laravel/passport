@@ -4,7 +4,6 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Laravel\Passport\AuthCode;
 use Laravel\Passport\Client;
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
