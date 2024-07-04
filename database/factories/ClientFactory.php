@@ -53,6 +53,19 @@ class ClientFactory extends Factory
     }
 
     /**
+     * Use as Personal Access Token Client.
+     *
+     * @return $this
+     */
+    public function asPersonalAccessTokenClient()
+    {
+        return $this->state([
+            'personal_access_client' => true,
+            'password_client' => false,
+        ]);
+    }
+
+    /**
      * Use as Client Credentials.
      *
      * @return $this
