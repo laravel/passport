@@ -23,6 +23,8 @@ class AccessTokenControllerTest extends TestCase
     public function test_a_token_can_be_issued()
     {
         $request = m::mock(ServerRequestInterface::class);
+        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
+
         $response = m::type(ResponseInterface::class);
         $tokens = m::mock(TokenRepository::class);
 
@@ -41,18 +43,21 @@ class AccessTokenControllerTest extends TestCase
 
     public function test_exceptions_are_handled()
     {
+        $request = m::mock(ServerRequestInterface::class);
+        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
+
         $tokens = m::mock(TokenRepository::class);
 
         $server = m::mock(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(
-            m::type(ServerRequestInterface::class), m::type(ResponseInterface::class)
+            $request, m::type(ResponseInterface::class)
         )->andThrow(LeagueException::invalidCredentials());
 
         $controller = new AccessTokenController($server, $tokens);
 
         $this->expectException(OAuthServerException::class);
 
-        $controller->issueToken(m::mock(ServerRequestInterface::class));
+        $controller->issueToken($request);
     }
 }
 
