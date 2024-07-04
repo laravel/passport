@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Response as Psr7Response;
@@ -20,24 +19,14 @@ class AccessTokenController
     protected $server;
 
     /**
-     * The token repository instance.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $tokens;
-
-    /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                TokenRepository $tokens)
+    public function __construct(AuthorizationServer $server)
     {
         $this->server = $server;
-        $this->tokens = $tokens;
     }
 
     /**

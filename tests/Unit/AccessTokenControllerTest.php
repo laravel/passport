@@ -26,7 +26,6 @@ class AccessTokenControllerTest extends TestCase
         $request->shouldReceive('getParsedBody')->once()->andReturn([]);
 
         $response = m::type(ResponseInterface::class);
-        $tokens = m::mock(TokenRepository::class);
 
         $psrResponse = new Response();
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
@@ -36,7 +35,7 @@ class AccessTokenControllerTest extends TestCase
             ->with($request, $response)
             ->andReturn($psrResponse);
 
-        $controller = new AccessTokenController($server, $tokens);
+        $controller = new AccessTokenController($server);
 
         $this->assertSame('{"access_token":"access-token"}', $controller->issueToken($request)->getContent());
     }
@@ -46,14 +45,12 @@ class AccessTokenControllerTest extends TestCase
         $request = m::mock(ServerRequestInterface::class);
         $request->shouldReceive('getParsedBody')->once()->andReturn([]);
 
-        $tokens = m::mock(TokenRepository::class);
-
         $server = m::mock(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(
             $request, m::type(ResponseInterface::class)
         )->andThrow(LeagueException::invalidCredentials());
 
-        $controller = new AccessTokenController($server, $tokens);
+        $controller = new AccessTokenController($server);
 
         $this->expectException(OAuthServerException::class);
 
