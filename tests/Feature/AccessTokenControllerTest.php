@@ -307,6 +307,10 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('error', $decodedResponse);
         $this->assertSame('unsupported_grant_type', $decodedResponse['error']);
         $this->assertArrayHasKey('error_description', $decodedResponse);
+
+        $token = $user->createToken('test');
+
+        $this->assertInstanceOf(\Laravel\Passport\PersonalAccessTokenResult::class, $token);
     }
 }
 
