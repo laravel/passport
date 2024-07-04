@@ -53,12 +53,13 @@ class PersonalAccessTokenFactory
      * @param  mixed  $userId
      * @param  string  $name
      * @param  string[]  $scopes
+     * @param  string|null  $provider
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, string $name, array $scopes = [])
+    public function make($userId, string $name, array $scopes = [], ?string $provider = null)
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($userId, $scopes)
+            $this->createRequest($userId, $scopes, $provider)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
@@ -78,11 +79,14 @@ class PersonalAccessTokenFactory
      *
      * @param  mixed  $userId
      * @param  string[]  $scopes
+     * @param  string|null  $provider
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($userId, array $scopes)
+    protected function createRequest($userId, array $scopes, ?string $provider)
     {
-        $config = config('passport.personal_access_client');
+        $config = $provider
+            ? config("passport.personal_access_client.$provider", config('passport.personal_access_client'))
+            : config('passport.personal_access_client');
 
         if (! $config) {
             throw new RuntimeException(
