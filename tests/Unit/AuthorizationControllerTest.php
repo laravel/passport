@@ -333,7 +333,7 @@ class AuthorizationControllerTest extends TestCase
         } catch (\Laravel\Passport\Exceptions\OAuthServerException $e) {
             $this->assertStringStartsWith(
                 'http://localhost?state=state&error=access_denied&error_description=',
-                $e->render($request)->headers->get('location')
+                $e->getResponse()->headers->get('location')
             );
         }
     }
