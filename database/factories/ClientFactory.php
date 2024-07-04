@@ -40,7 +40,7 @@ class ClientFactory extends Factory
     }
 
     /**
-     * Use as Password Client.
+     * Use as as Password client.
      *
      * @return $this
      */
@@ -53,7 +53,7 @@ class ClientFactory extends Factory
     }
 
     /**
-     * Use as Personal Access Token Client.
+     * Use as a Personal Access Token client.
      *
      * @return $this
      */
@@ -66,7 +66,7 @@ class ClientFactory extends Factory
     }
 
     /**
-     * Use as Client Credentials.
+     * Use as a Client Credentials client.
      *
      * @return $this
      */
