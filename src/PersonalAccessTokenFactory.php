@@ -7,6 +7,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class PersonalAccessTokenFactory
 {
@@ -16,13 +17,6 @@ class PersonalAccessTokenFactory
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
-
-    /**
-     * The client repository instance.
-     *
-     * @var \Laravel\Passport\ClientRepository
-     */
-    protected $clients;
 
     /**
      * The token repository instance.
@@ -42,20 +36,15 @@ class PersonalAccessTokenFactory
      * Create a new personal access token factory instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                ClientRepository $clients,
-                                TokenRepository $tokens,
-                                JwtParser $jwt)
+    public function __construct(AuthorizationServer $server, TokenRepository $tokens, JwtParser $jwt)
     {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
-        $this->clients = $clients;
     }
 
     /**
@@ -63,10 +52,10 @@ class PersonalAccessTokenFactory
      *
      * @param  mixed  $userId
      * @param  string  $name
-     * @param  array  $scopes
+     * @param  string[]  $scopes
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [])
+    public function make($userId, string $name, array $scopes = [])
     {
         $response = $this->dispatchRequestToAuthorizationServer(
             $this->createRequest($userId, $scopes)
@@ -88,15 +77,23 @@ class PersonalAccessTokenFactory
      * Create a request instance for the given client.
      *
      * @param  mixed  $userId
-     * @param  array  $scopes
+     * @param  string[]  $scopes
      * @return \Psr\Http\Message\ServerRequestInterface
      */
     protected function createRequest($userId, array $scopes)
     {
+        $config = config('passport.personal_access_client');
+
+        if (! $config) {
+            throw new RuntimeException(
+                'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
+            );
+        }
+
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
-            'client_id' => $this->clients->getPersonalAccessClientId(),
-            'client_secret' => $this->clients->getPersonalAccessClientSecret(),
+            'client_id' => $config['id'] ?? null,
+            'client_secret' => $config['secret'] ?? null,
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),
         ]);
