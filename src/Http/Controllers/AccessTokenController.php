@@ -45,8 +45,6 @@ class AccessTokenController
      *
      * @param  \Psr\Http\Message\ServerRequestInterface  $request
      * @return \Illuminate\Http\Response
-     *
-     * @throws \Laravel\Passport\Exceptions\OAuthServerException
      */
     public function issueToken(ServerRequestInterface $request)
     {
