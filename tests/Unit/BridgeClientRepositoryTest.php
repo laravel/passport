@@ -197,25 +197,4 @@ class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
     public $password_client = false;
 
     public $provider = null;
-
-    public $grant_types;
-
-    public function firstParty()
-    {
-        return $this->personal_access_client || $this->password_client;
-    }
-
-    public function confidential()
-    {
-        return ! empty($this->secret);
-    }
-
-    public function hasGrantType($grantType)
-    {
-        if (! isset($this->grant_types) || ! is_array($this->grant_types)) {
-            return true;
-        }
-
-        return in_array($grantType, $this->grant_types);
-    }
 }

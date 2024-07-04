@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\PersonalAccessTokenResult;
 use Laravel\Passport\Token;
@@ -27,14 +26,11 @@ class PersonalAccessTokenFactoryTest extends TestCase
     public function test_access_token_can_be_created()
     {
         $server = m::mock(AuthorizationServer::class);
-        $clients = m::mock(ClientRepository::class);
         $tokens = m::mock(TokenRepository::class);
         $jwt = m::mock(Parser::class);
 
-        $factory = new PersonalAccessTokenFactory($server, $clients, $tokens, $jwt);
+        $factory = new PersonalAccessTokenFactory($server, $tokens, $jwt);
 
-        $clients->shouldReceive('getPersonalAccessClientId')->andReturn('1');
-        $clients->shouldReceive('getPersonalAccessClientSecret')->andReturn('secret');
         $server->shouldReceive('respondToAccessTokenRequest')->andReturn($response = m::mock(ResponseInterface::class));
         $response->shouldReceive('getBody->__toString')->andReturn(json_encode([
             'access_token' => 'foo',

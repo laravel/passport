@@ -3,37 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Support\Str;
-use RuntimeException;
 
 class ClientRepository
 {
-    /**
-     * The personal access client ID.
-     *
-     * @var int|string|null
-     */
-    protected $personalAccessClientId;
-
-    /**
-     * The personal access client secret.
-     *
-     * @var string|null
-     */
-    protected $personalAccessClientSecret;
-
-    /**
-     * Create a new client repository.
-     *
-     * @param  int|string|null  $personalAccessClientId
-     * @param  string|null  $personalAccessClientSecret
-     * @return void
-     */
-    public function __construct($personalAccessClientId = null, $personalAccessClientSecret = null)
-    {
-        $this->personalAccessClientId = $personalAccessClientId;
-        $this->personalAccessClientSecret = $personalAccessClientSecret;
-    }
-
     /**
      * Get a client by the given ID.
      *
@@ -101,22 +73,6 @@ class ClientRepository
         return $this->forUser($userId)->reject(function ($client) {
             return $client->revoked;
         })->values();
-    }
-
-    /**
-     * Get the personal access token client for the application.
-     *
-     * @return \Laravel\Passport\Client
-     *
-     * @throws \RuntimeException
-     */
-    public function personalAccessClient()
-    {
-        $client = $this->personalAccessClientId ? $this->find($this->personalAccessClientId) : null;
-
-        return $client ?? throw new RuntimeException(
-            'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
-        );
     }
 
     /**
@@ -232,25 +188,5 @@ class ClientRepository
         $client->tokens()->update(['revoked' => true]);
 
         $client->forceFill(['revoked' => true])->save();
-    }
-
-    /**
-     * Get the personal access client id.
-     *
-     * @return int|string|null
-     */
-    public function getPersonalAccessClientId()
-    {
-        return $this->personalAccessClientId;
-    }
-
-    /**
-     * Get the personal access client secret.
-     *
-     * @return string|null
-     */
-    public function getPersonalAccessClientSecret()
-    {
-        return $this->personalAccessClientSecret;
     }
 }

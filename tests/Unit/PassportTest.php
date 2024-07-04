@@ -39,14 +39,6 @@ class PassportTest extends TestCase
         $this->assertInstanceOf(Passport::clientModel(), $client);
     }
 
-    public function test_missing_personal_access_client_is_reported()
-    {
-        $this->expectException('RuntimeException');
-
-        $clientRepository = new ClientRepository;
-        $clientRepository->personalAccessClient();
-    }
-
     public function test_token_instance_can_be_created()
     {
         $token = Passport::token();
