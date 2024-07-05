@@ -3,37 +3,9 @@
 namespace Laravel\Passport;
 
 use Illuminate\Support\Str;
-use RuntimeException;
 
 class ClientRepository
 {
-    /**
-     * The personal access client ID.
-     *
-     * @var int|string|null
-     */
-    protected $personalAccessClientId;
-
-    /**
-     * The personal access client secret.
-     *
-     * @var string|null
-     */
-    protected $personalAccessClientSecret;
-
-    /**
-     * Create a new client repository.
-     *
-     * @param  int|string|null  $personalAccessClientId
-     * @param  string|null  $personalAccessClientSecret
-     * @return void
-     */
-    public function __construct($personalAccessClientId = null, $personalAccessClientSecret = null)
-    {
-        $this->personalAccessClientId = $personalAccessClientId;
-        $this->personalAccessClientSecret = $personalAccessClientSecret;
-    }
-
     /**
      * Get a client by the given ID.
      *
@@ -104,28 +76,6 @@ class ClientRepository
     }
 
     /**
-     * Get the personal access token client for the application.
-     *
-     * @return \Laravel\Passport\Client
-     *
-     * @throws \RuntimeException
-     */
-    public function personalAccessClient()
-    {
-        if ($this->personalAccessClientId) {
-            return $this->find($this->personalAccessClientId);
-        }
-
-        $client = Passport::personalAccessClient();
-
-        if (! $client->exists()) {
-            throw new RuntimeException('Personal access client not found. Please create one.');
-        }
-
-        return $client->orderBy($client->getKeyName(), 'desc')->first()->client;
-    }
-
-    /**
      * Store a new client.
      *
      * @param  int|null  $userId
@@ -165,11 +115,7 @@ class ClientRepository
      */
     public function createPersonalAccessClient($userId, $name, $redirect)
     {
-        return tap($this->create($userId, $name, $redirect, null, true), function ($client) {
-            $accessClient = Passport::personalAccessClient();
-            $accessClient->client_id = $client->getKey();
-            $accessClient->save();
-        });
+        return $this->create($userId, $name, $redirect, null, true);
     }
 
     /**
@@ -242,25 +188,5 @@ class ClientRepository
         $client->tokens()->update(['revoked' => true]);
 
         $client->forceFill(['revoked' => true])->save();
-    }
-
-    /**
-     * Get the personal access client id.
-     *
-     * @return int|string|null
-     */
-    public function getPersonalAccessClientId()
-    {
-        return $this->personalAccessClientId;
-    }
-
-    /**
-     * Get the personal access client secret.
-     *
-     * @return string|null
-     */
-    public function getPersonalAccessClientSecret()
-    {
-        return $this->personalAccessClientSecret;
     }
 }

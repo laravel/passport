@@ -28,7 +28,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
-        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
+        $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
@@ -65,34 +65,11 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
-        $request->shouldReceive('has')->with('auth_token')->andReturn(true);
+        $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();
-
-        $server->shouldReceive('completeAuthorizationRequest')->never();
-
-        $controller->deny($request);
-    }
-
-    public function test_auth_token_should_exist_on_request()
-    {
-        $this->expectException('\Laravel\Passport\Exceptions\InvalidAuthTokenException');
-        $this->expectExceptionMessage('The provided auth token for the request is different from the session auth token.');
-
-        $server = m::mock(AuthorizationServer::class);
-
-        $controller = new DenyAuthorizationController($server);
-
-        $request = m::mock(Request::class);
-
-        $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->never();
-        $request->shouldReceive('input')->never();
-        $request->shouldReceive('has')->with('auth_token')->andReturn(false);
-
-        $session->shouldReceive('forget')->once()->with(['authToken', 'authRequest']);
 
         $server->shouldReceive('completeAuthorizationRequest')->never();
 

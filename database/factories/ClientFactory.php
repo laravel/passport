@@ -28,7 +28,7 @@ class ClientFactory extends Factory
      */
     public function definition()
     {
-        return $this->ensurePrimaryKeyIsSet([
+        return [
             'user_id' => null,
             'name' => $this->faker->company(),
             'secret' => Str::random(40),
@@ -36,28 +36,11 @@ class ClientFactory extends Factory
             'personal_access_client' => false,
             'password_client' => false,
             'revoked' => false,
-        ]);
+        ];
     }
 
     /**
-     * Ensure the primary key is set on the model when using UUIDs.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    protected function ensurePrimaryKeyIsSet(array $data)
-    {
-        if (Passport::clientUuids()) {
-            $keyName = (new ($this->modelName()))->getKeyName();
-
-            $data[$keyName] = (string) Str::orderedUuid();
-        }
-
-        return $data;
-    }
-
-    /**
-     * Use as Password Client.
+     * Use as a Password client.
      *
      * @return $this
      */
@@ -70,7 +53,20 @@ class ClientFactory extends Factory
     }
 
     /**
-     * Use as Client Credentials.
+     * Use as a Personal Access Token client.
+     *
+     * @return $this
+     */
+    public function asPersonalAccessTokenClient()
+    {
+        return $this->state([
+            'personal_access_client' => true,
+            'password_client' => false,
+        ]);
+    }
+
+    /**
+     * Use as a Client Credentials client.
      *
      * @return $this
      */

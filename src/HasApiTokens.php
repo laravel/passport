@@ -9,7 +9,7 @@ trait HasApiTokens
     /**
      * The current access token for the authentication user.
      *
-     * @var \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null
+     * @var \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
     protected $accessToken;
 
@@ -36,7 +36,7 @@ trait HasApiTokens
     /**
      * Get the current access token being used by the user.
      *
-     * @return \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null
+     * @return \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
     public function token()
     {
@@ -51,7 +51,7 @@ trait HasApiTokens
      */
     public function tokenCan($scope)
     {
-        return $this->accessToken ? $this->accessToken->can($scope) : false;
+        return $this->accessToken && $this->accessToken->can($scope);
     }
 
     /**
@@ -64,14 +64,34 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes
+            $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
         );
+    }
+
+    /**
+     * Get the user provider name.
+     *
+     * @return string|null
+     */
+    public function getProvider(): ?string
+    {
+        $providers = collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all();
+
+        foreach (config('auth.providers') as $provider => $config) {
+            if (in_array($provider, $providers)
+                && (($config['driver'] === 'eloquent' && is_a($this, $config['model']))
+                    || ($config['driver'] === 'database' && $config['table'] === $this->getTable()))) {
+                return $provider;
+            }
+        }
+
+        return null;
     }
 
     /**
      * Set the current access token for the user.
      *
-     * @param  \Laravel\Passport\Token|\Laravel\Passport\TransientToken|null  $accessToken
+     * @param  \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null  $accessToken
      * @return $this
      */
     public function withAccessToken($accessToken)

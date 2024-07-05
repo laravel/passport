@@ -128,14 +128,7 @@ class Passport
      *
      * @var bool
      */
-    public static $clientUuids = false;
-
-    /**
-     * The personal access client model class name.
-     *
-     * @var string
-     */
-    public static $personalAccessClientModel = 'Laravel\Passport\PersonalAccessClient';
+    public static $clientUuids = true;
 
     /**
      * The token model class name.
@@ -384,9 +377,10 @@ class Passport
      */
     public static function actingAs($user, $scopes = [], $guard = 'api')
     {
-        $token = app(self::tokenModel());
-
-        $token->scopes = $scopes;
+        $token = new AccessToken([
+            'oauth_user_id' => $user->getKey(),
+            'oauth_scopes' => $scopes,
+        ]);
 
         $user->withAccessToken($token);
 
@@ -411,27 +405,14 @@ class Passport
      */
     public static function actingAsClient($client, $scopes = [], $guard = 'api')
     {
-        $token = app(self::tokenModel());
-
-        $token->client_id = $client->getKey();
-        $token->setRelation('client', $client);
-
-        $token->scopes = $scopes;
-
         $mock = Mockery::mock(ResourceServer::class);
         $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function (ServerRequestInterface $request) use ($token) {
-                return $request->withAttribute('oauth_client_id', $token->client->id)
-                    ->withAttribute('oauth_access_token_id', $token->id)
-                    ->withAttribute('oauth_scopes', $token->scopes);
+            ->andReturnUsing(function (ServerRequestInterface $request) use ($client, $scopes) {
+                return $request->withAttribute('oauth_client_id', $client->getKey())
+                    ->withAttribute('oauth_scopes', $scopes);
             });
 
         app()->instance(ResourceServer::class, $mock);
-
-        $mock = Mockery::mock(TokenRepository::class);
-        $mock->shouldReceive('find')->andReturn($token);
-
-        app()->instance(TokenRepository::class, $mock);
 
         app('auth')->guard($guard)->setClient($client);
 
@@ -568,58 +549,6 @@ class Passport
     public static function client()
     {
         return new static::$clientModel;
-    }
-
-    /**
-     * Determine if clients are identified using UUIDs.
-     *
-     * @return bool
-     */
-    public static function clientUuids()
-    {
-        return static::$clientUuids;
-    }
-
-    /**
-     * Specify if clients are identified using UUIDs.
-     *
-     * @param  bool  $value
-     * @return void
-     */
-    public static function setClientUuids($value)
-    {
-        static::$clientUuids = $value;
-    }
-
-    /**
-     * Set the personal access client model class name.
-     *
-     * @param  string  $clientModel
-     * @return void
-     */
-    public static function usePersonalAccessClientModel($clientModel)
-    {
-        static::$personalAccessClientModel = $clientModel;
-    }
-
-    /**
-     * Get the personal access client model class name.
-     *
-     * @return string
-     */
-    public static function personalAccessClientModel()
-    {
-        return static::$personalAccessClientModel;
-    }
-
-    /**
-     * Get a new personal access client model instance.
-     *
-     * @return \Laravel\Passport\PersonalAccessClient
-     */
-    public static function personalAccessClient()
-    {
-        return new static::$personalAccessClientModel;
     }
 
     /**

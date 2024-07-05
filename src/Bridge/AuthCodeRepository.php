@@ -48,6 +48,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked(string $codeId): bool
     {
-        return Passport::authCode()->where('id', $codeId)->where('revoked', 1)->exists();
+        return Passport::authCode()->where('id', $codeId)->where('revoked', 0)->doesntExist();
     }
 }

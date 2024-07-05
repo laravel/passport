@@ -12,15 +12,12 @@ trait RetrievesAuthRequestFromSession
     /**
      * Get the authorization request from the session.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \League\OAuth2\Server\RequestTypes\AuthorizationRequest
-     *
      * @throws \Laravel\Passport\Exceptions\InvalidAuthTokenException
      * @throws \Exception
      */
-    protected function getAuthRequestFromSession(Request $request)
+    protected function getAuthRequestFromSession(Request $request): AuthorizationRequest
     {
-        if (! $request->has('auth_token') || $request->session()->pull('authToken') !== $request->get('auth_token')) {
+        if ($request->isNotFilled('auth_token') || $request->session()->pull('authToken') !== $request->get('auth_token')) {
             $request->session()->forget(['authToken', 'authRequest']);
 
             throw InvalidAuthTokenException::different();

@@ -59,19 +59,16 @@ class Client extends Model
     public $plainSecret;
 
     /**
-     * Bootstrap the model and its traits.
+     * Create a new Eloquent model instance.
      *
+     * @param  array  $attributes
      * @return void
      */
-    public static function boot()
+    public function __construct(array $attributes = [])
     {
-        parent::boot();
+        parent::__construct($attributes);
 
-        static::creating(function ($model) {
-            if (Passport::clientUuids()) {
-                $model->{$model->getKeyName()} = $model->{$model->getKeyName()} ?: (string) Str::orderedUuid();
-            }
-        });
+        $this->usesUniqueIds = Passport::$clientUuids;
     }
 
     /**
@@ -90,6 +87,8 @@ class Client extends Model
 
     /**
      * Get all of the authentication codes for the client.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
@@ -204,13 +203,33 @@ class Client extends Model
     }
 
     /**
+     * Get the columns that should receive a unique identifier.
+     *
+     * @return array
+     */
+    public function uniqueIds()
+    {
+        return $this->usesUniqueIds ? [$this->getKeyName()] : [];
+    }
+
+    /**
+     * Generate a new key for the model.
+     *
+     * @return string
+     */
+    public function newUniqueId()
+    {
+        return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
+    }
+
+    /**
      * Get the auto-incrementing key type.
      *
      * @return string
      */
     public function getKeyType()
     {
-        return Passport::clientUuids() ? 'string' : $this->keyType;
+        return $this->usesUniqueIds ? 'string' : $this->keyType;
     }
 
     /**
@@ -220,7 +239,7 @@ class Client extends Model
      */
     public function getIncrementing()
     {
-        return Passport::clientUuids() ? false : $this->incrementing;
+        return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**

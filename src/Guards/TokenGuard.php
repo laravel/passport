@@ -14,11 +14,11 @@ use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Traits\Macroable;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
-use Laravel\Passport\TokenRepository;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -42,13 +42,6 @@ class TokenGuard implements Guard
      * @var \Laravel\Passport\PassportUserProvider
      */
     protected $provider;
-
-    /**
-     * The token repository instance.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $tokens;
 
     /**
      * The client repository instance.
@@ -83,7 +76,6 @@ class TokenGuard implements Guard
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
      * @param  \Laravel\Passport\PassportUserProvider  $provider
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
      * @param  \Illuminate\Http\Request  $request
@@ -92,13 +84,11 @@ class TokenGuard implements Guard
     public function __construct(
         ResourceServer $server,
         PassportUserProvider $provider,
-        TokenRepository $tokens,
         ClientRepository $clients,
         Encrypter $encrypter,
         Request $request
     ) {
         $this->server = $server;
-        $this->tokens = $tokens;
         $this->clients = $clients;
         $this->provider = $provider;
         $this->encrypter = $encrypter;
@@ -108,7 +98,7 @@ class TokenGuard implements Guard
     /**
      * Get the user for the incoming request.
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function user()
     {
@@ -134,7 +124,6 @@ class TokenGuard implements Guard
         return ! is_null((new static(
             $this->server,
             $this->provider,
-            $this->tokens,
             $this->clients,
             $this->encrypter,
             $credentials['request'],
@@ -171,7 +160,7 @@ class TokenGuard implements Guard
      * Authenticate the incoming request via the Bearer token.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     protected function authenticateViaBearerToken($request)
     {
@@ -189,6 +178,8 @@ class TokenGuard implements Guard
             return;
         }
 
+        $this->setClient($client);
+
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
@@ -203,11 +194,9 @@ class TokenGuard implements Guard
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
-        $token = $this->tokens->find(
-            $psr->getAttribute('oauth_access_token_id')
-        );
+        $token = AccessToken::fromPsrRequest($psr);
 
-        return $token ? $user->withAccessToken($token) : null;
+        return $user->withAccessToken($token);
     }
 
     /**
@@ -243,7 +232,7 @@ class TokenGuard implements Guard
      * Authenticate the incoming request via the token cookie.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     protected function authenticateViaCookie($request)
     {
@@ -263,7 +252,7 @@ class TokenGuard implements Guard
      * Get the token cookie via the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return mixed
+     * @return array|null
      */
     protected function getTokenViaCookie($request)
     {

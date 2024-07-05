@@ -3,8 +3,8 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -20,23 +20,14 @@ abstract class CheckCredentials
     protected $server;
 
     /**
-     * Token Repository.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $repository;
-
-    /**
      * Create a new middleware instance.
      *
      * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @param  \Laravel\Passport\TokenRepository  $repository
      * @return void
      */
-    public function __construct(ResourceServer $server, TokenRepository $repository)
+    public function __construct(ResourceServer $server)
     {
         $this->server = $server;
-        $this->repository = $repository;
     }
 
     /**
@@ -95,7 +86,7 @@ abstract class CheckCredentials
      */
     protected function validate($psr, $scopes)
     {
-        $token = $this->repository->find($psr->getAttribute('oauth_access_token_id'));
+        $token = AccessToken::fromPsrRequest($psr);
 
         $this->validateCredentials($token);
 
@@ -105,7 +96,7 @@ abstract class CheckCredentials
     /**
      * Validate token credentials.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \Laravel\Passport\AccessToken  $token
      * @return void
      *
      * @throws \Laravel\Passport\Exceptions\AuthenticationException
@@ -115,7 +106,7 @@ abstract class CheckCredentials
     /**
      * Validate token scopes.
      *
-     * @param  \Laravel\Passport\Token  $token
+     * @param  \Laravel\Passport\AccessToken  $token
      * @param  array  $scopes
      * @return void
      *

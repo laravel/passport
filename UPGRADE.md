@@ -10,11 +10,30 @@ PR: https://github.com/laravel/passport/pull/1734
 
 PHP 8.1 is now the minimum required version.
 
+### Minimum Laravel Version
+
+PR: https://github.com/laravel/passport/pull/1757
+
+Laravel 10.0 is now the minimum required version.
+
 ### OAuth2 Server
 
 PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
+
+### Identify Clients by UUIDs
+
+PR: https://github.com/laravel/passport/pull/1764
+
+By default, Passport now uses UUIDs to identify clients. You may keep using incremental integer IDs by setting `Passport::$clientUuids` to `false` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+
+    public function boot(): void
+    {
+        Passport::$clientUuids = false;
+    }
+
+As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
 
 ### Client Secrets Hashed by Default
 
@@ -25,6 +44,22 @@ Passport now always hashes client secrets using Laravel's `Hash` facade. If you 
     php artisan passport:hash
 
 In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
+
+### The User's Token Instance
+
+PR: https://github.com/laravel/passport/pull/1755
+
+When authenticating users via bearer tokens, the `User` model's `token` method now returns an instance of `Laravel\Passport\AccessToken` class instead of `Laravel\Passport\Token`.
+
+### Personal Access Client Table and Model Removal
+
+PR: https://github.com/laravel/passport/pull/1749
+
+Passport's `oauth_personal_access_clients` table has been redundant and unnecessary for several release cycles. Therefore, this release of Passport no longer interacts with this table or its corresponding model. If you wish, you may create a migration that drops this table:
+
+    Schema::drop('oauth_personal_access_clients');
+
+In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
 ## Upgrading To 12.0 From 11.x
 
