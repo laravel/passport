@@ -36,8 +36,6 @@ class DenyAuthorizationController
      */
     public function deny(Request $request)
     {
-        $this->assertValidAuthToken($request);
-
         $authRequest = $this->getAuthRequestFromSession($request);
 
         $authRequest->setAuthorizationApproved(false);
