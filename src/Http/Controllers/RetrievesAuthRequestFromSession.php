@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Exceptions\InvalidAuthTokenException;
+use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
 trait RetrievesAuthRequestFromSession
 {

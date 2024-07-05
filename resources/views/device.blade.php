@@ -1,68 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <title>{{ config('app.name') }} - Authorization</title>
-
-    <!-- Styles -->
-    <link href="{{ asset('/css/app.css') }}" rel="stylesheet">
-
-    <style>
-        .passport-authorize .container {
-            margin-top: 30px;
-        }
-
-        .passport-authorize .scopes {
-            margin-top: 20px;
-        }
-
-        .passport-authorize .buttons {
-            margin-top: 25px;
-            text-align: center;
-        }
-
-        .passport-authorize .btn {
-            width: 125px;
-        }
-
-        .passport-authorize .btn-approve {
-            margin-right: 15px;
-        }
-
-        .passport-authorize form {
-            display: inline;
-        }
-    </style>
-</head>
-<body class="passport-authorize">
+@section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card card-default">
-                    <div class="card-header">
-                        Device Authorization
-                    </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">{{ __('Device Authorization') }}</div>
+
                     <div class="card-body">
-                        <!-- Introduction -->
-                        <p>Enter the code displayed on your device .</p>
+                        {{ __('Enter the code displayed on your device.') }}
 
-                        <div class="buttons">
-                            <!-- Authorize Button -->
-                            <form method="post" action="{{ route('passport.device.authorize') }}">
-                                @csrf
+                        <form method="post" action="{{ route('passport.device.authorize') }}">
+                            @csrf
 
-                                <input type="text" name="user_code" value="{{ $userCode }}">
+                            <div class="row mb-3">
+                                <label for="user-code" class="col-md-4 col-form-label text-md-end">{{ __('Code') }}</label>
 
-                                <button type="submit" class="btn btn-success btn-approve">Continue</button>
-                            </form>
-                        </div>
+                                <div class="col-md-6">
+                                    <input id="user-code" type="text" class="form-control @error('user_code') is-invalid @enderror" name="user_code" value="{{ $userCode ?? old('user_code') }}" required autofocus>
+
+                                    @error('user_code')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-0">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        {{ __('Continue') }}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+@endsection

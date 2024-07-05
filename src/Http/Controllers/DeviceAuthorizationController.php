@@ -4,7 +4,6 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Contracts\DeviceCodeViewResponse;
 use Laravel\Passport\Passport;
@@ -69,10 +68,9 @@ class DeviceAuthorizationController
      * Authorize a client to access the user's account.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Laravel\Passport\ClientRepository  $clients
      * @return \Illuminate\Http\Response|\Laravel\Passport\Contracts\AuthorizationViewResponse
      */
-    public function authorize(Request $request, ClientRepository $clients)
+    public function authorize(Request $request)
     {
         $deviceCode = Passport::deviceCode()->with('client')
             ->where('user_code', $request->user_code)
@@ -101,7 +99,7 @@ class DeviceAuthorizationController
     public function approve(Request $request)
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
-            $request->session()->pull('deviceCode'),
+            $this->getDeviceCodeFromSession(),
             $request->user()->getAuthIdentifier(),
             true
         ));
@@ -120,7 +118,7 @@ class DeviceAuthorizationController
     public function deny(Request $request)
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
-            $request->session()->pull('deviceCode'),
+            $this->getDeviceCodeFromSession(),
             $request->user()->getAuthIdentifier(),
             false
         ));
