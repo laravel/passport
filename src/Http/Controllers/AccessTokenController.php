@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AccessTokenController
 {
-    use HandlesOAuthErrors;
+    use ConvertsPsrResponses, HandlesOAuthErrors;
 
     /**
      * The authorization server.
