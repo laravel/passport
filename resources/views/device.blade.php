@@ -11,8 +11,6 @@
                         {{ __('Enter the code displayed on your device.') }}
 
                         <form method="get" action="{{ route('passport.device.authorize') }}">
-                            @csrf
-
                             <div class="row mb-3">
                                 <label for="user-code" class="col-md-4 col-form-label text-md-end">{{ __('Code') }}</label>
 
