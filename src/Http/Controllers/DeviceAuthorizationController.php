@@ -99,7 +99,7 @@ class DeviceAuthorizationController
     public function approve(Request $request)
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
-            $this->getDeviceCodeFromSession(),
+            $this->getDeviceCodeFromSession($request),
             $request->user()->getAuthIdentifier(),
             true
         ));
@@ -118,7 +118,7 @@ class DeviceAuthorizationController
     public function deny(Request $request)
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
-            $this->getDeviceCodeFromSession(),
+            $this->getDeviceCodeFromSession($request),
             $request->user()->getAuthIdentifier(),
             false
         ));
