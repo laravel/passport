@@ -31,6 +31,10 @@ class PersonalAccessGrant extends AbstractGrant
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
         $userIdentifier = $this->getRequestParameter('user_id', $request);
 
+        if (! $userIdentifier) {
+            throw OAuthServerException::invalidRequest('user_id');
+        }
+
         // Finalize the requested scopes
         $scopes = $this->scopeRepository->finalizeScopes(
             $scopes,

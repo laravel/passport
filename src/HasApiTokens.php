@@ -64,8 +64,28 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getAuthIdentifier(), $name, $scopes
+            $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
         );
+    }
+
+    /**
+     * Get the user provider name.
+     *
+     * @return string|null
+     */
+    public function getProvider(): ?string
+    {
+        $providers = collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all();
+
+        foreach (config('auth.providers') as $provider => $config) {
+            if (in_array($provider, $providers)
+                && (($config['driver'] === 'eloquent' && is_a($this, $config['model']))
+                    || ($config['driver'] === 'database' && $config['table'] === $this->getTable()))) {
+                return $provider;
+            }
+        }
+
+        return null;
     }
 
     /**
