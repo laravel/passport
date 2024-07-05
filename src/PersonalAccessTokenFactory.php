@@ -19,6 +19,13 @@ class PersonalAccessTokenFactory
     protected $server;
 
     /**
+     * The client repository instance.
+     *
+     * @var \Laravel\Passport\ClientRepository
+     */
+    protected $clients;
+
+    /**
      * The token repository instance.
      *
      * @var \Laravel\Passport\TokenRepository
@@ -36,15 +43,20 @@ class PersonalAccessTokenFactory
      * Create a new personal access token factory instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
+     * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
-    public function __construct(AuthorizationServer $server, TokenRepository $tokens, JwtParser $jwt)
+    public function __construct(AuthorizationServer $server,
+                                ClientRepository $clients,
+                                TokenRepository $tokens,
+                                JwtParser $jwt)
     {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
+        $this->clients = $clients;
     }
 
     /**
@@ -88,7 +100,9 @@ class PersonalAccessTokenFactory
             ? config("passport.personal_access_client.$provider", config('passport.personal_access_client'))
             : config('passport.personal_access_client');
 
-        if (! $config) {
+        $client = isset($config['id']) ? $this->clients->findActive($config['id']) : null;
+
+        if (! $client || ($client->provider && $client->provider !== $provider)) {
             throw new RuntimeException(
                 'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
             );
