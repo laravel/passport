@@ -55,26 +55,39 @@ class DeviceAuthorizationController
      * Show the form for entering user code.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Laravel\Passport\Contracts\DeviceCodeViewResponse
+     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\DeviceCodeViewResponse
      */
     public function userCode(Request $request)
     {
-        return $this->deviceCodeViewResponse->withParameters([
-            'userCode' => $request->query('user_code'),
-        ]);
+        if ($userCode = $request->query('user_code')) {
+            return to_route('passport.device.authorize', [
+                'user_code' => $userCode,
+            ]);
+        }
+
+        return $this->deviceCodeViewResponse;
     }
 
     /**
      * Authorize a client to access the user's account.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Laravel\Passport\Contracts\AuthorizationViewResponse
+     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\AuthorizationViewResponse
      */
     public function authorize(Request $request)
     {
-        $deviceCode = Passport::deviceCode()->with('client')
-            ->where('user_code', $request->user_code)
+        $deviceCode = Passport::deviceCode()
+            ->with('client')
+            ->where('user_code', $userCode = $request->query('user_code'))
             ->first();
+
+        if (! $deviceCode) {
+            return to_route('passport.device')
+                ->withInput(['user_code' => $userCode])
+                ->withErrors([
+                    'user_code' => 'Incorrect code.',
+                ]);
+        }
 
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('deviceCode', $deviceCode->getKey());

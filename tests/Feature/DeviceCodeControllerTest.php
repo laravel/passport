@@ -12,6 +12,8 @@ class DeviceCodeControllerTest extends PassportTestCase
 
     public function testIssuingDeviceCode()
     {
+        $this->withoutExceptionHandling();
+
         /** @var Client $client */
         $client = ClientFactory::new()->create();
 
@@ -31,7 +33,7 @@ class DeviceCodeControllerTest extends PassportTestCase
         $this->assertArrayHasKey('user_code', $response);
         $this->assertArrayHasKey('expires_in', $response);
         // $this->assertArrayHasKey('interval', $response); // TODO https://github.com/thephpleague/oauth2-server/pull/1410
-        $this->assertSame('http://localhost/oauth/device/code', $response['verification_uri']);
-        $this->assertStringStartsWith('http://localhost/oauth/device/code?user_code=', $response['verification_uri_complete']);
+        $this->assertSame('http://localhost/oauth/device', $response['verification_uri']);
+        $this->assertStringStartsWith('http://localhost/oauth/device?user_code=', $response['verification_uri_complete']);
     }
 }

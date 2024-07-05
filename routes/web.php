@@ -14,6 +14,11 @@ Route::post('/device/code', [
     'middleware' => 'throttle',
 ]);
 
+Route::get('/device', [
+    'uses' => 'DeviceAuthorizationController@userCode',
+    'as' => 'device',
+]);
+
 Route::get('/authorize', [
     'uses' => 'AuthorizationController@authorize',
     'as' => 'authorizations.authorize',
@@ -38,12 +43,7 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
         'as' => 'authorizations.deny',
     ]);
 
-    Route::get('/device', [
-        'uses' => 'DeviceAuthorizationController@userCode',
-        'as' => 'device',
-    ]);
-
-    Route::get('/device', [
+    Route::get('/device/authorize', [
         'uses' => 'DeviceAuthorizationController@authorize',
         'as' => 'device.authorize',
     ]);

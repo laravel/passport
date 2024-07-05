@@ -10,14 +10,14 @@
                     <div class="card-body">
                         {{ __('Enter the code displayed on your device.') }}
 
-                        <form method="post" action="{{ route('passport.device.authorize') }}">
+                        <form method="get" action="{{ route('passport.device.authorize') }}">
                             @csrf
 
                             <div class="row mb-3">
                                 <label for="user-code" class="col-md-4 col-form-label text-md-end">{{ __('Code') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="user-code" type="text" class="form-control @error('user_code') is-invalid @enderror" name="user_code" value="{{ $userCode ?? old('user_code') }}" required autofocus>
+                                    <input id="user-code" type="text" class="form-control @error('user_code') is-invalid @enderror" name="user_code" value="{{ old('user_code') }}" required autofocus>
 
                                     @error('user_code')
                                         <span class="invalid-feedback" role="alert">

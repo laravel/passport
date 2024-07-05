@@ -265,7 +265,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(DeviceCodeRepository::class),
             $this->app->make(RefreshTokenRepository::class),
             new DateInterval('PT10M'),
-            route('passport.device.code'),
+            route('passport.device'),
             5
         );
 

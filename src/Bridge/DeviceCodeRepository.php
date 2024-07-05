@@ -39,7 +39,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
                 'user_id' => null,
                 'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
                 'user_code' => $deviceCodeEntity->getUserCode(),
-                'scopes' => $this->formatScopesForStorage($deviceCodeEntity->getScopes()),
+                'scopes' => $this->scopesToArray($deviceCodeEntity->getScopes()),
                 'revoked' => false,
                 'user_approved_at' => null,
                 'last_polled_at' => null,
@@ -82,7 +82,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function isDeviceCodeRevoked(string $codeId): bool
     {
-        // Already checked on `getDeviceCodeEntityByDeviceCode` no need to query twice.
-        return false;
+        return Passport::deviceCode()->whereKey($codeId)->where('revoked', false)->doesntExist();
     }
 }
