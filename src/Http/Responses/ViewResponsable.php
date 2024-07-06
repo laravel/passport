@@ -29,6 +29,7 @@ trait ViewResponsable
     public function __construct($view)
     {
         $this->view = $view;
+        $this->parameters = [];
     }
 
     /**

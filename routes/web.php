@@ -17,6 +17,7 @@ Route::post('/device/code', [
 Route::get('/device', [
     'uses' => 'DeviceAuthorizationController@userCode',
     'as' => 'device',
+    'middleware' => 'web',
 ]);
 
 Route::get('/authorize', [
