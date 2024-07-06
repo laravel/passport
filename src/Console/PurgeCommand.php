@@ -41,6 +41,7 @@ class PurgeCommand extends Command
             Passport::token()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
+            Passport::deviceCode()->where('revoked', 1)->orWhereDate('expires_at', '<', $expired)->delete();
 
             $this->option('hours')
                 ? $this->components->info('Purged revoked items and items expired for more than '.$this->option('hours').' hours.')
@@ -49,12 +50,14 @@ class PurgeCommand extends Command
             Passport::token()->where('revoked', 1)->delete();
             Passport::authCode()->where('revoked', 1)->delete();
             Passport::refreshToken()->where('revoked', 1)->delete();
+            Passport::deviceCode()->where('revoked', 1)->delete();
 
             $this->components->info('Purged revoked items.');
         } elseif ($this->option('expired')) {
             Passport::token()->whereDate('expires_at', '<', $expired)->delete();
             Passport::authCode()->whereDate('expires_at', '<', $expired)->delete();
             Passport::refreshToken()->whereDate('expires_at', '<', $expired)->delete();
+            Passport::deviceCode()->whereDate('expires_at', '<', $expired)->delete();
 
             $this->option('hours')
                 ? $this->components->info('Purged items expired for more than '.$this->option('hours').' hours.')
