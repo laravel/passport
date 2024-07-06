@@ -61,8 +61,8 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             $record->client_id,
             $record->scopes,
             ! is_null($record->user_approved_at),
-            $record->last_polled_at,
-            $record->expires_at
+            $record->last_polled_at?->toDateTimeImmutable(),
+            $record->expires_at?->toDateTimeImmutable()
         ) : null;
     }
 

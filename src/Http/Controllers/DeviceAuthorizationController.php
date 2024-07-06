@@ -96,6 +96,8 @@ class DeviceAuthorizationController
         $deviceCode = Passport::deviceCode()
             ->with('client')
             ->where('user_code', $userCode)
+            ->where('expires_at', '>', now())
+            ->where('revoked', false)
             ->first();
 
         if (! $deviceCode) {
