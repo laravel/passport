@@ -3,12 +3,16 @@
 namespace Laravel\Passport\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
-use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
-use Laravel\Passport\Contracts\DeviceCodeViewResponse as DeviceCodeViewResponseContract;
+use Laravel\Passport\Contracts\AuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 
 class SimpleViewResponse implements
-    AuthorizationViewResponseContract,
-    DeviceCodeViewResponseContract
+    AuthorizationViewResponse,
+    DeviceAuthorizationViewResponse,
+    DeviceAuthorizationResultViewResponse,
+    DeviceUserCodeViewResponse
 {
     /**
      * The name of the view or the callable used to generate the view.

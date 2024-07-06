@@ -7,7 +7,9 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
-use Laravel\Passport\Contracts\DeviceCodeViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
@@ -646,22 +648,40 @@ class Passport
      */
     public static function authorizationView($view)
     {
-        app()->singleton(AuthorizationViewResponse::class, function ($app) use ($view) {
-            return new SimpleViewResponse($view);
-        });
+        app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**
-     * Specify which view should be used as the device code view.
+     * Specify which view should be used as the device authorization view.
      *
      * @param  callable|string  $view
      * @return void
      */
-    public static function deviceCodeView($view)
+    public static function deviceAuthorizationView($view)
     {
-        app()->singleton(DeviceCodeViewResponse::class, function ($app) use ($view) {
-            return new SimpleViewResponse($view);
-        });
+        app()->singleton(DeviceAuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
+    }
+
+    /**
+     * Specify which view should be used as the device authorization result view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function deviceAuthorizationResultView($view)
+    {
+        app()->singleton(DeviceAuthorizationResultViewResponse::class, fn () => new SimpleViewResponse($view));
+    }
+
+    /**
+     * Specify which view should be used as the device user code view.
+     *
+     * @param  callable|string  $view
+     * @return void
+     */
+    public static function deviceUserCodeView($view)
+    {
+        app()->singleton(DeviceUserCodeViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**

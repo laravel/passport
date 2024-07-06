@@ -46,7 +46,17 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
 
     Route::get('/device/authorize', [
         'uses' => 'DeviceAuthorizationController@authorize',
-        'as' => 'device.authorize',
+        'as' => 'device.authorizations.authorize',
+    ]);
+
+    Route::post('/device/authorize', [
+        'uses' => 'DeviceAuthorizationController@approve',
+        'as' => 'device.authorizations.approve',
+    ]);
+
+    Route::delete('/device/authorize', [
+        'uses' => 'DeviceAuthorizationController@deny',
+        'as' => 'device.authorizations.deny',
     ]);
 
     Route::get('/tokens', [

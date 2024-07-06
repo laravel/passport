@@ -4,8 +4,9 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Laravel\Passport\Contracts\AuthorizationViewResponse;
-use Laravel\Passport\Contracts\DeviceCodeViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
 
@@ -21,66 +22,80 @@ class DeviceAuthorizationController
     protected $server;
 
     /**
-     * The authorization view response implementation.
+     * The user code view response implementation.
      *
-     * @var \Laravel\Passport\Contracts\DeviceCodeViewResponse
+     * @var \Laravel\Passport\Contracts\DeviceUserCodeViewResponse
      */
-    protected $deviceCodeViewResponse;
+    protected $deviceUserCodeViewResponse;
 
     /**
      * The authorization view response implementation.
      *
-     * @var \Laravel\Passport\Contracts\AuthorizationViewResponse
+     * @var \Laravel\Passport\Contracts\DeviceAuthorizationViewResponse
      */
-    protected $authorizationViewResponse;
+    protected $deviceAuthorizationViewResponse;
+
+    /**
+     * The authorization result view response implementation.
+     *
+     * @var \Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse
+     */
+    protected $deviceAuthorizationResultViewResponse;
 
     /**
      * Create a new controller instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\Contracts\DeviceCodeViewResponse  $deviceCodeViewResponse
-     * @param  \Laravel\Passport\Contracts\AuthorizationViewResponse  $authorizationViewResponse
+     * @param  \Laravel\Passport\Contracts\DeviceUserCodeViewResponse  $deviceUserCodeViewResponse
+     * @param  \Laravel\Passport\Contracts\DeviceAuthorizationViewResponse  $deviceAuthorizationViewResponse
+     * @param  \Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse  $deviceAuthorizationResultViewResponse
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-                                DeviceCodeViewResponse $deviceCodeViewResponse,
-                                AuthorizationViewResponse $authorizationViewResponse)
+                                DeviceUserCodeViewResponse $deviceUserCodeViewResponse,
+                                DeviceAuthorizationViewResponse $deviceAuthorizationViewResponse,
+                                DeviceAuthorizationResultViewResponse $deviceAuthorizationResultViewResponse)
     {
         $this->server = $server;
-        $this->deviceCodeViewResponse = $deviceCodeViewResponse;
-        $this->authorizationViewResponse = $authorizationViewResponse;
+        $this->deviceUserCodeViewResponse = $deviceUserCodeViewResponse;
+        $this->deviceAuthorizationViewResponse = $deviceAuthorizationViewResponse;
+        $this->deviceAuthorizationResultViewResponse = $deviceAuthorizationResultViewResponse;
     }
 
     /**
-     * Show the form for entering user code.
+     * Show the form for entering the user code.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\DeviceCodeViewResponse
+     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\DeviceUserCodeViewResponse
      */
     public function userCode(Request $request)
     {
         if ($userCode = $request->query('user_code')) {
-            return to_route('passport.device.authorize', [
+            return to_route('passport.device.authorizations.authorize', [
                 'user_code' => $userCode,
             ]);
         }
 
-        return $this->deviceCodeViewResponse->withParameters([
+        return $this->deviceUserCodeViewResponse->withParameters([
             'request' => $request,
         ]);
     }
 
     /**
-     * Authorize a client to access the user's account.
+     * Authorize a device to access the user's account.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\AuthorizationViewResponse
+     * @return \Illuminate\Http\RedirectResponse|\Laravel\Passport\Contracts\DeviceAuthorizationViewResponse
      */
     public function authorize(Request $request)
     {
+        if (! $userCode = $request->query('user_code')) {
+            return to_route('passport.device');
+        }
+
         $deviceCode = Passport::deviceCode()
             ->with('client')
-            ->where('user_code', $userCode = $request->query('user_code'))
+            ->where('user_code', $userCode)
             ->first();
 
         if (! $deviceCode) {
@@ -94,7 +109,7 @@ class DeviceAuthorizationController
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('deviceCode', $deviceCode->getKey());
 
-        return $this->authorizationViewResponse->withParameters([
+        return $this->deviceAuthorizationViewResponse->withParameters([
             'client' => $deviceCode->client,
             'user' => $request->user(),
             'scopes' => Passport::scopesFor($deviceCode->scopes),
@@ -104,12 +119,10 @@ class DeviceAuthorizationController
     }
 
     /**
-     * Approve the authorization request.
+     * Approve the device authorization request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     *
-     * @throws \Laravel\Passport\Exceptions\OAuthServerException
+     * @return \Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse
      */
     public function approve(Request $request)
     {
@@ -119,16 +132,17 @@ class DeviceAuthorizationController
             true
         ));
 
-        return 'approved';
+        return $this->deviceAuthorizationResultViewResponse->withParameters([
+            'request' => $request,
+            'approved' => true,
+        ]);
     }
 
     /**
-     * Deny the authorization request.
+     * Deny the device authorization request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     *
-     * @throws \Laravel\Passport\Exceptions\OAuthServerException
+     * @return \Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse
      */
     public function deny(Request $request)
     {
@@ -138,6 +152,9 @@ class DeviceAuthorizationController
             false
         ));
 
-        return 'denied';
+        return $this->deviceAuthorizationResultViewResponse->withParameters([
+            'request' => $request,
+            'approved' => false,
+        ]);
     }
 }

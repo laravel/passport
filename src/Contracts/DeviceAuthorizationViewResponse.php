@@ -4,7 +4,7 @@ namespace Laravel\Passport\Contracts;
 
 use Illuminate\Contracts\Support\Responsable;
 
-interface DeviceCodeViewResponse extends Responsable
+interface DeviceAuthorizationViewResponse extends Responsable
 {
     /**
      * Specify the parameters that should be passed to the view.

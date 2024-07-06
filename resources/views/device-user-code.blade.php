@@ -10,7 +10,7 @@
                     <div class="card-body">
                         {{ __('Enter the code displayed on your device.') }}
 
-                        <form method="get" action="{{ route('passport.device.authorize') }}">
+                        <form method="get" action="{{ route('passport.device.authorizations.authorize') }}">
                             <div class="row mb-3">
                                 <label for="user-code" class="col-md-4 col-form-label text-md-end">{{ __('Code') }}</label>
 

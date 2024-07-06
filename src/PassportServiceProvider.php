@@ -138,7 +138,9 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerGuard();
 
         Passport::authorizationView('passport::authorize');
-        Passport::deviceCodeView('passport::device');
+        Passport::deviceAuthorizationView('passport::device-authorize');
+        Passport::deviceAuthorizationResultView('passport::device-authorize-result');
+        Passport::deviceUserCodeView('passport::device-user-code');
     }
 
     /**
