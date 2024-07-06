@@ -65,7 +65,9 @@ class DeviceAuthorizationController
             ]);
         }
 
-        return $this->deviceCodeViewResponse;
+        return $this->deviceCodeViewResponse->withParameters([
+            'request' => $request,
+        ]);
     }
 
     /**
