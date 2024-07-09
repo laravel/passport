@@ -3,7 +3,16 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Authorize({ userName, userEmail, clientId, clientName, scopes, state, authToken, promptLoginUrl }) {
+export default function Authorize({
+    userName,
+    userEmail,
+    clientId,
+    clientName,
+    scopes,
+    state,
+    authToken,
+    promptLoginUrl,
+}) {
     const { post, processing, transform } = useForm({
         state: state,
         client_id: clientId,
@@ -29,10 +38,12 @@ export default function Authorize({ userName, userEmail, clientId, clientName, s
 
     return (
         <GuestLayout>
-            <Head title="Authorization Request"/>
+            <Head title="Authorization Request" />
 
             <div className="mb-4 text-gray-600 text-center">
-                <p><strong>{userName}</strong></p>
+                <p>
+                    <strong>{userName}</strong>
+                </p>
                 <p className="text-sm">{userEmail}</p>
             </div>
 
@@ -45,16 +56,16 @@ export default function Authorize({ userName, userEmail, clientId, clientName, s
                     <p className="pb-1">This application will be able to:</p>
 
                     <ul className="list-inside list-disc">
-                        {scopes.map(scope => <li>{scope.description}</li>)}
+                        {scopes.map((scope) => (
+                            <li>{scope.description}</li>
+                        ))}
                     </ul>
                 </div>
             )}
 
             <div className="flex flex-row-reverse gap-3 mt-4 flex-wrap items-center">
                 <form onSubmit={approve}>
-                    <PrimaryButton disabled={processing}>
-                        Authorize
-                    </PrimaryButton>
+                    <PrimaryButton disabled={processing}>Authorize</PrimaryButton>
                 </form>
 
                 <form onSubmit={deny}>
