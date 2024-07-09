@@ -88,7 +88,7 @@ export default function Authorize({
                     href={promptLoginUrl}
                     className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
-                    Sign in with a different account
+                    Log into another account
                 </Link>
             </div>
         </GuestLayout>
