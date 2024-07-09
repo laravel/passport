@@ -39,33 +39,18 @@ class PurgeCommand extends Command
             : false;
 
         Passport::token()->where(function (Builder $query) use ($revoked, $expired) {
-            $query->when($revoked, function ($query) {
-                $query->orWhere('revoked', true);
-            });
-
-            $query->when($expired, function ($query, $expired) {
-                $query->orWhere('expires_at', '<', $expired);
-            });
+            $query->when($revoked, fn (Builder $query) => $query->orWhere('revoked', true));
+            $query->when($expired, fn (Builder $query) => $query->orWhere('expires_at', '<', $expired));
         })->delete();
 
         Passport::authCode()->where(function (Builder $query) use ($revoked, $expired) {
-            $query->when($revoked, function ($query) {
-                $query->orWhere('revoked', true);
-            });
-
-            $query->when($expired, function ($query, $expired) {
-                $query->orWhere('expires_at', '<', $expired);
-            });
+            $query->when($revoked, fn (Builder $query) => $query->orWhere('revoked', true));
+            $query->when($expired, fn (Builder $query) => $query->orWhere('expires_at', '<', $expired));
         })->delete();
 
         Passport::refreshToken()->where(function (Builder $query) use ($revoked, $expired) {
-            $query->when($revoked, function ($query) {
-                $query->orWhere('revoked', true);
-            });
-
-            $query->when($expired, function ($query, $expired) {
-                $query->orWhere('expires_at', '<', $expired);
-            });
+            $query->when($revoked, fn (Builder $query) => $query->orWhere('revoked', true));
+            $query->when($expired, fn (Builder $query) => $query->orWhere('expires_at', '<', $expired));
         })->delete();
 
         $this->components->info(sprintf('Purged %s.', implode(' and ', array_filter([
