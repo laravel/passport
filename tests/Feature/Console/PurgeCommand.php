@@ -23,7 +23,7 @@ class PurgeCommand extends TestCase
         $this->assertSame([
             'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
-            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')'
+            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
         ], array_column($query, 'query'));
     }
 
@@ -37,7 +37,7 @@ class PurgeCommand extends TestCase
         $this->assertSame([
             'delete from "oauth_access_tokens" where ("revoked" = 1)',
             'delete from "oauth_auth_codes" where ("revoked" = 1)',
-            'delete from "oauth_refresh_tokens" where ("revoked" = 1)'
+            'delete from "oauth_refresh_tokens" where ("revoked" = 1)',
         ], array_column($query, 'query'));
     }
 
@@ -53,7 +53,7 @@ class PurgeCommand extends TestCase
         $this->assertSame([
             'delete from "oauth_access_tokens" where ("expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_auth_codes" where ("expires_at" < \'2000-01-01 00:00:00\')',
-            'delete from "oauth_refresh_tokens" where ("expires_at" < \'2000-01-01 00:00:00\')'
+            'delete from "oauth_refresh_tokens" where ("expires_at" < \'2000-01-01 00:00:00\')',
         ], array_column($query, 'query'));
     }
 
@@ -69,7 +69,7 @@ class PurgeCommand extends TestCase
         $this->assertSame([
             'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
-            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')'
+            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
         ], array_column($query, 'query'));
     }
 
@@ -86,7 +86,7 @@ class PurgeCommand extends TestCase
         $this->assertSame([
             'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
-            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')'
+            'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
         ], array_column($query, 'query'));
     }
 }
