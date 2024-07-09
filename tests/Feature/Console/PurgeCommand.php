@@ -17,7 +17,7 @@ class PurgeCommand extends TestCase
 
         $query = DB::pretend(function () {
             $this->artisan('passport:purge')
-                ->expectsOutputToContain('Purged revoked items and items expired 1 week ago.');
+                ->expectsOutputToContain('Purged revoked items and items expired for more than 1 week.');
         });
 
         $this->assertSame([
@@ -47,7 +47,7 @@ class PurgeCommand extends TestCase
 
         $query = DB::pretend(function () {
             $this->artisan('passport:purge', ['--expired' => true])
-                ->expectsOutputToContain('Purged items expired 1 week ago.');
+                ->expectsOutputToContain('Purged items expired for more than 1 week.');
         });
 
         $this->assertSame([
@@ -63,7 +63,7 @@ class PurgeCommand extends TestCase
 
         $query = DB::pretend(function () {
             $this->artisan('passport:purge', ['--revoked' => true, '--expired' => true])
-                ->expectsOutputToContain('Purged revoked items and items expired 1 week ago.');
+                ->expectsOutputToContain('Purged revoked items and items expired for more than 1 week.');
         });
 
         $this->assertSame([
@@ -80,7 +80,7 @@ class PurgeCommand extends TestCase
 
         $query = DB::pretend(function () {
             $this->artisan('passport:purge', ['--hours' => 2])
-                ->expectsOutputToContain('Purged revoked items and items expired 2 hours ago.');
+                ->expectsOutputToContain('Purged revoked items and items expired for more than 2 hours.');
         });
 
         $this->assertSame([

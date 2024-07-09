@@ -70,7 +70,7 @@ class PurgeCommand extends Command
 
         $this->components->info(sprintf('Purged %s.', implode(' and ', array_filter([
             $revoked ? 'revoked items' : null,
-            $expired ? "items expired {$expired->diffForHumans()}" : null,
+            $expired ? "items expired for more than {$expired->longAbsoluteDiffForHumans()}" : null,
         ]))));
     }
 }
