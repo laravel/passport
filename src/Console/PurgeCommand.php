@@ -38,10 +38,9 @@ class PurgeCommand extends Command
             ? Carbon::now()->subHours($this->option('hours'))
             : false;
 
-        $constraint = function (Builder $query) use ($revoked, $expired) {
-            $query->when($revoked, fn () => $query->orWhere('revoked', true))
-                ->when($expired, fn () => $query->orWhere('expires_at', '<', $expired));
-        };
+        $constraint = fn (Builder $query) => $query
+            ->when($revoked, fn () => $query->orWhere('revoked', true))
+            ->when($expired, fn () => $query->orWhere('expires_at', '<', $expired));
 
         Passport::token()->where($constraint)->delete();
         Passport::authCode()->where($constraint)->delete();
