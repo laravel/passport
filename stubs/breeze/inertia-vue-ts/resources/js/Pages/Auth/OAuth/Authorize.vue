@@ -1,0 +1,75 @@
+<script setup lang="ts">
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+
+const props = defineProps<{
+    userName: string;
+    userEmail: string;
+    clientId: string;
+    clientName: string;
+    scopes: { description: string }[];
+    state: string;
+    authToken: string;
+    promptLoginUrl: string;
+}>();
+
+const form = useForm({
+    state: props.state,
+    client_id: props.clientId,
+    auth_token: props.authToken,
+});
+
+const approve = () => {
+    form.post(route('passport.authorizations.approve'));
+};
+const deny = () => {
+    form.transform(data => ({
+        ...data,
+        _method: 'delete',
+    })).post(route('passport.authorizations.deny'));
+};
+</script>
+
+<template>
+    <GuestLayout>
+        <Head title="Authorization Request" />
+
+        <div class="mb-4 text-gray-600 text-center">
+            <p><strong>{{ userName }}</strong></p>
+            <p class="text-sm">{{ userEmail }}</p>
+        </div>
+
+        <div class="mb-4 text-sm text-gray-600">
+            <strong>{{ clientName }}</strong> is requesting permission to access your account.
+        </div>
+
+        <div v-if="scopes.length" class="mb-4 text-sm text-gray-600">
+            <p class="pb-1">This application will be able to:</p>
+
+            <ul class="list-inside list-disc">
+                <li v-for="scope in scopes">{{ scope.description }}</li>
+            </ul>
+        </div>
+
+        <div class="flex flex-row-reverse gap-3 mt-4 flex-wrap items-center">
+            <form @submit.prevent="approve">
+                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Authorize
+                </PrimaryButton>
+            </form>
+
+            <form @submit.prevent="deny">
+                <SecondaryButton type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    Decline
+                </SecondaryButton>
+            </form>
+
+            <Link :href="promptLoginUrl"
+                  class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
+                Sign in with a different account
+            </Link>
+        </div>
+    </GuestLayout>
+</template>
