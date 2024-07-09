@@ -73,7 +73,6 @@ class PurgeCommand extends TestCase
         ], array_column($query, 'query'));
     }
 
-
     public function test_it_can_purge_tokens_by_hours()
     {
         $this->travelTo(Carbon::create(2000, 1, 1, 2));
