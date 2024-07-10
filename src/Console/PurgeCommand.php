@@ -34,6 +34,7 @@ class PurgeCommand extends Command
     public function handle()
     {
         $revoked = $this->option('revoked') || ! $this->option('expired');
+
         $expired = $this->option('expired') || ! $this->option('revoked')
             ? Carbon::now()->subHours($this->option('hours'))
             : false;
