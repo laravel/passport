@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
@@ -53,7 +54,7 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
         config([
             'auth.providers.admins' => ['driver' => 'eloquent', 'model' => AdminProviderStub::class],
             'auth.guards.api-admins' => ['driver' => 'passport', 'provider' => 'admins'],
-            'auth.providers.customers' => ['driver' => 'database', 'table' => 'customer_provider_stubs'],
+            'auth.providers.customers' => ['driver' => 'eloquent', 'model' => CustomerProviderStub::class],
             'auth.guards.api-customers' => ['driver' => 'passport', 'provider' => 'customers'],
             'passport.personal_access_client' => ['id' => $client->getKey(), 'secret' => $client->plainSecret],
             'passport.personal_access_client.admins' => ['id' => $adminClient->getKey(), 'secret' => $adminClient->plainSecret],
@@ -80,6 +81,21 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $customerToken);
         $this->assertSame($customerClient->getKey(), $customerToken->token->client_id);
         $this->assertSame($customer->getAuthIdentifier(), $customerToken->token->user_id);
+
+        DB::enableQueryLog();
+        $userTokens = $user->tokens()->pluck('id')->all();
+        $adminTokens = $admin->tokens()->pluck('id')->all();
+        $customerTokens = $customer->tokens()->pluck('id')->all();
+        DB::disableQueryLog();
+
+        $queries = DB::getRawQueryLog();
+        $this->assertStringContainsString('and ("provider" is null or "provider" = \'users\')', $queries[0]['raw_query']);
+        $this->assertStringContainsString('and ("provider" = \'admins\')', $queries[1]['raw_query']);
+        $this->assertStringContainsString('and ("provider" = \'customers\')', $queries[2]['raw_query']);
+
+        $this->assertEquals([$userToken->token->id], $userTokens);
+        $this->assertEquals([$adminToken->token->id], $adminTokens);
+        $this->assertEquals([$customerToken->token->id], $customerTokens);
     }
 }
 
@@ -87,18 +103,12 @@ class AdminProviderStub extends Authenticatable
 {
     use HasApiTokens;
 
-    public function getAuthIdentifier()
-    {
-        return 'foo';
-    }
+    protected $attributes = ['id' => 1];
 }
 
 class CustomerProviderStub extends Authenticatable
 {
     use HasApiTokens;
 
-    public function getAuthIdentifier()
-    {
-        return 3;
-    }
+    protected $attributes = ['id' => 3];
 }
