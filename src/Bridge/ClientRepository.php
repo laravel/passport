@@ -71,8 +71,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function handlesGrant(ClientModel $record, string $grantType): bool
     {
-        return $record->hasGrantType($grantType) &&
-            (! in_array($grantType, ['personal_access', 'client_credentials']) || $record->confidential());
+        return $record->hasGrantType($grantType);
     }
 
     /**

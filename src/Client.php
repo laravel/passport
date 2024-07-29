@@ -170,6 +170,10 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
+        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
+            return true;
+        }
+
         $scopes = Passport::$withInheritedScopes
             ? $this->resolveInheritedScopes($scope)
             : [$scope];

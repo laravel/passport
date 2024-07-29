@@ -31,11 +31,10 @@ class ClientFactory extends Factory
         return [
             'user_id' => null,
             'name' => $this->faker->company(),
-            'grant_types' => [],
-            'scopes' => [],
+            'secret' => Str::random(40),
             'redirect_uris' => [$this->faker->url()],
             'provider' => null,
-            'secret' => Str::random(40),
+            'grant_types' => [],
             'revoked' => false,
         ];
     }

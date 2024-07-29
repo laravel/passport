@@ -80,7 +80,6 @@ class ClientRepository
      *
      * @param  string[]  $redirectUris
      * @param  string[]  $grantTypes
-     * @param  string[]  $scopes
      */
     protected function create(
         string $name,
@@ -88,14 +87,12 @@ class ClientRepository
         array $redirectUris = [],
         ?string $provider = null,
         ?string $userId = null,
-        bool $confidential = true,
-        array $scopes = ['*']
+        bool $confidential = true
     ): Client {
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
             'grant_types' => $grantTypes,
-            'scopes' => $scopes,
             'redirect_uris' => $redirectUris,
             'provider' => $provider,
             'secret' => $confidential ? Str::random(40) : null,
@@ -110,9 +107,9 @@ class ClientRepository
     /**
      * Store a new personal access token client.
      */
-    public function createPersonalAccessGrantClient(string $name): Client
+    public function createPersonalAccessGrantClient(string $name, ?string $provider = null): Client
     {
-        return $this->create($name, ['personal_access']);
+        return $this->create($name, ['personal_access'], [], $provider);
     }
 
     /**
@@ -168,7 +165,8 @@ class ClientRepository
     public function update(Client $client, $name, $redirectUris)
     {
         $client->forceFill([
-            'name' => $name, 'redirect_uris' => $redirectUris,
+            'name' => $name,
+            'redirect_uris' => $redirectUris,
         ])->save();
 
         return $client;

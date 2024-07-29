@@ -15,11 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->string('name');
-            $table->text('grant_types');
-            $table->text('scopes');
-            $table->text('redirect_uris');
-            $table->string('provider')->nullable();
             $table->string('secret')->nullable();
+            $table->string('provider')->nullable();
+            $table->text('redirect_uris');
+            $table->text('grant_types');
             $table->boolean('revoked');
             $table->timestamps();
         });

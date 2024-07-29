@@ -25,7 +25,7 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create(['scopes' => ['foo', 'bar']]);
+        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
 
         config([
             'passport.personal_access_client.id' => $client->getKey(),

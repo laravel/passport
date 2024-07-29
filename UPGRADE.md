@@ -65,14 +65,13 @@ In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$pers
 
 PR: https://github.com/laravel/passport/pull/1744
 
-The `oauth_clients` table now requires `grant_types`, `scopes` and `redirect_uris` columns as JSON array and `personal_access_client` and `password_client` columns are removed:
+The `oauth_clients` table now requires `grant_types` and `redirect_uris` columns as JSON array and `redirect`, `personal_access_client`, and `password_client` columns are removed:
 
 ```php
 Schema::table('oauth_clients', function (Blueprint $table) {
-    $table->after('name', function (Blueprint $table) {
-        $table->text('grant_types');
-        $table->text('scopes');
+    $table->after('provider', function (Blueprint $table) {
         $table->text('redirect_uris');
+        $table->text('grant_types');
     });
 });
 
@@ -81,12 +80,9 @@ foreach (Passport::client()->cursor() as $client) {
         'grant_types' => match (true) {
             (bool) $client->personal_access_client => ['personal_access'],
             (bool) $client->password_client => ['password', 'refresh_token'],
-            empty($client->secret) && ! empty($client->redirect) => ['authorization_code', 'implicit', 'refresh_token'],
             ! empty($client->secret) && empty($client->redirect) => ['client_credentials'],
-            ! empty($client->secret) && ! empty($client->redirect) => ['authorization_code', 'implicit', 'refresh_token', 'client_credentials'],
-            default => [],
+            default => ['authorization_code', 'implicit', 'refresh_token'],
         },
-        'scopes' => ['*'],
         'redirect_uris' => explode(',', $client->redirect),
     ])->save());
 }

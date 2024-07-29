@@ -19,7 +19,7 @@ class ClientCommand extends Command
             {--personal : Create a personal access token client}
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
-            {--implicit : Create a implicit grant client}
+            {--implicit : Create an implicit grant client}
             {--public : Create a public client (Auth code grant type only) }
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
@@ -63,11 +63,16 @@ class ClientCommand extends Command
     protected function createPersonalAccessClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the personal access client?',
-            config('app.name').' Personal Access Client'
+            'What should we name the client?',
+            config('app.name').' Personal Access Grant Client'
         );
 
-        $client = $clients->createPersonalAccessGrantClient($name);
+        $provider = $this->option('provider') ?: $this->choice(
+            'Which user provider should this client use to retrieve users?',
+            array_keys(config('auth.providers')),
+        );
+
+        $client = $clients->createPersonalAccessGrantClient($name, $provider);
 
         $this->components->info('Personal access client created successfully.');
 
@@ -87,15 +92,13 @@ class ClientCommand extends Command
     protected function createPasswordClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the password grant client?',
+            'What should we name the client?',
             config('app.name').' Password Grant Client'
         );
 
-        $providers = array_keys(config('auth.providers'));
-
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
-            $providers,
+            array_keys(config('auth.providers')),
         );
 
         $client = $clients->createPasswordGrantClient($name, $provider);
@@ -157,10 +160,6 @@ class ClientCommand extends Command
      */
     protected function createAuthCodeClient(ClientRepository $clients)
     {
-        $userId = $this->option('user_id') ?: $this->ask(
-            'Which user ID should the client be assigned to? (Optional)'
-        );
-
         $name = $this->option('name') ?: $this->ask(
             'What should we name the client?'
         );
@@ -174,7 +173,6 @@ class ClientCommand extends Command
             $name,
             explode(',', $redirect),
             ! $this->option('public'),
-            $userId
         );
 
         $this->components->info('New client created successfully.');

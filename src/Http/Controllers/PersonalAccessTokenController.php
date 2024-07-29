@@ -61,7 +61,7 @@ class PersonalAccessTokenController
     public function store(Request $request)
     {
         $this->validation->make($request->all(), [
-            'name' => 'required|max:255',
+            'name' => 'required|max:191',
             'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
         ])->validate();
 

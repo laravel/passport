@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
-use Laravel\Passport\Http\Rules\UriRule;
+use Laravel\Passport\Http\Rules\RedirectRule;
 
 class ClientController
 {
@@ -25,18 +25,28 @@ class ClientController
     protected $validation;
 
     /**
+     * The redirect validation rule.
+     *
+     * @var \Laravel\Passport\Http\Rules\RedirectRule
+     */
+    protected $redirectRule;
+
+    /**
      * Create a client controller instance.
      *
      * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Illuminate\Contracts\Validation\Factory  $validation
+     * @param  \Laravel\Passport\Http\Rules\RedirectRule  $redirectRule
      * @return void
      */
     public function __construct(
         ClientRepository $clients,
         ValidationFactory $validation,
+        RedirectRule $redirectRule
     ) {
         $this->clients = $clients;
         $this->validation = $validation;
+        $this->redirectRule = $redirectRule;
     }
 
     /**
@@ -61,15 +71,14 @@ class ClientController
     public function store(Request $request)
     {
         $this->validation->make($request->all(), [
-            'name' => 'required|max:255',
-            'redirect_uris' => 'required|array|min:1',
-            'redirect_uris.*' => ['required', new UriRule],
+            'name' => 'required|max:191',
+            'redirect' => ['required', $this->redirectRule],
             'confidential' => 'boolean',
         ])->validate();
 
         $client = $this->clients->createAuthorizationCodeGrantClient(
             $request->name,
-            $request->redirect_uris,
+            explode(',', $request->redirect),
             (bool) $request->input('confidential', true),
             $request->user()->getAuthIdentifier(),
         );
@@ -95,13 +104,12 @@ class ClientController
         }
 
         $this->validation->make($request->all(), [
-            'name' => 'required|max:255',
-            'redirect_uris' => 'required|array|min:1',
-            'redirect_uris.*' => ['required', new UriRule],
+            'name' => 'required|max:191',
+            'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
         return $this->clients->update(
-            $client, $request->name, $request->redirect_uris
+            $client, $request->name, explode(',', $request->redirect)
         );
     }
 
