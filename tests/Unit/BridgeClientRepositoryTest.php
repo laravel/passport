@@ -64,11 +64,11 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_can_validate_client_for_client_credentials_grant()
     {
         $client = $this->clientModelRepository->findActive(1);
-        $client->grant_types[] = 'personal_access';
+        $client->grant_types = ['client_credentials'];
 
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
         $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'client_credentials'));
-        $this->assertTrue($this->repository->validateClient(1, 'secret', 'authorization_code'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'authorization_code'));
     }
 
     public function test_password_grant_is_permitted()
@@ -117,7 +117,7 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_personal_access_grant_is_permitted()
     {
         $client = $this->clientModelRepository->findActive(1);
-        $client->grant_types[] = 'personal_access';
+        $client->grant_types = ['personal_access'];
 
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'personal_access'));
     }
@@ -127,9 +127,9 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertFalse($this->repository->validateClient(1, 'secret', 'personal_access'));
     }
 
-    public function test_client_credentials_grant_is_permitted()
+    public function test_client_credentials_grant_is_prevented()
     {
-        $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'client_credentials'));
     }
 
     public function test_grant_types_allows_request()
@@ -175,7 +175,7 @@ class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 
     public $secret = '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG';
 
-    public $provider = null;
+    public $grant_types = ['authorization_code', 'refresh_token'];
 
-    public $grant_types = ['authorization_code', 'client_credentials', 'refresh_token'];
+    public $provider = null;
 }

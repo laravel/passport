@@ -33,7 +33,7 @@ class ClientFactory extends Factory
             'name' => $this->faker->company(),
             'secret' => Str::random(40),
             'redirect_uris' => [$this->faker->url()],
-            'grant_types' => [],
+            'grant_types' => ['authorization_code', 'refresh_token'],
             'revoked' => false,
         ];
     }
