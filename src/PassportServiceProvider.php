@@ -58,7 +58,7 @@ class PassportServiceProvider extends ServiceProvider
                     'scopes' => $params['scopes'],
                     'state' => $params['request']->state,
                     'authToken' => $params['authToken'],
-                    'promptLoginUrl' => $params['request']->fullUrlWithQuery(['prompt' => 'login'])
+                    'promptLoginUrl' => $params['request']->fullUrlWithQuery(['prompt' => 'login']),
                 ]);
             });
         } else {
