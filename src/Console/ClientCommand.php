@@ -23,8 +23,7 @@ class ClientCommand extends Command
             {--public : Create a public client (Auth code grant type only) }
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
-            {--redirect_uri= : The URI to redirect to after authorization }
-            {--user_id= : The user ID the client should be assigned to }';
+            {--redirect_uri= : The URI to redirect to after authorization }';
 
     /**
      * The console command description.

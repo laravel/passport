@@ -93,9 +93,9 @@ class ClientRepository
             'user_id' => $userId,
             'name' => $name,
             'secret' => $confidential ? Str::random(40) : null,
-            'grant_types' => $grantTypes,
-            'redirect_uris' => $redirectUris,
             'provider' => $provider,
+            'redirect_uris' => $redirectUris,
+            'grant_types' => $grantTypes,
             'revoked' => false,
         ]);
 

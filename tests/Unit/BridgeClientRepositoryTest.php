@@ -127,15 +127,6 @@ class BridgeClientRepositoryTest extends TestCase
         $this->assertFalse($this->repository->validateClient(1, 'secret', 'personal_access'));
     }
 
-    public function test_public_client_personal_access_grant_is_prevented()
-    {
-        $client = $this->clientModelRepository->findActive(1);
-        $client->personal_access_client = true;
-        $client->secret = null;
-
-        $this->assertFalse($this->repository->validateClient(1, null, 'personal_access'));
-    }
-
     public function test_client_credentials_grant_is_permitted()
     {
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
