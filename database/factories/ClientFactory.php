@@ -60,8 +60,7 @@ class ClientFactory extends Factory
     public function asPersonalAccessTokenClient()
     {
         return $this->state([
-            'personal_access_client' => true,
-            'password_client' => false,
+            'grant_types' => ['personal_access'],
         ]);
     }
 
