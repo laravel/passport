@@ -170,10 +170,6 @@ class Client extends Model
      */
     public function hasScope($scope)
     {
-        if (in_array('*', $this->scopes)) {
-            return true;
-        }
-
         $scopes = Passport::$withInheritedScopes
             ? $this->resolveInheritedScopes($scope)
             : [$scope];
