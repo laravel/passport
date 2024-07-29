@@ -25,7 +25,7 @@ class BridgeScopeRepositoryTest extends TestCase
         ]);
 
         $client = Mockery::mock(ClientModel::class)->makePartial();
-        $client->scopes = ['*'];
+        $client->scopes = ['scope-1'];
 
         $clients = Mockery::mock(ClientRepository::class);
         $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);

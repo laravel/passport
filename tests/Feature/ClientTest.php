@@ -38,14 +38,6 @@ final class ClientTest extends TestCase
         $this->assertTrue($client->hasScope('foo'));
     }
 
-    public function testScopesWhenClientHasAny(): void
-    {
-        $client = new Client(['scopes' => ['*']]);
-        $client->exists = true;
-
-        $this->assertTrue($client->hasScope('foo'));
-    }
-
     public function testGrantTypesWhenClientDoesNotHaveGrantType(): void
     {
         $client = new Client(['grant_types' => ['bar']]);
