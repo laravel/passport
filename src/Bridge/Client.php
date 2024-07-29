@@ -29,7 +29,7 @@ class Client implements ClientEntityInterface
 
         $this->name = $name;
         $this->isConfidential = $isConfidential;
-        $this->redirectUri = is_array($redirectUri) ? $redirectUri : explode(',', $redirectUri);;
+        $this->redirectUri = is_array($redirectUri) ? $redirectUri : explode(',', $redirectUri);
         $this->provider = $provider;
     }
 }

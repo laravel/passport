@@ -92,10 +92,10 @@ class ClientRepository
         $client = Passport::client()->forceFill([
             'user_id' => $userId,
             'name' => $name,
+            'secret' => $confidential ? Str::random(40) : null,
             'grant_types' => $grantTypes,
             'redirect_uris' => $redirectUris,
             'provider' => $provider,
-            'secret' => $confidential ? Str::random(40) : null,
             'revoked' => false,
         ]);
 
@@ -157,19 +157,14 @@ class ClientRepository
     /**
      * Update the given client.
      *
-     * @param  \Laravel\Passport\Client  $client
-     * @param  string  $name
      * @param  string[]  $redirectUris
-     * @return \Laravel\Passport\Client
      */
-    public function update(Client $client, $name, $redirectUris)
+    public function update(Client $client, string $name, array $redirectUris): bool
     {
-        $client->forceFill([
+        return $client->forceFill([
             'name' => $name,
             'redirect_uris' => $redirectUris,
         ])->save();
-
-        return $client;
     }
 
     /**
