@@ -7,6 +7,8 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Contracts\CreatesClients;
+use Laravel\Passport\Contracts\UpdatesClients;
 use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
@@ -204,12 +206,40 @@ class Passport
     /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
+     * @deprecated Use defaultScopes.
+     *
      * @param  array|string  $scope
      * @return void
      */
     public static function setDefaultScope($scope)
     {
         static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
+    }
+
+    /**
+     * Set or get the default scopes.
+     *
+     * @param  string[]|string|null  $scopes
+     * @return string[]
+     */
+    public static function defaultScopes(array|string|null $scopes = null): array
+    {
+        if (! is_null($scopes)) {
+            static::$defaultScope = is_array($scopes) ? implode(' ', $scopes) : $scopes;
+        }
+
+        return explode(' ', static::$defaultScope);
+    }
+
+    /**
+     * Return the scopes in the given list that are actually defined scopes for the application.
+     *
+     * @param  string[]  $scopes
+     * @return string[]
+     */
+    public static function validScopes(array $scopes): array
+    {
+        return array_values(array_unique(array_intersect($scopes, array_keys(static::$scopes))));
     }
 
     /**
@@ -610,6 +640,28 @@ class Passport
         app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
             return new AuthorizationViewResponse($view);
         });
+    }
+
+    /**
+     * Register a class / callback that should be used to create clients.
+     *
+     * @param  string  $class
+     * @return void
+     */
+    public static function createClientsUsing(string $class): void
+    {
+        app()->singleton(CreatesClients::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to update clients.
+     *
+     * @param  string  $class
+     * @return void
+     */
+    public static function updateClientsUsing(string $class): void
+    {
+        app()->singleton(UpdatesClients::class, $class);
     }
 
     /**

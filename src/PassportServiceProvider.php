@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Actions\CreateClient;
+use Laravel\Passport\Actions\UpdateClient;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
@@ -38,11 +40,30 @@ class PassportServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerRoutes();
-        $this->registerResources();
         $this->registerPublishing();
         $this->registerCommands();
 
         $this->deleteCookieOnLogout();
+
+        Passport::createClientsUsing(CreateClient::class);
+        Passport::updateClientsUsing(UpdateClient::class);
+
+        if (class_exists(\Inertia\Inertia::class)) {
+            Passport::authorizationView(function ($params) {
+                return \Inertia\Inertia::render('Auth/OAuth/Authorize', [
+                    'userName' => $params['user']->name,
+                    'userEmail' => $params['user']->email,
+                    'clientId' => $params['client']->getKey(),
+                    'clientName' => $params['client']->name,
+                    'scopes' => $params['scopes'],
+                    'state' => $params['request']->state,
+                    'authToken' => $params['authToken'],
+                    'promptLoginUrl' => $params['request']->fullUrlWithQuery(['prompt' => 'login'])
+                ]);
+            });
+        } else {
+            Passport::authorizationView('auth.oauth.authorize');
+        }
     }
 
     /**
@@ -64,16 +85,6 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the Passport resources.
-     *
-     * @return void
-     */
-    protected function registerResources()
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
-    }
-
-    /**
      * Register the package's publishable resources.
      *
      * @return void
@@ -88,10 +99,6 @@ class PassportServiceProvider extends ServiceProvider
             $this->{$publishesMigrationsMethod}([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'passport-migrations');
-
-            $this->publishes([
-                __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
-            ], 'passport-views');
 
             $this->publishes([
                 __DIR__.'/../config/passport.php' => config_path('passport.php'),
@@ -134,8 +141,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
-
-        Passport::authorizationView('passport::authorize');
     }
 
     /**
