@@ -108,9 +108,11 @@ class ClientController
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
-        return $this->clients->update(
+        $this->clients->update(
             $client, $request->name, explode(',', $request->redirect)
         );
+
+        return $client;
     }
 
     /**

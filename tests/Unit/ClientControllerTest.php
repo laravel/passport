@@ -126,8 +126,8 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('update')->once()->with(
-            m::type(Client::class), 'client name', ['http://localhost']
-        )->andReturn('response');
+            $client, 'client name', ['http://localhost']
+        )->andReturn(true);
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -145,7 +145,7 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertSame('response', $controller->update($request, 1));
+        $this->assertSame($client, $controller->update($request, 1));
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user()
