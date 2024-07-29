@@ -68,11 +68,13 @@ class Token extends Model
     /**
      * Get the user that the token belongs to.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
-        $provider = config('auth.guards.api.provider');
+        $provider = $this->client->provider ?: config('auth.guards.api.provider');
 
         $model = config('auth.providers.'.$provider.'.model');
 

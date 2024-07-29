@@ -65,10 +65,10 @@ class PersonalAccessTokenFactory
      * @param  mixed  $userId
      * @param  string  $name
      * @param  string[]  $scopes
-     * @param  string|null  $provider
+     * @param  string  $provider
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, string $name, array $scopes = [], ?string $provider = null)
+    public function make($userId, string $name, array $scopes, string $provider)
     {
         $response = $this->dispatchRequestToAuthorizationServer(
             $this->createRequest($userId, $scopes, $provider)
@@ -91,14 +91,12 @@ class PersonalAccessTokenFactory
      *
      * @param  mixed  $userId
      * @param  string[]  $scopes
-     * @param  string|null  $provider
+     * @param  string  $provider
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($userId, array $scopes, ?string $provider)
+    protected function createRequest($userId, array $scopes, string $provider)
     {
-        $config = $provider
-            ? config("passport.personal_access_client.$provider", config('passport.personal_access_client'))
-            : config('passport.personal_access_client');
+        $config = config("passport.personal_access_client.$provider", config('passport.personal_access_client'));
 
         $client = isset($config['id']) ? $this->clients->findActive($config['id']) : null;
 
