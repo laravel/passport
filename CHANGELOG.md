@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.2.0...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.2.1...12.x)
+
+## [v12.2.1](https://github.com/laravel/passport/compare/v12.2.0...v12.2.1) - 2024-07-10
+
+* [12.x] Fix purge command by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1772
 
 ## [v12.2.0](https://github.com/laravel/passport/compare/v12.1.0...v12.2.0) - 2024-04-17
 

@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Container\Container;
+use LogicException;
 
 trait HasApiTokens
 {
@@ -30,7 +31,18 @@ trait HasApiTokens
      */
     public function tokens()
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')->orderBy('created_at', 'desc');
+        return $this->hasMany(Passport::tokenModel(), 'user_id')
+            ->where(function ($query) {
+                $query->whereHas('client', function ($query) {
+                    $query->where(function ($query) {
+                        $provider = $this->getProvider();
+
+                        $query->when($provider === config('auth.guards.api.provider'), function ($query) {
+                            $query->orWhereNull('provider');
+                        })->orWhere('provider', $provider);
+                    });
+                });
+            });
     }
 
     /**
@@ -64,8 +76,24 @@ trait HasApiTokens
     public function createToken($name, array $scopes = [])
     {
         return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
-            $this->getKey(), $name, $scopes
+            $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
         );
+    }
+
+    /**
+     * Get the user provider name.
+     */
+    public function getProvider(): string
+    {
+        $providers = collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all();
+
+        foreach (config('auth.providers') as $provider => $config) {
+            if (in_array($provider, $providers) && $config['driver'] === 'eloquent' && is_a($this, $config['model'])) {
+                return $provider;
+            }
+        }
+
+        throw new LogicException('Unable to determine authentication provider for this model from configuration.');
     }
 
     /**

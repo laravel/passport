@@ -36,8 +36,6 @@ class ApproveAuthorizationController
      */
     public function approve(Request $request)
     {
-        $this->assertValidAuthToken($request);
-
         $authRequest = $this->getAuthRequestFromSession($request);
 
         $authRequest->setAuthorizationApproved(true);

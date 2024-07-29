@@ -22,6 +22,19 @@ PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
 
+### Identify Clients by UUIDs
+
+PR: https://github.com/laravel/passport/pull/1764
+
+By default, Passport now uses UUIDs to identify clients. You may keep using incremental integer IDs by setting `Passport::$clientUuids` to `false` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+
+    public function boot(): void
+    {
+        Passport::$clientUuids = false;
+    }
+
+As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
+
 ### Client Secrets Hashed by Default
 
 PR: https://github.com/laravel/passport/pull/1745

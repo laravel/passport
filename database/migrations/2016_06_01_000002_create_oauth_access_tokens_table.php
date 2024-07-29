@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('oauth_access_tokens', function (Blueprint $table) {
             $table->char('id', 80)->primary();
             $table->foreignId('user_id')->nullable()->index();
-            $table->foreignId('client_id');
+            $table->foreignUuid('client_id');
             $table->string('name')->nullable();
             $table->text('scopes')->nullable();
             $table->boolean('revoked');

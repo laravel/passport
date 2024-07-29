@@ -145,7 +145,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
         $this->assertInstanceOf(Token::class, $token);
         $this->assertFalse($token->revoked);
-        $this->assertTrue($token->user->is($user));
+        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
         $this->assertTrue($token->client->is($client));
         $this->assertNull($token->name);
         $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
@@ -268,6 +268,49 @@ class AccessTokenControllerTest extends PassportTestCase
 
         $this->assertArrayHasKey('id_token', $decodedResponse);
         $this->assertSame('foo_bar_open_id_token', $decodedResponse['id_token']);
+    }
+
+    public function testPersonalAccessTokenRequestIsDisabled()
+    {
+        $user = UserFactory::new()->create([
+            'email' => 'foo@gmail.com',
+            'password' => $this->app->make(Hasher::class)->make('foobar123'),
+        ]);
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
+
+        config([
+            'passport.personal_access_client.id' => $client->getKey(),
+            'passport.personal_access_client.secret' => $client->plainSecret,
+        ]);
+
+        $response = $this->post(
+            '/oauth/token',
+            [
+                'grant_type' => 'personal_access',
+                'client_id' => $client->getKey(),
+                'client_secret' => $client->plainSecret,
+                'user_id' => $user->getKey(),
+                'scope' => '',
+            ]
+        );
+
+        $response->assertStatus(400);
+
+        $decodedResponse = $response->decodeResponseJson()->json();
+
+        $this->assertArrayNotHasKey('token_type', $decodedResponse);
+        $this->assertArrayNotHasKey('expires_in', $decodedResponse);
+        $this->assertArrayNotHasKey('access_token', $decodedResponse);
+
+        $this->assertArrayHasKey('error', $decodedResponse);
+        $this->assertSame('unsupported_grant_type', $decodedResponse['error']);
+        $this->assertArrayHasKey('error_description', $decodedResponse);
+
+        $token = $user->createToken('test');
+
+        $this->assertInstanceOf(\Laravel\Passport\PersonalAccessTokenResult::class, $token);
     }
 }
 

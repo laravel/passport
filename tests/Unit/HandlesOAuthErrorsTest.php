@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
@@ -48,9 +47,10 @@ class HandlesOAuthErrorsTest extends TestCase
 
         $this->assertInstanceOf(OAuthServerException::class, $e);
         $this->assertSame('Error', $e->getMessage());
+        $this->assertSame(1, $e->getCode());
         $this->assertInstanceOf(LeagueException::class, $e->getPrevious());
 
-        $response = $e->render(new Request);
+        $response = $e->getResponse();
 
         $this->assertJsonStringEqualsJsonString(
             '{"error":"fatal","error_description":"Error"}',

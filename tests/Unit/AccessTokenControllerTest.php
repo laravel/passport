@@ -4,7 +4,6 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use Mockery as m;
@@ -23,8 +22,9 @@ class AccessTokenControllerTest extends TestCase
     public function test_a_token_can_be_issued()
     {
         $request = m::mock(ServerRequestInterface::class);
+        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
+
         $response = m::type(ResponseInterface::class);
-        $tokens = m::mock(TokenRepository::class);
 
         $psrResponse = new Response();
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
@@ -34,25 +34,26 @@ class AccessTokenControllerTest extends TestCase
             ->with($request, $response)
             ->andReturn($psrResponse);
 
-        $controller = new AccessTokenController($server, $tokens);
+        $controller = new AccessTokenController($server);
 
         $this->assertSame('{"access_token":"access-token"}', $controller->issueToken($request)->getContent());
     }
 
     public function test_exceptions_are_handled()
     {
-        $tokens = m::mock(TokenRepository::class);
+        $request = m::mock(ServerRequestInterface::class);
+        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
 
         $server = m::mock(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(
-            m::type(ServerRequestInterface::class), m::type(ResponseInterface::class)
+            $request, m::type(ResponseInterface::class)
         )->andThrow(LeagueException::invalidCredentials());
 
-        $controller = new AccessTokenController($server, $tokens);
+        $controller = new AccessTokenController($server);
 
         $this->expectException(OAuthServerException::class);
 
-        $controller->issueToken(m::mock(ServerRequestInterface::class));
+        $controller->issueToken($request);
     }
 }
 

@@ -126,14 +126,11 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
-        Passport::setClientUuids($this->app->make(Config::class)->get('passport.client_uuids', false));
-
         $this->app->when(AuthorizationController::class)
                 ->needs(StatefulGuard::class)
                 ->give(fn () => Auth::guard(config('passport.guard', null)));
 
         $this->registerAuthorizationServer();
-        $this->registerClientRepository();
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
@@ -265,20 +262,6 @@ class PassportServiceProvider extends ServiceProvider
             app('encrypter')->getKey(),
             Passport::$authorizationServerResponseType
         );
-    }
-
-    /**
-     * Register the client repository.
-     *
-     * @return void
-     */
-    protected function registerClientRepository()
-    {
-        $this->app->singleton(ClientRepository::class, function ($container) {
-            $config = $container->make('config')->get('passport.personal_access_client');
-
-            return new ClientRepository($config['id'] ?? null, $config['secret'] ?? null);
-        });
     }
 
     /**

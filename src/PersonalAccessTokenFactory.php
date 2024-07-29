@@ -7,6 +7,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 class PersonalAccessTokenFactory
 {
@@ -63,13 +64,14 @@ class PersonalAccessTokenFactory
      *
      * @param  mixed  $userId
      * @param  string  $name
-     * @param  array  $scopes
+     * @param  string[]  $scopes
+     * @param  string  $provider
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [])
+    public function make($userId, string $name, array $scopes, string $provider)
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($userId, $scopes)
+            $this->createRequest($userId, $scopes, $provider)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
@@ -88,15 +90,26 @@ class PersonalAccessTokenFactory
      * Create a request instance for the given client.
      *
      * @param  mixed  $userId
-     * @param  array  $scopes
+     * @param  string[]  $scopes
+     * @param  string  $provider
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($userId, array $scopes)
+    protected function createRequest($userId, array $scopes, string $provider)
     {
+        $config = config("passport.personal_access_client.$provider", config('passport.personal_access_client'));
+
+        $client = isset($config['id']) ? $this->clients->findActive($config['id']) : null;
+
+        if (! $client || ($client->provider && $client->provider !== $provider)) {
+            throw new RuntimeException(
+                'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
+            );
+        }
+
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
-            'client_id' => $this->clients->getPersonalAccessClientId(),
-            'client_secret' => $this->clients->getPersonalAccessClientSecret(),
+            'client_id' => $config['id'] ?? null,
+            'client_secret' => $config['secret'] ?? null,
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),
         ]);
