@@ -228,7 +228,7 @@ class Passport
             static::$defaultScope = is_array($scopes) ? implode(' ', $scopes) : $scopes;
         }
 
-        return explode(' ', static::$defaultScope);
+        return static::$defaultScope ? explode(' ', static::$defaultScope) : [];
     }
 
     /**

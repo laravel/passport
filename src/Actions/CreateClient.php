@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\CreatesClients;
+use Laravel\Passport\Http\Rules\UriRule;
 
 class CreateClient implements CreatesClients
 {
@@ -26,9 +27,9 @@ class CreateClient implements CreatesClients
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'redirect_uri' => ['required_without:redirect_uris', 'string', 'url'],
+            'redirect_uri' => ['required_without:redirect_uris', 'string', new UriRule],
             'redirect_uris' => ['required_without:redirect_uri', 'list'],
-            'redirect_uris.*' => ['required', 'string', 'url'],
+            'redirect_uris.*' => ['required', 'string', new UriRule],
             'confidential' => 'boolean',
         ])->validateWithBag('createClient');
 

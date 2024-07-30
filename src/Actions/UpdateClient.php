@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\UpdatesClients;
+use Laravel\Passport\Http\Rules\UriRule;
 
 class UpdateClient implements UpdatesClients
 {
@@ -25,9 +26,9 @@ class UpdateClient implements UpdatesClients
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'redirect_uri' => ['required_without:redirect_uris', 'string', 'url'],
+            'redirect_uri' => ['required_without:redirect_uris', 'string', new UriRule],
             'redirect_uris' => ['required_without:redirect_uri', 'list'],
-            'redirect_uris.*' => ['required', 'string', 'url'],
+            'redirect_uris.*' => ['required', 'string', new UriRule],
         ])->validateWithBag('updateClient');
 
         $this->clients->update(
