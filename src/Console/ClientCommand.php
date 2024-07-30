@@ -169,9 +169,7 @@ class ClientCommand extends Command
         );
 
         $client = $clients->createAuthorizationCodeGrantClient(
-            $name,
-            explode(',', $redirect),
-            ! $this->option('public'),
+            $name, explode(',', $redirect), ! $this->option('public'),
         );
 
         $this->components->info('New client created successfully.');
