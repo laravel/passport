@@ -138,7 +138,8 @@ class ClientCommand extends Command
     protected function createImplicitClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
+            'What should we name the client?',
+            config('app.name').' Implicit Grant Client'
         );
 
         $redirect = $this->option('redirect_uri') ?: $this->ask(
@@ -162,7 +163,8 @@ class ClientCommand extends Command
     protected function createAuthCodeClient(ClientRepository $clients)
     {
         $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?'
+            'What should we name the client?',
+            config('app.name')
         );
 
         $redirect = $this->option('redirect_uri') ?: $this->ask(
