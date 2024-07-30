@@ -20,10 +20,10 @@ class ClientCommand extends Command
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
             {--implicit : Create an implicit grant client}
-            {--public : Create a public client (Auth code grant type only) }
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
-            {--redirect_uri= : The URI to redirect to after authorization }';
+            {--redirect_uri= : The URI to redirect to after authorization }
+            {--public : Create a public client (Auth code grant type only) }';
 
     /**
      * The console command description.
