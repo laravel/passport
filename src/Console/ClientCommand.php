@@ -69,6 +69,7 @@ class ClientCommand extends Command
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
             array_keys(config('auth.providers')),
+            config('auth.guards.api.provider')
         );
 
         $client = $clients->createPersonalAccessGrantClient($name, $provider);
@@ -98,6 +99,7 @@ class ClientCommand extends Command
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
             array_keys(config('auth.providers')),
+            config('auth.guards.api.provider')
         );
 
         $client = $clients->createPasswordGrantClient($name, $provider);
