@@ -6,10 +6,10 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Contracts\CreatesClients;
 use Laravel\Passport\Contracts\UpdatesClients;
-use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
+use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -637,9 +637,7 @@ class Passport
      */
     public static function authorizationView($view)
     {
-        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
-            return new AuthorizationViewResponse($view);
-        });
+        app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**

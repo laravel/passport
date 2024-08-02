@@ -3,21 +3,21 @@
 namespace Laravel\Passport\Http\Responses;
 
 use Illuminate\Contracts\Support\Responsable;
-use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
+use Laravel\Passport\Contracts\AuthorizationViewResponse;
 
-class AuthorizationViewResponse implements AuthorizationViewResponseContract
+class SimpleViewResponse implements AuthorizationViewResponse
 {
     /**
      * The name of the view or the callable used to generate the view.
      *
-     * @var string
+     * @var callable|string
      */
     protected $view;
 
     /**
      * An array of arguments that may be passed to the view response and used in the view.
      *
-     * @var string
+     * @var array
      */
     protected $parameters;
 
