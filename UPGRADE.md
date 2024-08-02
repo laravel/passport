@@ -77,7 +77,7 @@ Schema::table('oauth_clients', function (Blueprint $table) {
 
 foreach (Passport::client()->cursor() as $client) {
     Model::withoutTimestamps(fn () => $client->forceFill([
-        'redirect_uris' => explode(',', $client->redirect),
+        'redirect_uris' => $client->redirect ? explode(',', $client->redirect) : [],
         'grant_types' => match (true) {
             $client->personal_access_client => ['personal_access'],
             $client->password_client => ['password', 'refresh_token'],
