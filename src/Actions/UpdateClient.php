@@ -26,17 +26,14 @@ class UpdateClient implements UpdatesClients
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'redirect_uri' => ['required_without:redirect_uris', 'string', new UriRule],
-            'redirect_uris' => ['required_without:redirect_uri', 'list'],
+            'redirect_uris' => ['required', 'list'],
             'redirect_uris.*' => ['required', 'string', new UriRule],
         ])->validateWithBag('updateClient');
 
         $this->clients->update(
             $client,
             $input['name'],
-            isset($input['redirect_uris'])
-                ? implode(',', $input['redirect_uris'])
-                : $input['redirect_uri'],
+            implode(',', $input['redirect_uris'])
         );
     }
 }

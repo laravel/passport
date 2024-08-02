@@ -27,8 +27,7 @@ class CreateClient implements CreatesClients
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'redirect_uri' => ['required_without:redirect_uris', 'string', new UriRule],
-            'redirect_uris' => ['required_without:redirect_uri', 'list'],
+            'redirect_uris' => ['required', 'list'],
             'redirect_uris.*' => ['required', 'string', new UriRule],
             'confidential' => 'boolean',
         ])->validateWithBag('createClient');
@@ -36,9 +35,7 @@ class CreateClient implements CreatesClients
         return $this->clients->create(
             Auth::user()->getAuthIdentifier(),
             $input['name'],
-            isset($input['redirect_uris'])
-                ? implode(',', $input['redirect_uris'])
-                : $input['redirect_uri'],
+            implode(',', $input['redirect_uris']),
             null,
             false,
             false,
