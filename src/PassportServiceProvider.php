@@ -47,23 +47,6 @@ class PassportServiceProvider extends ServiceProvider
 
         Passport::createClientsUsing(CreateClient::class);
         Passport::updateClientsUsing(UpdateClient::class);
-
-        if (class_exists(\Inertia\Inertia::class)) {
-            Passport::authorizationView(function ($params) {
-                return \Inertia\Inertia::render('Auth/OAuth/Authorize', [
-                    'userName' => $params['user']->name,
-                    'userEmail' => $params['user']->email,
-                    'clientId' => $params['client']->getKey(),
-                    'clientName' => $params['client']->name,
-                    'scopes' => $params['scopes'],
-                    'state' => $params['request']->state,
-                    'authToken' => $params['authToken'],
-                    'promptLoginUrl' => $params['request']->fullUrlWithQuery(['prompt' => 'login']),
-                ]);
-            });
-        } else {
-            Passport::authorizationView('auth.oauth.authorize');
-        }
     }
 
     /**
