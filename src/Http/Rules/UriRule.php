@@ -2,18 +2,27 @@
 
 namespace Laravel\Passport\Http\Rules;
 
-use Closure;
-use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Contracts\Validation\Rule;
 
-class UriRule implements ValidationRule
+class UriRule implements Rule
 {
     /**
      * {@inheritdoc}
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function passes($attribute, $value): bool
     {
-        if (! filter_var($value, FILTER_VALIDATE_URL)) {
-            $fail('The :attribute must be valid URI.');
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return true;
         }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function message(): string
+    {
+        return 'The :attribute must be valid URI.';
     }
 }
