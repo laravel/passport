@@ -80,7 +80,7 @@ class ClientController
             $request->name,
             explode(',', $request->redirect),
             (bool) $request->input('confidential', true),
-            $request->user()->getAuthIdentifier(),
+            $request->user(),
         );
 
         $client->secret = $client->plainSecret;

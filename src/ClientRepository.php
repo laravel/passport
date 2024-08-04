@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 
 class ClientRepository
@@ -86,22 +87,33 @@ class ClientRepository
         array $grantTypes,
         array $redirectUris = [],
         ?string $provider = null,
-        ?string $userId = null,
-        bool $confidential = true
+        bool $confidential = true,
+        ?Authenticatable $user = null
     ): Client {
-        $client = Passport::client()->forceFill([
-            'user_id' => $userId,
+        $client = Passport::client();
+        $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+
+        $attributes = [
             'name' => $name,
             'secret' => $confidential ? Str::random(40) : null,
             'provider' => $provider,
-            'redirect_uris' => $redirectUris,
-            'grant_types' => $grantTypes,
             'revoked' => false,
-        ]);
+            ...(in_array('redirect_uris', $columns) ? [
+                'redirect_uris' => $redirectUris
+            ] : [
+                'redirect' => implode(',', $redirectUris)
+            ]),
+            ...(in_array('grant_types', $columns) ? [
+                'grant_types' => $grantTypes
+            ] : [
+                'personal_access_client' => in_array('personal_access', $grantTypes),
+                'password_client' => in_array('password', $grantTypes),
+            ]),
+        ];
 
-        $client->save();
-
-        return $client;
+        return $user
+            ? $user->clients()->forceCreate($attributes)
+            : $client->forceCreate($attributes);
     }
 
     /**
@@ -147,10 +159,10 @@ class ClientRepository
         string $name,
         array $redirectUris,
         bool $confidential = true,
-        ?string $userId = null
+        ?Authenticatable $user = null
     ): Client {
         return $this->create(
-            $name, ['authorization_code', 'refresh_token'], $redirectUris, null, $userId, $confidential
+            $name, ['authorization_code', 'refresh_token'], $redirectUris, null, $confidential, $user
         );
     }
 

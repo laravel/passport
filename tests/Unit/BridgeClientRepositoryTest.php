@@ -74,7 +74,7 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_password_grant_is_permitted()
     {
         $client = $this->clientModelRepository->findActive(1);
-        $client->grant_types[] = 'password';
+        $client->grant_types = ['password'];
 
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'password'));
     }
@@ -82,7 +82,7 @@ class BridgeClientRepositoryTest extends TestCase
     public function test_public_client_password_grant_is_permitted()
     {
         $client = $this->clientModelRepository->findActive(1);
-        $client->grant_types[] = 'password';
+        $client->grant_types = ['password'];
         $client->secret = null;
 
         $this->assertTrue($this->repository->validateClient(1, null, 'password'));
@@ -169,13 +169,10 @@ class BridgeClientRepositoryTest extends TestCase
 
 class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 {
-    public $name = 'Client';
-
-    public $redirect_uris = ['http://localhost'];
-
-    public $secret = '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG';
-
-    public $grant_types = ['authorization_code', 'refresh_token'];
-
-    public $provider = null;
+    protected $attributes = [
+        'name' => 'Client',
+        'redirect_uris' => '["http://localhost"]',
+        'secret' => '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG',
+        'grant_types' => '["authorization_code","refresh_token"]',
+    ];
 }
