@@ -173,9 +173,15 @@ class ClientRepository
      */
     public function update(Client $client, string $name, array $redirectUris): bool
     {
+        $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+
         return $client->forceFill([
             'name' => $name,
-            'redirect_uris' => $redirectUris,
+            ...(in_array('redirect_uris', $columns) ? [
+                'redirect_uris' => $redirectUris,
+            ] : [
+                'redirect' => implode(',', $redirectUris),
+            ]),
         ])->save();
     }
 
