@@ -165,6 +165,46 @@ class BridgeClientRepositoryTest extends TestCase
     {
         $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'refresh_token'));
     }
+
+    public function test_without_grant_types()
+    {
+        $client = $this->clientModelRepository->findActive(1);
+        $client->grant_types = null;
+
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
+        $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'client_credentials'));
+
+        $client->personal_access_client = true;
+        $client->password_client = false;
+
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'authorization_code'));
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'personal_access'));
+        $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'personal_access'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'password'));
+
+        $client->personal_access_client = false;
+        $client->password_client = true;
+
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'authorization_code'));
+        $this->assertTrue($this->repository->validateClient(1, 'secret', 'password'));
+        $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'password'));
+        $this->assertFalse($this->repository->validateClient(1, 'secret', 'personal_access'));
+
+        $client->personal_access_client = false;
+        $client->password_client = true;
+        $client->secret = null;
+
+        $this->assertFalse($this->repository->validateClient(1, null, 'client_credentials'));
+        $this->assertTrue($this->repository->validateClient(1, null, 'password'));
+
+        $client->personal_access_client = true;
+        $client->password_client = false;
+        $client->secret = null;
+
+        $this->assertFalse($this->repository->validateClient(1, null, 'personal_access'));
+    }
 }
 
 class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
