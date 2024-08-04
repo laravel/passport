@@ -32,14 +32,11 @@ class CreateClient implements CreatesClients
             'confidential' => 'boolean',
         ])->validateWithBag('createClient');
 
-        return $this->clients->create(
-            Auth::user()->getAuthIdentifier(),
+        return $this->clients->createAuthorizationCodeGrantClient(
             $input['name'],
-            implode(',', $input['redirect_uris']),
-            null,
-            false,
-            false,
-            (bool) ($input['confidential'] ?? false)
+            $input['redirect_uris'],
+            (bool) ($input['confidential'] ?? false),
+            Auth::user()
         );
     }
 }
