@@ -99,12 +99,12 @@ class ClientRepository
             'provider' => $provider,
             'revoked' => false,
             ...(in_array('redirect_uris', $columns) ? [
-                'redirect_uris' => $redirectUris
+                'redirect_uris' => $redirectUris,
             ] : [
-                'redirect' => implode(',', $redirectUris)
+                'redirect' => implode(',', $redirectUris),
             ]),
             ...(in_array('grant_types', $columns) ? [
-                'grant_types' => $grantTypes
+                'grant_types' => $grantTypes,
             ] : [
                 'personal_access_client' => in_array('personal_access', $grantTypes),
                 'password_client' => in_array('password', $grantTypes),

@@ -61,37 +61,6 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
 
 In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
-### Clients Table
-
-PR: https://github.com/laravel/passport/pull/1744
-
-The `oauth_clients` table now requires `grant_types` and `redirect_uris` columns as JSON array and `redirect`, `personal_access_client`, and `password_client` columns are removed:
-
-```php
-Schema::table('oauth_clients', function (Blueprint $table) {
-    $table->after('provider', function (Blueprint $table) {
-        $table->text('redirect_uris');
-        $table->text('grant_types');
-    });
-});
-
-foreach (Passport::client()->cursor() as $client) {
-    Model::withoutTimestamps(fn () => $client->forceFill([
-        'redirect_uris' => $client->redirect ? explode(',', $client->redirect) : [],
-        'grant_types' => match (true) {
-            $client->personal_access_client => ['personal_access'],
-            $client->password_client => ['password', 'refresh_token'],
-            $client->secret && ! $client->redirect => ['client_credentials'],
-            default => ['authorization_code', 'refresh_token', 'implicit'],
-        },
-    ])->save());
-}
-
-Schema::table('oauth_clients', function (Blueprint $table) {
-    $table->dropColumn(['redirect', 'personal_access_client', 'password_client']);
-});
-```
-
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
