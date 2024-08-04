@@ -203,16 +203,6 @@ class Client extends Model
     }
 
     /**
-     * Revoke the client instance.
-     *
-     * @return bool
-     */
-    public function revoke()
-    {
-        return $this->forceFill(['revoked' => true])->save();
-    }
-
-    /**
      * Get the columns that should receive a unique identifier.
      *
      * @return array
