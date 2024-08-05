@@ -76,9 +76,11 @@ class ClientController
             'confidential' => 'boolean',
         ])->validate();
 
-        $client = $this->clients->create(
-            $request->user()->getAuthIdentifier(), $request->name, $request->redirect,
-            null, false, false, (bool) $request->input('confidential', true)
+        $client = $this->clients->createAuthorizationCodeGrantClient(
+            $request->name,
+            explode(',', $request->redirect),
+            (bool) $request->input('confidential', true),
+            $request->user(),
         );
 
         $client->secret = $client->plainSecret;
@@ -106,9 +108,11 @@ class ClientController
             'redirect' => ['required', $this->redirectRule],
         ])->validate();
 
-        return $this->clients->update(
-            $client, $request->name, $request->redirect
+        $this->clients->update(
+            $client, $request->name, explode(',', $request->redirect)
         );
+
+        return $client;
     }
 
     /**

@@ -40,7 +40,7 @@ class BridgeAccessTokenRepositoryTest extends TestCase
 
         $events->shouldReceive('dispatch')->once();
 
-        $accessToken = new AccessToken(2, [new Scope('scopes')], new Client('client-id', 'name', 'redirect'));
+        $accessToken = new AccessToken(2, [new Scope('scopes')], new Client('client-id', 'name', ['redirect']));
         $accessToken->setIdentifier(1);
         $accessToken->setExpiryDateTime($expiration);
 
@@ -54,7 +54,7 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $tokenRepository = m::mock(TokenRepository::class);
         $events = m::mock(Dispatcher::class);
         $repository = new AccessTokenRepository($tokenRepository, $events);
-        $client = new Client('client-id', 'name', 'redirect');
+        $client = new Client('client-id', 'name', ['redirect']);
         $scopes = [new Scope('place-orders'), new Scope('check-status')];
         $userIdentifier = 123;
 

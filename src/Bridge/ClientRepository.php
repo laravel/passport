@@ -43,7 +43,7 @@ class ClientRepository implements ClientRepositoryInterface
         return new Client(
             $clientIdentifier,
             $record->name,
-            $record->redirect,
+            $record->redirect_uris,
             $record->confidential(),
             $record->provider
         );
@@ -71,17 +71,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function handlesGrant(ClientModel $record, string $grantType): bool
     {
-        if (! $record->hasGrantType($grantType)) {
-            return false;
-        }
-
-        return match ($grantType) {
-            'authorization_code' => ! $record->firstParty(),
-            'personal_access' => $record->personal_access_client && $record->confidential(),
-            'password' => $record->password_client,
-            'client_credentials' => $record->confidential(),
-            default => true,
-        };
+        return $record->hasGrantType($grantType);
     }
 
     /**
