@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +45,7 @@ class Client extends Model
     protected $casts = [
         'grant_types' => 'array',
         'scopes' => 'array',
+        'redirect_uris' => 'array',
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
         'revoked' => 'bool',
@@ -133,13 +135,29 @@ class Client extends Model
     }
 
     /**
+     * Get the client's redirect URIs.
+     */
+    protected function redirectUris(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value, array $attributes) {
+                if (isset($value)) {
+                    return $this->fromJson($value);
+                }
+
+                return empty($attributes['redirect']) ? [] : explode(',', $attributes['redirect']);
+            },
+        );
+    }
+
+    /**
      * Determine if the client is a "first party" client.
      *
      * @return bool
      */
     public function firstParty()
     {
-        return $this->personal_access_client || $this->password_client;
+        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
     }
 
     /**
@@ -160,11 +178,17 @@ class Client extends Model
      */
     public function hasGrantType($grantType)
     {
-        if (! isset($this->attributes['grant_types']) || ! is_array($this->grant_types)) {
-            return true;
+        if (isset($this->attributes['grant_types']) && is_array($this->grant_types)) {
+            return in_array($grantType, $this->grant_types);
         }
 
-        return in_array($grantType, $this->grant_types);
+        return match ($grantType) {
+            'authorization_code' => ! $this->personal_access_client && ! $this->password_client,
+            'personal_access' => $this->personal_access_client && $this->confidential(),
+            'password' => $this->password_client,
+            'client_credentials' => $this->confidential(),
+            default => true,
+        };
     }
 
     /**

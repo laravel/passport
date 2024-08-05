@@ -52,9 +52,9 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $userTokens = m::mock();
         $client1 = new Client;
-        $client1->personal_access_client = true;
+        $client1->grant_types = ['personal_access'];
         $client2 = new Client;
-        $client2->personal_access_client = false;
+        $client2->grant_types = [];
         $token1->client = $client1;
         $token2->client = $client2;
         $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
