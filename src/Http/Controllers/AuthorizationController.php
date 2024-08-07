@@ -94,7 +94,7 @@ class AuthorizationController
         $client = $clients->find($authRequest->getClient()->getIdentifier());
 
         if ($request->get('prompt') !== 'consent' &&
-            ($client->skipsAuthorization($user, $scopes) || $this->hasConsent($user, $client, $scopes))) {
+            ($client->skipsAuthorization($user, $scopes) || $this->hasGrantedScopes($user, $client, $scopes))) {
             return $this->approveRequest($authRequest, $user);
         }
 
@@ -130,14 +130,14 @@ class AuthorizationController
     }
 
     /**
-     * Determine if the given user has already consented the scopes for the client.
+     * Determine if the given user has already granted the client access to the scopes.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Laravel\Passport\Client  $client
      * @param  array  $scopes
      * @return bool
      */
-    protected function hasConsent($user, $client, $scopes)
+    protected function hasGrantedScopes($user, $client, $scopes)
     {
         return collect($scopes)->pluck('id')
             ->diff($user->tokens()
