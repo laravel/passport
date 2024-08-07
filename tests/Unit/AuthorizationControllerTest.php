@@ -59,9 +59,9 @@ class AuthorizationControllerTest extends TestCase
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
-        $client->shouldReceive('getKey')->andReturn(1);
+        $client->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect());
 
-        $user->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect());
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
             $this->assertEquals($client, $data['client']);
@@ -139,8 +139,7 @@ class AuthorizationControllerTest extends TestCase
 
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
         $client->shouldReceive('getKey')->andReturn(1);
-
-        $user->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect(['scope-1']));
+        $client->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect(['scope-1']));
 
         $this->assertSame('approved', $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients
@@ -276,8 +275,7 @@ class AuthorizationControllerTest extends TestCase
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
         $client->shouldReceive('getKey')->andReturn(1);
-
-        $user->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect());
+        $client->shouldReceive('tokens->where->pluck->flatten')->andReturn(collect());
 
         $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients

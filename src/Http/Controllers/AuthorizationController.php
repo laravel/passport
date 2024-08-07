@@ -140,8 +140,8 @@ class AuthorizationController
     protected function hasGrantedScopes($user, $client, $scopes)
     {
         return collect($scopes)->pluck('id')->diff(
-            $user->tokens()->where([
-                ['client_id', '=', $client->getKey()],
+            $client->tokens()->where([
+                ['user_id', '=', $user->getAuthIdentifier()],
                 ['revoked', '=', false],
                 ['expires_at', '>', Date::now()],
             ])->pluck('scopes')->flatten()
