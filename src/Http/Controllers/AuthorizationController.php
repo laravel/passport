@@ -64,7 +64,6 @@ class AuthorizationController
      * @param  \Psr\Http\Message\ServerRequestInterface  $psrRequest
      * @param  \Illuminate\Http\Request  $request
      * @param  \Laravel\Passport\ClientRepository  $clients
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return \Illuminate\Http\Response|\Laravel\Passport\Contracts\AuthorizationViewResponse
      */
     public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients)
