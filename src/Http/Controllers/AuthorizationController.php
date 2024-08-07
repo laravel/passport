@@ -4,13 +4,13 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Passport;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use Nyholm\Psr7\Response as Psr7Response;
@@ -67,10 +67,7 @@ class AuthorizationController
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @return \Illuminate\Http\Response|\Laravel\Passport\Contracts\AuthorizationViewResponse
      */
-    public function authorize(ServerRequestInterface $psrRequest,
-                              Request $request,
-                              ClientRepository $clients,
-                              TokenRepository $tokens)
+    public function authorize(ServerRequestInterface $psrRequest, Request $request, ClientRepository $clients)
     {
         $authRequest = $this->withErrorHandling(function () use ($psrRequest) {
             return $this->server->validateAuthorizationRequest($psrRequest);
@@ -78,8 +75,8 @@ class AuthorizationController
 
         if ($this->guard->guest()) {
             return $request->get('prompt') === 'none'
-                    ? $this->denyRequest($authRequest)
-                    : $this->promptForLogin($request);
+                ? $this->denyRequest($authRequest)
+                : $this->promptForLogin($request);
         }
 
         if ($request->get('prompt') === 'login' &&
@@ -98,7 +95,7 @@ class AuthorizationController
         $client = $clients->find($authRequest->getClient()->getIdentifier());
 
         if ($request->get('prompt') !== 'consent' &&
-            ($client->skipsAuthorization() || $this->hasValidToken($tokens, $user, $client, $scopes))) {
+            ($client->skipsAuthorization($user, $scopes) || $this->hasConsent($user, $client, $scopes))) {
             return $this->approveRequest($authRequest, $user);
         }
 
@@ -134,19 +131,23 @@ class AuthorizationController
     }
 
     /**
-     * Determine if a valid token exists for the given user, client, and scopes.
+     * Determine if the given user has already consented the scopes for the client.
      *
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  \Laravel\Passport\Client  $client
      * @param  array  $scopes
      * @return bool
      */
-    protected function hasValidToken($tokens, $user, $client, $scopes)
+    protected function hasConsent($user, $client, $scopes)
     {
-        $token = $tokens->findValidToken($user, $client);
-
-        return $token && $token->scopes === collect($scopes)->pluck('id')->all();
+        return collect($scopes)->pluck('id')
+            ->diff($user->tokens()
+                ->where('client_id', $client->getKey())
+                ->where('revoked', false)
+                ->where('expires_at', '>', Date::now())
+                ->pluck('scopes')
+                ->flatten()
+            )->isEmpty();
     }
 
     /**
