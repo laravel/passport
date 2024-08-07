@@ -139,14 +139,13 @@ class AuthorizationController
      */
     protected function hasGrantedScopes($user, $client, $scopes)
     {
-        return collect($scopes)->pluck('id')
-            ->diff($user->tokens()
-                ->where('client_id', $client->getKey())
-                ->where('revoked', false)
-                ->where('expires_at', '>', Date::now())
-                ->pluck('scopes')
-                ->flatten()
-            )->isEmpty();
+        return collect($scopes)->pluck('id')->diff(
+            $user->tokens()->where([
+                ['client_id', '=', $client->getKey()],
+                ['revoked', '=', false],
+                ['expires_at', '>', Date::now()],
+            ])->pluck('scopes')->flatten()
+        )->isEmpty();
     }
 
     /**
