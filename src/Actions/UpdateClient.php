@@ -30,6 +30,10 @@ class UpdateClient implements UpdatesClients
             'redirect_uris.*' => ['required', 'string', new UriRule],
         ])->validateWithBag('updateClient');
 
-        $this->clients->update($client, $input['name'], $input['redirect_uris']);
+        $this->clients->update(
+            $client,
+            $input['name'],
+            $input['redirect_uris']
+        );
     }
 }

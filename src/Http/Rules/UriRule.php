@@ -13,7 +13,7 @@ class UriRule implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! filter_var($value, FILTER_VALIDATE_URL)) {
-            $fail('The :attribute must be valid URI.');
+            $fail('The :attribute field must be a valid URI.');
         }
     }
 }
