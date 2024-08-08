@@ -2,10 +2,15 @@
 
 namespace Laravel\Passport;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class RefreshTokenRepository
 {
     /**
      * Creates a new refresh token.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  array  $attributes
      * @return \Laravel\Passport\RefreshToken
@@ -18,6 +23,8 @@ class RefreshTokenRepository
     /**
      * Gets a refresh token by the given ID.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  string  $id
      * @return \Laravel\Passport\RefreshToken
      */
@@ -28,6 +35,8 @@ class RefreshTokenRepository
 
     /**
      * Stores the given token instance.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  \Laravel\Passport\RefreshToken  $token
      * @return void
@@ -40,6 +49,8 @@ class RefreshTokenRepository
     /**
      * Revokes the refresh token.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  string  $id
      * @return mixed
      */
@@ -51,6 +62,8 @@ class RefreshTokenRepository
     /**
      * Revokes refresh tokens by access token id.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  string  $tokenId
      * @return mixed
      */
@@ -61,6 +74,8 @@ class RefreshTokenRepository
 
     /**
      * Checks if the refresh token has been revoked.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  string  $id
      * @return bool

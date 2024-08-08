@@ -7,6 +7,9 @@ use Illuminate\Http\Response;
 use Laravel\Passport\RefreshTokenRepository;
 use Laravel\Passport\TokenRepository;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class AuthorizedAccessTokenController
 {
     /**

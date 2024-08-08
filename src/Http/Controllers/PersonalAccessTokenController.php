@@ -8,6 +8,9 @@ use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use Laravel\Passport\TokenRepository;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class PersonalAccessTokenController
 {
     /**

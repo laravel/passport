@@ -4,6 +4,9 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Laravel\Passport\Passport;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class ScopeController
 {
     /**

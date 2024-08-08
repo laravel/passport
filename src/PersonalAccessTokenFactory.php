@@ -26,13 +26,6 @@ class PersonalAccessTokenFactory
     protected $clients;
 
     /**
-     * The token repository instance.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $tokens;
-
-    /**
      * The JWT token parser instance.
      *
      * @var \Lcobucci\JWT\Parser
@@ -44,17 +37,14 @@ class PersonalAccessTokenFactory
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
      * @param  \Laravel\Passport\ClientRepository  $clients
-     * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
                                 ClientRepository $clients,
-                                TokenRepository $tokens,
                                 JwtParser $jwt)
     {
         $this->jwt = $jwt;
-        $this->tokens = $tokens;
         $this->server = $server;
         $this->clients = $clients;
     }
@@ -75,10 +65,10 @@ class PersonalAccessTokenFactory
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
-            $this->tokens->save($token->forceFill([
+            $token->forceFill([
                 'user_id' => $userId,
                 'name' => $name,
-            ]));
+            ])->save();
         });
 
         return new PersonalAccessTokenResult(
@@ -136,7 +126,7 @@ class PersonalAccessTokenFactory
      */
     public function findAccessToken(array $response)
     {
-        return $this->tokens->find(
+        return Passport::token()->find(
             $this->jwt->parse($response['access_token'])->claims()->get('jti')
         );
     }

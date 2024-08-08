@@ -8,6 +8,9 @@ use Illuminate\Http\Response;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Rules\RedirectRule;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class ClientController
 {
     /**

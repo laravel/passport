@@ -36,6 +36,8 @@ class ClientRepository
     /**
      * Get a client instance for the given ID and user ID.
      *
+     * @deprecated Use $user->clients()->find()
+     *
      * @param  int|string  $clientId
      * @param  mixed  $userId
      * @return \Laravel\Passport\Client|null
@@ -53,6 +55,8 @@ class ClientRepository
     /**
      * Get the client instances for the given user ID.
      *
+     * @deprecated Use $user->clients()
+     *
      * @param  mixed  $userId
      * @return \Illuminate\Database\Eloquent\Collection
      */
@@ -65,6 +69,8 @@ class ClientRepository
 
     /**
      * Get the active client instances for the given user ID.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  mixed  $userId
      * @return \Illuminate\Database\Eloquent\Collection
@@ -203,6 +209,8 @@ class ClientRepository
     /**
      * Determine if the given client is revoked.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  int|string  $id
      * @return bool
      */
@@ -215,6 +223,8 @@ class ClientRepository
 
     /**
      * Delete the given client.
+     *
+     * @deprecated Will be removed in a future Laravel version.
      *
      * @param  \Laravel\Passport\Client  $client
      * @return void
