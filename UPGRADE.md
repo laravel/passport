@@ -61,6 +61,17 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
 
 In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
+### JSON API Deprecation
+
+PR: https://github.com/laravel/passport/pull/1778
+
+Passport's JSON API has been deprecated in favor of new Jetstream OAuth features. If you wish, you may continue using deprecated JSON API by setting `Passport::$registersJsonApiRoutes` to `true` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+
+    public function boot(): void
+    {
+        Passport::$registersJsonApiRoutes = true;
+    }
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
