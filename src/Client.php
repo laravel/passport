@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -163,9 +164,9 @@ class Client extends Model
     /**
      * Determine if the client should skip the authorization prompt.
      *
-     * @return bool
+     * @param  \Laravel\Passport\Scope[]  $scopes
      */
-    public function skipsAuthorization()
+    public function skipsAuthorization(Authenticatable $user, array $scopes): bool
     {
         return false;
     }
