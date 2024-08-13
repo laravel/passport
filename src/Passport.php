@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -631,33 +632,24 @@ class Passport
 
     /**
      * Register the views for Passport using conventional names under the given namespace.
-     *
-     * @param  string  $namespace
-     * @return void
      */
-    public static function viewNamespace(string $namespace)
+    public static function viewNamespace(string $namespace): void
     {
         static::viewPrefix($namespace.'::');
     }
 
     /**
      * Register the views for Passport using conventional names under the given prefix.
-     *
-     * @param  string  $prefix
-     * @return void
      */
-    public static function viewPrefix(string $prefix)
+    public static function viewPrefix(string $prefix): void
     {
         static::authorizationView($prefix.'authorize');
     }
 
     /**
      * Specify which view should be used as the authorization view.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public static function authorizationView($view)
+    public static function authorizationView(Closure|string $view): void
     {
         app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
@@ -665,8 +657,7 @@ class Passport
     /**
      * Register a class / callback that should be used to create clients.
      *
-     * @param  string  $class
-     * @return void
+     * @param  class-string<\Laravel\Passport\Contracts\CreatesClients>  $class
      */
     public static function createClientsUsing(string $class): void
     {
@@ -676,8 +667,7 @@ class Passport
     /**
      * Register a class / callback that should be used to update clients.
      *
-     * @param  string  $class
-     * @return void
+     * @param  class-string<\Laravel\Passport\Contracts\UpdatesClients>  $class
      */
     public static function updateClientsUsing(string $class): void
     {
