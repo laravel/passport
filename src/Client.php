@@ -154,6 +154,8 @@ class Client extends Model
     /**
      * Determine if the client is a "first party" client.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @return bool
      */
     public function firstParty()
