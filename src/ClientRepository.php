@@ -175,6 +175,8 @@ class ClientRepository
     /**
      * Update the given client.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  string[]  $redirectUris
      */
     public function update(Client $client, string $name, array $redirectUris): bool
