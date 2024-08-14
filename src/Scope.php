@@ -34,11 +34,6 @@ class Scope implements Arrayable, Jsonable
         $this->description = $description;
     }
 
-    public static function make(string $id): ?static
-    {
-        return isset(Passport::$scopes[$id]) ? new static($id, Passport::$scopes[$id]) : null;
-    }
-
     /**
      * Get the instance as an array.
      *
