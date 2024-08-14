@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Passport\Actions\CreateClient;
-use Laravel\Passport\Actions\UpdateClient;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
@@ -44,9 +42,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerCommands();
 
         $this->deleteCookieOnLogout();
-
-        Passport::createClientsUsing(CreateClient::class);
-        Passport::updateClientsUsing(UpdateClient::class);
     }
 
     /**

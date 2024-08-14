@@ -8,8 +8,6 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
-use Laravel\Passport\Contracts\CreatesClients;
-use Laravel\Passport\Contracts\UpdatesClients;
 use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
@@ -652,26 +650,6 @@ class Passport
     public static function authorizationView(Closure|string $view): void
     {
         app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
-    }
-
-    /**
-     * Register a class / callback that should be used to create clients.
-     *
-     * @param  class-string<\Laravel\Passport\Contracts\CreatesClients>  $class
-     */
-    public static function createClientsUsing(string $class): void
-    {
-        app()->singleton(CreatesClients::class, $class);
-    }
-
-    /**
-     * Register a class / callback that should be used to update clients.
-     *
-     * @param  class-string<\Laravel\Passport\Contracts\UpdatesClients>  $class
-     */
-    public static function updateClientsUsing(string $class): void
-    {
-        app()->singleton(UpdatesClients::class, $class);
     }
 
     /**
