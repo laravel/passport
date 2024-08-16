@@ -73,4 +73,14 @@ class ClientFactory extends Factory
             'grant_types' => ['client_credentials'],
         ]);
     }
+
+    /**
+     * Use as a Device Code client.
+     */
+    public function asDeviceCodeClient(): static
+    {
+        return $this->state([
+            'grant_types' => ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'],
+        ]);
+    }
 }

@@ -25,14 +25,14 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
         if ($deviceCodeEntity->isLastPolledAtDirty()) {
-            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->forceFill([
+            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
-            ])->save();
+            ]);
         } elseif ($deviceCodeEntity->isUserDirty()) {
-            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->forceFill([
+            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'user_id' => $deviceCodeEntity->getUserIdentifier(),
                 'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
-            ])->save();
+            ]);
         } else {
             Passport::deviceCode()->forceFill([
                 'id' => $deviceCodeEntity->getIdentifier(),
