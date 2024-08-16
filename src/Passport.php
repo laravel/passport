@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -113,9 +114,9 @@ class Passport
     /**
      * The device code model class name.
      *
-     * @var string
+     * @var class-string<\Laravel\Passport\DeviceCode>
      */
-    public static $deviceCodeModel = 'Laravel\Passport\DeviceCode';
+    public static string $deviceCodeModel = DeviceCode::class;
 
     /**
      * The client model class name.
@@ -493,10 +494,9 @@ class Passport
     /**
      * Set the device code model class name.
      *
-     * @param  string  $deviceCodeModel
-     * @return void
+     * @param  class-string<\Laravel\Passport\DeviceCode>  $deviceCodeModel
      */
-    public static function useDeviceCodeModel($deviceCodeModel)
+    public static function useDeviceCodeModel(string $deviceCodeModel): void
     {
         static::$deviceCodeModel = $deviceCodeModel;
     }
@@ -504,19 +504,17 @@ class Passport
     /**
      * Get the device code model class name.
      *
-     * @return string
+     * @return class-string<\Laravel\Passport\DeviceCode>
      */
-    public static function deviceCodeModel()
+    public static function deviceCodeModel(): string
     {
         return static::$deviceCodeModel;
     }
 
     /**
      * Get a new device code model instance.
-     *
-     * @return \Laravel\Passport\DeviceCode
      */
-    public static function deviceCode()
+    public static function deviceCode(): DeviceCode
     {
         return new static::$deviceCodeModel;
     }
@@ -642,44 +640,32 @@ class Passport
 
     /**
      * Specify which view should be used as the authorization view.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public static function authorizationView($view)
+    public static function authorizationView(Closure|string $view): void
     {
         app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**
      * Specify which view should be used as the device authorization view.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public static function deviceAuthorizationView($view)
+    public static function deviceAuthorizationView(Closure|string $view): void
     {
         app()->singleton(DeviceAuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**
      * Specify which view should be used as the device authorization result view.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public static function deviceAuthorizationResultView($view)
+    public static function deviceAuthorizationResultView(Closure|string $view): void
     {
         app()->singleton(DeviceAuthorizationResultViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**
      * Specify which view should be used as the device user code view.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public static function deviceUserCodeView($view)
+    public static function deviceUserCodeView(Closure|string $view): void
     {
         app()->singleton(DeviceUserCodeViewResponse::class, fn () => new SimpleViewResponse($view));
     }

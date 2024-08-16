@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DeviceCode extends Model
 {
@@ -56,20 +57,16 @@ class DeviceCode extends Model
 
     /**
      * Get the client that owns the authentication code.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function client()
+    public function client(): BelongsTo
     {
         return $this->belongsTo(Passport::clientModel());
     }
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return $this->connection ?? config('passport.connection');
     }
