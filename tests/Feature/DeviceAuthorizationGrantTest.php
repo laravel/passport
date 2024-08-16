@@ -94,9 +94,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $response = $this->actingAs($user, 'web')->get($verificationUriComplete);
         $response->assertRedirect('/oauth/device/authorize?user_code='.$userCode);
-        $response->assertRedirectToRoute('passport.device.authorizations.authorize', [
-            'user_code' => $userCode
-        ]);
+        $response->assertRedirectToRoute('passport.device.authorizations.authorize', ['user_code' => $userCode]);
     }
 
     public function testAuthorizationWithInvalidUserCode()
@@ -120,7 +118,10 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
-        ['device_code' => $deviceCode, 'user_code' => $userCode] = $this->post('/oauth/device/code', [
+        [
+            'device_code' => $deviceCode,
+            'user_code' => $userCode,
+        ] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
             'scope' => 'create read',
         ])->json();
@@ -138,9 +139,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         ['authToken' => $authToken] = $json;
 
-        $response = $this->post('/oauth/device/authorize', [
-            'auth_token' => $authToken,
-        ]);
+        $response = $this->post('/oauth/device/authorize', ['auth_token' => $authToken]);
         $response->assertOk();
         $response->assertSessionMissing(['deviceCode', 'authToken']);
         $json = $response->json();
@@ -167,7 +166,10 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
     {
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
-        ['device_code' => $deviceCode, 'user_code' => $userCode] = $this->post('/oauth/device/code', [
+        [
+            'device_code' => $deviceCode,
+            'user_code' => $userCode,
+        ] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
             'scope' => '',
         ])->json();
@@ -177,9 +179,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         ['authToken' => $authToken] = $this->get('/oauth/device/authorize?user_code='.$userCode)->json();
 
-        $response = $this->delete('/oauth/device/authorize', [
-            'auth_token' => $authToken,
-        ]);
+        $response = $this->delete('/oauth/device/authorize', ['auth_token' => $authToken]);
         $response->assertOk();
         $response->assertSessionMissing(['deviceCode', 'authToken']);
         $json = $response->json();
