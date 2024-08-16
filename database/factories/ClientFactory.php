@@ -32,9 +32,8 @@ class ClientFactory extends Factory
             'user_id' => null,
             'name' => $this->faker->company(),
             'secret' => Str::random(40),
-            'redirect' => $this->faker->url(),
-            'personal_access_client' => false,
-            'password_client' => false,
+            'redirect_uris' => [$this->faker->url()],
+            'grant_types' => ['authorization_code', 'refresh_token'],
             'revoked' => false,
         ];
     }
@@ -47,8 +46,7 @@ class ClientFactory extends Factory
     public function asPasswordClient()
     {
         return $this->state([
-            'personal_access_client' => false,
-            'password_client' => true,
+            'grant_types' => ['password', 'refresh_token'],
         ]);
     }
 
@@ -60,8 +58,7 @@ class ClientFactory extends Factory
     public function asPersonalAccessTokenClient()
     {
         return $this->state([
-            'personal_access_client' => true,
-            'password_client' => false,
+            'grant_types' => ['personal_access'],
         ]);
     }
 
@@ -73,8 +70,7 @@ class ClientFactory extends Factory
     public function asClientCredentials()
     {
         return $this->state([
-            'personal_access_client' => false,
-            'password_client' => false,
+            'grant_types' => ['client_credentials'],
         ]);
     }
 }

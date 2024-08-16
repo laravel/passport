@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
 
 class ClientRepository
@@ -78,75 +79,110 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param  int|null  $userId
-     * @param  string  $name
-     * @param  string  $redirect
-     * @param  string|null  $provider
-     * @param  bool  $personalAccess
-     * @param  bool  $password
-     * @param  bool  $confidential
-     * @return \Laravel\Passport\Client
+     * @param  string[]  $redirectUris
+     * @param  string[]  $grantTypes
      */
-    public function create($userId, $name, $redirect, $provider = null, $personalAccess = false, $password = false, $confidential = true)
-    {
-        $client = Passport::client()->forceFill([
-            'user_id' => $userId,
+    protected function create(
+        string $name,
+        array $grantTypes,
+        array $redirectUris = [],
+        ?string $provider = null,
+        bool $confidential = true,
+        ?Authenticatable $user = null
+    ): Client {
+        $client = Passport::client();
+        $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+
+        $attributes = [
             'name' => $name,
-            'secret' => ($confidential || $personalAccess) ? Str::random(40) : null,
+            'secret' => $confidential ? Str::random(40) : null,
             'provider' => $provider,
-            'redirect' => $redirect,
-            'personal_access_client' => $personalAccess,
-            'password_client' => $password,
             'revoked' => false,
-        ]);
+            ...(in_array('redirect_uris', $columns) ? [
+                'redirect_uris' => $redirectUris,
+            ] : [
+                'redirect' => implode(',', $redirectUris),
+            ]),
+            ...(in_array('grant_types', $columns) ? [
+                'grant_types' => $grantTypes,
+            ] : [
+                'personal_access_client' => in_array('personal_access', $grantTypes),
+                'password_client' => in_array('password', $grantTypes),
+            ]),
+        ];
 
-        $client->save();
-
-        return $client;
+        return $user
+            ? $user->clients()->forceCreate($attributes)
+            : $client->forceCreate($attributes);
     }
 
     /**
      * Store a new personal access token client.
-     *
-     * @param  int|null  $userId
-     * @param  string  $name
-     * @param  string  $redirect
-     * @return \Laravel\Passport\Client
      */
-    public function createPersonalAccessClient($userId, $name, $redirect)
+    public function createPersonalAccessGrantClient(string $name, ?string $provider = null): Client
     {
-        return $this->create($userId, $name, $redirect, null, true);
+        return $this->create($name, ['personal_access'], [], $provider);
     }
 
     /**
      * Store a new password grant client.
-     *
-     * @param  int|null  $userId
-     * @param  string  $name
-     * @param  string  $redirect
-     * @param  string|null  $provider
-     * @return \Laravel\Passport\Client
      */
-    public function createPasswordGrantClient($userId, $name, $redirect, $provider = null)
+    public function createPasswordGrantClient(string $name, ?string $provider = null): Client
     {
-        return $this->create($userId, $name, $redirect, $provider, false, true);
+        return $this->create($name, ['password', 'refresh_token'], [], $provider);
+    }
+
+    /**
+     * Store a new client credentials grant client.
+     */
+    public function createClientCredentialsGrantClient(string $name): Client
+    {
+        return $this->create($name, ['client_credentials']);
+    }
+
+    /**
+     * Store a new implicit grant client.
+     *
+     * @param  string[]  $redirectUris
+     */
+    public function createImplicitGrantClient(string $name, array $redirectUris): Client
+    {
+        return $this->create($name, ['implicit'], $redirectUris);
+    }
+
+    /**
+     * Store a new authorization code grant client.
+     *
+     * @param  string[]  $redirectUris
+     */
+    public function createAuthorizationCodeGrantClient(
+        string $name,
+        array $redirectUris,
+        bool $confidential = true,
+        ?Authenticatable $user = null
+    ): Client {
+        return $this->create(
+            $name, ['authorization_code', 'refresh_token'], $redirectUris, null, $confidential, $user
+        );
     }
 
     /**
      * Update the given client.
      *
-     * @param  \Laravel\Passport\Client  $client
-     * @param  string  $name
-     * @param  string  $redirect
-     * @return \Laravel\Passport\Client
+     * @param  string[]  $redirectUris
      */
-    public function update(Client $client, $name, $redirect)
+    public function update(Client $client, string $name, array $redirectUris): bool
     {
-        $client->forceFill([
-            'name' => $name, 'redirect' => $redirect,
-        ])->save();
+        $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
 
-        return $client;
+        return $client->forceFill([
+            'name' => $name,
+            ...(in_array('redirect_uris', $columns) ? [
+                'redirect_uris' => $redirectUris,
+            ] : [
+                'redirect' => implode(',', $redirectUris),
+            ]),
+        ])->save();
     }
 
     /**

@@ -40,15 +40,14 @@ class ClientControllerTest extends TestCase
     public function test_clients_can_be_stored()
     {
         $clients = m::mock(ClientRepository::class);
+        $user = new ClientControllerFakeUser;
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
-        $request->setUserResolver(function () {
-            return new ClientControllerFakeUser;
-        });
+        $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('create')
+        $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
-            ->with(1, 'client name', 'http://localhost', null, false, false, true)
+            ->with('client name', ['http://localhost'], true, $user)
             ->andReturn($client = new Client);
 
         $redirectRule = m::mock(RedirectRule::class);
@@ -74,19 +73,18 @@ class ClientControllerTest extends TestCase
     public function test_public_clients_can_be_stored()
     {
         $clients = m::mock(ClientRepository::class);
+        $user = new ClientControllerFakeUser;
 
         $request = Request::create(
             '/',
             'GET',
             ['name' => 'client name', 'redirect' => 'http://localhost', 'confidential' => false]
         );
-        $request->setUserResolver(function () {
-            return new ClientControllerFakeUser;
-        });
+        $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('create')
+        $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
-            ->with(1, 'client name', 'http://localhost', null, false, false, false)
+            ->with('client name', ['http://localhost'], false, $user)
             ->andReturn($client = new Client);
 
         $redirectRule = m::mock(RedirectRule::class);
@@ -126,8 +124,8 @@ class ClientControllerTest extends TestCase
         });
 
         $clients->shouldReceive('update')->once()->with(
-            m::type(Client::class), 'client name', 'http://localhost'
-        )->andReturn('response');
+            $client, 'client name', ['http://localhost']
+        )->andReturn(true);
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -145,7 +143,7 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertSame('response', $controller->update($request, 1));
+        $this->assertSame($client, $controller->update($request, 1));
     }
 
     public function test_404_response_if_client_doesnt_belong_to_user()
@@ -229,7 +227,7 @@ class ClientControllerTest extends TestCase
     }
 }
 
-class ClientControllerFakeUser
+class ClientControllerFakeUser extends \Illuminate\Foundation\Auth\User
 {
     public $id = 1;
 
