@@ -8,21 +8,21 @@ Route::post('/token', [
     'middleware' => 'throttle',
 ]);
 
+Route::get('/authorize', [
+    'uses' => 'AuthorizationController@authorize',
+    'as' => 'authorizations.authorize',
+    'middleware' => 'web',
+]);
+
 Route::post('/device/code', [
-    'uses' => 'DeviceCodeController@issueDeviceCode',
+    'uses' => 'DeviceCodeController',
     'as' => 'device.code',
     'middleware' => 'throttle',
 ]);
 
 Route::get('/device', [
-    'uses' => 'DeviceAuthorizationController@userCode',
+    'uses' => 'DeviceUserCodeController',
     'as' => 'device',
-    'middleware' => 'web',
-]);
-
-Route::get('/authorize', [
-    'uses' => 'AuthorizationController@authorize',
-    'as' => 'authorizations.authorize',
     'middleware' => 'web',
 ]);
 
@@ -45,17 +45,17 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
     ]);
 
     Route::get('/device/authorize', [
-        'uses' => 'DeviceAuthorizationController@authorize',
+        'uses' => 'DeviceAuthorizationController',
         'as' => 'device.authorizations.authorize',
     ]);
 
     Route::post('/device/authorize', [
-        'uses' => 'DeviceAuthorizationController@approve',
+        'uses' => 'ApproveDeviceAuthorizationController',
         'as' => 'device.authorizations.approve',
     ]);
 
     Route::delete('/device/authorize', [
-        'uses' => 'DeviceAuthorizationController@deny',
+        'uses' => 'DenyDeviceAuthorizationController',
         'as' => 'device.authorizations.deny',
     ]);
 

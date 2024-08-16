@@ -16,18 +16,14 @@ trait RetrievesDeviceCodeFromSession
      */
     protected function getDeviceCodeFromSession(Request $request): string
     {
-        if ($request->isNotFilled('auth_token') || $request->session()->pull('authToken') !== $request->get('auth_token')) {
+        if ($request->isNotFilled('auth_token') ||
+            $request->session()->pull('authToken') !== $request->get('auth_token')) {
             $request->session()->forget(['authToken', 'deviceCode']);
 
             throw InvalidAuthTokenException::different();
         }
 
-        return tap($request->session()->pull('deviceCode'), function ($deviceCode) {
-            if (! $deviceCode) {
-                throw new Exception('Device code was not present in the session.');
-            }
-
-            return $deviceCode;
-        });
+        return $request->session()->pull('deviceCode')
+            ?? throw new Exception('Device code was not present in the session.');
     }
 }
