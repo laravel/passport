@@ -210,6 +210,7 @@ class BridgeClientRepositoryTest extends TestCase
 class BridgeClientRepositoryTestClientStub extends \Laravel\Passport\Client
 {
     protected $attributes = [
+        'id' => 1,
         'name' => 'Client',
         'redirect_uris' => '["http://localhost"]',
         'secret' => '$2y$10$WgqU4wQpfsARCIQk.nPSOOiNkrMpPVxQiLCFUt8comvQwh1z6WFMG',
