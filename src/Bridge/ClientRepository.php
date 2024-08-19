@@ -73,6 +73,16 @@ class ClientRepository implements ClientRepositoryInterface
     }
 
     /**
+     * Get the personal access client for the given provider.
+     */
+    public function getPersonalAccessClientEntity(string $provider): ?ClientEntityInterface
+    {
+        return $this->fromClientModel(
+            $this->clients->personalAccessClient($provider)
+        );
+    }
+
+    /**
      * Create a new client entity from the given client model instance.
      */
     protected function fromClientModel(ClientModel $model): ClientEntityInterface
@@ -83,16 +93,6 @@ class ClientRepository implements ClientRepositoryInterface
             $model->redirect_uris,
             $model->confidential(),
             $model->provider
-        );
-    }
-
-    /**
-     * Get the personal access client for the given provider.
-     */
-    public function getPersonalAccessClientEntity(string $provider): ?ClientEntityInterface
-    {
-        return $this->fromClientModel(
-            $this->clients->personalAccessClient($provider)
         );
     }
 }
