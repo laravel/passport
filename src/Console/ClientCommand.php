@@ -68,19 +68,13 @@ class ClientCommand extends Command
 
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
-            array_keys(config('auth.providers')),
+            collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
         );
 
-        $client = $clients->createPersonalAccessGrantClient($name, $provider);
+        $clients->createPersonalAccessGrantClient($name, $provider);
 
         $this->components->info('Personal access client created successfully.');
-
-        if (! config('passport.personal_access_client')) {
-            $this->components->info('Next, define the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables using the values below.');
-        }
-
-        $this->outputClientDetails($client);
     }
 
     /**
@@ -98,7 +92,7 @@ class ClientCommand extends Command
 
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
-            array_keys(config('auth.providers')),
+            collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
         );
 

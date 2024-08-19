@@ -5,7 +5,6 @@ namespace Laravel\Passport\Bridge;
 use DateInterval;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
-use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,20 +19,17 @@ class PersonalAccessGrant extends AbstractGrant
         DateInterval $accessTokenTTL
     ): ResponseTypeInterface {
         // Validate request
-        $client = $this->validateClient($request);
-
-        if (! $client->isConfidential()) {
-            $this->getEmitter()->emit(new RequestEvent(RequestEvent::CLIENT_AUTHENTICATION_FAILED, $request));
-
-            throw OAuthServerException::invalidClient($request);
-        }
-
-        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
-        $userIdentifier = $this->getRequestParameter('user_id', $request);
-
-        if (! $userIdentifier) {
+        if (! $userIdentifier = $this->getRequestParameter('user_id', $request)) {
             throw OAuthServerException::invalidRequest('user_id');
         }
+
+        if (! $provider = $this->getRequestParameter('provider', $request)) {
+            throw OAuthServerException::invalidRequest('provider');
+        }
+
+        $client = $this->clientRepository->getPersonalAccessClientEntity($provider);
+
+        $scopes = $this->validateScopes($this->getRequestParameter('scope', $request, $this->defaultScope));
 
         // Finalize the requested scopes
         $scopes = $this->scopeRepository->finalizeScopes(

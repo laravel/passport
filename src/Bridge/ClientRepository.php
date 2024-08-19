@@ -36,17 +36,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        if (! $record) {
-            return null;
-        }
-
-        return new Client(
-            $clientIdentifier,
-            $record->name,
-            $record->redirect_uris,
-            $record->confidential(),
-            $record->provider
-        );
+        return $record ? $this->fromClientModel($record) : null;
     }
 
     /**
@@ -80,5 +70,29 @@ class ClientRepository implements ClientRepositoryInterface
     protected function verifySecret(string $clientSecret, string $storedHash): bool
     {
         return $this->hasher->check($clientSecret, $storedHash);
+    }
+
+    /**
+     * Get the personal access client for the given provider.
+     */
+    public function getPersonalAccessClientEntity(string $provider): ?ClientEntityInterface
+    {
+        return $this->fromClientModel(
+            $this->clients->personalAccessClient($provider)
+        );
+    }
+
+    /**
+     * Create a new client entity from the given client model instance.
+     */
+    protected function fromClientModel(ClientModel $model): ClientEntityInterface
+    {
+        return new Client(
+            $model->getKey(),
+            $model->name,
+            $model->redirect_uris,
+            $model->confidential(),
+            $model->provider
+        );
     }
 }

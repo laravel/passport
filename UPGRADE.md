@@ -53,13 +53,13 @@ When authenticating users via bearer tokens, the `User` model's `token` method n
 
 ### Personal Access Client Table and Model Removal
 
-PR: https://github.com/laravel/passport/pull/1749
+PR: https://github.com/laravel/passport/pull/1749, https://github.com/laravel/passport/pull/1780
 
 Passport's `oauth_personal_access_clients` table has been redundant and unnecessary for several release cycles. Therefore, this release of Passport no longer interacts with this table or its corresponding model. If you wish, you may create a migration that drops this table:
 
     Schema::drop('oauth_personal_access_clients');
 
-In addition, the `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+In addition, the `passport.personal_access_client` configuration value, `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
 ## Upgrading To 12.0 From 11.x
 
