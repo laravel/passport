@@ -59,7 +59,7 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
 
     Schema::drop('oauth_personal_access_clients');
 
-In addition, the `passport.personal_access_client` config property, `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+In addition, the `passport.personal_access_client` configuration value, `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
 ## Upgrading To 12.0 From 11.x
 
