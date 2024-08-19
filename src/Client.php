@@ -13,7 +13,6 @@ use Laravel\Passport\Database\Factories\ClientFactory;
 class Client extends Model
 {
     use HasFactory;
-    use ResolvesInheritedScopes;
 
     /**
      * The database table used by the model.
@@ -190,31 +189,6 @@ class Client extends Model
             'client_credentials' => $this->confidential(),
             default => true,
         };
-    }
-
-    /**
-     * Determine whether the client has the given scope.
-     *
-     * @param  string  $scope
-     * @return bool
-     */
-    public function hasScope($scope)
-    {
-        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
-            return true;
-        }
-
-        $scopes = Passport::$withInheritedScopes
-            ? $this->resolveInheritedScopes($scope)
-            : [$scope];
-
-        foreach ($scopes as $scope) {
-            if (in_array($scope, $this->scopes)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

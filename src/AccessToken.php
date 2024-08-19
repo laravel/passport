@@ -52,21 +52,7 @@ class AccessToken
      */
     public function can(string $scope): bool
     {
-        if (in_array('*', $this->oauth_scopes)) {
-            return true;
-        }
-
-        $scopes = Passport::$withInheritedScopes
-            ? $this->resolveInheritedScopes($scope)
-            : [$scope];
-
-        foreach ($scopes as $scope) {
-            if (array_key_exists($scope, array_flip($this->oauth_scopes))) {
-                return true;
-            }
-        }
-
-        return false;
+        return in_array('*', $this->oauth_scopes) || $this->scopeExists($scope, $this->oauth_scopes);
     }
 
     /**
