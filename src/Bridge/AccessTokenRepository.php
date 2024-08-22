@@ -7,7 +7,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Events\AccessTokenCreated;
 use Laravel\Passport\Events\AccessTokenRevoked;
 use Laravel\Passport\Passport;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -15,11 +14,6 @@ use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     use FormatsScopesForStorage;
-
-    /**
-     * The token repository instance.
-     */
-    protected TokenRepository $tokenRepository;
 
     /**
      * The event dispatcher instance.
@@ -69,7 +63,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function revokeAccessToken(string $tokenId): void
     {
-        if (Passport::token()->whereKey($tokenId)->update(['revoked' => true])) {
+        if (Passport::token()->newQuery()->whereKey($tokenId)->update(['revoked' => true])) {
             $this->events->dispatch(new AccessTokenRevoked($tokenId));
         }
     }
