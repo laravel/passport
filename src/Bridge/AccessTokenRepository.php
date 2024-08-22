@@ -44,7 +44,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        Passport::token()->create([
+        Passport::token()->newQuery()->create([
             'id' => $id = $accessTokenEntity->getIdentifier(),
             'user_id' => $userId = $accessTokenEntity->getUserIdentifier(),
             'client_id' => $clientId = $accessTokenEntity->getClient()->getIdentifier(),
@@ -73,6 +73,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked(string $tokenId): bool
     {
-        return Passport::token()->whereKey($tokenId)->where('revoked', false)->doesntExist();
+        return Passport::token()->newQuery()->whereKey($tokenId)->where('revoked', false)->doesntExist();
     }
 }

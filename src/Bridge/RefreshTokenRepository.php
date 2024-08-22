@@ -36,7 +36,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
-        Passport::refreshToken()->create([
+        Passport::refreshToken()->newQuery()->create([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
             'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),
             'revoked' => false,
@@ -51,7 +51,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function revokeRefreshToken(string $tokenId): void
     {
-        Passport::refreshToken()->whereKey($tokenId)->update(['revoked' => true]);
+        Passport::refreshToken()->newQuery()->whereKey($tokenId)->update(['revoked' => true]);
     }
 
     /**
@@ -59,6 +59,6 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked(string $tokenId): bool
     {
-        return Passport::refreshToken()->whereKey($tokenId)->where('revoked', false)->doesntExist();
+        return Passport::refreshToken()->newQuery()->whereKey($tokenId)->where('revoked', false)->doesntExist();
     }
 }

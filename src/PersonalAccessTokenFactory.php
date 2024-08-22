@@ -104,7 +104,7 @@ class PersonalAccessTokenFactory
      */
     public function findAccessToken(array $response)
     {
-        return Passport::token()->find(
+        return Passport::token()->newQuery()->find(
             $this->jwt->parse($response['access_token'])->claims()->get('jti')
         );
     }
