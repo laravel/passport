@@ -158,7 +158,7 @@ class Client extends Model
      */
     public function firstParty()
     {
-        return empty($this->user_id);
+        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
     }
 
     /**
