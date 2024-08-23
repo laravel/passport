@@ -2,43 +2,32 @@
 
 namespace Laravel\Passport\Http\Responses;
 
+use Closure;
 use Illuminate\Contracts\Support\Responsable;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 
 class SimpleViewResponse implements AuthorizationViewResponse
 {
     /**
-     * The name of the view or the callable used to generate the view.
-     *
-     * @var callable|string
-     */
-    protected $view;
-
-    /**
      * An array of arguments that may be passed to the view response and used in the view.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $parameters;
+    protected array $parameters = [];
 
     /**
      * Create a new response instance.
-     *
-     * @param  callable|string  $view
-     * @return void
      */
-    public function __construct($view)
+    public function __construct(protected Closure|string $view)
     {
-        $this->view = $view;
     }
 
     /**
      * Add parameters to response.
      *
-     * @param  array  $parameters
-     * @return $this
+     * @param  array<string, mixed>  $parameters
      */
-    public function withParameters($parameters = [])
+    public function withParameters(array $parameters = []): static
     {
         $this->parameters = $parameters;
 

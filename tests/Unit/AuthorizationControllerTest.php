@@ -63,16 +63,16 @@ class AuthorizationControllerTest extends TestCase
 
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request, $response) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
             $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
-            return 'view';
+            return $response;
         });
 
-        $this->assertSame('view', $controller->authorize(
+        $this->assertSame($response, $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients
         ));
     }
@@ -221,16 +221,16 @@ class AuthorizationControllerTest extends TestCase
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
-        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request) {
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request, $response) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
             $this->assertEquals($request, $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
-            return 'view';
+            return $response;
         });
 
-        $this->assertSame('view', $controller->authorize(
+        $this->assertSame($response, $controller->authorize(
             m::mock(ServerRequestInterface::class), $request, $clients
         ));
     }
