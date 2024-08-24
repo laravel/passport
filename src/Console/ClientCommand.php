@@ -20,10 +20,11 @@ class ClientCommand extends Command
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
             {--implicit : Create an implicit grant client}
+            {--device : Create a device authorization grant client}
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
-            {--public : Create a public client (Auth code grant type only) }';
+            {--public : Create a public client (Auth code and device code grant types only) }';
 
     /**
      * The console command description.
@@ -48,6 +49,8 @@ class ClientCommand extends Command
             $this->createClientCredentialsClient($clients);
         } elseif ($this->option('implicit')) {
             $this->createImplicitClient($clients);
+        } elseif ($this->option('device')) {
+            $this->createDeviceCodeClient($clients);
         } else {
             $this->createAuthCodeClient($clients);
         }
@@ -155,6 +158,33 @@ class ClientCommand extends Command
     }
 
     /**
+     * Create a device code client.
+     *
+     * @param  \Laravel\Passport\ClientRepository  $clients
+     * @return void
+     */
+    protected function createDeviceCodeClient(ClientRepository $clients)
+    {
+        $name = $this->option('name') ?: $this->ask(
+            'What should we name the client?',
+            config('app.name')
+        );
+
+        if (! $this->hasOption('public')) {
+            $this->input->setOption('public', $this->confirm(
+                'Would you like to make this client public?',
+                true
+            ));
+        }
+
+        $client = $clients->createDeviceAuthorizationGrantClient($name, ! $this->option('public'));
+
+        $this->components->info('New client created successfully.');
+
+        $this->outputClientDetails($client);
+    }
+
+    /**
      * Create a authorization code client.
      *
      * @param  \Laravel\Passport\ClientRepository  $clients
@@ -172,8 +202,17 @@ class ClientCommand extends Command
             url('/auth/callback')
         );
 
+        $enableDeviceFlow = $this->confirm('Would you like to enable device authorization flow for this client?');
+
+        if (! $this->hasOption('public')) {
+            $this->input->setOption('public', $this->confirm(
+                'Would you like to make this client public?',
+                false
+            ));
+        }
+
         $client = $clients->createAuthorizationCodeGrantClient(
-            $name, explode(',', $redirect), ! $this->option('public'),
+            $name, explode(',', $redirect), ! $this->option('public'), null, $enableDeviceFlow
         );
 
         $this->components->info('New client created successfully.');

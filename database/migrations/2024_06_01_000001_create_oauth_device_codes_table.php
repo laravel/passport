@@ -15,7 +15,7 @@ return new class extends Migration
             $table->char('id', 80)->primary();
             $table->foreignId('user_id')->nullable()->index();
             $table->foreignUuid('client_id')->index();
-            $table->char('user_code', 8);
+            $table->char('user_code', 8)->unique();
             $table->text('scopes');
             $table->boolean('revoked');
             $table->dateTime('user_approved_at')->nullable();
