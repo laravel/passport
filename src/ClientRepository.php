@@ -4,6 +4,7 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 class ClientRepository
 {
@@ -74,6 +75,29 @@ class ClientRepository
         return $this->forUser($userId)->reject(function ($client) {
             return $client->revoked;
         })->values();
+    }
+
+    /*
+     * Get the latest active personal access client for the given user provider.
+     *
+     * @throws \RuntimeException
+     */
+    public function personalAccessClient(string $provider): Client
+    {
+        return Passport::client()
+            ->where('revoked', false)
+            ->whereNull('user_id')
+            ->where(function ($query) use ($provider) {
+                $query->when($provider === config('auth.guards.api.provider'), function ($query) {
+                    $query->orWhereNull('provider');
+                })->orWhere('provider', $provider);
+            })
+            ->latest()
+            ->get()
+            ->first(fn (Client $client) => $client->hasGrantType('personal_access'))
+            ?? throw new RuntimeException(
+                "Personal access client not found for '$provider' user provider. Please create one."
+            );
     }
 
     /**

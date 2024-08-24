@@ -49,6 +49,34 @@ class BridgeAccessTokenRepositoryTest extends TestCase
         $repository->persistNewAccessToken($accessToken);
     }
 
+    public function test_access_tokens_can_be_revoked()
+    {
+        $tokenRepository = m::mock(TokenRepository::class);
+        $events = m::mock(Dispatcher::class);
+
+        $tokenRepository->shouldReceive('revokeAccessToken')->with('token-id')->once()->andReturn(1);
+        $events->shouldReceive('dispatch')->once();
+
+        $repository = new AccessTokenRepository($tokenRepository, $events);
+        $repository->revokeAccessToken('token-id');
+
+        $this->expectNotToPerformAssertions();
+    }
+
+    public function test_access_token_revoke_event_is_not_dispatched_when_nothing_happened()
+    {
+        $tokenRepository = m::mock(TokenRepository::class);
+        $events = m::mock(Dispatcher::class);
+
+        $tokenRepository->shouldReceive('revokeAccessToken')->with('token-id')->once()->andReturn(0);
+        $events->shouldNotReceive('dispatch');
+
+        $repository = new AccessTokenRepository($tokenRepository, $events);
+        $repository->revokeAccessToken('token-id');
+
+        $this->expectNotToPerformAssertions();
+    }
+
     public function test_can_get_new_access_token()
     {
         $tokenRepository = m::mock(TokenRepository::class);

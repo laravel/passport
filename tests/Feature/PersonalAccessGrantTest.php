@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\Client;
@@ -13,24 +12,16 @@ use Laravel\Passport\PersonalAccessTokenResult;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
-class PersonalAccessTokenFactoryTest extends PassportTestCase
+class PersonalAccessGrantTest extends PassportTestCase
 {
     use WithLaravelMigrations;
 
     public function testIssueToken()
     {
-        $user = UserFactory::new()->create([
-            'email' => 'foo@gmail.com',
-            'password' => $this->app->make(Hasher::class)->make('foobar123'),
-        ]);
+        $user = UserFactory::new()->create();
 
         /** @var Client $client */
         $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
-
-        config([
-            'passport.personal_access_client.id' => $client->getKey(),
-            'passport.personal_access_client.secret' => $client->plainSecret,
-        ]);
 
         Passport::tokensCan([
             'foo' => 'Do foo',
@@ -56,9 +47,6 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
             'auth.guards.api-admins' => ['driver' => 'passport', 'provider' => 'admins'],
             'auth.providers.customers' => ['driver' => 'eloquent', 'model' => CustomerProviderStub::class],
             'auth.guards.api-customers' => ['driver' => 'passport', 'provider' => 'customers'],
-            'passport.personal_access_client' => ['id' => $client->getKey(), 'secret' => $client->plainSecret],
-            'passport.personal_access_client.admins' => ['id' => $adminClient->getKey(), 'secret' => $adminClient->plainSecret],
-            'passport.personal_access_client.customers' => ['id' => $customerClient->getKey(), 'secret' => $customerClient->plainSecret],
         ]);
 
         $user = UserFactory::new()->create();
@@ -96,6 +84,28 @@ class PersonalAccessTokenFactoryTest extends PassportTestCase
         $this->assertEquals([$userToken->token->id], $userTokens);
         $this->assertEquals([$adminToken->token->id], $adminTokens);
         $this->assertEquals([$customerToken->token->id], $customerTokens);
+    }
+
+    public function testPersonalAccessTokenRequestIsDisabled()
+    {
+        $user = UserFactory::new()->create();
+        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
+
+        $response = $this->post('/oauth/token', [
+            'grant_type' => 'personal_access',
+            'provider' => $user->getProvider(),
+            'user_id' => $user->getKey(),
+            'scope' => '',
+        ]);
+
+        $response->assertStatus(400);
+        $json = $response->json();
+
+        $this->assertSame('unsupported_grant_type', $json['error']);
+        $this->assertArrayHasKey('error_description', $json);
+        $this->assertArrayNotHasKey('access_token', $json);
+
+        $this->assertInstanceOf(PersonalAccessTokenResult::class, $user->createToken('test'));
     }
 }
 

@@ -7,7 +7,6 @@ use League\OAuth2\Server\AuthorizationServer;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\ServerRequest;
 use Psr\Http\Message\ServerRequestInterface;
-use RuntimeException;
 
 class PersonalAccessTokenFactory
 {
@@ -17,13 +16,6 @@ class PersonalAccessTokenFactory
      * @var \League\OAuth2\Server\AuthorizationServer
      */
     protected $server;
-
-    /**
-     * The client repository instance.
-     *
-     * @var \Laravel\Passport\ClientRepository
-     */
-    protected $clients;
 
     /**
      * The token repository instance.
@@ -43,20 +35,17 @@ class PersonalAccessTokenFactory
      * Create a new personal access token factory instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-                                ClientRepository $clients,
                                 TokenRepository $tokens,
                                 JwtParser $jwt)
     {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
-        $this->clients = $clients;
     }
 
     /**
@@ -96,20 +85,9 @@ class PersonalAccessTokenFactory
      */
     protected function createRequest($userId, array $scopes, string $provider)
     {
-        $config = config("passport.personal_access_client.$provider", config('passport.personal_access_client'));
-
-        $client = isset($config['id']) ? $this->clients->findActive($config['id']) : null;
-
-        if (! $client || ($client->provider && $client->provider !== $provider)) {
-            throw new RuntimeException(
-                'Personal access client not found. Please create one and set the `PASSPORT_PERSONAL_ACCESS_CLIENT_ID` and `PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET` environment variables.'
-            );
-        }
-
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
-            'client_id' => $config['id'] ?? null,
-            'client_secret' => $config['secret'] ?? null,
+            'provider' => $provider,
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),
         ]);
