@@ -55,6 +55,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $client1->grant_types = ['personal_access'];
         $client2 = new Client;
         $client2->grant_types = [];
+        $client2->user_id = 2;
         $token1->client = $client1;
         $token2->client = $client2;
         $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
