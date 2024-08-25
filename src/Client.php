@@ -153,12 +153,10 @@ class Client extends Model
 
     /**
      * Determine if the client is a "first party" client.
-     *
-     * @return bool
      */
-    public function firstParty()
+    public function firstParty(): bool
     {
-        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
+        return empty($this->user_id);
     }
 
     /**
