@@ -25,11 +25,11 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
         if ($deviceCodeEntity->isLastPolledAtDirty()) {
-            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->update([
+            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
             ]);
         } elseif ($deviceCodeEntity->isUserDirty()) {
-            Passport::deviceCode()->whereKey($deviceCodeEntity->getIdentifier())->update([
+            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'user_id' => $deviceCodeEntity->getUserIdentifier(),
                 'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
             ]);
@@ -53,7 +53,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function getDeviceCodeEntityByDeviceCode(string $deviceCode): ?DeviceCodeEntityInterface
     {
-        $record = Passport::deviceCode()->whereKey($deviceCode)->where(['revoked' => false])->first();
+        $record = Passport::deviceCode()->newQuery()->whereKey($deviceCode)->where(['revoked' => false])->first();
 
         return $record ? new DeviceCode(
             $record->getKey(),
@@ -71,7 +71,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function revokeDeviceCode(string $codeId): void
     {
-        Passport::deviceCode()->whereKey($codeId)->update(['revoked' => true]);
+        Passport::deviceCode()->newQuery()->whereKey($codeId)->update(['revoked' => true]);
     }
 
     /**
@@ -79,6 +79,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function isDeviceCodeRevoked(string $codeId): bool
     {
-        return Passport::deviceCode()->whereKey($codeId)->where('revoked', false)->doesntExist();
+        return Passport::deviceCode()->newQuery()->whereKey($codeId)->where('revoked', false)->doesntExist();
     }
 }
