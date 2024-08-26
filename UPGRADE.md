@@ -6,15 +6,15 @@
 
 ### Minimum PHP Version
 
-PR: https://github.com/laravel/passport/pull/1734
+PR: https://github.com/laravel/passport/pull/1734, https://github.com/laravel/passport/pull/1783
 
-PHP 8.1 is now the minimum required version.
+PHP 8.2 is now the minimum required version.
 
 ### Minimum Laravel Version
 
-PR: https://github.com/laravel/passport/pull/1757
+PR: https://github.com/laravel/passport/pull/1757, https://github.com/laravel/passport/pull/1783
 
-Laravel 10.0 is now the minimum required version.
+Laravel 11.14 is now the minimum required version.
 
 ### OAuth2 Server
 
