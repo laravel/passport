@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport\Bridge;
 
+use Illuminate\Support\Collection;
+use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
@@ -37,11 +39,15 @@ class ScopeRepository implements ScopeRepositoryInterface
     ): array {
         return collect($scopes)
             ->unless(in_array($grantType, ['password', 'personal_access', 'client_credentials']),
-                fn ($scopes) => $scopes->reject(fn (Scope $scope) => $scope->getIdentifier() === '*')
+                fn (Collection $scopes): Collection => $scopes->reject(
+                    fn (Scope $scope): bool => $scope->getIdentifier() === '*'
+                )
             )
-            ->filter(fn (Scope $scope) => Passport::hasScope($scope->getIdentifier()))
+            ->filter(fn (Scope $scope): bool => Passport::hasScope($scope->getIdentifier()))
             ->when($this->clients->findActive($clientEntity->getIdentifier()),
-                fn ($scopes, $client) => $scopes->filter(fn ($scope) => $client->hasScope($scope->getIdentifier()))
+                fn (Collection $scopes, Client $client): Collection => $scopes->filter(
+                    fn (Scope $scope): bool => $client->hasScope($scope->getIdentifier())
+                )
             )
             ->values()
             ->all();
