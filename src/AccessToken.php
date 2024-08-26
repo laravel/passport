@@ -2,16 +2,24 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Traits\ForwardsCalls;
+use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @property  string  oauth_access_token_id
- * @property  string  oauth_client_id
- * @property  string  oauth_user_id
- * @property  string[]  oauth_scopes
+ * @template TKey of string
+ * @template TValue
+ *
+ * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ *
+ * @property  string  $oauth_access_token_id
+ * @property  string  $oauth_client_id
+ * @property  string  $oauth_user_id
+ * @property  string[]  $oauth_scopes
  */
-class AccessToken
+class AccessToken implements Arrayable, Jsonable, JsonSerializable
 {
     use ResolvesInheritedScopes, ForwardsCalls;
 
@@ -23,7 +31,7 @@ class AccessToken
     /**
      * All the attributes set on the access token instance.
      *
-     * @var array<string, mixed>
+     * @var array<TKey, TValue>
      */
     protected array $attributes = [];
 
@@ -76,7 +84,7 @@ class AccessToken
      */
     public function revoke(): bool
     {
-        return Passport::token()->whereKey($this->oauth_access_token_id)->forceFill(['revoked' => true])->save();
+        return Passport::token()->newQuery()->whereKey($this->oauth_access_token_id)->update(['revoked' => true]);
     }
 
     /**
@@ -84,7 +92,37 @@ class AccessToken
      */
     protected function getToken(): ?Token
     {
-        return $this->token ??= Passport::token()->find($this->oauth_access_token_id);
+        return $this->token ??= Passport::token()->newQuery()->find($this->oauth_access_token_id);
+    }
+
+    /**
+     * Convert the access token instance to an array.
+     *
+     * @return array<TKey, TValue>
+     */
+    public function toArray(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array<TKey, TValue>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Convert the access token instance to JSON.
+     *
+     * @param  int  $options
+     */
+    public function toJson($options = 0): string
+    {
+        return json_encode($this->jsonSerialize(), $options);
     }
 
     /**
@@ -98,7 +136,7 @@ class AccessToken
     /**
      * Dynamically retrieve the value of an attribute.
      */
-    public function __get(string $key)
+    public function __get(string $key): mixed
     {
         if (array_key_exists($key, $this->attributes)) {
             return $this->attributes[$key];
