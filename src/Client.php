@@ -13,6 +13,7 @@ use Laravel\Passport\Database\Factories\ClientFactory;
 class Client extends Model
 {
     use HasFactory;
+    use ResolvesInheritedScopes;
 
     /**
      * The database table used by the model.
@@ -189,6 +190,14 @@ class Client extends Model
             'client_credentials' => $this->confidential(),
             default => true,
         };
+    }
+
+    /**
+     * Determine whether the client has the given scope.
+     */
+    public function hasScope(string $scope): bool
+    {
+        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
     }
 
     /**
