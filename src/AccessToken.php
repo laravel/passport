@@ -14,10 +14,10 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
  *
- * @property  string  $oauth_access_token_id
- * @property  string  $oauth_client_id
- * @property  string  $oauth_user_id
- * @property  string[]  $oauth_scopes
+ * @property string $oauth_access_token_id
+ * @property string $oauth_client_id
+ * @property string $oauth_user_id
+ * @property string[] $oauth_scopes
  */
 class AccessToken implements Arrayable, Jsonable, JsonSerializable
 {
