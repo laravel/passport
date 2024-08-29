@@ -81,9 +81,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
             ->middleware('auth:api');
 
-        $json = $this->get('/foo', [
-            'Authorization' => 'Bearer '.$json['access_token'],
-        ])->json();
+        $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
 
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
         $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
