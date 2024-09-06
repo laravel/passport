@@ -24,7 +24,7 @@ class ClientCommand extends Command
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
-            {--public : Create a public client (Auth code and device code grant types only) }';
+            {--public : Create a public client (without secret) }';
 
     /**
      * The console command description.
@@ -35,196 +35,122 @@ class ClientCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    public function handle(ClientRepository $clients)
+    public function handle(ClientRepository $clients): void
     {
-        if ($this->option('personal')) {
-            $this->createPersonalAccessClient($clients);
-        } elseif ($this->option('password')) {
-            $this->createPasswordClient($clients);
-        } elseif ($this->option('client')) {
-            $this->createClientCredentialsClient($clients);
-        } elseif ($this->option('implicit')) {
-            $this->createImplicitClient($clients);
-        } elseif ($this->option('device')) {
-            $this->createDeviceCodeClient($clients);
-        } else {
-            $this->createAuthCodeClient($clients);
+        if (! $this->hasOption('name')) {
+            $this->input->setOption('name', $this->ask(
+                'What should we name the client?',
+                config('app.name')
+            ));
+        }
+
+        $client = match (true) {
+            $this->option('personal') => $this->createPersonalAccessClient($clients),
+            $this->option('password') => $this->createPasswordClient($clients),
+            $this->option('client') => $this->createClientCredentialsClient($clients),
+            $this->option('implicit') => $this->createImplicitClient($clients),
+            $this->option('device') => $this->createDeviceCodeClient($clients),
+            default => $this->createAuthCodeClient($clients)
+        };
+
+        $this->components->info('New client created successfully.');
+
+        if ($client) {
+            $this->components->twoColumnDetail('Client ID', $client->getKey());
+
+            if ($client->confidential()) {
+                $this->components->twoColumnDetail('Client Secret', $client->plainSecret);
+                $this->components->warn('The client secret will not be shown again, so don\'t lose it!');
+            }
         }
     }
 
     /**
      * Create a new personal access client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    protected function createPersonalAccessClient(ClientRepository $clients)
+    protected function createPersonalAccessClient(ClientRepository $clients): ?Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name').' Personal Access Grant Client'
-        );
-
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
             collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
         );
 
-        $clients->createPersonalAccessGrantClient($name, $provider);
+        $clients->createPersonalAccessGrantClient($this->option('name'), $provider);
 
-        $this->components->info('Personal access client created successfully.');
+        return null;
     }
 
     /**
      * Create a new password grant client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    protected function createPasswordClient(ClientRepository $clients)
+    protected function createPasswordClient(ClientRepository $clients): Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name').' Password Grant Client'
-        );
-
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
             collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
         );
 
-        $client = $clients->createPasswordGrantClient($name, $provider);
+        $confidential = $this->hasOption('public')
+            ? ! $this->option('public')
+            : $this->confirm('Would you like to make this client confidential?');
 
-        $this->components->info('Password grant client created successfully.');
-
-        $this->outputClientDetails($client);
+        return $clients->createPasswordGrantClient($this->option('name'), $provider, $confidential);
     }
 
     /**
      * Create a client credentials grant client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    protected function createClientCredentialsClient(ClientRepository $clients)
+    protected function createClientCredentialsClient(ClientRepository $clients): Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name').' Client Credentials Grant Client'
-        );
-
-        $client = $clients->createClientCredentialsGrantClient($name);
-
-        $this->components->info('New client created successfully.');
-
-        $this->outputClientDetails($client);
+        return $clients->createClientCredentialsGrantClient($this->option('name'));
     }
 
     /**
      * Create an implicit grant client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    protected function createImplicitClient(ClientRepository $clients)
+    protected function createImplicitClient(ClientRepository $clients): Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name').' Implicit Grant Client'
-        );
-
         $redirect = $this->option('redirect_uri') ?: $this->ask(
             'Where should we redirect the request after authorization?',
             url('/auth/callback')
         );
 
-        $client = $clients->createImplicitGrantClient($name, explode(',', $redirect));
-
-        $this->components->info('New client created successfully.');
-
-        $this->outputClientDetails($client);
+        return $clients->createImplicitGrantClient($this->option('name'), explode(',', $redirect));
     }
 
     /**
      * Create a device code client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
      */
-    protected function createDeviceCodeClient(ClientRepository $clients)
+    protected function createDeviceCodeClient(ClientRepository $clients): Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name')
-        );
+        $confidential = $this->hasOption('public')
+            ? ! $this->option('public')
+            : $this->confirm('Would you like to make this client confidential?', true);
 
-        if (! $this->hasOption('public')) {
-            $this->input->setOption('public', $this->confirm(
-                'Would you like to make this client public?',
-                true
-            ));
-        }
-
-        $client = $clients->createDeviceAuthorizationGrantClient($name, ! $this->option('public'));
-
-        $this->components->info('New client created successfully.');
-
-        $this->outputClientDetails($client);
+        return $clients->createDeviceAuthorizationGrantClient($this->option('name'), $confidential);
     }
 
     /**
-     * Create a authorization code client.
-     *
-     * @param  \Laravel\Passport\ClientRepository  $clients
-     * @return void
+     * Create an authorization code client.
      */
-    protected function createAuthCodeClient(ClientRepository $clients)
+    protected function createAuthCodeClient(ClientRepository $clients): Client
     {
-        $name = $this->option('name') ?: $this->ask(
-            'What should we name the client?',
-            config('app.name')
-        );
-
         $redirect = $this->option('redirect_uri') ?: $this->ask(
             'Where should we redirect the request after authorization?',
             url('/auth/callback')
         );
 
+        $confidential = $this->hasOption('public')
+            ? ! $this->option('public')
+            : $this->confirm('Would you like to make this client confidential?', true);
+
         $enableDeviceFlow = $this->confirm('Would you like to enable device authorization flow for this client?');
 
-        if (! $this->hasOption('public')) {
-            $this->input->setOption('public', $this->confirm(
-                'Would you like to make this client public?',
-                false
-            ));
-        }
-
-        $client = $clients->createAuthorizationCodeGrantClient(
-            $name, explode(',', $redirect), ! $this->option('public'), null, $enableDeviceFlow
+        return $clients->createAuthorizationCodeGrantClient(
+            $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow
         );
-
-        $this->components->info('New client created successfully.');
-
-        $this->outputClientDetails($client);
-    }
-
-    /**
-     * Output the client's ID and secret key.
-     *
-     * @param  \Laravel\Passport\Client  $client
-     * @return void
-     */
-    protected function outputClientDetails(Client $client)
-    {
-        $this->components->warn('Here is your new client secret. This is the only time it will be shown so don\'t lose it!');
-
-        $this->components->twoColumnDetail('Client ID', $client->getKey());
-        $this->components->twoColumnDetail('Client Secret', $client->plainSecret);
     }
 }
