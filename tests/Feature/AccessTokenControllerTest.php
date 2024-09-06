@@ -145,7 +145,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
         $this->assertInstanceOf(Token::class, $token);
         $this->assertFalse($token->revoked);
-        $this->assertTrue($token->user->is($user));
+        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
         $this->assertTrue($token->client->is($client));
         $this->assertNull($token->name);
         $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));

@@ -18,13 +18,6 @@ class PersonalAccessTokenFactory
     protected $server;
 
     /**
-     * The client repository instance.
-     *
-     * @var \Laravel\Passport\ClientRepository
-     */
-    protected $clients;
-
-    /**
      * The token repository instance.
      *
      * @var \Laravel\Passport\TokenRepository
@@ -42,20 +35,17 @@ class PersonalAccessTokenFactory
      * Create a new personal access token factory instance.
      *
      * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\ClientRepository  $clients
      * @param  \Laravel\Passport\TokenRepository  $tokens
      * @param  \Lcobucci\JWT\Parser  $jwt
      * @return void
      */
     public function __construct(AuthorizationServer $server,
-                                ClientRepository $clients,
                                 TokenRepository $tokens,
                                 JwtParser $jwt)
     {
         $this->jwt = $jwt;
         $this->tokens = $tokens;
         $this->server = $server;
-        $this->clients = $clients;
     }
 
     /**
@@ -63,13 +53,14 @@ class PersonalAccessTokenFactory
      *
      * @param  mixed  $userId
      * @param  string  $name
-     * @param  array  $scopes
+     * @param  string[]  $scopes
+     * @param  string  $provider
      * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, $name, array $scopes = [])
+    public function make($userId, string $name, array $scopes, string $provider)
     {
         $response = $this->dispatchRequestToAuthorizationServer(
-            $this->createRequest($userId, $scopes)
+            $this->createRequest($userId, $scopes, $provider)
         );
 
         $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
@@ -88,15 +79,15 @@ class PersonalAccessTokenFactory
      * Create a request instance for the given client.
      *
      * @param  mixed  $userId
-     * @param  array  $scopes
+     * @param  string[]  $scopes
+     * @param  string  $provider
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($userId, array $scopes)
+    protected function createRequest($userId, array $scopes, string $provider)
     {
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
-            'client_id' => $this->clients->getPersonalAccessClientId(),
-            'client_secret' => $this->clients->getPersonalAccessClientSecret(),
+            'provider' => $provider,
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),
         ]);

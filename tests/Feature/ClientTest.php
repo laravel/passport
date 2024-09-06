@@ -76,13 +76,44 @@ final class ClientTest extends TestCase
         $client->exists = true;
 
         $this->assertTrue($client->hasGrantType('foo'));
+
+        $client->personal_access_client = false;
+        $client->password_client = false;
+
+        $this->assertTrue($client->hasGrantType('authorization_code'));
+
+        $client->personal_access_client = false;
+        $client->password_client = true;
+
+        $this->assertTrue($client->hasGrantType('password'));
+
+        $client->personal_access_client = true;
+        $client->password_client = false;
+        $client->secret = 'secret';
+
+        $this->assertTrue($client->hasGrantType('personal_access'));
+        $this->assertTrue($client->hasGrantType('client_credentials'));
     }
 
     public function testGrantTypesWhenColumnIsNull(): void
     {
-        $client = new Client(['scopes' => null]);
+        $client = new Client(['grant_types' => null]);
         $client->exists = true;
 
         $this->assertTrue($client->hasGrantType('foo'));
+
+        $client->personal_access_client = false;
+        $client->password_client = false;
+        $this->assertTrue($client->hasGrantType('authorization_code'));
+
+        $client->personal_access_client = false;
+        $client->password_client = true;
+        $this->assertTrue($client->hasGrantType('password'));
+
+        $client->personal_access_client = true;
+        $client->password_client = false;
+        $client->secret = 'secret';
+        $this->assertTrue($client->hasGrantType('personal_access'));
+        $this->assertTrue($client->hasGrantType('client_credentials'));
     }
 }

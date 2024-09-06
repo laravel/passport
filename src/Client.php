@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -44,6 +46,7 @@ class Client extends Model
     protected $casts = [
         'grant_types' => 'array',
         'scopes' => 'array',
+        'redirect_uris' => 'array',
         'personal_access_client' => 'bool',
         'password_client' => 'bool',
         'revoked' => 'bool',
@@ -68,7 +71,7 @@ class Client extends Model
     {
         parent::__construct($attributes);
 
-        $this->usesUniqueIds = Passport::clientUuids();
+        $this->usesUniqueIds = Passport::$clientUuids;
     }
 
     /**
@@ -133,21 +136,37 @@ class Client extends Model
     }
 
     /**
+     * Get the client's redirect URIs.
+     */
+    protected function redirectUris(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value, array $attributes) {
+                if (isset($value)) {
+                    return $this->fromJson($value);
+                }
+
+                return empty($attributes['redirect']) ? [] : explode(',', $attributes['redirect']);
+            },
+        );
+    }
+
+    /**
      * Determine if the client is a "first party" client.
      *
      * @return bool
      */
     public function firstParty()
     {
-        return $this->personal_access_client || $this->password_client;
+        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
     }
 
     /**
      * Determine if the client should skip the authorization prompt.
      *
-     * @return bool
+     * @param  \Laravel\Passport\Scope[]  $scopes
      */
-    public function skipsAuthorization()
+    public function skipsAuthorization(Authenticatable $user, array $scopes): bool
     {
         return false;
     }
@@ -160,11 +179,17 @@ class Client extends Model
      */
     public function hasGrantType($grantType)
     {
-        if (! isset($this->attributes['grant_types']) || ! is_array($this->grant_types)) {
-            return true;
+        if (isset($this->attributes['grant_types']) && is_array($this->grant_types)) {
+            return in_array($grantType, $this->grant_types);
         }
 
-        return in_array($grantType, $this->grant_types);
+        return match ($grantType) {
+            'authorization_code' => ! $this->personal_access_client && ! $this->password_client,
+            'personal_access' => $this->personal_access_client && $this->confidential(),
+            'password' => $this->password_client,
+            'client_credentials' => $this->confidential(),
+            default => true,
+        };
     }
 
     /**
@@ -209,7 +234,7 @@ class Client extends Model
      */
     public function uniqueIds()
     {
-        return Passport::clientUuids() ? [$this->getKeyName()] : [];
+        return $this->usesUniqueIds ? [$this->getKeyName()] : [];
     }
 
     /**
@@ -219,7 +244,7 @@ class Client extends Model
      */
     public function newUniqueId()
     {
-        return Passport::clientUuids() ? (string) Str::orderedUuid() : null;
+        return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
     }
 
     /**
@@ -229,7 +254,7 @@ class Client extends Model
      */
     public function getKeyType()
     {
-        return Passport::clientUuids() ? 'string' : $this->keyType;
+        return $this->usesUniqueIds ? 'string' : $this->keyType;
     }
 
     /**
@@ -239,7 +264,7 @@ class Client extends Model
      */
     public function getIncrementing()
     {
-        return Passport::clientUuids() ? false : $this->incrementing;
+        return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**

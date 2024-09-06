@@ -36,17 +36,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        if (! $record || ! $this->handlesGrant($record, $grantType)) {
-            return null;
-        }
-
-        return new Client(
-            $clientIdentifier,
-            $record->name,
-            $record->redirect,
-            $record->confidential(),
-            $record->provider
-        );
+        return $record && $this->handlesGrant($record, $grantType) ? $this->fromClientModel($record) : null;
     }
 
     /**
@@ -71,17 +61,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     protected function handlesGrant(ClientModel $record, string $grantType): bool
     {
-        if (! $record->hasGrantType($grantType)) {
-            return false;
-        }
-
-        return match ($grantType) {
-            'authorization_code' => ! $record->firstParty(),
-            'personal_access' => $record->personal_access_client && $record->confidential(),
-            'password' => $record->password_client,
-            'client_credentials' => $record->confidential(),
-            default => true,
-        };
+        return $record->hasGrantType($grantType);
     }
 
     /**
@@ -90,5 +70,29 @@ class ClientRepository implements ClientRepositoryInterface
     protected function verifySecret(string $clientSecret, string $storedHash): bool
     {
         return $this->hasher->check($clientSecret, $storedHash);
+    }
+
+    /**
+     * Get the personal access client for the given provider.
+     */
+    public function getPersonalAccessClientEntity(string $provider): ?ClientEntityInterface
+    {
+        return $this->fromClientModel(
+            $this->clients->personalAccessClient($provider)
+        );
+    }
+
+    /**
+     * Create a new client entity from the given client model instance.
+     */
+    protected function fromClientModel(ClientModel $model): ClientEntityInterface
+    {
+        return new Client(
+            $model->getKey(),
+            $model->name,
+            $model->redirect_uris,
+            $model->confidential(),
+            $model->provider
+        );
     }
 }
