@@ -22,6 +22,19 @@ PR: https://github.com/laravel/passport/pull/1734
 
 The `league/oauth2-server` Composer package which is utilized internally by Passport has been updated to 9.0, which adds additional types to method signatures. To ensure your application is compatible, you should review this package's complete [changelog](https://github.com/thephpleague/oauth2-server/blob/master/CHANGELOG.md#900---released-2024-05-13). 
 
+### Headless
+
+PR: https://github.com/laravel/passport/pull/1771
+
+Passport's views were not rendering properly for several release cycles. Passport is now a headless OAuth2 library. If you would like a frontend implementation of Laravel Passport's OAuth features that are already completed for you, you should use an [application starter kit](https://laravel.com/docs/11.x/starter-kits).
+
+All the authorization view's rendering logic may be customized using the appropriate methods available via the `Laravel\Passport\Passport` class. Typically, you should call these methods within the `boot` method of your application's `App\Providers\AppServiceProvider` class. Passport will take care of defining the routes that return these views:
+
+    public function boot(): void
+    {
+        Passport::authorizationView('auth.oauth.authorize');
+    }
+
 ### Identify Clients by UUIDs
 
 PR: https://github.com/laravel/passport/pull/1764

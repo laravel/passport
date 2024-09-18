@@ -143,9 +143,9 @@ class ClientRepository
     /**
      * Store a new password grant client.
      */
-    public function createPasswordGrantClient(string $name, ?string $provider = null): Client
+    public function createPasswordGrantClient(string $name, ?string $provider = null, bool $confidential = false): Client
     {
-        return $this->create($name, ['password', 'refresh_token'], [], $provider);
+        return $this->create($name, ['password', 'refresh_token'], [], $provider, $confidential);
     }
 
     /**
@@ -163,7 +163,7 @@ class ClientRepository
      */
     public function createImplicitGrantClient(string $name, array $redirectUris): Client
     {
-        return $this->create($name, ['implicit'], $redirectUris);
+        return $this->create($name, ['implicit'], $redirectUris, null, false);
     }
 
     /**
