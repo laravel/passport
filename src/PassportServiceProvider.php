@@ -38,7 +38,6 @@ class PassportServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerRoutes();
-        $this->registerResources();
         $this->registerPublishing();
         $this->registerCommands();
 
@@ -64,16 +63,6 @@ class PassportServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the Passport resources.
-     *
-     * @return void
-     */
-    protected function registerResources()
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'passport');
-    }
-
-    /**
      * Register the package's publishable resources.
      *
      * @return void
@@ -88,10 +77,6 @@ class PassportServiceProvider extends ServiceProvider
             $this->{$publishesMigrationsMethod}([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'passport-migrations');
-
-            $this->publishes([
-                __DIR__.'/../resources/views' => base_path('resources/views/vendor/passport'),
-            ], 'passport-views');
 
             $this->publishes([
                 __DIR__.'/../config/passport.php' => config_path('passport.php'),
@@ -134,8 +119,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
-
-        Passport::authorizationView('passport::authorize');
     }
 
     /**
