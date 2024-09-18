@@ -238,10 +238,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Create and configure an instance of the Device Code grant.
-     *
-     * @return \League\OAuth2\Server\Grant\DeviceCodeGrant
      */
-    protected function makeDeviceCodeGrant()
+    protected function makeDeviceCodeGrant(): DeviceCodeGrant
     {
         $grant = new DeviceCodeGrant(
             $this->app->make(DeviceCodeRepository::class),

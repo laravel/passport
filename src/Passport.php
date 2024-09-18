@@ -680,6 +680,9 @@ class Passport
     public static function viewPrefix(string $prefix): void
     {
         static::authorizationView($prefix.'authorize');
+        static::deviceAuthorizationView($prefix.'device.authorize');
+        static::deviceAuthorizationResultView($prefix.'device.result');
+        static::deviceUserCodeView($prefix.'device.user_code');
     }
 
     /**
