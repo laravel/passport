@@ -215,12 +215,40 @@ class Passport
     /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
+     * @deprecated Use defaultScopes.
+     *
      * @param  array|string  $scope
      * @return void
      */
     public static function setDefaultScope($scope)
     {
         static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
+    }
+
+    /**
+     * Set or get the default scopes.
+     *
+     * @param  string[]|string|null  $scopes
+     * @return string[]
+     */
+    public static function defaultScopes(array|string|null $scopes = null): array
+    {
+        if (! is_null($scopes)) {
+            static::$defaultScope = is_array($scopes) ? implode(' ', $scopes) : $scopes;
+        }
+
+        return static::$defaultScope ? explode(' ', static::$defaultScope) : [];
+    }
+
+    /**
+     * Return the scopes in the given list that are actually defined scopes for the application.
+     *
+     * @param  string[]  $scopes
+     * @return string[]
+     */
+    public static function validScopes(array $scopes): array
+    {
+        return array_values(array_unique(array_intersect($scopes, array_keys(static::$scopes))));
     }
 
     /**
@@ -636,6 +664,22 @@ class Passport
         return is_callable(static::$tokenEncryptionKeyCallback) ?
             (static::$tokenEncryptionKeyCallback)($encrypter) :
             $encrypter->getKey();
+    }
+
+    /**
+     * Register the views for Passport using conventional names under the given namespace.
+     */
+    public static function viewNamespace(string $namespace): void
+    {
+        static::viewPrefix($namespace.'::');
+    }
+
+    /**
+     * Register the views for Passport using conventional names under the given prefix.
+     */
+    public static function viewPrefix(string $prefix): void
+    {
+        static::authorizationView($prefix.'authorize');
     }
 
     /**
