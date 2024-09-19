@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
@@ -160,6 +162,14 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
+
+        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())->middleware('auth:api');
+
+        $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
+
+        $this->assertSame($client->getKey(), $json['oauth_client_id']);
+        $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
+        // $this->assertSame(['create', 'read'], $json['oauth_scopes']); TODO: https://github.com/thephpleague/oauth2-server/pull/1412
     }
 
     public function testDenyAuthorization()
