@@ -192,27 +192,10 @@ class Client extends Model
 
     /**
      * Determine whether the client has the given scope.
-     *
-     * @param  string  $scope
-     * @return bool
      */
-    public function hasScope($scope)
+    public function hasScope(string $scope): bool
     {
-        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
-            return true;
-        }
-
-        $scopes = Passport::$withInheritedScopes
-            ? $this->resolveInheritedScopes($scope)
-            : [$scope];
-
-        foreach ($scopes as $scope) {
-            if (in_array($scope, $this->scopes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
     }
 
     /**

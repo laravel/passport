@@ -10,24 +10,16 @@ class ClientRepository
 {
     /**
      * Get a client by the given ID.
-     *
-     * @param  int|string  $id
-     * @return \Laravel\Passport\Client|null
      */
-    public function find($id)
+    public function find(string|int $id): ?Client
     {
-        $client = Passport::client();
-
-        return $client->where($client->getKeyName(), $id)->first();
+        return once(fn () => Passport::client()->newQuery()->find($id));
     }
 
     /**
      * Get an active client by the given ID.
-     *
-     * @param  int|string  $id
-     * @return \Laravel\Passport\Client|null
      */
-    public function findActive($id)
+    public function findActive(string|int $id): ?Client
     {
         $client = $this->find($id);
 
