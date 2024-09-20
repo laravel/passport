@@ -682,7 +682,7 @@ class Passport
         static::authorizationView($prefix.'authorize');
         static::deviceAuthorizationView($prefix.'device.authorize');
         static::deviceAuthorizationResultView($prefix.'device.result');
-        static::deviceUserCodeView($prefix.'device.user_code');
+        static::deviceUserCodeView($prefix.'device.user-code');
     }
 
     /**
