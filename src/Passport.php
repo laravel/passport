@@ -8,7 +8,6 @@ use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
-use Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse;
 use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
 use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 use Laravel\Passport\Http\Responses\SimpleViewResponse;
@@ -681,7 +680,6 @@ class Passport
     {
         static::authorizationView($prefix.'authorize');
         static::deviceAuthorizationView($prefix.'device.authorize');
-        static::deviceAuthorizationResultView($prefix.'device.result');
         static::deviceUserCodeView($prefix.'device.user-code');
     }
 
@@ -699,14 +697,6 @@ class Passport
     public static function deviceAuthorizationView(Closure|string $view): void
     {
         app()->singleton(DeviceAuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
-    }
-
-    /**
-     * Specify which view should be used as the device authorization result view.
-     */
-    public static function deviceAuthorizationResultView(Closure|string $view): void
-    {
-        app()->singleton(DeviceAuthorizationResultViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**

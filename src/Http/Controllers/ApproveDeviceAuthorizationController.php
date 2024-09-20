@@ -3,7 +3,7 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Laravel\Passport\Contracts\DeviceAuthorizationResultViewResponse;
+use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse;
 use League\OAuth2\Server\AuthorizationServer;
 
 class ApproveDeviceAuthorizationController
@@ -14,14 +14,14 @@ class ApproveDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(protected AuthorizationServer $server,
-                                protected DeviceAuthorizationResultViewResponse $viewResponse)
+                                protected ApprovedDeviceAuthorizationResponse $response)
     {
     }
 
     /**
      * Approve the device authorization request.
      */
-    public function __invoke(Request $request): DeviceAuthorizationResultViewResponse
+    public function __invoke(Request $request): ApprovedDeviceAuthorizationResponse
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
@@ -29,9 +29,6 @@ class ApproveDeviceAuthorizationController
             true
         ));
 
-        return $this->viewResponse->withParameters([
-            'request' => $request,
-            'approved' => true,
-        ]);
+        return $this->response;
     }
 }

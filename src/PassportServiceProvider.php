@@ -15,8 +15,12 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\DeviceCodeRepository;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse as ApprovedDeviceAuthorizationResponseContract;
+use Laravel\Passport\Contracts\DeniedDeviceAuthorizationResponse as DeniedDeviceAuthorizationResponseContract;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\Http\Responses\ApprovedDeviceAuthorizationResponse;
+use Laravel\Passport\Http\Responses\DeniedDeviceAuthorizationResponse;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Parser as ParserContract;
 use Lcobucci\JWT\Token\Parser;
@@ -119,10 +123,20 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->app->singleton(ClientRepository::class);
 
+        $this->registerResponseBindings();
         $this->registerAuthorizationServer();
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
+    }
+
+    /**
+     * Register the response bindings.
+     */
+    protected function registerResponseBindings(): void
+    {
+        $this->app->singleton(ApprovedDeviceAuthorizationResponseContract::class, ApprovedDeviceAuthorizationResponse::class);
+        $this->app->singleton(DeniedDeviceAuthorizationResponseContract::class, DeniedDeviceAuthorizationResponse::class);
     }
 
     /**

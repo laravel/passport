@@ -18,7 +18,6 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         parent::setUp();
 
         Passport::deviceAuthorizationView(fn ($params) => $params);
-        Passport::deviceAuthorizationResultView(fn ($params) => $params);
         Passport::deviceUserCodeView(fn ($params) => $params);
     }
 
@@ -142,11 +141,9 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         ['authToken' => $authToken] = $json;
 
         $response = $this->post('/oauth/device/authorize', ['auth_token' => $authToken]);
-        $response->assertOk();
+        $response->assertRedirectToRoute('passport.device');
+        $response->assertSessionHas('status', 'authorization-approved');
         $response->assertSessionMissing(['deviceCode', 'authToken']);
-        $json = $response->json();
-        $this->assertEqualsCanonicalizing(['approved', 'request'], array_keys($json));
-        $this->assertSame(true, $json['approved']);
 
         $response = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -190,11 +187,9 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         ['authToken' => $authToken] = $this->get('/oauth/device/authorize?user_code='.$userCode)->json();
 
         $response = $this->delete('/oauth/device/authorize', ['auth_token' => $authToken]);
-        $response->assertOk();
+        $response->assertRedirectToRoute('passport.device');
+        $response->assertSessionHas('status', 'authorization-denied');
         $response->assertSessionMissing(['deviceCode', 'authToken']);
-        $json = $response->json();
-        $this->assertEqualsCanonicalizing(['approved', 'request'], array_keys($json));
-        $this->assertSame(false, $json['approved']);
 
         $response = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
