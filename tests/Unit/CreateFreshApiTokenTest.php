@@ -7,8 +7,8 @@ use Illuminate\Http\Response;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Http\Middleware\CreateFreshApiToken;
 use Laravel\Passport\Passport;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 

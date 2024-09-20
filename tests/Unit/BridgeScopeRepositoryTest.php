@@ -8,8 +8,8 @@ use Laravel\Passport\Bridge\ScopeRepository;
 use Laravel\Passport\Client as ClientModel;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class BridgeScopeRepositoryTest extends TestCase

@@ -10,8 +10,8 @@ use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\TokenRepository;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class BridgeAccessTokenRepositoryTest extends TestCase

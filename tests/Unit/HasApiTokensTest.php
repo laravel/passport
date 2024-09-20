@@ -5,8 +5,8 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Container\Container;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\HasApiTokens;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class HasApiTokensTest extends TestCase

@@ -4,8 +4,8 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckScopes;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class CheckScopesTest extends TestCase

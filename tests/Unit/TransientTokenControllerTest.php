@@ -5,8 +5,8 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Http\Request;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Http\Controllers\TransientTokenController;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 

@@ -7,8 +7,8 @@ use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Passport;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 

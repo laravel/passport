@@ -8,8 +8,8 @@ use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshTokenRepository;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
-use Mockery as m;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
