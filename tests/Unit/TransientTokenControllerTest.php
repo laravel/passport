@@ -6,15 +6,13 @@ use Illuminate\Http\Request;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Http\Controllers\TransientTokenController;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class TransientTokenControllerTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_token_can_be_refreshed()
     {

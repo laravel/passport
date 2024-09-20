@@ -11,14 +11,12 @@ use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\TokenRepository;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
 
 class BridgeAccessTokenRepositoryTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_access_tokens_can_be_persisted()
     {
@@ -59,8 +57,6 @@ class BridgeAccessTokenRepositoryTest extends TestCase
 
         $repository = new AccessTokenRepository($tokenRepository, $events);
         $repository->revokeAccessToken('token-id');
-
-        $this->expectNotToPerformAssertions();
     }
 
     public function test_access_token_revoke_event_is_not_dispatched_when_nothing_happened()
@@ -73,8 +69,6 @@ class BridgeAccessTokenRepositoryTest extends TestCase
 
         $repository = new AccessTokenRepository($tokenRepository, $events);
         $repository->revokeAccessToken('token-id');
-
-        $this->expectNotToPerformAssertions();
     }
 
     public function test_can_get_new_access_token()
