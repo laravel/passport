@@ -4,15 +4,13 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckForAnyScope as CheckScopes;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class CheckForAnyScopeTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_request_is_passed_along_if_scopes_are_present_on_token()
     {

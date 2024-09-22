@@ -6,17 +6,11 @@ use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
 class HandlesOAuthErrorsTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
-
     public function testShouldReturnCallbackResultIfNoErrorIsThrown()
     {
         $controller = new HandlesOAuthErrorsStubController;

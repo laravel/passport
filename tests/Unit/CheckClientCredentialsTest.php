@@ -7,16 +7,14 @@ use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CheckClientCredentialsTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_request_is_passed_along_if_token_is_valid()
     {
