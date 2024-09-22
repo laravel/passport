@@ -6,15 +6,16 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Foundation\Application as App;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportServiceProvider;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class PassportServiceProviderTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         @unlink(__DIR__.'/../keys/oauth-private.key');
     }
 

@@ -6,6 +6,7 @@ use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
@@ -14,10 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class AccessTokenControllerTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_a_token_can_be_issued()
     {
