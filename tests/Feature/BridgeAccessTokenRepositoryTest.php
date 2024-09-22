@@ -8,12 +8,14 @@ use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class BridgeAccessTokenRepositoryTest extends PassportTestCase
 {
     use WithLaravelMigrations;
+    use MockeryPHPUnitIntegration;
 
     public function test_access_tokens_can_be_persisted()
     {

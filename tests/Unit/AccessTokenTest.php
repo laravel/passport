@@ -11,8 +11,6 @@ class AccessTokenTest extends TestCase
 {
     protected function tearDown(): void
     {
-        parent::tearDown();
-
         Passport::$withInheritedScopes = false;
     }
 

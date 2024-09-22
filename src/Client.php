@@ -153,12 +153,10 @@ class Client extends Model
 
     /**
      * Determine if the client is a "first party" client.
-     *
-     * @return bool
      */
-    public function firstParty()
+    public function firstParty(): bool
     {
-        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
+        return empty($this->user_id);
     }
 
     /**
@@ -194,27 +192,10 @@ class Client extends Model
 
     /**
      * Determine whether the client has the given scope.
-     *
-     * @param  string  $scope
-     * @return bool
      */
-    public function hasScope($scope)
+    public function hasScope(string $scope): bool
     {
-        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
-            return true;
-        }
-
-        $scopes = Passport::$withInheritedScopes
-            ? $this->resolveInheritedScopes($scope)
-            : [$scope];
-
-        foreach ($scopes as $scope) {
-            if (in_array($scope, $this->scopes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
     }
 
     /**

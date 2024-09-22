@@ -56,6 +56,16 @@ trait HasApiTokens
     }
 
     /**
+     * Get the access token currently associated with the user.
+     *
+     * @return \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
+     */
+    public function currentAccessToken()
+    {
+        return $this->token();
+    }
+
+    /**
      * Determine if the current API token has a given scope.
      *
      * @param  string  $scope

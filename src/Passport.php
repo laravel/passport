@@ -3,11 +3,12 @@
 namespace Laravel\Passport;
 
 use Carbon\Carbon;
+use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
-use Laravel\Passport\Contracts\AuthorizationViewResponse as AuthorizationViewResponseContract;
-use Laravel\Passport\Http\Responses\AuthorizationViewResponse;
+use Laravel\Passport\Contracts\AuthorizationViewResponse;
+use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use Mockery;
 use Psr\Http\Message\ServerRequestInterface;
@@ -211,12 +212,40 @@ class Passport
     /**
      * Set the default scope(s). Multiple scopes may be an array or specified delimited by spaces.
      *
+     * @deprecated Use defaultScopes.
+     *
      * @param  array|string  $scope
      * @return void
      */
     public static function setDefaultScope($scope)
     {
         static::$defaultScope = is_array($scope) ? implode(' ', $scope) : $scope;
+    }
+
+    /**
+     * Set or get the default scopes.
+     *
+     * @param  string[]|string|null  $scopes
+     * @return string[]
+     */
+    public static function defaultScopes(array|string|null $scopes = null): array
+    {
+        if (! is_null($scopes)) {
+            static::$defaultScope = is_array($scopes) ? implode(' ', $scopes) : $scopes;
+        }
+
+        return static::$defaultScope ? explode(' ', static::$defaultScope) : [];
+    }
+
+    /**
+     * Return the scopes in the given list that are actually defined scopes for the application.
+     *
+     * @param  string[]  $scopes
+     * @return string[]
+     */
+    public static function validScopes(array $scopes): array
+    {
+        return array_values(array_unique(array_intersect($scopes, array_keys(static::$scopes))));
     }
 
     /**
@@ -607,16 +636,27 @@ class Passport
     }
 
     /**
-     * Specify which view should be used as the authorization view.
-     *
-     * @param  callable|string  $view
-     * @return void
+     * Register the views for Passport using conventional names under the given namespace.
      */
-    public static function authorizationView($view)
+    public static function viewNamespace(string $namespace): void
     {
-        app()->singleton(AuthorizationViewResponseContract::class, function ($app) use ($view) {
-            return new AuthorizationViewResponse($view);
-        });
+        static::viewPrefix($namespace.'::');
+    }
+
+    /**
+     * Register the views for Passport using conventional names under the given prefix.
+     */
+    public static function viewPrefix(string $prefix): void
+    {
+        static::authorizationView($prefix.'authorize');
+    }
+
+    /**
+     * Specify which view should be used as the authorization view.
+     */
+    public static function authorizationView(Closure|string $view): void
+    {
+        app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**

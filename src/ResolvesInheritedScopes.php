@@ -5,12 +5,31 @@ namespace Laravel\Passport;
 trait ResolvesInheritedScopes
 {
     /**
+     * Determine if a scope exists or inherited in the given array.
+     *
+     * @param  string[]  $haystack
+     */
+    protected function scopeExists(string $scope, array $haystack): bool
+    {
+        $scopes = Passport::$withInheritedScopes
+            ? $this->resolveInheritedScopes($scope)
+            : [$scope];
+
+        foreach ($scopes as $scope) {
+            if (in_array($scope, $haystack)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Resolve all possible scopes.
      *
-     * @param  string  $scope
-     * @return array
+     * @return string[]
      */
-    protected function resolveInheritedScopes($scope)
+    protected function resolveInheritedScopes(string $scope): array
     {
         $parts = explode(':', $scope);
 
