@@ -40,7 +40,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode($codeId)
     {
-        Passport::authCode()->where(Passport::authCode()->getKeyName(), $codeId)->update(['revoked' => true]);
+        Passport::authCode()->whereKey($codeId)->update(['revoked' => true]);
     }
 
     /**
@@ -48,6 +48,6 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function isAuthCodeRevoked($codeId)
     {
-        return Passport::authCode()->where(Passport::authCode()->getKeyName(), $codeId)->where('revoked', 1)->exists();
+        return Passport::authCode()->whereKey($codeId)->where('revoked', 1)->exists();
     }
 }

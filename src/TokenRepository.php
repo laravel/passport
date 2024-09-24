@@ -25,7 +25,7 @@ class TokenRepository
      */
     public function find($id)
     {
-        return Passport::token()->where(Passport::token()->getKeyName(), $id)->first();
+        return Passport::token()->whereKey($id)->first();
     }
 
     /**
@@ -37,7 +37,7 @@ class TokenRepository
      */
     public function findForUser($id, $userId)
     {
-        return Passport::token()->where(Passport::token()->getKeyName(), $id)->where('user_id', $userId)->first();
+        return Passport::token()->whereKey($id)->where('user_id', $userId)->first();
     }
 
     /**
@@ -86,7 +86,7 @@ class TokenRepository
      */
     public function revokeAccessToken($id)
     {
-        return Passport::token()->where(Passport::token()->getKeyName(), $id)->update(['revoked' => true]);
+        return Passport::token()->whereKey($id)->update(['revoked' => true]);
     }
 
     /**
