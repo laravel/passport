@@ -1,4 +1,4 @@
-<p align="center"><img src="/art/logo.svg" alt="Logo Laravel Passport"></p>
+<p align="center"><img width="368" height="60" src="/art/logo.svg" alt="Logo Laravel Passport"></p>
 
 <p align="center">
 <a href="https://github.com/laravel/passport/actions"><img src="https://github.com/laravel/passport/workflows/tests/badge.svg" alt="Build Status"></a>
