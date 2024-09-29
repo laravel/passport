@@ -2,24 +2,23 @@
 
 namespace Laravel\Passport;
 
-use Illuminate\Container\Container;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 trait HasApiTokens
 {
     /**
      * The current access token for the authentication user.
-     *
-     * @var \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
-    protected $accessToken;
+    protected AccessToken|TransientToken|null $accessToken;
 
     /**
      * Get all of the user's registered OAuth clients.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Client, $this>
      */
-    public function clients()
+    public function clients(): HasMany
     {
         return $this->hasMany(Passport::clientModel(), 'user_id');
     }
@@ -27,17 +26,17 @@ trait HasApiTokens
     /**
      * Get all of the access tokens for the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Token, $this>
      */
-    public function tokens()
+    public function tokens(): HasMany
     {
         return $this->hasMany(Passport::tokenModel(), 'user_id')
-            ->where(function ($query) {
-                $query->whereHas('client', function ($query) {
-                    $query->where(function ($query) {
+            ->where(function (Builder $query) {
+                $query->whereHas('client', function (Builder $query) {
+                    $query->where(function (Builder $query) {
                         $provider = $this->getProvider();
 
-                        $query->when($provider === config('auth.guards.api.provider'), function ($query) {
+                        $query->when($provider === config('auth.guards.api.provider'), function (Builder $query) {
                             $query->orWhereNull('provider');
                         })->orWhere('provider', $provider);
                     });
@@ -47,51 +46,42 @@ trait HasApiTokens
 
     /**
      * Get the current access token being used by the user.
-     *
-     * @return \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
-    public function token()
+    public function token(): AccessToken|TransientToken|null
     {
         return $this->accessToken;
     }
 
     /**
      * Get the access token currently associated with the user.
-     *
-     * @return \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null
      */
-    public function currentAccessToken()
+    public function currentAccessToken(): AccessToken|TransientToken|null
     {
         return $this->token();
     }
 
     /**
      * Determine if the current API token has a given scope.
-     *
-     * @param  string  $scope
-     * @return bool
      */
-    public function tokenCan($scope)
+    public function tokenCan(string $scope): bool
     {
         return $this->accessToken && $this->accessToken->can($scope);
     }
 
     /**
      * Create a new personal access token for the user.
-     *
-     * @param  string  $name
-     * @param  array  $scopes
-     * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function createToken($name, array $scopes = [])
+    public function createToken(string $name, array $scopes = []): PersonalAccessTokenResult
     {
-        return Container::getInstance()->make(PersonalAccessTokenFactory::class)->make(
+        return app(PersonalAccessTokenFactory::class)->make(
             $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
         );
     }
 
     /**
      * Get the user provider name.
+     *
+     * @throws \LogicException
      */
     public function getProvider(): string
     {
@@ -108,11 +98,8 @@ trait HasApiTokens
 
     /**
      * Set the current access token for the user.
-     *
-     * @param  \Laravel\Passport\AccessToken|\Laravel\Passport\TransientToken|null  $accessToken
-     * @return $this
      */
-    public function withAccessToken($accessToken)
+    public function withAccessToken(AccessToken|TransientToken|null $accessToken): static
     {
         $this->accessToken = $accessToken;
 

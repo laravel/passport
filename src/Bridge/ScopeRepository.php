@@ -15,8 +15,9 @@ class ScopeRepository implements ScopeRepositoryInterface
     /**
      * Create a new scope repository.
      */
-    public function __construct(protected ClientRepository $clients)
-    {
+    public function __construct(
+        protected ClientRepository $clients
+    ) {
     }
 
     /**
@@ -40,13 +41,13 @@ class ScopeRepository implements ScopeRepositoryInterface
         return collect($scopes)
             ->unless(in_array($grantType, ['password', 'personal_access', 'client_credentials']),
                 fn (Collection $scopes): Collection => $scopes->reject(
-                    fn (Scope $scope): bool => $scope->getIdentifier() === '*'
+                    fn (ScopeEntityInterface $scope): bool => $scope->getIdentifier() === '*'
                 )
             )
-            ->filter(fn (Scope $scope): bool => Passport::hasScope($scope->getIdentifier()))
+            ->filter(fn (ScopeEntityInterface $scope): bool => Passport::hasScope($scope->getIdentifier()))
             ->when($this->clients->findActive($clientEntity->getIdentifier()),
                 fn (Collection $scopes, Client $client): Collection => $scopes->filter(
-                    fn (Scope $scope): bool => $client->hasScope($scope->getIdentifier())
+                    fn (ScopeEntityInterface $scope): bool => $client->hasScope($scope->getIdentifier())
                 )
             )
             ->values()

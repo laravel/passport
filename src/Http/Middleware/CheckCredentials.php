@@ -3,40 +3,31 @@
 namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class CheckCredentials
 {
     /**
-     * The Resource Server instance.
-     *
-     * @var \League\OAuth2\Server\ResourceServer
-     */
-    protected $server;
-
-    /**
      * Create a new middleware instance.
-     *
-     * @param  \League\OAuth2\Server\ResourceServer  $server
-     * @return void
      */
-    public function __construct(ResourceServer $server)
-    {
-        $this->server = $server;
+    public function __construct(
+        protected ResourceServer $server
+    ) {
     }
 
     /**
      * Specify the scopes for the middleware.
      *
-     * @param  array|string  $scopes
-     * @return string
+     * @param  string[]|string  ...$scopes
      */
-    public static function using(...$scopes)
+    public static function using(...$scopes): string
     {
         if (is_array($scopes[0])) {
             return static::class.':'.implode(',', $scopes[0]);
@@ -48,14 +39,12 @@ abstract class CheckCredentials
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  mixed  ...$scopes
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string[]|string  ...$scopes
      *
      * @throws \Laravel\Passport\Exceptions\AuthenticationException
      */
-    public function handle($request, Closure $next, ...$scopes)
+    public function handle(Request $request, Closure $next, string ...$scopes): Response
     {
         $psr = (new PsrHttpFactory(
             new Psr17Factory,
@@ -66,51 +55,21 @@ abstract class CheckCredentials
 
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
-        } catch (OAuthServerException $e) {
+        } catch (OAuthServerException) {
             throw new AuthenticationException;
         }
 
-        $this->validate($psr, $scopes);
+        $this->validateScopes(AccessToken::fromPsrRequest($psr), $scopes);
 
         return $next($request);
     }
 
     /**
-     * Validate the scopes and token on the incoming request.
-     *
-     * @param  \Psr\Http\Message\ServerRequestInterface  $psr
-     * @param  array  $scopes
-     * @return void
-     *
-     * @throws \Laravel\Passport\Exceptions\MissingScopeException|\Illuminate\Auth\AuthenticationException
-     */
-    protected function validate($psr, $scopes)
-    {
-        $token = AccessToken::fromPsrRequest($psr);
-
-        $this->validateCredentials($token);
-
-        $this->validateScopes($token, $scopes);
-    }
-
-    /**
-     * Validate token credentials.
-     *
-     * @param  \Laravel\Passport\AccessToken  $token
-     * @return void
-     *
-     * @throws \Laravel\Passport\Exceptions\AuthenticationException
-     */
-    abstract protected function validateCredentials($token);
-
-    /**
      * Validate token scopes.
      *
-     * @param  \Laravel\Passport\AccessToken  $token
-     * @param  array  $scopes
-     * @return void
+     * @param  string[]  $scopes
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    abstract protected function validateScopes($token, $scopes);
+    abstract protected function validateScopes(AccessToken $token, array $scopes): void;
 }

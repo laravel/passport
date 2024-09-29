@@ -8,38 +8,20 @@ use Illuminate\Contracts\Support\Jsonable;
 class Scope implements Arrayable, Jsonable
 {
     /**
-     * The name / ID of the scope.
-     *
-     * @var string
-     */
-    public $id;
-
-    /**
-     * The scope description.
-     *
-     * @var string
-     */
-    public $description;
-
-    /**
      * Create a new scope instance.
-     *
-     * @param  string  $id
-     * @param  string  $description
-     * @return void
      */
-    public function __construct($id, $description)
-    {
-        $this->id = $id;
-        $this->description = $description;
+    public function __construct(
+        public string $id,
+        public string $description
+    ) {
     }
 
     /**
      * Get the instance as an array.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'id' => $this->id,
@@ -51,9 +33,8 @@ class Scope implements Arrayable, Jsonable
      * Convert the object to its JSON representation.
      *
      * @param  int  $options
-     * @return string
      */
-    public function toJson($options = 0)
+    public function toJson($options = 0): string
     {
         return json_encode($this->toArray(), $options);
     }

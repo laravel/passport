@@ -26,15 +26,12 @@ class HashCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        if ($this->option('force') || $this->confirm('Are you sure you want to hash all client secrets? This cannot be undone.')) {
-            $model = Passport::clientModel();
-
-            foreach ((new $model)->whereNotNull('secret')->cursor() as $client) {
+        if ($this->option('force') ||
+            $this->confirm('Are you sure you want to hash all client secrets? This cannot be undone.')) {
+            foreach (Passport::client()->newQuery()->whereNotNull('secret')->cursor() as $client) {
                 if (Hash::isHashed($client->secret) && ! Hash::needsRehash($client->secret)) {
                     continue;
                 }

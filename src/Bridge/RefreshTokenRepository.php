@@ -4,29 +4,18 @@ namespace Laravel\Passport\Bridge;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Events\RefreshTokenCreated;
-use Laravel\Passport\RefreshTokenRepository as PassportRefreshTokenRepository;
+use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * The refresh token repository instance.
-     */
-    protected PassportRefreshTokenRepository $refreshTokenRepository;
-
-    /**
-     * The event dispatcher instance.
-     */
-    protected Dispatcher $events;
-
-    /**
      * Create a new repository instance.
      */
-    public function __construct(PassportRefreshTokenRepository $refreshTokenRepository, Dispatcher $events)
-    {
-        $this->events = $events;
-        $this->refreshTokenRepository = $refreshTokenRepository;
+    public function __construct(
+        protected Dispatcher $events
+    ) {
     }
 
     /**
@@ -42,7 +31,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
-        $this->refreshTokenRepository->create([
+        Passport::refreshToken()->newQuery()->create([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
             'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),
             'revoked' => false,
@@ -57,7 +46,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function revokeRefreshToken(string $tokenId): void
     {
-        $this->refreshTokenRepository->revokeRefreshToken($tokenId);
+        Passport::refreshToken()->newQuery()->whereKey($tokenId)->update(['revoked' => true]);
     }
 
     /**
@@ -65,6 +54,6 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function isRefreshTokenRevoked(string $tokenId): bool
     {
-        return $this->refreshTokenRepository->isRefreshTokenRevoked($tokenId);
+        return Passport::refreshToken()->newQuery()->whereKey($tokenId)->where('revoked', false)->doesntExist();
     }
 }
