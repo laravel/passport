@@ -7,9 +7,7 @@ use Laravel\Passport\Bridge\AuthCode;
 use Laravel\Passport\Bridge\AuthCodeRepository as BridgeAuthCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
-use Laravel\Passport\RefreshTokenRepository;
 use Laravel\Passport\Tests\Feature\PassportTestCase;
-use Laravel\Passport\TokenRepository;
 use Mockery as m;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
@@ -97,7 +95,7 @@ class RevokedTest extends PassportTestCase
         $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
         $events->shouldReceive('dispatch');
 
-        return new BridgeAccessTokenRepository(new TokenRepository, $events);
+        return new BridgeAccessTokenRepository($events);
     }
 
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
@@ -134,7 +132,7 @@ class RevokedTest extends PassportTestCase
         $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
         $events->shouldReceive('dispatch');
 
-        return new BridgeRefreshTokenRepository(new RefreshTokenRepository, $events);
+        return new BridgeRefreshTokenRepository($events);
     }
 
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void

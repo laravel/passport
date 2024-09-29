@@ -34,6 +34,13 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertSame($client->getKey(), $result->token->client_id);
         $this->assertSame($user->getAuthIdentifier(), $result->token->user_id);
         $this->assertSame(['bar'], $result->token->scopes);
+
+        $this->assertDatabaseHas('oauth_access_tokens', [
+            'id' =>  $result->token->id,
+            'user_id' => $result->token->user_id,
+            'client_id' => $result->token->client_id,
+            'name' => $result->token->name,
+        ]);
     }
 
     public function testIssueTokenWithDifferentProviders()

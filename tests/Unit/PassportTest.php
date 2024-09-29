@@ -67,6 +67,6 @@ class PassportTest extends TestCase
     }
 }
 
-class RefreshTokenStub
+class RefreshTokenStub extends RefreshToken
 {
 }
