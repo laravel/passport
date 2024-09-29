@@ -4,6 +4,7 @@ namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\Events\Logout;
+use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -20,7 +21,6 @@ use Lcobucci\JWT\Parser as ParserContract;
 use Lcobucci\JWT\Token\Parser;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
-use League\OAuth2\Server\CryptKeyInterface;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
@@ -247,9 +247,9 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Create a CryptKey instance.
      */
-    protected function makeCryptKey(string $type): CryptKeyInterface
+    protected function makeCryptKey(string $type): CryptKey
     {
-        $key = str_replace('\\n', "\n", config("passport.{$type}_key", ''));
+        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get("passport.{$type}_key", ''));
 
         if (! $key) {
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
