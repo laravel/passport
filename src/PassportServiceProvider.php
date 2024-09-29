@@ -4,7 +4,6 @@ namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -249,7 +248,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeCryptKey(string $type): CryptKey
     {
-        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get("passport.{$type}_key") ?? '');
+        $key = str_replace('\\n', "\n", config("passport.{$type}_key") ?? '');
 
         if (! $key) {
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
