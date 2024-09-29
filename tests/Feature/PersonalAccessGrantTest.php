@@ -36,7 +36,7 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertSame(['bar'], $result->token->scopes);
 
         $this->assertDatabaseHas('oauth_access_tokens', [
-            'id' =>  $result->token->id,
+            'id' => $result->token->id,
             'user_id' => $result->token->user_id,
             'client_id' => $result->token->client_id,
             'name' => $result->token->name,
