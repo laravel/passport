@@ -31,7 +31,7 @@ class PurgeCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $revoked = $this->option('revoked') || ! $this->option('expired');
 
@@ -43,9 +43,9 @@ class PurgeCommand extends Command
             ->when($revoked, fn () => $query->orWhere('revoked', true))
             ->when($expired, fn () => $query->orWhere('expires_at', '<', $expired));
 
-        Passport::token()->where($constraint)->delete();
-        Passport::authCode()->where($constraint)->delete();
-        Passport::refreshToken()->where($constraint)->delete();
+        Passport::token()->newQuery()->where($constraint)->delete();
+        Passport::authCode()->newQuery()->where($constraint)->delete();
+        Passport::refreshToken()->newQuery()->where($constraint)->delete();
 
         $this->components->info(sprintf('Purged %s.', implode(' and ', array_filter([
             $revoked ? 'revoked items' : null,

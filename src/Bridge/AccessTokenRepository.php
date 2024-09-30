@@ -16,16 +16,11 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The event dispatcher instance.
-     */
-    protected Dispatcher $events;
-
-    /**
      * Create a new repository instance.
      */
-    public function __construct(Dispatcher $events)
-    {
-        $this->events = $events;
+    public function __construct(
+        protected Dispatcher $events
+    ) {
     }
 
     /**

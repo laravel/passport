@@ -11,16 +11,11 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * The event dispatcher instance.
-     */
-    protected Dispatcher $events;
-
-    /**
      * Create a new repository instance.
      */
-    public function __construct(Dispatcher $events)
-    {
-        $this->events = $events;
+    public function __construct(
+        protected Dispatcher $events
+    ) {
     }
 
     /**

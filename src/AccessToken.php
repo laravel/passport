@@ -38,7 +38,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
     /**
      * Create a new access token instance.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param  array<TKey, TValue>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -84,7 +84,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
      */
     public function revoke(): bool
     {
-        return Passport::token()->newQuery()->whereKey($this->oauth_access_token_id)->update(['revoked' => true]);
+        return (bool) Passport::token()->newQuery()->whereKey($this->oauth_access_token_id)->update(['revoked' => true]);
     }
 
     /**

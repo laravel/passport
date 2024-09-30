@@ -4,44 +4,31 @@ namespace Laravel\Passport\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Passport;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class CreateFreshApiToken
 {
     /**
-     * The API token cookie factory instance.
-     *
-     * @var \Laravel\Passport\ApiTokenCookieFactory
-     */
-    protected $cookieFactory;
-
-    /**
      * The authentication guard.
-     *
-     * @var string
      */
-    protected $guard;
+    protected ?string $guard = null;
 
     /**
      * Create a new middleware instance.
-     *
-     * @param  \Laravel\Passport\ApiTokenCookieFactory  $cookieFactory
-     * @return void
      */
-    public function __construct(ApiTokenCookieFactory $cookieFactory)
-    {
-        $this->cookieFactory = $cookieFactory;
+    public function __construct(
+        protected ApiTokenCookieFactory $cookieFactory
+    ) {
     }
 
     /**
      * Specify the guard for the middleware.
-     *
-     * @param  string|null  $guard
-     * @return string
      */
-    public static function using($guard = null)
+    public static function using(?string $guard = null): string
     {
         $guard = is_null($guard) ? '' : ':'.$guard;
 
@@ -51,12 +38,9 @@ class CreateFreshApiToken
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  string|null  $guard
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle(Request $request, Closure $next, ?string $guard = null): BaseResponse
     {
         $this->guard = $guard;
 
@@ -73,12 +57,8 @@ class CreateFreshApiToken
 
     /**
      * Determine if the given request should receive a fresh token.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Http\Response  $response
-     * @return bool
      */
-    protected function shouldReceiveFreshToken($request, $response)
+    protected function shouldReceiveFreshToken(Request $request, BaseResponse $response): bool
     {
         return $this->requestShouldReceiveFreshToken($request) &&
                $this->responseShouldReceiveFreshToken($response);
@@ -86,22 +66,16 @@ class CreateFreshApiToken
 
     /**
      * Determine if the request should receive a fresh token.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return bool
      */
-    protected function requestShouldReceiveFreshToken($request)
+    protected function requestShouldReceiveFreshToken(Request $request): bool
     {
         return $request->isMethod('GET') && $request->user($this->guard);
     }
 
     /**
      * Determine if the response should receive a fresh token.
-     *
-     * @param  \Illuminate\Http\Response  $response
-     * @return bool
      */
-    protected function responseShouldReceiveFreshToken($response)
+    protected function responseShouldReceiveFreshToken(BaseResponse $response): bool
     {
         return ($response instanceof Response ||
                 $response instanceof JsonResponse) &&
@@ -112,11 +86,8 @@ class CreateFreshApiToken
      * Determine if the given response already contains an API token.
      *
      * This avoids us overwriting a just "refreshed" token.
-     *
-     * @param  \Illuminate\Http\Response  $response
-     * @return bool
      */
-    protected function alreadyContainsToken($response)
+    protected function alreadyContainsToken(BaseResponse $response): bool
     {
         foreach ($response->headers->getCookies() as $cookie) {
             if ($cookie->getName() === Passport::cookie()) {

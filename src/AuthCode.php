@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AuthCode extends Model
 {
@@ -23,14 +24,14 @@ class AuthCode extends Model
     /**
      * The guarded attributes on the model.
      *
-     * @var array
+     * @var array<string>|bool
      */
-    protected $guarded = [];
+    protected $guarded = false;
 
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
      */
     protected $casts = [
         'revoked' => 'bool',
@@ -56,19 +57,17 @@ class AuthCode extends Model
      *
      * @deprecated Will be removed in a future Laravel version.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Laravel\Passport\Client, $this>
      */
-    public function client()
+    public function client(): BelongsTo
     {
         return $this->belongsTo(Passport::clientModel());
     }
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return $this->connection ?? config('passport.connection');
     }

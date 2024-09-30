@@ -10,18 +10,16 @@ class MissingScopeException extends AuthorizationException
     /**
      * The scopes that the user did not have.
      *
-     * @var array
+     * @var string[]
      */
-    protected $scopes;
+    protected array $scopes;
 
     /**
      * Create a new missing scope exception.
      *
-     * @param  array|string  $scopes
-     * @param  string  $message
-     * @return void
+     * @param  string[]|string  $scopes
      */
-    public function __construct($scopes = [], $message = 'Invalid scope(s) provided.')
+    public function __construct(array|string $scopes = [], string $message = 'Invalid scope(s) provided.')
     {
         parent::__construct($message);
 
@@ -31,9 +29,9 @@ class MissingScopeException extends AuthorizationException
     /**
      * Get the scopes that the user did not have.
      *
-     * @return array
+     * @return string[]
      */
-    public function scopes()
+    public function scopes(): array
     {
         return $this->scopes;
     }

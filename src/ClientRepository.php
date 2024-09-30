@@ -3,6 +3,7 @@
 namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -83,10 +84,11 @@ class ClientRepository
     public function personalAccessClient(string $provider): Client
     {
         return Passport::client()
+            ->newQuery()
             ->where('revoked', false)
             ->whereNull('user_id')
-            ->where(function ($query) use ($provider) {
-                $query->when($provider === config('auth.guards.api.provider'), function ($query) {
+            ->where(function (Builder $query) use ($provider) {
+                $query->when($provider === config('auth.guards.api.provider'), function (Builder $query) {
                     $query->orWhereNull('provider');
                 })->orWhere('provider', $provider);
             })
@@ -101,8 +103,9 @@ class ClientRepository
     /**
      * Store a new client.
      *
-     * @param  string[]  $redirectUris
      * @param  string[]  $grantTypes
+     * @param  string[]  $redirectUris
+     * @param  \Laravel\Passport\HasApiTokens  $user
      */
     protected function create(
         string $name,
@@ -135,7 +138,7 @@ class ClientRepository
 
         return $user
             ? $user->clients()->forceCreate($attributes)
-            : $client->forceCreate($attributes);
+            : $client->newQuery()->forceCreate($attributes);
     }
 
     /**
@@ -211,17 +214,12 @@ class ClientRepository
 
     /**
      * Regenerate the client secret.
-     *
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Client
      */
-    public function regenerateSecret(Client $client)
+    public function regenerateSecret(Client $client): bool
     {
-        $client->forceFill([
+        return $client->forceFill([
             'secret' => Str::random(40),
         ])->save();
-
-        return $client;
     }
 
     /**

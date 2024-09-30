@@ -15,6 +15,7 @@ class AccessToken implements AccessTokenEntityInterface
     /**
      * Create a new token instance.
      *
+     * @param  non-empty-string|null  $userIdentifier
      * @param  \League\OAuth2\Server\Entities\ScopeEntityInterface[]  $scopes
      */
     public function __construct(string|null $userIdentifier, array $scopes, ClientEntityInterface $client)
