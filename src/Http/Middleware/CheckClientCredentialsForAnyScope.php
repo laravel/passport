@@ -2,36 +2,19 @@
 
 namespace Laravel\Passport\Http\Middleware;
 
-use Laravel\Passport\Exceptions\AuthenticationException;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
 class CheckClientCredentialsForAnyScope extends CheckCredentials
 {
     /**
-     * Validate token credentials.
+     * Validate token scopes.
      *
-     * @param  \Laravel\Passport\AccessToken  $token
-     * @return void
-     *
-     * @throws \Laravel\Passport\Exceptions\AuthenticationException
-     */
-    protected function validateCredentials($token)
-    {
-        if (! $token) {
-            throw new AuthenticationException;
-        }
-    }
-
-    /**
-     * Validate token credentials.
-     *
-     * @param  \Laravel\Passport\AccessToken  $token
-     * @param  array  $scopes
-     * @return void
+     * @param  string[]  $scopes
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    protected function validateScopes($token, $scopes)
+    protected function validateScopes(AccessToken $token, array $scopes): void
     {
         if (in_array('*', $token->oauth_scopes)) {
             return;

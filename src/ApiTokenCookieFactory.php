@@ -11,40 +11,18 @@ use Symfony\Component\HttpFoundation\Cookie;
 class ApiTokenCookieFactory
 {
     /**
-     * The configuration repository implementation.
-     *
-     * @var \Illuminate\Contracts\Config\Repository
-     */
-    protected $config;
-
-    /**
-     * The encrypter implementation.
-     *
-     * @var \Illuminate\Contracts\Encryption\Encrypter
-     */
-    protected $encrypter;
-
-    /**
      * Create an API token cookie factory instance.
-     *
-     * @param  \Illuminate\Contracts\Config\Repository  $config
-     * @param  \Illuminate\Contracts\Encryption\Encrypter  $encrypter
-     * @return void
      */
-    public function __construct(Config $config, Encrypter $encrypter)
-    {
-        $this->config = $config;
-        $this->encrypter = $encrypter;
+    public function __construct(
+        protected Config $config,
+        protected Encrypter $encrypter
+    ) {
     }
 
     /**
      * Create a new API token cookie.
-     *
-     * @param  mixed  $userId
-     * @param  string  $csrfToken
-     * @return \Symfony\Component\HttpFoundation\Cookie
      */
-    public function make($userId, $csrfToken)
+    public function make(string|int $userId, string $csrfToken): Cookie
     {
         $config = $this->config->get('session');
 
@@ -65,13 +43,8 @@ class ApiTokenCookieFactory
 
     /**
      * Create a new JWT token for the given user ID and CSRF token.
-     *
-     * @param  mixed  $userId
-     * @param  string  $csrfToken
-     * @param  \Carbon\Carbon  $expiration
-     * @return string
      */
-    protected function createToken($userId, $csrfToken, Carbon $expiration)
+    protected function createToken(string|int $userId, string $csrfToken, Carbon $expiration): string
     {
         return JWT::encode([
             'sub' => $userId,

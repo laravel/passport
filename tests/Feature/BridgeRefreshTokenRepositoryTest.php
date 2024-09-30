@@ -1,35 +1,27 @@
 <?php
 
-namespace Laravel\Passport\Tests\Unit;
+namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\RefreshToken;
-use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
-use Laravel\Passport\RefreshTokenRepository;
+use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
-use PHPUnit\Framework\TestCase;
+use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
-class BridgeRefreshTokenRepositoryTest extends TestCase
+class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 {
+    use WithLaravelMigrations;
     use MockeryPHPUnitIntegration;
 
     public function test_access_tokens_can_be_persisted()
     {
         $expiration = CarbonImmutable::now();
 
-        $refreshTokenRepository = m::mock(RefreshTokenRepository::class);
         $events = m::mock(Dispatcher::class);
-
-        $refreshTokenRepository->shouldReceive('create')->once()->andReturnUsing(function ($array) use ($expiration) {
-            $this->assertEquals('1', $array['id']);
-            $this->assertEquals('2', $array['access_token_id']);
-            $this->assertFalse($array['revoked']);
-            $this->assertEquals($expiration, $array['expires_at']);
-        });
 
         $events->shouldReceive('dispatch')->once();
 
@@ -41,16 +33,22 @@ class BridgeRefreshTokenRepositoryTest extends TestCase
         $refreshToken->setExpiryDateTime($expiration);
         $refreshToken->setAccessToken($accessToken);
 
-        $repository = new BridgeRefreshTokenRepository($refreshTokenRepository, $events);
+        $repository = new RefreshTokenRepository($events);
 
         $repository->persistNewRefreshToken($refreshToken);
+
+        $this->assertDatabaseHas('oauth_refresh_tokens', [
+            'id' => '1',
+            'access_token_id' => '2',
+            'revoked' => false,
+            'expires_at' => $expiration,
+        ]);
     }
 
     public function test_can_get_new_refresh_token()
     {
-        $refreshTokenRepository = m::mock(RefreshTokenRepository::class);
         $events = m::mock(Dispatcher::class);
-        $repository = new BridgeRefreshTokenRepository($refreshTokenRepository, $events);
+        $repository = new RefreshTokenRepository($events);
 
         $token = $repository->getNewRefreshToken();
 

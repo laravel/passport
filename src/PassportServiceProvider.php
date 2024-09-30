@@ -4,7 +4,6 @@ namespace Laravel\Passport;
 
 use DateInterval;
 use Illuminate\Auth\Events\Logout;
-use Illuminate\Config\Repository as Config;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -32,10 +31,8 @@ class PassportServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerRoutes();
         $this->registerPublishing();
@@ -46,10 +43,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the Passport routes.
-     *
-     * @return void
      */
-    protected function registerRoutes()
+    protected function registerRoutes(): void
     {
         if (Passport::$registersRoutes) {
             Route::group([
@@ -64,10 +59,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the package's publishable resources.
-     *
-     * @return void
      */
-    protected function registerPublishing()
+    protected function registerPublishing(): void
     {
         if ($this->app->runningInConsole()) {
             $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
@@ -86,10 +79,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the Passport Artisan commands.
-     *
-     * @return void
      */
-    protected function registerCommands()
+    protected function registerCommands(): void
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -104,10 +95,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
@@ -125,13 +114,11 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the authorization server.
-     *
-     * @return void
      */
-    protected function registerAuthorizationServer()
+    protected function registerAuthorizationServer(): void
     {
         $this->app->singleton(AuthorizationServer::class, function () {
-            return tap($this->makeAuthorizationServer(), function ($server) {
+            return tap($this->makeAuthorizationServer(), function (AuthorizationServer $server) {
                 $server->setDefaultScope(Passport::$defaultScope);
 
                 $server->enableGrantType(
@@ -167,22 +154,18 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Create and configure an instance of the Auth Code grant.
-     *
-     * @return \League\OAuth2\Server\Grant\AuthCodeGrant
      */
-    protected function makeAuthCodeGrant()
+    protected function makeAuthCodeGrant(): AuthCodeGrant
     {
-        return tap($this->buildAuthCodeGrant(), function ($grant) {
+        return tap($this->buildAuthCodeGrant(), function (AuthCodeGrant $grant) {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
 
     /**
      * Build the Auth Code grant instance.
-     *
-     * @return \League\OAuth2\Server\Grant\AuthCodeGrant
      */
-    protected function buildAuthCodeGrant()
+    protected function buildAuthCodeGrant(): AuthCodeGrant
     {
         return new AuthCodeGrant(
             $this->app->make(Bridge\AuthCodeRepository::class),
@@ -193,72 +176,58 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Create and configure a Refresh Token grant instance.
-     *
-     * @return \League\OAuth2\Server\Grant\RefreshTokenGrant
      */
-    protected function makeRefreshTokenGrant()
+    protected function makeRefreshTokenGrant(): RefreshTokenGrant
     {
         $repository = $this->app->make(RefreshTokenRepository::class);
 
-        return tap(new RefreshTokenGrant($repository), function ($grant) {
+        return tap(new RefreshTokenGrant($repository), function (RefreshTokenGrant $grant) {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
 
     /**
      * Create and configure a Password grant instance.
-     *
-     * @return \League\OAuth2\Server\Grant\PasswordGrant
      */
-    protected function makePasswordGrant()
+    protected function makePasswordGrant(): PasswordGrant
     {
-        $grant = new PasswordGrant(
+        return tap(new PasswordGrant(
             $this->app->make(Bridge\UserRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class)
-        );
-
-        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
-
-        return $grant;
+        ), function (PasswordGrant $grant) {
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+        });
     }
 
     /**
      * Create and configure an instance of the Implicit grant.
-     *
-     * @return \League\OAuth2\Server\Grant\ImplicitGrant
      */
-    protected function makeImplicitGrant()
+    protected function makeImplicitGrant(): ImplicitGrant
     {
         return new ImplicitGrant(Passport::tokensExpireIn());
     }
 
     /**
      * Make the authorization service instance.
-     *
-     * @return \League\OAuth2\Server\AuthorizationServer
      */
-    public function makeAuthorizationServer()
+    public function makeAuthorizationServer(): AuthorizationServer
     {
         return new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            app('encrypter')->getKey(),
+            $this->app->make('encrypter')->getKey(),
             Passport::$authorizationServerResponseType
         );
     }
 
     /**
      * Register the JWT Parser.
-     *
-     * @return void
      */
-    protected function registerJWTParser()
+    protected function registerJWTParser(): void
     {
-        $this->app->singleton(ParserContract::class, function () {
-            return new Parser(new JoseEncoder);
-        });
+        $this->app->singleton(ParserContract::class, fn () => new Parser(new JoseEncoder));
     }
 
     /**
@@ -266,25 +235,20 @@ class PassportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerResourceServer()
+    protected function registerResourceServer(): void
     {
-        $this->app->singleton(ResourceServer::class, function ($container) {
-            return new ResourceServer(
-                $container->make(Bridge\AccessTokenRepository::class),
-                $this->makeCryptKey('public')
-            );
-        });
+        $this->app->singleton(ResourceServer::class, fn ($container) => new ResourceServer(
+            $container->make(Bridge\AccessTokenRepository::class),
+            $this->makeCryptKey('public')
+        ));
     }
 
     /**
      * Create a CryptKey instance.
-     *
-     * @param  string  $type
-     * @return \League\OAuth2\Server\CryptKey
      */
-    protected function makeCryptKey($type)
+    protected function makeCryptKey(string $type): CryptKey
     {
-        $key = str_replace('\\n', "\n", $this->app->make(Config::class)->get('passport.'.$type.'_key') ?? '');
+        $key = str_replace('\\n', "\n", config("passport.{$type}_key") ?? '');
 
         if (! $key) {
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
@@ -295,27 +259,22 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the token guard.
-     *
-     * @return void
      */
-    protected function registerGuard()
+    protected function registerGuard(): void
     {
         Auth::resolved(function ($auth) {
-            $auth->extend('passport', function ($app, $name, array $config) {
-                return tap($this->makeGuard($config), function ($guard) {
-                    app()->refresh('request', $guard, 'setRequest');
-                });
-            });
+            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard) {
+                app()->refresh('request', $guard, 'setRequest');
+            }));
         });
     }
 
     /**
      * Make an instance of the token guard.
      *
-     * @param  array  $config
-     * @return \Laravel\Passport\Guards\TokenGuard
+     * @param  array<string, mixed>  $config
      */
-    protected function makeGuard(array $config)
+    protected function makeGuard(array $config): TokenGuard
     {
         return new TokenGuard(
             $this->app->make(ResourceServer::class),
@@ -328,10 +287,8 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the cookie deletion event handler.
-     *
-     * @return void
      */
-    protected function deleteCookieOnLogout()
+    protected function deleteCookieOnLogout(): void
     {
         Event::listen(Logout::class, function () {
             if (Request::hasCookie(Passport::cookie())) {

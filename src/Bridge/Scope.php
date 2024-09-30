@@ -12,6 +12,8 @@ class Scope implements ScopeEntityInterface
 
     /**
      * Create a new scope instance.
+     *
+     * @param  non-empty-string  $name
      */
     public function __construct(string $name)
     {

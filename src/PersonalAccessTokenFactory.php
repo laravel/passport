@@ -11,63 +11,29 @@ use Psr\Http\Message\ServerRequestInterface;
 class PersonalAccessTokenFactory
 {
     /**
-     * The authorization server instance.
-     *
-     * @var \League\OAuth2\Server\AuthorizationServer
-     */
-    protected $server;
-
-    /**
-     * The token repository instance.
-     *
-     * @var \Laravel\Passport\TokenRepository
-     */
-    protected $tokens;
-
-    /**
-     * The JWT token parser instance.
-     *
-     * @var \Lcobucci\JWT\Parser
-     */
-    protected $jwt;
-
-    /**
      * Create a new personal access token factory instance.
-     *
-     * @param  \League\OAuth2\Server\AuthorizationServer  $server
-     * @param  \Laravel\Passport\TokenRepository  $tokens
-     * @param  \Lcobucci\JWT\Parser  $jwt
-     * @return void
      */
-    public function __construct(AuthorizationServer $server,
-                                TokenRepository $tokens,
-                                JwtParser $jwt)
-    {
-        $this->jwt = $jwt;
-        $this->tokens = $tokens;
-        $this->server = $server;
+    public function __construct(
+        protected AuthorizationServer $server,
+        protected JwtParser $jwt
+    ) {
     }
 
     /**
      * Create a new personal access token.
      *
-     * @param  mixed  $userId
-     * @param  string  $name
      * @param  string[]  $scopes
-     * @param  string  $provider
-     * @return \Laravel\Passport\PersonalAccessTokenResult
      */
-    public function make($userId, string $name, array $scopes, string $provider)
+    public function make(string|int $userId, string $name, array $scopes, string $provider): PersonalAccessTokenResult
     {
         $response = $this->dispatchRequestToAuthorizationServer(
             $this->createRequest($userId, $scopes, $provider)
         );
 
-        $token = tap($this->findAccessToken($response), function ($token) use ($userId, $name) {
-            $this->tokens->save($token->forceFill([
-                'user_id' => $userId,
+        $token = tap($this->findAccessToken($response), function (Token $token) use ($name) {
+            $token->forceFill([
                 'name' => $name,
-            ]));
+            ])->save();
         });
 
         return new PersonalAccessTokenResult(
@@ -78,12 +44,9 @@ class PersonalAccessTokenFactory
     /**
      * Create a request instance for the given client.
      *
-     * @param  mixed  $userId
      * @param  string[]  $scopes
-     * @param  string  $provider
-     * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function createRequest($userId, array $scopes, string $provider)
+    protected function createRequest(string|int $userId, array $scopes, string $provider): ServerRequestInterface
     {
         return (new ServerRequest('POST', 'not-important'))->withParsedBody([
             'grant_type' => 'personal_access',
@@ -96,10 +59,9 @@ class PersonalAccessTokenFactory
     /**
      * Dispatch the given request to the authorization server.
      *
-     * @param  \Psr\Http\Message\ServerRequestInterface  $request
-     * @return array
+     * @return array<string, mixed>
      */
-    protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request)
+    protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request): array
     {
         return json_decode($this->server->respondToAccessTokenRequest(
             $request, new Response
@@ -109,12 +71,11 @@ class PersonalAccessTokenFactory
     /**
      * Get the access token instance for the parsed response.
      *
-     * @param  array  $response
-     * @return \Laravel\Passport\Token
+     * @param  array<string, mixed>  $response
      */
-    public function findAccessToken(array $response)
+    public function findAccessToken(array $response): Token
     {
-        return $this->tokens->find(
+        return Passport::token()->newQuery()->find(
             $this->jwt->parse($response['access_token'])->claims()->get('jti')
         );
     }

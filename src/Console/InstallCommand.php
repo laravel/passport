@@ -26,12 +26,13 @@ class InstallCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $this->call('passport:keys', ['--force' => $this->option('force'), '--length' => $this->option('length')]);
+        $this->call('passport:keys', [
+            '--force' => $this->option('force'),
+            '--length' => $this->option('length'),
+        ]);
 
         $this->call('vendor:publish', ['--tag' => 'passport-config']);
         $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
@@ -40,7 +41,10 @@ class InstallCommand extends Command
             $this->call('migrate');
 
             if ($this->confirm('Would you like to create the "personal access" grant client?', true)) {
-                $this->call('passport:client', ['--personal' => true, '--name' => config('app.name').' Personal Access Client']);
+                $this->call('passport:client', [
+                    '--personal' => true,
+                    '--name' => config('app.name'),
+                ]);
             }
         }
     }

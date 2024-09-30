@@ -2,18 +2,20 @@
 
 namespace Laravel\Passport\Http\Middleware;
 
+use Closure;
+use Illuminate\Http\Request;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckForAnyScope
 {
     /**
      * Specify the scopes for the middleware.
      *
-     * @param  array|string  $scopes
-     * @return string
+     * @param  string[]|string  ...$scopes
      */
-    public static function using(...$scopes)
+    public static function using(...$scopes): string
     {
         if (is_array($scopes[0])) {
             return static::class.':'.implode(',', $scopes[0]);
@@ -25,14 +27,11 @@ class CheckForAnyScope
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @param  mixed  ...$scopes
-     * @return \Illuminate\Http\Response
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      *
      * @throws \Laravel\Passport\Exceptions\AuthenticationException|\Laravel\Passport\Exceptions\MissingScopeException
      */
-    public function handle($request, $next, ...$scopes)
+    public function handle(Request $request, Closure $next, string ...$scopes): Response
     {
         if (! $request->user() || ! $request->user()->token()) {
             throw new AuthenticationException;
