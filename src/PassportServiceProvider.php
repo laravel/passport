@@ -232,19 +232,17 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeDeviceCodeGrant(): DeviceCodeGrant
     {
-        $grant = new DeviceCodeGrant(
+        return tap(new DeviceCodeGrant(
             $this->app->make(DeviceCodeRepository::class),
             $this->app->make(RefreshTokenRepository::class),
             new DateInterval('PT10M'),
             route('passport.device'),
             5
-        );
-
-        $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
-        $grant->setIncludeVerificationUriComplete(true);
-        $grant->setIntervalVisibility(true);
-
-        return $grant;
+        ), function (DeviceCodeGrant $grant) {
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+            $grant->setIncludeVerificationUriComplete(true);
+            $grant->setIntervalVisibility(true);
+        });
     }
 
     /**

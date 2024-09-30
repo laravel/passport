@@ -13,8 +13,9 @@ class DeviceAuthorizationController
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected DeviceAuthorizationViewResponse $viewResponse)
-    {
+    public function __construct(
+        protected DeviceAuthorizationViewResponse $viewResponse
+    ) {
     }
 
     /**

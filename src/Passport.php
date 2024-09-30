@@ -598,6 +598,8 @@ class Passport
 
     /**
      * Specify which view should be used as the device authorization view.
+     *
+     * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
      */
     public static function deviceAuthorizationView(Closure|string $view): void
     {
@@ -606,6 +608,8 @@ class Passport
 
     /**
      * Specify which view should be used as the device user code view.
+     *
+     * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
      */
     public static function deviceUserCodeView(Closure|string $view): void
     {

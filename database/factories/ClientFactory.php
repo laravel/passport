@@ -88,6 +88,7 @@ class ClientFactory extends Factory
     {
         return $this->state([
             'grant_types' => ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'],
+            'redirect_uris' => [],
         ]);
     }
 }

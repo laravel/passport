@@ -11,8 +11,9 @@ class DeviceUserCodeController
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected DeviceUserCodeViewResponse $viewResponse)
-    {
+    public function __construct(
+        protected DeviceUserCodeViewResponse $viewResponse
+    ) {
     }
 
     /**

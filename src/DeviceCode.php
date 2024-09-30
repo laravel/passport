@@ -24,14 +24,14 @@ class DeviceCode extends Model
     /**
      * The guarded attributes on the model.
      *
-     * @var array
+     * @var array<string>|bool
      */
-    protected $guarded = [];
+    protected $guarded = false;
 
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
      */
     protected $casts = [
         'scopes' => 'array',
@@ -57,6 +57,8 @@ class DeviceCode extends Model
 
     /**
      * Get the client that owns the authentication code.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Laravel\Passport\Client, $this>
      */
     public function client(): BelongsTo
     {

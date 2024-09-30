@@ -13,9 +13,10 @@ class DenyDeviceAuthorizationController
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected AuthorizationServer $server,
-                                protected DeniedDeviceAuthorizationResponse $response)
-    {
+    public function __construct(
+        protected AuthorizationServer $server,
+        protected DeniedDeviceAuthorizationResponse $response
+    ) {
     }
 
     /**

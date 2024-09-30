@@ -14,8 +14,9 @@ class DeviceCodeController
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected AuthorizationServer $server)
-    {
+    public function __construct(
+        protected AuthorizationServer $server
+    ) {
     }
 
     /**
