@@ -30,6 +30,9 @@ class DeviceCode implements DeviceCodeEntityInterface
     /**
      * Create a new device code instance.
      *
+     * @param  non-empty-string|null  $identifier
+     * @param  non-empty-string|null  $userIdentifier
+     * @param  non-empty-string|null  $clientIdentifier
      * @param  string[]  $scopes
      */
     public function __construct(
