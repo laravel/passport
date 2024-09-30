@@ -22,9 +22,12 @@ class SimpleViewResponse implements
 
     /**
      * Create a new response instance.
+     *
+     * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
      */
-    public function __construct(protected Closure|string $view)
-    {
+    public function __construct(
+        protected Closure|string $view
+    ) {
     }
 
     /**

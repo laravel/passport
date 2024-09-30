@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -33,10 +34,10 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         $request->headers->set('Authorization', 'Bearer token');
 
         $response = $middleware->handle($request, function () {
-            return 'response';
+            return new Response('response');
         });
 
-        $this->assertSame('response', $response);
+        $this->assertSame('response', $response->getContent());
     }
 
     public function test_request_is_passed_along_if_token_has_any_required_scope()
@@ -56,10 +57,10 @@ class CheckClientCredentialsForAnyScopeTest extends TestCase
         $request->headers->set('Authorization', 'Bearer token');
 
         $response = $middleware->handle($request, function () {
-            return 'response';
+            return new Response('response');
         }, 'notfoo', 'bar', 'notbaz');
 
-        $this->assertSame('response', $response);
+        $this->assertSame('response', $response->getContent());
     }
 
     public function test_exception_is_thrown_when_oauth_throws_exception()

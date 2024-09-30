@@ -7,7 +7,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Events\AccessTokenCreated;
 use Laravel\Passport\Events\AccessTokenRevoked;
 use Laravel\Passport\Passport;
-use Laravel\Passport\TokenRepository;
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
@@ -17,22 +16,11 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
     use FormatsScopesForStorage;
 
     /**
-     * The token repository instance.
-     */
-    protected TokenRepository $tokenRepository;
-
-    /**
-     * The event dispatcher instance.
-     */
-    protected Dispatcher $events;
-
-    /**
      * Create a new repository instance.
      */
-    public function __construct(TokenRepository $tokenRepository, Dispatcher $events)
-    {
-        $this->events = $events;
-        $this->tokenRepository = $tokenRepository;
+    public function __construct(
+        protected Dispatcher $events
+    ) {
     }
 
     /**
@@ -51,7 +39,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        $this->tokenRepository->create([
+        Passport::token()->newQuery()->create([
             'id' => $id = $accessTokenEntity->getIdentifier(),
             'user_id' => $userId = $accessTokenEntity->getUserIdentifier(),
             'client_id' => $clientId = $accessTokenEntity->getClient()->getIdentifier(),
@@ -70,7 +58,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function revokeAccessToken(string $tokenId): void
     {
-        if ($this->tokenRepository->revokeAccessToken($tokenId)) {
+        if (Passport::token()->newQuery()->whereKey($tokenId)->update(['revoked' => true])) {
             $this->events->dispatch(new AccessTokenRevoked($tokenId));
         }
     }
@@ -80,6 +68,6 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function isAccessTokenRevoked(string $tokenId): bool
     {
-        return $this->tokenRepository->isAccessTokenRevoked($tokenId);
+        return Passport::token()->newQuery()->whereKey($tokenId)->where('revoked', false)->doesntExist();
     }
 }

@@ -11,19 +11,17 @@ class Client implements ClientEntityInterface
     use ClientTrait, EntityTrait;
 
     /**
-     * The client's provider.
-     */
-    public ?string $provider;
-
-    /**
      * Create a new client instance.
+     *
+     * @param  non-empty-string  $identifier
+     * @param  string[]  $redirectUri
      */
     public function __construct(
         string $identifier,
         ?string $name = null,
         array $redirectUri = [],
         bool $isConfidential = false,
-        ?string $provider = null
+        public ?string $provider = null
     ) {
         $this->setIdentifier($identifier);
 
@@ -33,6 +31,5 @@ class Client implements ClientEntityInterface
 
         $this->isConfidential = $isConfidential;
         $this->redirectUri = $redirectUri;
-        $this->provider = $provider;
     }
 }
