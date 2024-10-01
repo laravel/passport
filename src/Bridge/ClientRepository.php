@@ -22,11 +22,11 @@ class ClientRepository implements ClientRepositoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientEntity(string $clientIdentifier, ?string $grantType): ?ClientEntityInterface
+    public function getClientEntity(string $clientIdentifier): ?ClientEntityInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        return $record && $this->handlesGrant($record, $grantType) ? $this->fromClientModel($record) : null;
+        return $record ? $this->fromClientModel($record) : null;
     }
 
     /**
@@ -82,7 +82,8 @@ class ClientRepository implements ClientRepositoryInterface
             $model->name,
             $model->redirect_uris,
             $model->confidential(),
-            $model->provider
+            $model->provider,
+            isset($model['grant_types']) ? $model->grant_types : null
         );
     }
 }
