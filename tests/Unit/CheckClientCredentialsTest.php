@@ -3,20 +3,19 @@
 namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckClientCredentials;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CheckClientCredentialsTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        m::close();
-    }
+    use MockeryPHPUnitIntegration;
 
     public function test_request_is_passed_along_if_token_is_valid()
     {
@@ -35,10 +34,10 @@ class CheckClientCredentialsTest extends TestCase
         $request->headers->set('Authorization', 'Bearer token');
 
         $response = $middleware->handle($request, function () {
-            return 'response';
+            return new Response('response');
         });
 
-        $this->assertSame('response', $response);
+        $this->assertSame('response', $response->getContent());
     }
 
     public function test_request_is_passed_along_if_token_and_scope_are_valid()
@@ -58,10 +57,10 @@ class CheckClientCredentialsTest extends TestCase
         $request->headers->set('Authorization', 'Bearer token');
 
         $response = $middleware->handle($request, function () {
-            return 'response';
+            return new Response('response');
         }, 'see-profile');
 
-        $this->assertSame('response', $response);
+        $this->assertSame('response', $response->getContent());
     }
 
     public function test_exception_is_thrown_when_oauth_throws_exception()

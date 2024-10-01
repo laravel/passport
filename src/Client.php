@@ -4,14 +4,18 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
 {
+    /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Laravel\Passport\Database\Factories\ClientFactory> */
     use HasFactory;
     use ResolvesInheritedScopes;
 
@@ -25,14 +29,14 @@ class Client extends Model
     /**
      * The guarded attributes on the model.
      *
-     * @var array
+     * @var array<string>|bool
      */
-    protected $guarded = [];
+    protected $guarded = false;
 
     /**
      * The attributes excluded from the model's JSON form.
      *
-     * @var array
+     * @var array<string>
      */
     protected $hidden = [
         'secret',
@@ -41,7 +45,7 @@ class Client extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
      */
     protected $casts = [
         'grant_types' => 'array',
@@ -56,16 +60,13 @@ class Client extends Model
      * The temporary plain-text client secret.
      *
      * This is only available during the request that created the client.
-     *
-     * @var string|null
      */
-    public $plainSecret;
+    public ?string $plainSecret = null;
 
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array  $attributes
-     * @return void
+     * @param  array<string, mixed>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -77,14 +78,14 @@ class Client extends Model
     /**
      * Get the user that the client belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Foundation\Auth\User, $this>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         $provider = $this->provider ?: config('auth.guards.api.provider');
 
         return $this->belongsTo(
-            config("auth.providers.{$provider}.model")
+            config("auth.providers.$provider.model")
         );
     }
 
@@ -93,9 +94,9 @@ class Client extends Model
      *
      * @deprecated Will be removed in a future Laravel version.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\AuthCode, $this>
      */
-    public function authCodes()
+    public function authCodes(): HasMany
     {
         return $this->hasMany(Passport::authCodeModel(), 'client_id');
     }
@@ -103,9 +104,9 @@ class Client extends Model
     /**
      * Get all of the tokens that belong to the client.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Token, $this>
      */
-    public function tokens()
+    public function tokens(): HasMany
     {
         return $this->hasMany(Passport::tokenModel(), 'client_id');
     }
@@ -114,21 +115,16 @@ class Client extends Model
      * The temporary non-hashed client secret.
      *
      * This is only available once during the request that created the client.
-     *
-     * @return string|null
      */
-    public function getPlainSecretAttribute()
+    public function getPlainSecretAttribute(): ?string
     {
         return $this->plainSecret;
     }
 
     /**
      * Set the value of the secret attribute.
-     *
-     * @param  string|null  $value
-     * @return void
      */
-    public function setSecretAttribute($value)
+    public function setSecretAttribute(?string $value): void
     {
         $this->plainSecret = $value;
 
@@ -153,12 +149,10 @@ class Client extends Model
 
     /**
      * Determine if the client is a "first party" client.
-     *
-     * @return bool
      */
-    public function firstParty()
+    public function firstParty(): bool
     {
-        return $this->hasGrantType('personal_access') || $this->hasGrantType('password');
+        return empty($this->user_id);
     }
 
     /**
@@ -173,11 +167,8 @@ class Client extends Model
 
     /**
      * Determine if the client has the given grant type.
-     *
-     * @param  string  $grantType
-     * @return bool
      */
-    public function hasGrantType($grantType)
+    public function hasGrantType(string $grantType): bool
     {
         if (isset($this->attributes['grant_types']) && is_array($this->grant_types)) {
             return in_array($grantType, $this->grant_types);
@@ -194,35 +185,16 @@ class Client extends Model
 
     /**
      * Determine whether the client has the given scope.
-     *
-     * @param  string  $scope
-     * @return bool
      */
-    public function hasScope($scope)
+    public function hasScope(string $scope): bool
     {
-        if (! isset($this->attributes['scopes']) || ! is_array($this->scopes)) {
-            return true;
-        }
-
-        $scopes = Passport::$withInheritedScopes
-            ? $this->resolveInheritedScopes($scope)
-            : [$scope];
-
-        foreach ($scopes as $scope) {
-            if (in_array($scope, $this->scopes)) {
-                return true;
-            }
-        }
-
-        return false;
+        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
     }
 
     /**
      * Determine if the client is a confidential client.
-     *
-     * @return bool
      */
-    public function confidential()
+    public function confidential(): bool
     {
         return ! empty($this->secret);
     }
@@ -230,49 +202,41 @@ class Client extends Model
     /**
      * Get the columns that should receive a unique identifier.
      *
-     * @return array
+     * @return array<string>
      */
-    public function uniqueIds()
+    public function uniqueIds(): array
     {
         return $this->usesUniqueIds ? [$this->getKeyName()] : [];
     }
 
     /**
      * Generate a new key for the model.
-     *
-     * @return string
      */
-    public function newUniqueId()
+    public function newUniqueId(): ?string
     {
         return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
     }
 
     /**
      * Get the auto-incrementing key type.
-     *
-     * @return string
      */
-    public function getKeyType()
+    public function getKeyType(): string
     {
         return $this->usesUniqueIds ? 'string' : $this->keyType;
     }
 
     /**
      * Get the value indicating whether the IDs are incrementing.
-     *
-     * @return bool
      */
-    public function getIncrementing()
+    public function getIncrementing(): bool
     {
         return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return $this->connection ?? config('passport.connection');
     }
@@ -280,9 +244,9 @@ class Client extends Model
     /**
      * Create a new factory instance for the model.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return \Laravel\Passport\Database\Factories\ClientFactory
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return ClientFactory::new();
     }

@@ -11,22 +11,12 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 class ClientRepository implements ClientRepositoryInterface
 {
     /**
-     * The client model repository.
-     */
-    protected ClientModelRepository $clients;
-
-    /**
-     * The hasher implementation.
-     */
-    protected Hasher $hasher;
-
-    /**
      * Create a new repository instance.
      */
-    public function __construct(ClientModelRepository $clients, Hasher $hasher)
-    {
-        $this->clients = $clients;
-        $this->hasher = $hasher;
+    public function __construct(
+        protected ClientModelRepository $clients,
+        protected Hasher $hasher
+    ) {
     }
 
     /**

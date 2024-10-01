@@ -3,6 +3,8 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Token extends Model
 {
@@ -30,14 +32,14 @@ class Token extends Model
     /**
      * The guarded attributes on the model.
      *
-     * @var array
+     * @var array<string>|bool
      */
-    protected $guarded = [];
+    protected $guarded = false;
 
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
      */
     protected $casts = [
         'scopes' => 'array',
@@ -48,9 +50,9 @@ class Token extends Model
     /**
      * Get the client that the token belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Laravel\Passport\Client, $this>
      */
-    public function client()
+    public function client(): BelongsTo
     {
         return $this->belongsTo(Passport::clientModel());
     }
@@ -58,9 +60,9 @@ class Token extends Model
     /**
      * Get the refresh token associated with the token.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\Laravel\Passport\RefreshToken, $this>
      */
-    public function refreshToken()
+    public function refreshToken(): HasOne
     {
         return $this->hasOne(Passport::refreshTokenModel(), 'access_token_id');
     }
@@ -70,33 +72,29 @@ class Token extends Model
      *
      * @deprecated Will be removed in a future Laravel version.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Foundation\Auth\User, $this>
      */
-    public function user()
+    public function user(): BelongsTo
     {
         $provider = $this->client->provider ?: config('auth.guards.api.provider');
 
         $model = config('auth.providers.'.$provider.'.model');
 
-        return $this->belongsTo($model, 'user_id', (new $model)->getKeyName());
+        return $this->belongsTo($model, 'user_id', (new $model)->getAuthIdentifierName());
     }
 
     /**
      * Revoke the token instance.
-     *
-     * @return bool
      */
-    public function revoke()
+    public function revoke(): bool
     {
         return $this->forceFill(['revoked' => true])->save();
     }
 
     /**
      * Get the current connection name for the model.
-     *
-     * @return string|null
      */
-    public function getConnectionName()
+    public function getConnectionName(): ?string
     {
         return $this->connection ?? config('passport.connection');
     }

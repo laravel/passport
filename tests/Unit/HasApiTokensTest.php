@@ -5,14 +5,16 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Container\Container;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\HasApiTokens;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class HasApiTokensTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function tearDown(): void
     {
-        m::close();
         Container::getInstance()->flush();
     }
 

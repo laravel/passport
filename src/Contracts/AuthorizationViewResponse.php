@@ -9,8 +9,7 @@ interface AuthorizationViewResponse extends Responsable
     /**
      * Specify the parameters that should be passed to the view.
      *
-     * @param  array  $parameters
-     * @return $this
+     * @param  array<string, mixed>  $parameters
      */
-    public function withParameters($parameters = []);
+    public function withParameters(array $parameters = []): static;
 }

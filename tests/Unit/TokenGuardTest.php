@@ -14,20 +14,22 @@ use Laravel\Passport\AccessToken;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Guards\TokenGuard;
-use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
+use Workbench\App\Models\User as TokenGuardTestUser;
 
 class TokenGuardTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     protected function tearDown(): void
     {
-        m::close();
         Container::getInstance()->flush();
     }
 
@@ -549,11 +551,6 @@ class TokenGuardTest extends TestCase
 
         $this->assertEquals($expectedClient, $client);
     }
-}
-
-class TokenGuardTestUser
-{
-    use HasApiTokens;
 }
 
 class TokenGuardTestClient extends Client

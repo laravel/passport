@@ -11,6 +11,8 @@ class User implements UserEntityInterface
 
     /**
      * Create a new user instance.
+     *
+     * @param  non-empty-string  $identifier
      */
     public function __construct(string $identifier)
     {
