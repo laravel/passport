@@ -83,11 +83,11 @@ class RefreshTokenGrantTest extends PassportTestCase
         Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())->middleware('auth:api');
 
         $this->getJson('/foo', [
-            'Authorization' => $oldToken['token_type'].' '.$oldToken['access_token']
+            'Authorization' => $oldToken['token_type'].' '.$oldToken['access_token'],
         ])->assertUnauthorized();
 
         $this->getJson('/foo', [
-            'Authorization' => $newToken['token_type'].' '.$newToken['access_token']
+            'Authorization' => $newToken['token_type'].' '.$newToken['access_token'],
         ])->assertOk();
 
         return $this->post('/oauth/token', [
