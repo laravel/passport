@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
@@ -20,14 +22,27 @@ class RefreshTokenGrantTest extends PassportTestCase
 
     public function testRefreshingToken()
     {
-        $this->assertArrayHasKey('refresh_token', $this->refreshToken());
+        $json = $this->refreshToken()
+            ->assertStatus(400)
+            ->json();
+
+        $this->assertSame('invalid_grant', $json['error']);
+        $this->assertSame('The refresh token is invalid.', $json['error_description']);
+        $this->assertSame('Token has been revoked', $json['hint']);
     }
 
     public function testRefreshingTokenWithoutRevoking()
     {
         Passport::$revokeRefreshTokens = false;
 
-        $this->assertArrayNotHasKey('refresh_token', $this->refreshToken());
+        $json = $this->refreshToken()
+            ->assertOk()
+            ->json();
+
+        $this->assertArrayHasKey('access_token', $json);
+        $this->assertArrayHasKey('refresh_token', $json);
+        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertSame('Bearer', $json['token_type']);
     }
 
     private function refreshToken()
@@ -36,36 +51,50 @@ class RefreshTokenGrantTest extends PassportTestCase
 
         $this->actingAs(UserFactory::new()->create(), 'web');
 
-        $json = $this->get('/oauth/authorize?'.http_build_query([
+        $authToken = $this->get('/oauth/authorize?'.http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
             'response_type' => 'code',
-        ]))->json();
+        ]))->json('authToken');
 
-        $redirectUrl = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']])->headers->get('Location');
+        $redirectUrl = $this->post('/oauth/authorize', ['auth_token' => $authToken])->headers->get('Location');
         parse_str(parse_url($redirectUrl, PHP_URL_QUERY), $params);
 
-        $json = $this->post('/oauth/token', [
+        $oldToken = $this->post('/oauth/token', [
             'grant_type' => 'authorization_code',
             'client_id' => $client->getKey(),
             'client_secret' => $client->plainSecret,
             'redirect_uri' => $redirect,
             'code' => $params['code'],
-        ])->json();
+        ])->assertOK()->json();
 
-        $response = $this->post('/oauth/token', [
+        $newToken = $this->post('/oauth/token', [
             'grant_type' => 'refresh_token',
             'client_id' => $client->getKey(),
             'client_secret' => $client->plainSecret,
-            'refresh_token' => $json['refresh_token'],
+            'refresh_token' => $oldToken['refresh_token'],
+        ])->assertOK()->json();
+
+        $this->assertArrayHasKey('access_token', $newToken);
+        $this->assertArrayHasKey('refresh_token', $newToken);
+        $this->assertSame(31536000, $newToken['expires_in']);
+        $this->assertSame('Bearer', $newToken['token_type']);
+
+        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())->middleware('auth:api');
+
+        $this->getJson('/foo', [
+            'Authorization' => $oldToken['token_type'].' '.$oldToken['access_token']
+        ])->assertUnauthorized();
+
+        $this->getJson('/foo', [
+            'Authorization' => $newToken['token_type'].' '.$newToken['access_token']
+        ])->assertOk();
+
+        return $this->post('/oauth/token', [
+            'grant_type' => 'refresh_token',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'refresh_token' => $oldToken['refresh_token'],
         ]);
-
-        $response->assertOk();
-        $json = $response->json();
-        $this->assertArrayHasKey('access_token', $json);
-        $this->assertSame(31536000, $json['expires_in']);
-        $this->assertSame('Bearer', $json['token_type']);
-
-        return $json;
     }
 }
