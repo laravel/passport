@@ -171,7 +171,8 @@ class ImplicitGrantTest extends PassportTestCase
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
             'response_type' => 'token',
-            'scope' => 'foo'
+            'scope' => 'foo',
+            'state' => $state = Str::random(40),
         ]);
 
         $response = $this->get('/oauth/authorize?'.$query);
