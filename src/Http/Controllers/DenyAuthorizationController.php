@@ -30,6 +30,6 @@ class DenyAuthorizationController
 
         return $this->withErrorHandling(fn () => $this->convertResponse(
             $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        ));
+        ), $authRequest->getGrantTypeId() === 'implicit');
     }
 }
