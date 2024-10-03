@@ -35,9 +35,7 @@ class ApproveAuthorizationControllerTest extends TestCase
 
         $request->shouldReceive('user')->andReturn(new ApproveAuthorizationControllerFakeUser);
 
-        $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
-        $authRequest->shouldReceive('getUser->getIdentifier')->andReturn(2);
-        $authRequest->shouldReceive('setUser')->once();
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
         $psrResponse = new Response();
