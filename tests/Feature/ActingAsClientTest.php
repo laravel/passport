@@ -4,7 +4,7 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Laravel\Passport\Client;
-use Laravel\Passport\Http\Middleware\CheckTokenScopes;
+use Laravel\Passport\Http\Middleware\CheckToken;
 use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\Passport;
 
@@ -19,7 +19,7 @@ class ActingAsClientTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckTokenScopes::class);
+        })->middleware(CheckToken::class);
 
         Passport::actingAsClient(new Client());
 

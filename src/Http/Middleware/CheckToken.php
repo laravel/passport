@@ -5,7 +5,7 @@ namespace Laravel\Passport\Http\Middleware;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
-class CheckTokenScopes extends ValidateToken
+class CheckToken extends ValidateToken
 {
     /**
      * Determine if the token has all the given scopes.

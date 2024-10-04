@@ -5,7 +5,7 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\Exceptions\AuthenticationException;
-use Laravel\Passport\Http\Middleware\CheckTokenScopes;
+use Laravel\Passport\Http\Middleware\CheckToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -28,7 +28,7 @@ class CheckTokenScopesTest extends TestCase
             'oauth_scopes' => ['*'],
         ]);
 
-        $middleware = new CheckTokenScopes($resourceServer);
+        $middleware = new CheckToken($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -51,7 +51,7 @@ class CheckTokenScopesTest extends TestCase
             'oauth_scopes' => ['see-profile'],
         ]);
 
-        $middleware = new CheckTokenScopes($resourceServer);
+        $middleware = new CheckToken($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -72,7 +72,7 @@ class CheckTokenScopesTest extends TestCase
             new OAuthServerException('message', 500, 'error type')
         );
 
-        $middleware = new CheckTokenScopes($resourceServer);
+        $middleware = new CheckToken($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -95,7 +95,7 @@ class CheckTokenScopesTest extends TestCase
             'oauth_scopes' => ['foo', 'notbar'],
         ]);
 
-        $middleware = new CheckTokenScopes($resourceServer);
+        $middleware = new CheckToken($resourceServer);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
