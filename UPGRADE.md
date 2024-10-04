@@ -64,6 +64,16 @@ PR: https://github.com/laravel/passport/pull/1755
 
 When authenticating users via bearer tokens, the `User` model's `token` method now returns an instance of `Laravel\Passport\AccessToken` class instead of `Laravel\Passport\Token`.
 
+### Renamed Middlewares 
+
+PR: https://github.com/laravel/passport/pull/1792
+
+Passport's `CheckClientCredentials` and `CheckClientCredentialsForAnyScope` middlewares have been renamed to better reflect the functionality of these middlewares:
+
+* `Laravel\Passport\Http\Middleware\CheckClientCredentials` class has been renamed to `CheckToken`
+* `Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope` class has been renamed to `CheckTokenForAnyScope`
+* `Laravel\Passport\Http\Middleware\CheckCredentials` abstract class has been renamed to `ValidateToken`
+
 ### Personal Access Client Table and Model Removal
 
 PR: https://github.com/laravel/passport/pull/1749, https://github.com/laravel/passport/pull/1780
