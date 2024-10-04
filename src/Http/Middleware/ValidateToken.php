@@ -8,11 +8,10 @@ use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class CheckCredentials
+abstract class ValidateToken
 {
     /**
      * Create a new middleware instance.
@@ -46,12 +45,7 @@ abstract class CheckCredentials
      */
     public function handle(Request $request, Closure $next, string ...$scopes): Response
     {
-        $psr = (new PsrHttpFactory(
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory
-        ))->createRequest($request);
+        $psr = (new PsrHttpFactory())->createRequest($request);
 
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
@@ -59,17 +53,17 @@ abstract class CheckCredentials
             throw new AuthenticationException;
         }
 
-        $this->validateScopes(AccessToken::fromPsrRequest($psr), $scopes);
+        $this->hasScopes(AccessToken::fromPsrRequest($psr), $scopes);
 
         return $next($request);
     }
 
     /**
-     * Validate token scopes.
+     * Determine if the token has the given scopes.
      *
      * @param  string[]  $scopes
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    abstract protected function validateScopes(AccessToken $token, array $scopes): void;
+    abstract protected function hasScopes(AccessToken $token, array $scopes): void;
 }
