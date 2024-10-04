@@ -13,7 +13,7 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 
-class CheckTokenScopesTest extends TestCase
+class CheckTokenTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 

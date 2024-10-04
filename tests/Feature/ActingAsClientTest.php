@@ -10,7 +10,7 @@ use Laravel\Passport\Passport;
 
 class ActingAsClientTest extends PassportTestCase
 {
-    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenScopesMiddleware()
+    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenMiddleware()
     {
         $this->withoutExceptionHandling();
 
@@ -28,7 +28,7 @@ class ActingAsClientTest extends PassportTestCase
         $response->assertSee('bar');
     }
 
-    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenScopesForAnyScope()
+    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenForAnyScope()
     {
         $this->withoutExceptionHandling();
 
