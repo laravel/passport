@@ -5,7 +5,6 @@ namespace Laravel\Passport\Http\Controllers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
@@ -18,8 +17,9 @@ use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationController
 {
@@ -31,7 +31,6 @@ class AuthorizationController
     public function __construct(
         protected AuthorizationServer $server,
         protected StatefulGuard $guard,
-        protected AuthorizationViewResponse $response,
         protected ClientRepository $clients
     ) {
     }
@@ -39,8 +38,12 @@ class AuthorizationController
     /**
      * Authorize a client to access the user's account.
      */
-    public function authorize(ServerRequestInterface $psrRequest, Request $request): Response|AuthorizationViewResponse
-    {
+    public function authorize(
+        ServerRequestInterface $psrRequest,
+        Request $request,
+        ResponseInterface $psrResponse,
+        AuthorizationViewResponse $viewResponse
+    ): Response|AuthorizationViewResponse {
         $authRequest = $this->withErrorHandling(
             fn () => $this->server->validateAuthorizationRequest($psrRequest),
             ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
@@ -71,7 +74,7 @@ class AuthorizationController
 
         if ($request->get('prompt') !== 'consent' &&
             ($client->skipsAuthorization($user, $scopes) || $this->hasGrantedScopes($user, $client, $scopes))) {
-            return $this->approveRequest($authRequest);
+            return $this->approveRequest($authRequest, $psrResponse);
         }
 
         if ($request->get('prompt') === 'none') {
@@ -81,7 +84,7 @@ class AuthorizationController
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('authRequest', $authRequest);
 
-        return $this->response->withParameters([
+        return $viewResponse->withParameters([
             'client' => $client,
             'user' => $user,
             'scopes' => $scopes,
@@ -124,12 +127,12 @@ class AuthorizationController
     /**
      * Approve the authorization request.
      */
-    protected function approveRequest(AuthorizationRequestInterface $authRequest): Response
+    protected function approveRequest(AuthorizationRequestInterface $authRequest, ResponseInterface $psrResponse): Response
     {
         $authRequest->setAuthorizationApproved(true);
 
         return $this->withErrorHandling(fn () => $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
+            $this->server->completeAuthorizationRequest($authRequest, $psrResponse)
         ), $authRequest->getGrantTypeId() === 'implicit');
     }
 

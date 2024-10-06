@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use Laravel\Passport\Http\Controllers\ConvertsPsrResponses;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 
 class OAuthServerException extends HttpResponseException
 {
@@ -18,7 +18,9 @@ class OAuthServerException extends HttpResponseException
      */
     public function __construct(LeagueException $e, bool $useFragment = false)
     {
-        parent::__construct($this->convertResponse($e->generateHttpResponse(new Psr7Response, $useFragment)), $e);
+        parent::__construct($this->convertResponse(
+            $e->generateHttpResponse(app(ResponseInterface::class), $useFragment)
+        ), $e);
     }
 
     /**

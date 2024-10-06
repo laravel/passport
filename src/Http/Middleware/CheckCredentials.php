@@ -8,7 +8,6 @@ use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -46,12 +45,7 @@ abstract class CheckCredentials
      */
     public function handle(Request $request, Closure $next, string ...$scopes): Response
     {
-        $psr = (new PsrHttpFactory(
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory
-        ))->createRequest($request);
+        $psr = (new PsrHttpFactory())->createRequest($request);
 
         try {
             $psr = $this->server->validateAuthenticatedRequest($psr);
