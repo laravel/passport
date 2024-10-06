@@ -14,22 +14,23 @@ class ApproveDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(
-        protected AuthorizationServer $server,
-        protected ApprovedDeviceAuthorizationResponse $response
+        protected AuthorizationServer $server
     ) {
     }
 
     /**
      * Approve the device authorization request.
      */
-    public function __invoke(Request $request): ApprovedDeviceAuthorizationResponse
-    {
+    public function __invoke(
+        Request $request,
+        ApprovedDeviceAuthorizationResponse $response
+    ): ApprovedDeviceAuthorizationResponse {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
             $request->user()->getAuthIdentifier(),
             true
         ));
 
-        return $this->response;
+        return $response;
     }
 }

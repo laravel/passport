@@ -14,15 +14,17 @@ class DenyDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(
-        protected AuthorizationServer $server,
-        protected DeniedDeviceAuthorizationResponse $response
+        protected AuthorizationServer $server
     ) {
     }
 
     /**
      * Deny the device authorization request.
      */
-    public function __invoke(Request $request): DeniedDeviceAuthorizationResponse
+    public function __invoke(
+        Request $request,
+        DeniedDeviceAuthorizationResponse $response
+    ): DeniedDeviceAuthorizationResponse
     {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
@@ -30,6 +32,6 @@ class DenyDeviceAuthorizationController
             false
         ));
 
-        return $this->response;
+        return $response;
     }
 }

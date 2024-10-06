@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Response;
 use League\OAuth2\Server\AuthorizationServer;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class DeviceCodeController
 {
@@ -22,10 +22,10 @@ class DeviceCodeController
     /**
      * Issue a device code for the client.
      */
-    public function __invoke(ServerRequestInterface $request): Response
+    public function __invoke(ServerRequestInterface $psrRequest, ResponseInterface $psrResponse): Response
     {
         return $this->withErrorHandling(fn () => $this->convertResponse(
-            $this->server->respondToDeviceAuthorizationRequest($request, new Psr7Response)
+            $this->server->respondToDeviceAuthorizationRequest($psrRequest, $psrResponse)
         ));
     }
 }
