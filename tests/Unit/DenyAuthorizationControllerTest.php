@@ -25,7 +25,6 @@ class DenyAuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
@@ -37,7 +36,7 @@ class DenyAuthorizationControllerTest extends TestCase
                 AuthorizationRequest::class
             ));
 
-        $authRequest->shouldReceive('setUser')->once();
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
 
         $server->shouldReceive('completeAuthorizationRequest')
