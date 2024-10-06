@@ -24,8 +24,7 @@ class DenyDeviceAuthorizationController
     public function __invoke(
         Request $request,
         DeniedDeviceAuthorizationResponse $response
-    ): DeniedDeviceAuthorizationResponse
-    {
+    ): DeniedDeviceAuthorizationResponse {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
             $request->user()->getAuthIdentifier(),
