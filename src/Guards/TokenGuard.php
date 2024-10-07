@@ -21,7 +21,6 @@ use Laravel\Passport\PassportUserProvider;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
@@ -161,13 +160,8 @@ class TokenGuard implements Guard
     {
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
-        // conversion for us to a new Nyholm implementation of this PSR-7 request.
-        $psr = (new PsrHttpFactory(
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory,
-            new Psr17Factory
-        ))->createRequest($this->request);
+        // conversion for us to a new PSR-7 implementation from this Symfony request.
+        $psr = (new PsrHttpFactory())->createRequest($this->request);
 
         try {
             return $this->server->validateAuthenticatedRequest($psr);
