@@ -11,7 +11,7 @@ use League\OAuth2\Server\ResourceServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class CheckCredentials
+abstract class ValidateToken
 {
     /**
      * Create a new middleware instance.
@@ -53,17 +53,17 @@ abstract class CheckCredentials
             throw new AuthenticationException;
         }
 
-        $this->validateScopes(AccessToken::fromPsrRequest($psr), $scopes);
+        $this->hasScopes(AccessToken::fromPsrRequest($psr), $scopes);
 
         return $next($request);
     }
 
     /**
-     * Validate token scopes.
+     * Determine if the token has the given scopes.
      *
      * @param  string[]  $scopes
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    abstract protected function validateScopes(AccessToken $token, array $scopes): void;
+    abstract protected function hasScopes(AccessToken $token, array $scopes): void;
 }
