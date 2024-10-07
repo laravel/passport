@@ -66,6 +66,7 @@ class PassportTest extends TestCase
 
         Passport::useRefreshTokenModel(RefreshToken::class);
     }
+
     public function test_device_code_instance_can_be_created()
     {
         $deviceCode = Passport::deviceCode();
