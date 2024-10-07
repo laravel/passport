@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Laravel\Passport\AuthCode;
 use Laravel\Passport\Client;
+use Laravel\Passport\DeviceCode;
 use Laravel\Passport\Passport;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
@@ -64,6 +65,13 @@ class PassportTest extends TestCase
         $this->assertInstanceOf(Passport::refreshTokenModel(), $refreshToken);
 
         Passport::useRefreshTokenModel(RefreshToken::class);
+    }
+    public function test_device_code_instance_can_be_created()
+    {
+        $deviceCode = Passport::deviceCode();
+
+        $this->assertInstanceOf(DeviceCode::class, $deviceCode);
+        $this->assertInstanceOf(Passport::deviceCodeModel(), $deviceCode);
     }
 }
 
