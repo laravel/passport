@@ -2,10 +2,11 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
-use Laravel\Passport\RefreshTokenRepository;
+use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -22,11 +23,6 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     protected $tokenRepository;
 
     /**
-     * @var \Mockery\Mock|\Laravel\Passport\RefreshTokenRepository
-     */
-    protected $refreshTokenRepository;
-
-    /**
      * @var AuthorizedAccessTokenController
      */
     protected $controller;
@@ -34,8 +30,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     protected function setUp(): void
     {
         $this->tokenRepository = m::mock(TokenRepository::class);
-        $this->refreshTokenRepository = m::mock(RefreshTokenRepository::class);
-        $this->controller = new AuthorizedAccessTokenController($this->tokenRepository, $this->refreshTokenRepository);
+        $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
     }
 
     protected function tearDown(): void
@@ -52,7 +47,6 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $token1 = new Token;
         $token2 = new Token;
 
-        $userTokens = m::mock();
         $client1 = new Client;
         $client1->grant_types = ['personal_access'];
         $client2 = new Client;
@@ -60,14 +54,14 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $client2->user_id = 2;
         $token1->client = $client1;
         $token2->client = $client2;
-        $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
+        $userTokens = (new Token)->newCollection([
             $token1, $token2,
-        ]));
+        ]);
 
         $this->tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -85,13 +79,14 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
         $token1 = m::mock(Token::class.'[revoke]');
         $token1->id = 1;
+        $token1->refreshToken = m::mock(RefreshToken::class);
+        $token1->refreshToken->shouldReceive('revoke')->once();
         $token1->shouldReceive('revoke')->once();
 
         $this->tokenRepository->shouldReceive('findForUser')->andReturn($token1);
-        $this->refreshTokenRepository->shouldReceive('revokeRefreshTokensByAccessTokenId')->once();
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -109,7 +104,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $this->tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;

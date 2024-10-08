@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Illuminate\Support\Collection;
 use Laravel\Passport\Passport;
 
 /**
@@ -12,9 +13,9 @@ class ScopeController
     /**
      * Get all of the available scopes for the application.
      *
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection<int, \Laravel\Passport\Scope>
      */
-    public function all()
+    public function all(): Collection
     {
         return Passport::scopes();
     }
