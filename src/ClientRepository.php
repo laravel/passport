@@ -204,11 +204,11 @@ class ClientRepository
      *
      * @deprecated Will be removed in a future Laravel version.
      */
-    public function revoke(Client $client): void
+    public function delete(Client $client): void
     {
         $client->tokens()->with('refreshToken')->each(function (Token $token): void {
-            $token->revoke();
             $token->refreshToken?->revoke();
+            $token->revoke();
         });
 
         $client->forceFill(['revoked' => true])->save();

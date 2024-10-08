@@ -190,9 +190,9 @@ class ClientControllerTest extends TestCase
             return $user;
         });
 
-        $clients->shouldReceive('revoke')->once()->with(
+        $clients->shouldReceive('delete')->once()->with(
             m::type(Client::class)
-        )->andReturn('response');
+        );
 
         $validator = m::mock(Factory::class);
 
@@ -219,7 +219,7 @@ class ClientControllerTest extends TestCase
             return $user;
         });
 
-        $clients->shouldReceive('revoke')->never();
+        $clients->shouldReceive('delete')->never();
 
         $validator = m::mock(Factory::class);
 

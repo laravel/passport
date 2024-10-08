@@ -92,7 +92,7 @@ class ClientController
             return new Response('', 404);
         }
 
-        $this->clients->revoke($client);
+        $this->clients->delete($client);
 
         return new Response('', Response::HTTP_NO_CONTENT);
     }
