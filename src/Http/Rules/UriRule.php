@@ -4,6 +4,9 @@ namespace Laravel\Passport\Http\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class UriRule implements Rule
 {
     /**
