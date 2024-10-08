@@ -88,7 +88,7 @@ In addition, the `passport.personal_access_client` configuration value, `Laravel
 
 PR: https://github.com/laravel/passport/pull/1778
 
-Passport's JSON API has been deprecated, as it falls outside the core purpose of Passport as an OAuth2 server implementation. If you wish, you may copy these routes and controllers to your application or continue using deprecated JSON API by setting `Passport::$registersJsonApiRoutes` to `true` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+The JSON API provided by Passport has been deprecated. If you need to continue using the deprecated JSON API, you can do so by setting `Passport::$registersJsonApiRoutes` to `true` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class. Alternatively, you may also copy the relevant routes and controllers into your application as needed:
 
     public function boot(): void
     {
