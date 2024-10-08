@@ -2,8 +2,9 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Response;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 trait ConvertsPsrResponses
 {
@@ -12,10 +13,6 @@ trait ConvertsPsrResponses
      */
     public function convertResponse(ResponseInterface $psrResponse): Response
     {
-        return new Response(
-            $psrResponse->getBody(),
-            $psrResponse->getStatusCode(),
-            $psrResponse->getHeaders()
-        );
+        return (new HttpFoundationFactory())->createResponse($psrResponse);
     }
 }
