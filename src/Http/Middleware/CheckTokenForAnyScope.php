@@ -10,22 +10,16 @@ class CheckTokenForAnyScope extends ValidateToken
     /**
      * Determine if the token has at least one of the given scopes.
      *
-     * @param  string[]  $scopes
-     *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    protected function hasScopes(AccessToken $token, array $scopes): void
+    protected function validate(AccessToken $token, string ...$params): void
     {
-        if (in_array('*', $token->oauth_scopes)) {
-            return;
-        }
-
-        foreach ($scopes as $scope) {
+        foreach ($params as $scope) {
             if ($token->can($scope)) {
                 return;
             }
         }
 
-        throw new MissingScopeException($scopes);
+        throw new MissingScopeException($params);
     }
 }

@@ -22,48 +22,66 @@ abstract class ValidateToken
     }
 
     /**
-     * Specify the scopes for the middleware.
+     * Specify the parameters for the middleware.
      *
-     * @param  string[]|string  ...$scopes
+     * @param  string[]|string  ...$params
      */
-    public static function using(...$scopes): string
+    public static function using(...$params): string
     {
-        if (is_array($scopes[0])) {
-            return static::class.':'.implode(',', $scopes[0]);
+        if (is_array($params[0])) {
+            return static::class.':'.implode(',', $params[0]);
         }
 
-        return static::class.':'.implode(',', $scopes);
+        return static::class.':'.implode(',', $params);
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string[]|string  ...$scopes
-     *
-     * @throws \Laravel\Passport\Exceptions\AuthenticationException
+     * @param  string[]|string  ...$params
      */
-    public function handle(Request $request, Closure $next, string ...$scopes): Response
+    public function handle(Request $request, Closure $next, string ...$params): Response
     {
-        $psr = (new PsrHttpFactory())->createRequest($request);
+        $token = $this->validateToken($request);
 
-        try {
-            $psr = $this->server->validateAuthenticatedRequest($psr);
-        } catch (OAuthServerException) {
-            throw new AuthenticationException;
-        }
-
-        $this->hasScopes(AccessToken::fromPsrRequest($psr), $scopes);
+        $this->validate($token, ...$params);
 
         return $next($request);
     }
 
     /**
-     * Determine if the token has the given scopes.
+     * Validate and get the request's access token.
      *
-     * @param  string[]  $scopes
+     * @throws \Laravel\Passport\Exceptions\AuthenticationException
+     */
+    protected function validateToken(Request $request): AccessToken
+    {
+        // If the user is authenticated and already has an access token set via
+        // the token guard, there's no need to validate the request's bearer
+        // token again, so we'll return the access token as the valid one.
+        if ($request->user()?->token()) {
+            return $request->user()->token();
+        }
+
+        // Otherwise, we will convert the request to a PSR-7 implementation and
+        // pass it to the OAuth2 server to be validated. If the bearer token
+        // passed the validation, we will return an access token instance.
+        $psrRequest = (new PsrHttpFactory())->createRequest($request);
+
+        try {
+            $psrRequest = $this->server->validateAuthenticatedRequest($psrRequest);
+        } catch (OAuthServerException) {
+            throw new AuthenticationException;
+        }
+
+        return AccessToken::fromPsrRequest($psrRequest);
+    }
+
+    /**
+     * Validate the given access token.
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    abstract protected function hasScopes(AccessToken $token, array $scopes): void;
+    abstract protected function validate(AccessToken $token, string ...$params): void;
 }
