@@ -82,7 +82,8 @@ class ClientRepository implements ClientRepositoryInterface
             $model->name,
             $model->redirect_uris,
             $model->confidential(),
-            $model->provider
+            $model->provider,
+            isset($model['grant_types']) ? $model->grant_types : null
         );
     }
 }
