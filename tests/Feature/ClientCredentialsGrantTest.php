@@ -5,8 +5,8 @@ namespace Laravel\Passport\Tests\Feature;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Database\Factories\ClientFactory;
-use Laravel\Passport\Http\Middleware\EnsureClientIsResourceOwner;
 use Laravel\Passport\Http\Middleware\CheckToken;
+use Laravel\Passport\Http\Middleware\EnsureClientIsResourceOwner;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
@@ -42,7 +42,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $this->assertSame(31536000, $json['expires_in']);
 
         Route::get('/foo', fn (Request $request) => response('response'))
-            ->middleware([EnsureClientIsResourceOwner::class, CheckToken::using(['create', 'delete'])]);
+            ->middleware([EnsureClientIsResourceOwner::using(['create', 'delete'])]);
 
         $response = $this->withToken($json['access_token'], $json['token_type'])->get('/foo');
         $response->assertOk();

@@ -4,8 +4,8 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Support\Facades\Route;
-use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\Http\Middleware\CheckToken;
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\Passport;
 use Workbench\App\Models\User;
 
