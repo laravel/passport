@@ -20,7 +20,7 @@ class Passport
     /**
      * Indicates if Passport should validate the permissions of its encryption keys.
      */
-    public static bool $validateKeyPermissions = false;
+    public static bool $validateKeyPermissions = true;
 
     /**
      * Indicates if the implicit grant type is enabled.
