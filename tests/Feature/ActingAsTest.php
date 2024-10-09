@@ -4,8 +4,8 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Support\Facades\Route;
-use Laravel\Passport\Http\Middleware\CheckForAnyScope;
-use Laravel\Passport\Http\Middleware\CheckScopes;
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
+use Laravel\Passport\Http\Middleware\CheckToken;
 use Laravel\Passport\Passport;
 use Workbench\App\Models\User;
 
@@ -38,7 +38,7 @@ class ActingAsTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckScopes::class.':admin,footest');
+        })->middleware(CheckToken::class.':admin,footest');
 
         Passport::actingAs(new User(), ['admin', 'footest']);
 
@@ -49,23 +49,23 @@ class ActingAsTest extends PassportTestCase
 
     public function testItCanGenerateDefinitionViaStaticMethod()
     {
-        $signature = (string) CheckScopes::using('admin');
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckScopes:admin', $signature);
+        $signature = (string) CheckToken::using('admin');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckToken:admin', $signature);
 
-        $signature = (string) CheckScopes::using('admin', 'footest');
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckScopes:admin,footest', $signature);
+        $signature = (string) CheckToken::using('admin', 'footest');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckToken:admin,footest', $signature);
 
-        $signature = (string) CheckScopes::using(['admin', 'footest']);
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckScopes:admin,footest', $signature);
+        $signature = (string) CheckToken::using(['admin', 'footest']);
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckToken:admin,footest', $signature);
 
-        $signature = (string) CheckForAnyScope::using('admin');
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckForAnyScope:admin', $signature);
+        $signature = (string) CheckTokenForAnyScope::using('admin');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckTokenForAnyScope:admin', $signature);
 
-        $signature = (string) CheckForAnyScope::using('admin', 'footest');
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckForAnyScope:admin,footest', $signature);
+        $signature = (string) CheckTokenForAnyScope::using('admin', 'footest');
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckTokenForAnyScope:admin,footest', $signature);
 
-        $signature = (string) CheckForAnyScope::using(['admin', 'footest']);
-        $this->assertSame('Laravel\Passport\Http\Middleware\CheckForAnyScope:admin,footest', $signature);
+        $signature = (string) CheckTokenForAnyScope::using(['admin', 'footest']);
+        $this->assertSame('Laravel\Passport\Http\Middleware\CheckTokenForAnyScope:admin,footest', $signature);
     }
 
     public function testActingAsWhenTheRouteIsProtectedByCheckForAnyScopeMiddleware()
@@ -77,7 +77,7 @@ class ActingAsTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckForAnyScope::class.':admin,footest');
+        })->middleware(CheckTokenForAnyScope::class.':admin,footest');
 
         Passport::actingAs(new User(), ['footest']);
 
@@ -92,7 +92,7 @@ class ActingAsTest extends PassportTestCase
 
         $this->withoutExceptionHandling();
 
-        Route::middleware(CheckScopes::class.':foo:bar,baz:qux')->get('/foo', function () {
+        Route::middleware(CheckToken::class.':foo:bar,baz:qux')->get('/foo', function () {
             return 'bar';
         });
 
@@ -109,7 +109,7 @@ class ActingAsTest extends PassportTestCase
 
         $this->withoutExceptionHandling();
 
-        Route::middleware(CheckForAnyScope::class.':foo:baz,baz:qux')->get('/foo', function () {
+        Route::middleware(CheckTokenForAnyScope::class.':foo:baz,baz:qux')->get('/foo', function () {
             return 'bar';
         });
 

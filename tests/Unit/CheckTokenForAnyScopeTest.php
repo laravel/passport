@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -35,7 +36,7 @@ class CheckTokenForAnyScopeTest extends TestCase
 
         $response = $middleware->handle($request, function () {
             return new Response('response');
-        });
+        }, 'notfoo');
 
         $this->assertSame('response', $response->getContent());
     }
@@ -103,5 +104,39 @@ class CheckTokenForAnyScopeTest extends TestCase
         $response = $middleware->handle($request, function () {
             return 'response';
         }, 'baz', 'notbar');
+    }
+
+    public function test_request_is_passed_along_if_scopes_are_present_on_token()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $middleware = new CheckTokenForAnyScope($resourceServer);
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $token->shouldReceive('can')->with('foo')->andReturn(true);
+        $token->shouldReceive('can')->with('bar')->andReturn(false);
+
+        $response = $middleware->handle($request, function () {
+            return new Response('response');
+        }, 'foo', 'bar');
+
+        $this->assertSame('response', $response->getContent());
+    }
+
+    public function test_exception_is_thrown_if_token_doesnt_have_scope()
+    {
+        $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
+
+        $resourceServer = m::mock(ResourceServer::class);
+        $middleware = new CheckTokenForAnyScope($resourceServer);
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $token->shouldReceive('can')->with('foo')->andReturn(false);
+        $token->shouldReceive('can')->with('bar')->andReturn(false);
+
+        $middleware->handle($request, function () {
+            return new Response('response');
+        }, 'foo', 'bar');
     }
 }

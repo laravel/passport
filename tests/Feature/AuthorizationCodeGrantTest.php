@@ -142,7 +142,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
             'client_secret' => $client->plainSecret,
             'redirect_uri' => $redirect,
             'code' => $params['code'],
-        ]);
+        ])->assertOk();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
