@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Passport\AccessToken;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -102,6 +103,39 @@ class CheckTokenTest extends TestCase
 
         $response = $middleware->handle($request, function () {
             return 'response';
+        }, 'foo', 'bar');
+    }
+
+    public function test_request_is_passed_along_if_scopes_are_present_on_token()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $middleware = new CheckToken($resourceServer);
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $token->shouldReceive('cant')->with('foo')->andReturn(false);
+        $token->shouldReceive('cant')->with('bar')->andReturn(false);
+
+        $response = $middleware->handle($request, function () {
+            return new Response('response');
+        }, 'foo', 'bar');
+
+        $this->assertSame('response', $response->getContent());
+    }
+
+    public function test_exception_is_thrown_if_token_doesnt_have_scope()
+    {
+        $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
+
+        $resourceServer = m::mock(ResourceServer::class);
+        $middleware = new CheckToken($resourceServer);
+        $request = m::mock(Request::class);
+        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $token->shouldReceive('cant')->with('foo')->andReturn(true);
+
+        $middleware->handle($request, function () {
+            return new Response('response');
         }, 'foo', 'bar');
     }
 }
