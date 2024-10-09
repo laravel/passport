@@ -2,120 +2,45 @@
 
 namespace Laravel\Passport;
 
-use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Date;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class TokenRepository
 {
     /**
-     * Creates a new Access Token.
-     *
-     * @param  array  $attributes
-     * @return \Laravel\Passport\Token
-     */
-    public function create($attributes)
-    {
-        return Passport::token()->create($attributes);
-    }
-
-    /**
-     * Get a token by the given ID.
-     *
-     * @param  string  $id
-     * @return \Laravel\Passport\Token
-     */
-    public function find($id)
-    {
-        return Passport::token()->where('id', $id)->first();
-    }
-
-    /**
      * Get a token by the given user ID and token ID.
      *
-     * @param  string  $id
-     * @param  int  $userId
-     * @return \Laravel\Passport\Token|null
+     * @deprecated Use $user->tokens()->find()
+     *
+     * @param  \Laravel\Passport\HasApiTokens  $user
      */
-    public function findForUser($id, $userId)
+    public function findForUser(string $id, Authenticatable $user): ?Token
     {
-        return Passport::token()->where('id', $id)->where('user_id', $userId)->first();
+        return $user->tokens()
+            ->with('client')
+            ->where('revoked', false)
+            ->where('expires_at', '>', Date::now())
+            ->find($id);
     }
 
     /**
      * Get the token instances for the given user ID.
      *
-     * @param  mixed  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function forUser($userId)
-    {
-        return Passport::token()->where('user_id', $userId)->get();
-    }
-
-    /**
-     * Get a valid token instance for the given user and client.
+     * @deprecated Use $user->tokens()
      *
-     * @deprecated use findValidToken
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Token|null
+     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Token>
      */
-    public function getValidToken($user, $client)
+    public function forUser(Authenticatable $user): Collection
     {
-        return $client->tokens()
-                    ->whereUserId($user->getAuthIdentifier())
-                    ->where('revoked', 0)
-                    ->where('expires_at', '>', Carbon::now())
-                    ->first();
-    }
-
-    /**
-     * Store the given token instance.
-     *
-     * @param  \Laravel\Passport\Token  $token
-     * @return void
-     */
-    public function save(Token $token)
-    {
-        $token->save();
-    }
-
-    /**
-     * Revoke an access token.
-     *
-     * @param  string  $id
-     * @return mixed
-     */
-    public function revokeAccessToken($id)
-    {
-        return Passport::token()->where('id', $id)->update(['revoked' => true]);
-    }
-
-    /**
-     * Check if the access token has been revoked.
-     *
-     * @param  string  $id
-     * @return bool
-     */
-    public function isAccessTokenRevoked($id)
-    {
-        return Passport::token()->where('id', $id)->where('revoked', 0)->doesntExist();
-    }
-
-    /**
-     * Find a valid token for the given user and client.
-     *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  \Laravel\Passport\Client  $client
-     * @return \Laravel\Passport\Token|null
-     */
-    public function findValidToken($user, $client)
-    {
-        return $client->tokens()
-                      ->whereUserId($user->getAuthIdentifier())
-                      ->where('revoked', 0)
-                      ->where('expires_at', '>', Carbon::now())
-                      ->latest('expires_at')
-                      ->first();
+        return $user->tokens()
+            ->with('client')
+            ->where('revoked', false)
+            ->where('expires_at', '>', Date::now())
+            ->get();
     }
 }

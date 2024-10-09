@@ -158,6 +158,13 @@ class Passport
     public static bool $registersRoutes = true;
 
     /**
+     * Indicates if Passport JSON API routes will be registered.
+     *
+     * @var bool
+     */
+    public static $registersJsonApiRoutes = false;
+
+    /**
      * Enable the implicit grant type.
      */
     public static function enableImplicitGrant(): void

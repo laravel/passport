@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laravel\Passport\Passport;
 
 Route::post('/token', [
     'uses' => 'AccessTokenController@issueToken',
@@ -59,53 +60,55 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
         'as' => 'device.authorizations.deny',
     ]);
 
-    Route::get('/tokens', [
-        'uses' => 'AuthorizedAccessTokenController@forUser',
-        'as' => 'tokens.index',
-    ]);
+    if (Passport::$registersJsonApiRoutes) {
+        Route::get('/tokens', [
+            'uses' => 'AuthorizedAccessTokenController@forUser',
+            'as' => 'tokens.index',
+        ]);
 
-    Route::delete('/tokens/{token_id}', [
-        'uses' => 'AuthorizedAccessTokenController@destroy',
-        'as' => 'tokens.destroy',
-    ]);
+        Route::delete('/tokens/{token_id}', [
+            'uses' => 'AuthorizedAccessTokenController@destroy',
+            'as' => 'tokens.destroy',
+        ]);
 
-    Route::get('/clients', [
-        'uses' => 'ClientController@forUser',
-        'as' => 'clients.index',
-    ]);
+        Route::get('/clients', [
+            'uses' => 'ClientController@forUser',
+            'as' => 'clients.index',
+        ]);
 
-    Route::post('/clients', [
-        'uses' => 'ClientController@store',
-        'as' => 'clients.store',
-    ]);
+        Route::post('/clients', [
+            'uses' => 'ClientController@store',
+            'as' => 'clients.store',
+        ]);
 
-    Route::put('/clients/{client_id}', [
-        'uses' => 'ClientController@update',
-        'as' => 'clients.update',
-    ]);
+        Route::put('/clients/{client_id}', [
+            'uses' => 'ClientController@update',
+            'as' => 'clients.update',
+        ]);
 
-    Route::delete('/clients/{client_id}', [
-        'uses' => 'ClientController@destroy',
-        'as' => 'clients.destroy',
-    ]);
+        Route::delete('/clients/{client_id}', [
+            'uses' => 'ClientController@destroy',
+            'as' => 'clients.destroy',
+        ]);
 
-    Route::get('/scopes', [
-        'uses' => 'ScopeController@all',
-        'as' => 'scopes.index',
-    ]);
+        Route::get('/scopes', [
+            'uses' => 'ScopeController@all',
+            'as' => 'scopes.index',
+        ]);
 
-    Route::get('/personal-access-tokens', [
-        'uses' => 'PersonalAccessTokenController@forUser',
-        'as' => 'personal.tokens.index',
-    ]);
+        Route::get('/personal-access-tokens', [
+            'uses' => 'PersonalAccessTokenController@forUser',
+            'as' => 'personal.tokens.index',
+        ]);
 
-    Route::post('/personal-access-tokens', [
-        'uses' => 'PersonalAccessTokenController@store',
-        'as' => 'personal.tokens.store',
-    ]);
+        Route::post('/personal-access-tokens', [
+            'uses' => 'PersonalAccessTokenController@store',
+            'as' => 'personal.tokens.store',
+        ]);
 
-    Route::delete('/personal-access-tokens/{token_id}', [
-        'uses' => 'PersonalAccessTokenController@destroy',
-        'as' => 'personal.tokens.destroy',
-    ]);
+        Route::delete('/personal-access-tokens/{token_id}', [
+            'uses' => 'PersonalAccessTokenController@destroy',
+            'as' => 'personal.tokens.destroy',
+        ]);
+    }
 });

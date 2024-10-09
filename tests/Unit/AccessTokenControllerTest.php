@@ -34,13 +34,15 @@ class AccessTokenControllerTest extends TestCase
 
         $controller = new AccessTokenController($server);
 
-        $this->assertSame('{"access_token":"access-token"}', $controller->issueToken($request)->getContent());
+        $this->assertSame('{"access_token":"access-token"}', $controller->issueToken($request, $psrResponse)->getContent());
     }
 
     public function test_exceptions_are_handled()
     {
         $request = m::mock(ServerRequestInterface::class);
         $request->shouldReceive('getParsedBody')->once()->andReturn([]);
+
+        app()->instance(ResponseInterface::class, new Response);
 
         $server = m::mock(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(
@@ -51,7 +53,7 @@ class AccessTokenControllerTest extends TestCase
 
         $this->expectException(OAuthServerException::class);
 
-        $controller->issueToken($request);
+        $controller->issueToken($request, m::mock(ResponseInterface::class));
     }
 }
 

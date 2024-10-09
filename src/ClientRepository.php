@@ -4,6 +4,7 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -30,44 +31,26 @@ class ClientRepository
     /**
      * Get a client instance for the given ID and user ID.
      *
-     * @param  int|string  $clientId
-     * @param  mixed  $userId
-     * @return \Laravel\Passport\Client|null
+     * @deprecated Use $user->clients()->find()
+     *
+     * @param  \Laravel\Passport\HasApiTokens  $user
      */
-    public function findForUser($clientId, $userId)
+    public function findForUser(string|int $clientId, Authenticatable $user): ?Client
     {
-        $client = Passport::client();
-
-        return $client
-                    ->where($client->getKeyName(), $clientId)
-                    ->where('user_id', $userId)
-                    ->first();
+        return $user->clients()->where('revoked', false)->find($clientId);
     }
 
     /**
      * Get the client instances for the given user ID.
      *
-     * @param  mixed  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function forUser($userId)
-    {
-        return Passport::client()
-                    ->where('user_id', $userId)
-                    ->orderBy('name', 'asc')->get();
-    }
-
-    /**
-     * Get the active client instances for the given user ID.
+     * @deprecated Use $user->clients()
      *
-     * @param  mixed  $userId
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client>
      */
-    public function activeForUser($userId)
+    public function forUser(Authenticatable $user): Collection
     {
-        return $this->forUser($userId)->reject(function ($client) {
-            return $client->revoked;
-        })->values();
+        return $user->clients()->where('revoked', false)->orderBy('name')->get();
     }
 
     /*
@@ -206,6 +189,8 @@ class ClientRepository
     /**
      * Update the given client.
      *
+     * @deprecated Will be removed in a future Laravel version.
+     *
      * @param  string[]  $redirectUris
      */
     public function update(Client $client, string $name, array $redirectUris): bool
@@ -233,27 +218,16 @@ class ClientRepository
     }
 
     /**
-     * Determine if the given client is revoked.
+     * Revoke the given client and its tokens.
      *
-     * @param  int|string  $id
-     * @return bool
+     * @deprecated Will be removed in a future Laravel version.
      */
-    public function revoked($id)
+    public function delete(Client $client): void
     {
-        $client = $this->find($id);
-
-        return is_null($client) || $client->revoked;
-    }
-
-    /**
-     * Delete the given client.
-     *
-     * @param  \Laravel\Passport\Client  $client
-     * @return void
-     */
-    public function delete(Client $client)
-    {
-        $client->tokens()->update(['revoked' => true]);
+        $client->tokens()->with('refreshToken')->each(function (Token $token): void {
+            $token->refreshToken?->revoke();
+            $token->revoke();
+        });
 
         $client->forceFill(['revoked' => true])->save();
     }
