@@ -66,10 +66,12 @@ When authenticating users via bearer tokens, the `User` model's `token` method n
 
 ### Renamed Middlewares
 
-PR: https://github.com/laravel/passport/pull/1792
+PR: https://github.com/laravel/passport/pull/1792, https://github.com/laravel/passport/pull/1794
 
-Passport's `CheckClientCredentials` and `CheckClientCredentialsForAnyScope` middleware have been renamed to better reflect their functionality:
+The following Passport's middlewares have been renamed to better reflect their functionality:
 
+* `Laravel\Passport\Http\Middleware\CheckScopes` class has been renamed to `CheckToken`.
+* `Laravel\Passport\Http\Middleware\CheckForAnyScope` class has been renamed to `CheckTokenForAnyScope`.
 * `Laravel\Passport\Http\Middleware\CheckClientCredentials` class has been renamed to `CheckToken`.
 * `Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope` class has been renamed to `CheckTokenForAnyScope`.
 * `Laravel\Passport\Http\Middleware\CheckCredentials` abstract class has been renamed to `ValidateToken`.
