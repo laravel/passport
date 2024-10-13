@@ -31,12 +31,12 @@ trait HasApiTokens
     public function tokens(): HasMany
     {
         return $this->hasMany(Passport::tokenModel(), 'user_id')
-            ->where(function (Builder $query) {
-                $query->whereHas('client', function (Builder $query) {
-                    $query->where(function (Builder $query) {
+            ->where(function (Builder $query): void {
+                $query->whereHas('client', function (Builder $query): void {
+                    $query->where(function (Builder $query): void {
                         $provider = $this->getProvider();
 
-                        $query->when($provider === config('auth.guards.api.provider'), function (Builder $query) {
+                        $query->when($provider === config('auth.guards.api.provider'), function (Builder $query): void {
                             $query->orWhereNull('provider');
                         })->orWhere('provider', $provider);
                     });

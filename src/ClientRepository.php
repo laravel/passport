@@ -64,14 +64,14 @@ class ClientRepository
             ->newQuery()
             ->where('revoked', false)
             ->whereNull('user_id')
-            ->where(function (Builder $query) use ($provider) {
-                $query->when($provider === config('auth.guards.api.provider'), function (Builder $query) {
+            ->where(function (Builder $query) use ($provider): void {
+                $query->when($provider === config('auth.guards.api.provider'), function (Builder $query): void {
                     $query->orWhereNull('provider');
                 })->orWhere('provider', $provider);
             })
             ->latest()
             ->get()
-            ->first(fn (Client $client) => $client->hasGrantType('personal_access'))
+            ->first(fn (Client $client): bool => $client->hasGrantType('personal_access'))
             ?? throw new RuntimeException(
                 "Personal access client not found for '$provider' user provider. Please create one."
             );

@@ -9,10 +9,9 @@ use JsonSerializable;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @template TKey of string
  * @template TValue
  *
- * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
  *
  * @property string $oauth_access_token_id
  * @property string $oauth_client_id
@@ -26,19 +25,19 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
     /**
      * The token instance.
      */
-    protected ?Token $token;
+    protected ?Token $token = null;
 
     /**
      * All the attributes set on the access token instance.
      *
-     * @var array<TKey, TValue>
+     * @var array<string, TValue>
      */
     protected array $attributes = [];
 
     /**
      * Create a new access token instance.
      *
-     * @param  array<TKey, TValue>  $attributes
+     * @param  array<string, TValue>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -98,7 +97,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
     /**
      * Convert the access token instance to an array.
      *
-     * @return array<TKey, TValue>
+     * @return array<string, TValue>
      */
     public function toArray(): array
     {
@@ -108,7 +107,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
     /**
      * Convert the object into something JSON serializable.
      *
-     * @return array<TKey, TValue>
+     * @return array<string, TValue>
      */
     public function jsonSerialize(): array
     {

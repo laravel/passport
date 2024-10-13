@@ -37,8 +37,8 @@ class ClientCommand extends Command
      */
     public function handle(ClientRepository $clients): void
     {
-        if (! $this->hasOption('name')) {
-            $this->input->setOption('name', $this->ask(
+        if (! $this->option('name')) {
+            $this->input->setOption('name', $this->components->ask(
                 'What should we name the client?',
                 config('app.name')
             ));
@@ -69,7 +69,7 @@ class ClientCommand extends Command
      */
     protected function createPersonalAccessClient(ClientRepository $clients): ?Client
     {
-        $provider = $this->option('provider') ?: $this->choice(
+        $provider = $this->option('provider') ?: $this->components->choice(
             'Which user provider should this client use to retrieve users?',
             collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
@@ -85,7 +85,7 @@ class ClientCommand extends Command
      */
     protected function createPasswordClient(ClientRepository $clients): Client
     {
-        $provider = $this->option('provider') ?: $this->choice(
+        $provider = $this->option('provider') ?: $this->components->choice(
             'Which user provider should this client use to retrieve users?',
             collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
             config('auth.guards.api.provider')
@@ -93,7 +93,7 @@ class ClientCommand extends Command
 
         $confidential = $this->hasOption('public')
             ? ! $this->option('public')
-            : $this->confirm('Would you like to make this client confidential?');
+            : $this->components->confirm('Would you like to make this client confidential?');
 
         return $clients->createPasswordGrantClient($this->option('name'), $provider, $confidential);
     }
@@ -111,7 +111,7 @@ class ClientCommand extends Command
      */
     protected function createImplicitClient(ClientRepository $clients): Client
     {
-        $redirect = $this->option('redirect_uri') ?: $this->ask(
+        $redirect = $this->option('redirect_uri') ?: $this->components->ask(
             'Where should we redirect the request after authorization?',
             url('/auth/callback')
         );
@@ -124,14 +124,14 @@ class ClientCommand extends Command
      */
     protected function createAuthCodeClient(ClientRepository $clients): Client
     {
-        $redirect = $this->option('redirect_uri') ?: $this->ask(
+        $redirect = $this->option('redirect_uri') ?: $this->components->ask(
             'Where should we redirect the request after authorization?',
             url('/auth/callback')
         );
 
         $confidential = $this->hasOption('public')
             ? ! $this->option('public')
-            : $this->confirm('Would you like to make this client confidential?', true);
+            : $this->components->confirm('Would you like to make this client confidential?', true);
 
         return $clients->createAuthorizationCodeGrantClient(
             $this->option('name'), explode(',', $redirect), $confidential,

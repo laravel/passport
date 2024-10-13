@@ -2,12 +2,12 @@
 
 namespace Laravel\Passport;
 
-use Carbon\Carbon;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
@@ -49,17 +49,17 @@ class Passport
     /**
      * The interval when access tokens expire.
      */
-    public static ?DateInterval $tokensExpireIn;
+    public static ?DateInterval $tokensExpireIn = null;
 
     /**
      * The date when refresh tokens expire.
      */
-    public static ?DateInterval $refreshTokensExpireIn;
+    public static ?DateInterval $refreshTokensExpireIn = null;
 
     /**
      * The date when personal access tokens expire.
      */
-    public static ?DateInterval $personalAccessTokensExpireIn;
+    public static ?DateInterval $personalAccessTokensExpireIn = null;
 
     /**
      * The name for API token cookies.
@@ -272,7 +272,7 @@ class Passport
         }
 
         return static::$tokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -286,7 +286,7 @@ class Passport
         }
 
         return static::$refreshTokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -300,7 +300,7 @@ class Passport
         }
 
         return static::$personalAccessTokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -361,11 +361,11 @@ class Passport
     public static function actingAsClient(Client $client, array $scopes = [], ?string $guard = 'api'): Client
     {
         $mock = Mockery::mock(ResourceServer::class);
-        $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function (ServerRequestInterface $request) use ($client, $scopes) {
-                return $request->withAttribute('oauth_client_id', $client->getKey())
-                    ->withAttribute('oauth_scopes', $scopes);
-            });
+        $mock->shouldReceive('validateAuthenticatedRequest')->andReturnUsing(
+            fn (ServerRequestInterface $request) => $request
+                ->withAttribute('oauth_client_id', $client->getKey())
+                ->withAttribute('oauth_scopes', $scopes)
+        );
 
         app()->instance(ResourceServer::class, $mock);
 

@@ -31,7 +31,7 @@ class PersonalAccessTokenFactory
             $this->createRequest($userId, $scopes, $provider)
         );
 
-        $token = tap($this->findAccessToken($response), function (Token $token) use ($name) {
+        $token = tap($this->findAccessToken($response), function (Token $token) use ($name): void {
             $token->forceFill([
                 'name' => $name,
             ])->save();

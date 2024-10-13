@@ -45,7 +45,7 @@ class AuthorizationController
         AuthorizationViewResponse $viewResponse
     ): Response|AuthorizationViewResponse {
         $authRequest = $this->withErrorHandling(
-            fn () => $this->server->validateAuthorizationRequest($psrRequest),
+            fn (): AuthorizationRequestInterface => $this->server->validateAuthorizationRequest($psrRequest),
             ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
         );
 

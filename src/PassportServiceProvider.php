@@ -51,7 +51,7 @@ class PassportServiceProvider extends ServiceProvider
                 'as' => 'passport.',
                 'prefix' => config('passport.path', 'oauth'),
                 'namespace' => 'Laravel\Passport\Http\Controllers',
-            ], function () {
+            ], function (): void {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
         }
@@ -117,8 +117,8 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerAuthorizationServer(): void
     {
-        $this->app->singleton(AuthorizationServer::class, function () {
-            return tap($this->makeAuthorizationServer(), function (AuthorizationServer $server) {
+        $this->app->singleton(AuthorizationServer::class,
+            fn () => tap($this->makeAuthorizationServer(), function (AuthorizationServer $server): void {
                 $server->setDefaultScope(Passport::$defaultScope);
 
                 $server->enableGrantType(
@@ -148,8 +148,8 @@ class PassportServiceProvider extends ServiceProvider
                         $this->makeImplicitGrant(), Passport::tokensExpireIn()
                     );
                 }
-            });
-        });
+            }
+        ));
     }
 
     /**
@@ -157,7 +157,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeAuthCodeGrant(): AuthCodeGrant
     {
-        return tap($this->buildAuthCodeGrant(), function (AuthCodeGrant $grant) {
+        return tap($this->buildAuthCodeGrant(), function (AuthCodeGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -179,9 +179,9 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeRefreshTokenGrant(): RefreshTokenGrant
     {
-        $repository = $this->app->make(RefreshTokenRepository::class);
-
-        return tap(new RefreshTokenGrant($repository), function (RefreshTokenGrant $grant) {
+        return tap(new RefreshTokenGrant(
+            $this->app->make(RefreshTokenRepository::class)
+        ), function (RefreshTokenGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -194,7 +194,7 @@ class PassportServiceProvider extends ServiceProvider
         return tap(new PasswordGrant(
             $this->app->make(Bridge\UserRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class)
-        ), function (PasswordGrant $grant) {
+        ), function (PasswordGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -262,8 +262,8 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerGuard(): void
     {
-        Auth::resolved(function ($auth) {
-            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard) {
+        Auth::resolved(function ($auth): void {
+            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard): void {
                 app()->refresh('request', $guard, 'setRequest');
             }));
         });
@@ -290,7 +290,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function deleteCookieOnLogout(): void
     {
-        Event::listen(Logout::class, function () {
+        Event::listen(Logout::class, function (): void {
             if (Request::hasCookie(Passport::cookie())) {
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }
