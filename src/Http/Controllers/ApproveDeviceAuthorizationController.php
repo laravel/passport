@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse;
 use League\OAuth2\Server\AuthorizationServer;
@@ -14,7 +15,8 @@ class ApproveDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(
-        protected AuthorizationServer $server
+        protected AuthorizationServer $server,
+        protected StatefulGuard $guard
     ) {
     }
 
@@ -27,7 +29,7 @@ class ApproveDeviceAuthorizationController
     ): ApprovedDeviceAuthorizationResponse {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
-            $request->user()->getAuthIdentifier(),
+            $this->guard->user()->getAuthIdentifier(),
             true
         ));
 

@@ -17,7 +17,10 @@ use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse as ApprovedDeviceAuthorizationResponseContract;
 use Laravel\Passport\Contracts\DeniedDeviceAuthorizationResponse as DeniedDeviceAuthorizationResponseContract;
 use Laravel\Passport\Guards\TokenGuard;
+use Laravel\Passport\Http\Controllers\ApproveDeviceAuthorizationController;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\Http\Controllers\DenyDeviceAuthorizationController;
+use Laravel\Passport\Http\Controllers\DeviceAuthorizationController;
 use Laravel\Passport\Http\Responses\ApprovedDeviceAuthorizationResponse;
 use Laravel\Passport\Http\Responses\DeniedDeviceAuthorizationResponse;
 use Lcobucci\JWT\Encoding\JoseEncoder;
@@ -106,9 +109,14 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
-        $this->app->when(AuthorizationController::class)
-                ->needs(StatefulGuard::class)
-                ->give(fn () => Auth::guard(config('passport.guard', null)));
+        $this->app->when([
+            AuthorizationController::class,
+            DeviceAuthorizationController::class,
+            ApproveDeviceAuthorizationController::class,
+            DenyDeviceAuthorizationController::class,
+        ])
+            ->needs(StatefulGuard::class)
+            ->give(fn () => Auth::guard(config('passport.guard', null)));
 
         $this->app->singleton(ClientRepository::class);
 

@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -11,6 +12,14 @@ use Laravel\Passport\Passport;
 
 class DeviceAuthorizationController
 {
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(
+        protected StatefulGuard $guard
+    ) {
+    }
+
     /**
      * Authorize a device to access the user's account.
      */
@@ -42,7 +51,7 @@ class DeviceAuthorizationController
 
         return $viewResponse->withParameters([
             'client' => $deviceCode->client,
-            'user' => $request->user(),
+            'user' => $this->guard->user(),
             'scopes' => Passport::scopesFor($deviceCode->scopes),
             'request' => $request,
             'authToken' => $authToken,

@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Laravel\Passport\Contracts\DeniedDeviceAuthorizationResponse;
 use League\OAuth2\Server\AuthorizationServer;
@@ -14,7 +15,8 @@ class DenyDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(
-        protected AuthorizationServer $server
+        protected AuthorizationServer $server,
+        protected StatefulGuard $guard
     ) {
     }
 
@@ -27,7 +29,7 @@ class DenyDeviceAuthorizationController
     ): DeniedDeviceAuthorizationResponse {
         $this->withErrorHandling(fn () => $this->server->completeDeviceAuthorizationRequest(
             $this->getDeviceCodeFromSession($request),
-            $request->user()->getAuthIdentifier(),
+            $this->guard->user()->getAuthIdentifier(),
             false
         ));
 
