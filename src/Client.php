@@ -214,7 +214,7 @@ class Client extends Model
      */
     public function newUniqueId(): ?string
     {
-        return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
+        return $this->usesUniqueIds ? (string) Str::uuid7() : null;
     }
 
     /**
