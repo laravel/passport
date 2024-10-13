@@ -16,7 +16,7 @@ class ImplicitGrantTest extends PassportTestCase
 
     protected function setUp(): void
     {
-        PassportTestCase::setUp();
+        parent::setUp();
 
         Passport::enableImplicitGrant();
 

@@ -16,7 +16,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
 
     protected function setUp(): void
     {
-        PassportTestCase::setUp();
+        parent::setUp();
 
         Passport::tokensCan([
             'create' => 'Create',

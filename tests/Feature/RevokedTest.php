@@ -1,5 +1,7 @@
 <?php
 
+namespace Laravel\Passport\Tests\Feature;
+
 use Carbon\CarbonImmutable;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository as BridgeAccessTokenRepository;
@@ -7,7 +9,6 @@ use Laravel\Passport\Bridge\AuthCode;
 use Laravel\Passport\Bridge\AuthCodeRepository as BridgeAuthCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
-use Laravel\Passport\Tests\Feature\PassportTestCase;
 use Mockery as m;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
