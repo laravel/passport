@@ -80,8 +80,6 @@ abstract class ValidateToken
 
     /**
      * Validate the given access token.
-     *
-     * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
     abstract protected function validate(AccessToken $token, string ...$params): void;
 }
