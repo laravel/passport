@@ -83,6 +83,8 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
+        $refreshToken = $json['refresh_token'];
+
         Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
             ->middleware('auth:api');
 
@@ -91,6 +93,18 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
         $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
         $this->assertSame(['create', 'read'], $json['oauth_scopes']);
+
+        $newToken = $this->post('/oauth/token', [
+            'grant_type' => 'refresh_token',
+            'client_id' => $client->getKey(),
+            'refresh_token' => $refreshToken,
+            'scope' => 'create read',
+        ])->assertOK()->json();
+
+        $this->assertArrayHasKey('access_token', $newToken);
+        $this->assertArrayHasKey('refresh_token', $newToken);
+        $this->assertSame(31536000, $newToken['expires_in']);
+        $this->assertSame('Bearer', $newToken['token_type']);
     }
 
     public function testRequireCodeChallenge()
