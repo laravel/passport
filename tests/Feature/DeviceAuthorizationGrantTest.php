@@ -17,6 +17,13 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
     {
         parent::setUp();
 
+        Passport::tokensCan([
+            'create' => 'Create',
+            'read' => 'Read',
+            'update' => 'Update',
+            'delete' => 'Delete',
+        ]);
+
         Passport::deviceAuthorizationView(fn ($params) => $params);
         Passport::deviceUserCodeView(fn ($params) => $params);
     }
@@ -25,13 +32,10 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
     {
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
-        $response = $this->post('/oauth/device/code', [
+        $json = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
-            'scope' => '',
-        ]);
-
-        $response->assertOk();
-        $json = $response->json();
+            'scope' => 'create read',
+        ])->assertOk()->json();
 
         $this->assertArrayHasKey('device_code', $json);
         $this->assertArrayHasKey('user_code', $json);
@@ -47,18 +51,15 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         ['device_code' => $deviceCode] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
-            'scope' => '',
-        ])->json();
+            'scope' => 'create read',
+        ])->assertOk()->json();
 
-        $response = $this->post('/oauth/token', [
+        $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'client_id' => $client->getKey(),
             'client_secret' => $client->plainSecret,
             'device_code' => $deviceCode,
-        ]);
-
-        $response->assertBadRequest();
-        $json = $response->json();
+        ])->assertBadRequest()->json();
 
         $this->assertArrayHasKey('error', $json);
         $this->assertArrayHasKey('error_description', $json);
@@ -84,12 +85,11 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
             'user_code' => $userCode,
         ] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
-            'scope' => '',
-        ])->json();
+            'scope' => 'create read',
+        ])->assertOk()->json();
 
-        $response = $this->get($verificationUri);
-        $response->assertOk();
-        $this->assertEqualsCanonicalizing(['request'], array_keys($response->json()));
+        $json = $this->get($verificationUri)->assertOk()->json();
+        $this->assertEqualsCanonicalizing(['request'], array_keys($json));
 
         $user = UserFactory::new()->create();
 
@@ -110,13 +110,6 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
     public function testRequestAccessToken()
     {
-        Passport::tokensCan([
-            'create' => 'Create',
-            'read' => 'Read',
-            'update' => 'Update',
-            'delete' => 'Delete',
-        ]);
-
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
         [
@@ -125,7 +118,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         ] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
             'scope' => 'create read',
-        ])->json();
+        ])->assertOk()->json();
 
         $user = UserFactory::new()->create();
         $this->actingAs($user, 'web');
@@ -138,29 +131,25 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
         $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
 
-        ['authToken' => $authToken] = $json;
-
-        $response = $this->post('/oauth/device/authorize', ['auth_token' => $authToken]);
+        $response = $this->post('/oauth/device/authorize', ['auth_token' => $json['authToken']]);
         $response->assertRedirectToRoute('passport.device');
         $response->assertSessionHas('status', 'authorization-approved');
         $response->assertSessionMissing(['deviceCode', 'authToken']);
 
-        $response = $this->post('/oauth/token', [
+        $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'client_id' => $client->getKey(),
             'client_secret' => $client->plainSecret,
             'device_code' => $deviceCode,
-        ]);
-
-        $response->assertOk();
-        $json = $response->json();
+        ])->assertOk()->json();
 
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())->middleware('auth:api');
+        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+            ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
 
@@ -178,31 +167,59 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
             'user_code' => $userCode,
         ] = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
-            'scope' => '',
-        ])->json();
+            'scope' => 'create read',
+        ])->assertOk()->json();
 
         $user = UserFactory::new()->create();
         $this->actingAs($user, 'web');
 
-        ['authToken' => $authToken] = $this->get('/oauth/device/authorize?user_code='.$userCode)->json();
+        $authToken = $this->get('/oauth/device/authorize?user_code='.$userCode)->assertOk()->json('authToken');
 
         $response = $this->delete('/oauth/device/authorize', ['auth_token' => $authToken]);
         $response->assertRedirectToRoute('passport.device');
         $response->assertSessionHas('status', 'authorization-denied');
         $response->assertSessionMissing(['deviceCode', 'authToken']);
 
-        $response = $this->post('/oauth/token', [
+        $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
             'client_id' => $client->getKey(),
             'client_secret' => $client->plainSecret,
             'device_code' => $deviceCode,
-        ]);
-
-        $response->assertUnauthorized();
-        $json = $response->json();
+        ])->assertUnauthorized()->json();
 
         $this->assertArrayHasKey('error', $json);
         $this->assertArrayHasKey('error_description', $json);
         $this->assertSame('access_denied', $json['error']);
+    }
+
+    public function testRequestAccessTokenWithPublicClient()
+    {
+        $client = ClientFactory::new()->asDeviceCodeClient()->asPublic()->create();
+
+        [
+            'device_code' => $deviceCode,
+            'user_code' => $userCode,
+        ] = $this->post('/oauth/device/code', [
+            'client_id' => $client->getKey(),
+            'scope' => 'create read',
+        ])->assertOk()->json();
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+
+        $authToken = $this->get('/oauth/device/authorize?user_code='.$userCode)->assertOk()->json('authToken');
+
+        $this->post('/oauth/device/authorize', ['auth_token' => $authToken])->assertRedirect();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
+            'client_id' => $client->getKey(),
+            'device_code' => $deviceCode,
+        ])->assertOk()->json();
+
+        $this->assertArrayHasKey('access_token', $json);
+        $this->assertArrayHasKey('refresh_token', $json);
+        $this->assertSame('Bearer', $json['token_type']);
+        $this->assertSame(31536000, $json['expires_in']);
     }
 }
