@@ -67,4 +67,32 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $this->assertSame('invalid_client', $json['error']);
         $this->assertSame('Client authentication failed', $json['error_description']);
     }
+
+    public function testIssueAccessTokenWithAllScopes()
+    {
+        $client = ClientFactory::new()->asClientCredentials()->create();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'scope' => '*',
+        ])->assertOk()->json();
+
+        $this->assertArrayHasKey('access_token', $json);
+        $this->assertSame('Bearer', $json['token_type']);
+        $this->assertSame(31536000, $json['expires_in']);
+
+        Route::get('/foo', fn (Request $request) => response('response'))
+            ->middleware([EnsureClientIsResourceOwner::using(['create', 'delete'])]);
+
+        $response = $this->withToken($json['access_token'], $json['token_type'])->get('/foo');
+        $response->assertOk();
+
+        Route::get('/bar', fn (Request $request) => response('response'))
+            ->middleware(CheckToken::using(['create', 'delete']));
+
+        $response = $this->withToken($json['access_token'], $json['token_type'])->get('/bar');
+        $response->assertOk();
+    }
 }

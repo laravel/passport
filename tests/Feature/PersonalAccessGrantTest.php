@@ -3,7 +3,9 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
@@ -41,6 +43,30 @@ class PersonalAccessGrantTest extends PassportTestCase
             'client_id' => $result->token->client_id,
             'name' => $result->token->name,
         ]);
+    }
+
+    public function testIssueTokenWithAllScopes()
+    {
+        $user = UserFactory::new()->create();
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
+
+        $result = $user->createToken('test', ['*']);
+
+        $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
+        $this->assertSame($client->getKey(), $result->token->client_id);
+        $this->assertSame($user->getAuthIdentifier(), $result->token->user_id);
+        $this->assertSame(['*'], $result->token->scopes);
+
+        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+            ->middleware('auth:api');
+
+        $json = $this->withToken($result->accessToken)->get('/foo')->json();
+
+        $this->assertSame($client->getKey(), $json['oauth_client_id']);
+        $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
+        $this->assertSame(['*'], $json['oauth_scopes']);
     }
 
     public function testIssueTokenWithDifferentProviders()
