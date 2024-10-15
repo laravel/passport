@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport;
 
-use DateTime;
 use Firebase\JWT\JWT;
 use Illuminate\Contracts\Config\Repository as Config;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -27,7 +26,7 @@ class ApiTokenCookieFactory
     {
         $config = $this->config->get('session');
 
-        $expiration = Date::now()->addMinutes((int) $config['lifetime']);
+        $expiration = Date::now()->addMinutes((int) $config['lifetime'])->getTimestamp();
 
         return new Cookie(
             Passport::cookie(),
@@ -45,12 +44,12 @@ class ApiTokenCookieFactory
     /**
      * Create a new JWT token for the given user ID and CSRF token.
      */
-    protected function createToken(string|int $userId, string $csrfToken, DateTime $expiration): string
+    protected function createToken(string|int $userId, string $csrfToken, int $expiration): string
     {
         return JWT::encode([
             'sub' => $userId,
             'csrf' => $csrfToken,
-            'expiry' => $expiration->getTimestamp(),
+            'expiry' => $expiration,
         ], Passport::tokenEncryptionKey($this->encrypter), 'HS256');
     }
 }
