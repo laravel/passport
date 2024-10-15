@@ -3,9 +3,9 @@
 namespace Laravel\Passport\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use League\OAuth2\Server\AuthorizationServer;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class DenyAuthorizationController
 {
@@ -22,14 +22,14 @@ class DenyAuthorizationController
     /**
      * Deny the authorization request.
      */
-    public function deny(Request $request): Response
+    public function deny(Request $request, ResponseInterface $psrResponse): Response
     {
         $authRequest = $this->getAuthRequestFromSession($request);
 
         $authRequest->setAuthorizationApproved(false);
 
         return $this->withErrorHandling(fn () => $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        ));
+            $this->server->completeAuthorizationRequest($authRequest, $psrResponse)
+        ), $authRequest->getGrantTypeId() === 'implicit');
     }
 }
