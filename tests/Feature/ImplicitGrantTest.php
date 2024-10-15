@@ -100,8 +100,8 @@ class ImplicitGrantTest extends PassportTestCase
         $location = $response->headers->get('Location');
         parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        // $this->assertStringStartsWith($redirect.'#', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertStringStartsWith($redirect.'#', $location);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('access_denied', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }
@@ -182,7 +182,7 @@ class ImplicitGrantTest extends PassportTestCase
         parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
         $this->assertStringStartsWith($redirect.'#', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }

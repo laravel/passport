@@ -199,7 +199,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         parse_str(parse_url($location, PHP_URL_QUERY), $params);
 
         $this->assertStringStartsWith($redirect.'?', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }
