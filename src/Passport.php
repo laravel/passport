@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -327,13 +328,10 @@ class Passport
     /**
      * Set the current user for the application with the given scopes.
      *
-     * @template TUserModel of \Laravel\Passport\HasApiTokens
-     *
-     * @param  TUserModel  $user
+     * @param  \Laravel\Passport\HasApiTokens  $user
      * @param  string[]  $scopes
-     * @return TUserModel
      */
-    public static function actingAs($user, array $scopes = [], ?string $guard = 'api')
+    public static function actingAs(Authenticatable $user, array $scopes = [], ?string $guard = 'api'): Authenticatable
     {
         $token = new AccessToken([
             'oauth_user_id' => $user->getAuthIdentifier(),

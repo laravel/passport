@@ -82,7 +82,7 @@ class ClientRepository
      *
      * @param  string[]  $grantTypes
      * @param  string[]  $redirectUris
-     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @param  \Laravel\Passport\HasApiTokens|null  $user
      */
     protected function create(
         string $name,
