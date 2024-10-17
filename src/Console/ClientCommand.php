@@ -20,6 +20,7 @@ class ClientCommand extends Command
             {--password : Create a password grant client}
             {--client : Create a client credentials grant client}
             {--implicit : Create an implicit grant client}
+            {--device : Create a device authorization grant client}
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
@@ -49,6 +50,7 @@ class ClientCommand extends Command
             $this->option('password') => $this->createPasswordClient($clients),
             $this->option('client') => $this->createClientCredentialsClient($clients),
             $this->option('implicit') => $this->createImplicitClient($clients),
+            $this->option('device') => $this->createDeviceCodeClient($clients),
             default => $this->createAuthCodeClient($clients)
         };
 
@@ -120,6 +122,18 @@ class ClientCommand extends Command
     }
 
     /**
+     * Create a device code client.
+     */
+    protected function createDeviceCodeClient(ClientRepository $clients): Client
+    {
+        $confidential = $this->hasOption('public')
+            ? ! $this->option('public')
+            : $this->confirm('Would you like to make this client confidential?', true);
+
+        return $clients->createDeviceAuthorizationGrantClient($this->option('name'), $confidential);
+    }
+
+    /**
      * Create an authorization code client.
      */
     protected function createAuthCodeClient(ClientRepository $clients): Client
@@ -133,8 +147,10 @@ class ClientCommand extends Command
             ? ! $this->option('public')
             : $this->confirm('Would you like to make this client confidential?', true);
 
+        $enableDeviceFlow = $this->confirm('Would you like to enable device authorization flow for this client?');
+
         return $clients->createAuthorizationCodeGrantClient(
-            $this->option('name'), explode(',', $redirect), $confidential,
+            $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow
         );
     }
 }

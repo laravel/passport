@@ -5,8 +5,13 @@ namespace Laravel\Passport\Http\Responses;
 use Closure;
 use Illuminate\Contracts\Support\Responsable;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 
-class SimpleViewResponse implements AuthorizationViewResponse
+class SimpleViewResponse implements
+    AuthorizationViewResponse,
+    DeviceAuthorizationViewResponse,
+    DeviceUserCodeViewResponse
 {
     /**
      * An array of arguments that may be passed to the view response and used in the view.

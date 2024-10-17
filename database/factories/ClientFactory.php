@@ -91,4 +91,15 @@ class ClientFactory extends Factory
             'redirect_uris' => [],
         ]);
     }
+
+    /**
+     * Use as a Device Code client.
+     */
+    public function asDeviceCodeClient(): static
+    {
+        return $this->state([
+            'grant_types' => ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'],
+            'redirect_uris' => [],
+        ]);
+    }
 }

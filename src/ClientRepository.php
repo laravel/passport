@@ -153,6 +153,19 @@ class ClientRepository
     }
 
     /**
+     * Store a new device authorization grant client.
+     */
+    public function createDeviceAuthorizationGrantClient(
+        string $name,
+        bool $confidential = true,
+        ?Authenticatable $user = null
+    ): Client {
+        return $this->create(
+            $name, ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'], [], null, $confidential, $user
+        );
+    }
+
+    /**
      * Store a new authorization code grant client.
      *
      * @param  string[]  $redirectUris
@@ -161,11 +174,16 @@ class ClientRepository
         string $name,
         array $redirectUris,
         bool $confidential = true,
-        ?Authenticatable $user = null
+        ?Authenticatable $user = null,
+        bool $enableDeviceFlow = false
     ): Client {
-        return $this->create(
-            $name, ['authorization_code', 'refresh_token'], $redirectUris, null, $confidential, $user
-        );
+        $grantTypes = ['authorization_code', 'refresh_token'];
+
+        if ($enableDeviceFlow) {
+            $grantTypes[] = 'urn:ietf:params:oauth:grant-type:device_code';
+        }
+
+        return $this->create($name, $grantTypes, $redirectUris, null, $confidential, $user);
     }
 
     /**

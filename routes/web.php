@@ -15,6 +15,18 @@ Route::get('/authorize', [
     'middleware' => 'web',
 ]);
 
+Route::post('/device/code', [
+    'uses' => 'DeviceCodeController',
+    'as' => 'device.code',
+    'middleware' => 'throttle',
+]);
+
+Route::get('/device', [
+    'uses' => 'DeviceUserCodeController',
+    'as' => 'device',
+    'middleware' => 'web',
+]);
+
 $guard = config('passport.guard', null);
 
 Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () {
@@ -31,6 +43,21 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
     Route::delete('/authorize', [
         'uses' => 'DenyAuthorizationController@deny',
         'as' => 'authorizations.deny',
+    ]);
+
+    Route::get('/device/authorize', [
+        'uses' => 'DeviceAuthorizationController',
+        'as' => 'device.authorizations.authorize',
+    ]);
+
+    Route::post('/device/authorize', [
+        'uses' => 'ApproveDeviceAuthorizationController',
+        'as' => 'device.authorizations.approve',
+    ]);
+
+    Route::delete('/device/authorize', [
+        'uses' => 'DenyDeviceAuthorizationController',
+        'as' => 'device.authorizations.deny',
     ]);
 
     if (Passport::$registersJsonApiRoutes) {

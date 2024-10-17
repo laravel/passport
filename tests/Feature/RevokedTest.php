@@ -5,6 +5,8 @@ use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository as BridgeAccessTokenRepository;
 use Laravel\Passport\Bridge\AuthCode;
 use Laravel\Passport\Bridge\AuthCodeRepository as BridgeAuthCodeRepository;
+use Laravel\Passport\Bridge\DeviceCode;
+use Laravel\Passport\Bridge\DeviceCodeRepository as BridgeDeviceCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
 use Laravel\Passport\Tests\Feature\PassportTestCase;
@@ -90,6 +92,31 @@ class RevokedTest extends PassportTestCase
         $this->assertFalse($repository->isRefreshTokenRevoked('tokenId'));
     }
 
+    public function test_it_can_determine_if_a_device_code_is_revoked()
+    {
+        $repository = $this->deviceCodeRepository();
+        $this->persistNewDeviceCode($repository, 'deviceCodeId');
+
+        $repository->revokeDeviceCode('deviceCodeId');
+
+        $this->assertTrue($repository->isDeviceCodeRevoked('deviceCodeId'));
+    }
+
+    public function test_a_device_code_is_also_revoked_if_it_cannot_be_found()
+    {
+        $repository = $this->deviceCodeRepository();
+
+        $this->assertTrue($repository->isDeviceCodeRevoked('notExistingDeviceCodeId'));
+    }
+
+    public function test_it_can_determine_if_a_device_code_is_not_revoked()
+    {
+        $repository = $this->deviceCodeRepository();
+        $this->persistNewDeviceCode($repository, 'deviceCodeId');
+
+        $this->assertFalse($repository->isDeviceCodeRevoked('deviceCodeId'));
+    }
+
     private function accessTokenRepository(): BridgeAccessTokenRepository
     {
         $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
@@ -143,5 +170,25 @@ class RevokedTest extends PassportTestCase
         $refreshToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
+    }
+
+    private function deviceCodeRepository(): BridgeDeviceCodeRepository
+    {
+        return new BridgeDeviceCodeRepository;
+    }
+
+    private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
+    {
+        $deviceCode = m::mock(DeviceCode::class);
+        $deviceCode->shouldReceive('getIdentifier')->andReturn($id);
+        $deviceCode->shouldReceive('getUserIdentifier')->andReturn(null);
+        $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
+        $deviceCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $deviceCode->shouldReceive('getLastPolledAt')->andReturn(CarbonImmutable::now());
+        $deviceCode->shouldReceive('getScopes')->andReturn([]);
+        $deviceCode->shouldReceive('getUserCode')->andReturn('userCode');
+        $deviceCode->shouldReceive('getUserApproved')->andReturn(false);
+
+        $repository->persistDeviceCode($deviceCode);
     }
 }

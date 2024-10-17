@@ -11,10 +11,16 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\DeviceCodeRepository;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse as ApprovedDeviceAuthorizationResponseContract;
+use Laravel\Passport\Contracts\DeniedDeviceAuthorizationResponse as DeniedDeviceAuthorizationResponseContract;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
+use Laravel\Passport\Http\Controllers\DeviceAuthorizationController;
+use Laravel\Passport\Http\Responses\ApprovedDeviceAuthorizationResponse;
+use Laravel\Passport\Http\Responses\DeniedDeviceAuthorizationResponse;
 use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Parser as ParserContract;
 use Lcobucci\JWT\Token\Parser;
@@ -22,6 +28,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
+use League\OAuth2\Server\Grant\DeviceCodeGrant;
 use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
@@ -100,16 +107,29 @@ class PassportServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/passport.php', 'passport');
 
-        $this->app->when(AuthorizationController::class)
-                ->needs(StatefulGuard::class)
-                ->give(fn () => Auth::guard(config('passport.guard', null)));
+        $this->app->when([
+            AuthorizationController::class,
+            DeviceAuthorizationController::class,
+        ])
+            ->needs(StatefulGuard::class)
+            ->give(fn () => Auth::guard(config('passport.guard', null)));
 
         $this->app->singleton(ClientRepository::class);
 
+        $this->registerResponseBindings();
         $this->registerAuthorizationServer();
         $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
+    }
+
+    /**
+     * Register the response bindings.
+     */
+    protected function registerResponseBindings(): void
+    {
+        $this->app->singleton(ApprovedDeviceAuthorizationResponseContract::class, ApprovedDeviceAuthorizationResponse::class);
+        $this->app->singleton(DeniedDeviceAuthorizationResponseContract::class, DeniedDeviceAuthorizationResponse::class);
     }
 
     /**
@@ -148,6 +168,10 @@ class PassportServiceProvider extends ServiceProvider
                         $this->makeImplicitGrant(), Passport::tokensExpireIn()
                     );
                 }
+
+                $server->enableGrantType(
+                    $this->makeDeviceCodeGrant(), Passport::tokensExpireIn()
+                );
             });
         });
     }
@@ -205,6 +229,24 @@ class PassportServiceProvider extends ServiceProvider
     protected function makeImplicitGrant(): ImplicitGrant
     {
         return new ImplicitGrant(Passport::tokensExpireIn());
+    }
+
+    /**
+     * Create and configure an instance of the Device Code grant.
+     */
+    protected function makeDeviceCodeGrant(): DeviceCodeGrant
+    {
+        return tap(new DeviceCodeGrant(
+            $this->app->make(DeviceCodeRepository::class),
+            $this->app->make(RefreshTokenRepository::class),
+            new DateInterval('PT10M'),
+            route('passport.device'),
+            5
+        ), function (DeviceCodeGrant $grant) {
+            $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
+            $grant->setIncludeVerificationUriComplete(true);
+            $grant->setIntervalVisibility(true);
+        });
     }
 
     /**

@@ -9,6 +9,8 @@ use DateTimeInterface;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
+use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
 use Laravel\Passport\Http\Responses\SimpleViewResponse;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -89,6 +91,13 @@ class Passport
      * @var class-string<\Laravel\Passport\AuthCode>
      */
     public static string $authCodeModel = AuthCode::class;
+
+    /**
+     * The device code model class name.
+     *
+     * @var class-string<\Laravel\Passport\DeviceCode>
+     */
+    public static string $deviceCodeModel = DeviceCode::class;
 
     /**
      * The client model class name.
@@ -435,6 +444,34 @@ class Passport
     }
 
     /**
+     * Set the device code model class name.
+     *
+     * @param  class-string<\Laravel\Passport\DeviceCode>  $deviceCodeModel
+     */
+    public static function useDeviceCodeModel(string $deviceCodeModel): void
+    {
+        static::$deviceCodeModel = $deviceCodeModel;
+    }
+
+    /**
+     * Get the device code model class name.
+     *
+     * @return class-string<\Laravel\Passport\DeviceCode>
+     */
+    public static function deviceCodeModel(): string
+    {
+        return static::$deviceCodeModel;
+    }
+
+    /**
+     * Get a new device code model instance.
+     */
+    public static function deviceCode(): DeviceCode
+    {
+        return new static::$deviceCodeModel;
+    }
+
+    /**
      * Set the client model class name.
      *
      * @param  class-string<\Laravel\Passport\Client>  $clientModel
@@ -552,6 +589,8 @@ class Passport
     public static function viewPrefix(string $prefix): void
     {
         static::authorizationView($prefix.'authorize');
+        static::deviceAuthorizationView($prefix.'device.authorize');
+        static::deviceUserCodeView($prefix.'device.user-code');
     }
 
     /**
@@ -562,6 +601,26 @@ class Passport
     public static function authorizationView(Closure|string $view): void
     {
         app()->singleton(AuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
+    }
+
+    /**
+     * Specify which view should be used as the device authorization view.
+     *
+     * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
+     */
+    public static function deviceAuthorizationView(Closure|string $view): void
+    {
+        app()->singleton(DeviceAuthorizationViewResponse::class, fn () => new SimpleViewResponse($view));
+    }
+
+    /**
+     * Specify which view should be used as the device user code view.
+     *
+     * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
+     */
+    public static function deviceUserCodeView(Closure|string $view): void
+    {
+        app()->singleton(DeviceUserCodeViewResponse::class, fn () => new SimpleViewResponse($view));
     }
 
     /**
