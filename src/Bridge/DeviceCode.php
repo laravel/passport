@@ -10,22 +10,7 @@ use League\OAuth2\Server\Entities\Traits\TokenEntityTrait;
 
 class DeviceCode implements DeviceCodeEntityInterface
 {
-    use EntityTrait;
-    use DeviceCodeTrait {
-        setLastPolledAt as traitSetLastPolledAt;
-        setUserApproved as traitSetUserApproved;
-    }
-    use TokenEntityTrait;
-
-    /**
-     * Determine if the "user identifier" and "user approved" properties has changed.
-     */
-    private bool $isUserDirty = false;
-
-    /**
-     * Determine if the "last polled at" property has changed.
-     */
-    private bool $isLastPolledAtDirty = false;
+    use EntityTrait, DeviceCodeTrait, TokenEntityTrait;
 
     /**
      * Create a new device code instance.
@@ -39,6 +24,7 @@ class DeviceCode implements DeviceCodeEntityInterface
         ?string $identifier = null,
         ?string $userIdentifier = null,
         ?string $clientIdentifier = null,
+        ?string $userCode = null,
         array $scopes = [],
         bool $userApproved = false,
         ?DateTimeImmutable $lastPolledAt = null,
@@ -56,59 +42,24 @@ class DeviceCode implements DeviceCodeEntityInterface
             $this->setClient(new Client($clientIdentifier));
         }
 
+        if (! is_null($userCode)) {
+            $this->setUserCode($userCode);
+        }
+
         foreach ($scopes as $scope) {
             $this->addScope(new Scope($scope));
         }
 
         if ($userApproved) {
-            $this->traitSetUserApproved($userApproved);
+            $this->setUserApproved($userApproved);
         }
 
         if (! is_null($lastPolledAt)) {
-            $this->traitSetLastPolledAt($lastPolledAt);
+            $this->setLastPolledAt($lastPolledAt);
         }
 
         if (! is_null($expiryDateTime)) {
             $this->setExpiryDateTime($expiryDateTime);
         }
-
-        $this->isUserDirty = false;
-        $this->isLastPolledAtDirty = false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setUserApproved(bool $userApproved): void
-    {
-        $this->isUserDirty = true;
-
-        $this->traitSetUserApproved($userApproved);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLastPolledAt(DateTimeImmutable $lastPolledAt): void
-    {
-        $this->isLastPolledAtDirty = true;
-
-        $this->traitSetLastPolledAt($lastPolledAt);
-    }
-
-    /**
-     * Determine if the "user identifier" and "user approved" properties has changed.
-     */
-    public function isUserDirty(): bool
-    {
-        return $this->isUserDirty;
-    }
-
-    /**
-     * Determine if the "last polled at" property has changed.
-     */
-    public function isLastPolledAtDirty(): bool
-    {
-        return $this->isLastPolledAtDirty;
     }
 }

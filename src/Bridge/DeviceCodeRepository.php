@@ -3,6 +3,8 @@
 namespace Laravel\Passport\Bridge;
 
 use DateTime;
+use Illuminate\Support\Facades\Date;
+use Laravel\Passport\DeviceCode as DeviceCodeModel;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\DeviceCodeEntityInterface;
 use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
@@ -24,28 +26,17 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
-        if ($deviceCodeEntity->isLastPolledAtDirty()) {
-            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
-                'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
-            ]);
-        } elseif ($deviceCodeEntity->isUserDirty()) {
-            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
-                'user_id' => $deviceCodeEntity->getUserIdentifier(),
-                'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
-            ]);
-        } else {
-            Passport::deviceCode()->forceFill([
-                'id' => $deviceCodeEntity->getIdentifier(),
-                'user_id' => null,
-                'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
-                'user_code' => $deviceCodeEntity->getUserCode(),
-                'scopes' => $this->scopesToArray($deviceCodeEntity->getScopes()),
-                'revoked' => false,
-                'user_approved_at' => null,
-                'last_polled_at' => null,
-                'expires_at' => $deviceCodeEntity->getExpiryDateTime(),
-            ])->save();
-        }
+        Passport::deviceCode()->newQuery()->upsert([
+            'id' => $deviceCodeEntity->getIdentifier(),
+            'user_id' => $deviceCodeEntity->getUserIdentifier(),
+            'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
+            'user_code' => $deviceCodeEntity->getUserCode(),
+            'scopes' => $this->formatScopesForStorage($deviceCodeEntity->getScopes()),
+            'revoked' => false,
+            'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
+            'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
+            'expires_at' => $deviceCodeEntity->getExpiryDateTime(),
+        ], 'id', ['user_id', 'user_approved_at', 'last_polled_at']);
     }
 
     /**
@@ -55,15 +46,21 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     {
         $record = Passport::deviceCode()->newQuery()->whereKey($deviceCode)->where(['revoked' => false])->first();
 
-        return $record ? new DeviceCode(
-            $record->getKey(),
-            $record->user_id,
-            $record->client_id,
-            $record->scopes,
-            ! is_null($record->user_approved_at),
-            $record->last_polled_at?->toDateTimeImmutable(),
-            $record->expires_at?->toDateTimeImmutable()
-        ) : null;
+        return $record ? $this->fromDeviceCodeModel($record) : null;
+    }
+
+    /*
+     * Get the device code entity by the given user code.
+     */
+    public function getDeviceCodeEntityByUserCode(string $userCode): ?DeviceCodeEntityInterface
+    {
+        $record = Passport::deviceCode()->newQuery()
+            ->where('user_code', $userCode)
+            ->where('expires_at', '>', Date::now())
+            ->where('revoked', false)
+            ->first();
+
+        return $record ? $this->fromDeviceCodeModel($record) : null;
     }
 
     /**
@@ -80,5 +77,22 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     public function isDeviceCodeRevoked(string $codeId): bool
     {
         return Passport::deviceCode()->newQuery()->whereKey($codeId)->where('revoked', false)->doesntExist();
+    }
+
+    /**
+     * Create a new device code entity from the given device code model instance.
+     */
+    protected function fromDeviceCodeModel(DeviceCodeModel $model): DeviceCodeEntityInterface
+    {
+        return new DeviceCode(
+            $model->getKey(),
+            $model->user_id,
+            $model->client_id,
+            $model->user_code,
+            $model->scopes,
+            ! is_null($model->user_approved_at),
+            $model->last_polled_at?->toDateTimeImmutable(),
+            $model->expires_at?->toDateTimeImmutable()
+        );
     }
 }

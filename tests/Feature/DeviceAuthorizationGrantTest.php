@@ -123,11 +123,11 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $user = UserFactory::new()->create();
         $this->actingAs($user, 'web');
 
-        $response = $this->get('/oauth/device/authorize?user_code='.$userCode);
-        $response->assertOk();
-        $response->assertSessionHas('deviceCode', $deviceCode);
-        $response->assertSessionHas('authToken');
-        $json = $response->json();
+        $json = $this->get('/oauth/device/authorize?user_code='.$userCode)
+            ->assertOk()
+            ->assertSessionHas('deviceCode')
+            ->assertSessionHas('authToken')
+            ->json();
         $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
         $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
 
