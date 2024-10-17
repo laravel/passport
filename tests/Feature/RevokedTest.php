@@ -181,12 +181,13 @@ class RevokedTest extends PassportTestCase
     {
         $deviceCode = m::mock(DeviceCode::class);
         $deviceCode->shouldReceive('getIdentifier')->andReturn($id);
+        $deviceCode->shouldReceive('getUserIdentifier')->andReturn(null);
         $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
         $deviceCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $deviceCode->shouldReceive('getLastPolledAt')->andReturn(CarbonImmutable::now());
         $deviceCode->shouldReceive('getScopes')->andReturn([]);
         $deviceCode->shouldReceive('getUserCode')->andReturn('userCode');
-        $deviceCode->shouldReceive('isLastPolledAtDirty')->andReturn(false);
-        $deviceCode->shouldReceive('isUserDirty')->andReturn(false);
+        $deviceCode->shouldReceive('getUserApproved')->andReturn(false);
 
         $repository->persistDeviceCode($deviceCode);
     }
