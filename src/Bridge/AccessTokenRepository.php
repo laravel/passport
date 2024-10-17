@@ -39,7 +39,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        Passport::token()->newQuery()->create([
+        Passport::token()->forceFill([
             'id' => $id = $accessTokenEntity->getIdentifier(),
             'user_id' => $userId = $accessTokenEntity->getUserIdentifier(),
             'client_id' => $clientId = $accessTokenEntity->getClient()->getIdentifier(),
@@ -48,7 +48,7 @@ class AccessTokenRepository implements AccessTokenRepositoryInterface
             'created_at' => new DateTime,
             'updated_at' => new DateTime,
             'expires_at' => $accessTokenEntity->getExpiryDateTime(),
-        ]);
+        ])->save();
 
         $this->events->dispatch(new AccessTokenCreated($id, $userId, $clientId));
     }
