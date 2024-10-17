@@ -39,7 +39,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertArrayHasKey('device_code', $json);
         $this->assertArrayHasKey('user_code', $json);
-        // $this->assertSame(5, $json['interval']); // TODO https://github.com/thephpleague/oauth2-server/pull/1410
+        // $this->assertSame(5, $json['interval']);
         $this->assertSame(600, $json['expires_in']);
         $this->assertSame('http://localhost/oauth/device', $json['verification_uri']);
         $this->assertSame('http://localhost/oauth/device?user_code='.$json['user_code'], $json['verification_uri_complete']);
@@ -155,7 +155,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
         $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
-        // $this->assertSame(['create', 'read'], $json['oauth_scopes']); TODO: https://github.com/thephpleague/oauth2-server/pull/1412
+        // $this->assertSame(['create', 'read'], $json['oauth_scopes']);
     }
 
     public function testDenyAuthorization()
