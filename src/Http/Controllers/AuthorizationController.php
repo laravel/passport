@@ -5,7 +5,6 @@ namespace Laravel\Passport\Http\Controllers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use Laravel\Passport\Bridge\User;
@@ -13,13 +12,14 @@ use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Exceptions\AuthenticationException;
+use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationController
 {
@@ -31,7 +31,6 @@ class AuthorizationController
     public function __construct(
         protected AuthorizationServer $server,
         protected StatefulGuard $guard,
-        protected AuthorizationViewResponse $response,
         protected ClientRepository $clients
     ) {
     }
@@ -39,16 +38,21 @@ class AuthorizationController
     /**
      * Authorize a client to access the user's account.
      */
-    public function authorize(ServerRequestInterface $psrRequest, Request $request): Response|AuthorizationViewResponse
-    {
-        $authRequest = $this->withErrorHandling(fn () => $this->server->validateAuthorizationRequest($psrRequest));
+    public function authorize(
+        ServerRequestInterface $psrRequest,
+        Request $request,
+        ResponseInterface $psrResponse,
+        AuthorizationViewResponse $viewResponse
+    ): Response|AuthorizationViewResponse {
+        $authRequest = $this->withErrorHandling(
+            fn () => $this->server->validateAuthorizationRequest($psrRequest),
+            ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
+        );
 
         if ($this->guard->guest()) {
-            if ($request->get('prompt') === 'none') {
-                return $this->denyRequest($authRequest);
-            }
-
-            $this->promptForLogin($request);
+            $request->get('prompt') === 'none'
+                ? throw OAuthServerException::loginRequired($authRequest)
+                : $this->promptForLogin($request);
         }
 
         if ($request->get('prompt') === 'login' &&
@@ -62,23 +66,25 @@ class AuthorizationController
 
         $request->session()->forget('promptedForLogin');
 
-        $scopes = $this->parseScopes($authRequest);
         $user = $this->guard->user();
+        $authRequest->setUser(new User($user->getAuthIdentifier()));
+
+        $scopes = $this->parseScopes($authRequest);
         $client = $this->clients->find($authRequest->getClient()->getIdentifier());
 
         if ($request->get('prompt') !== 'consent' &&
             ($client->skipsAuthorization($user, $scopes) || $this->hasGrantedScopes($user, $client, $scopes))) {
-            return $this->approveRequest($authRequest, $user);
+            return $this->approveRequest($authRequest, $psrResponse);
         }
 
         if ($request->get('prompt') === 'none') {
-            return $this->denyRequest($authRequest, $user);
+            throw OAuthServerException::consentRequired($authRequest);
         }
 
         $request->session()->put('authToken', $authToken = Str::random());
         $request->session()->put('authRequest', $authRequest);
 
-        return $this->response->withParameters([
+        return $viewResponse->withParameters([
             'client' => $client,
             'user' => $user,
             'scopes' => $scopes,
@@ -121,44 +127,13 @@ class AuthorizationController
     /**
      * Approve the authorization request.
      */
-    protected function approveRequest(AuthorizationRequestInterface $authRequest, Authenticatable $user): Response
+    protected function approveRequest(AuthorizationRequestInterface $authRequest, ResponseInterface $psrResponse): Response
     {
-        $authRequest->setUser(new User($user->getAuthIdentifier()));
-
         $authRequest->setAuthorizationApproved(true);
 
         return $this->withErrorHandling(fn () => $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        ));
-    }
-
-    /**
-     * Deny the authorization request.
-     */
-    protected function denyRequest(AuthorizationRequestInterface $authRequest, ?Authenticatable $user = null): Response
-    {
-        if (is_null($user)) {
-            $uri = $authRequest->getRedirectUri()
-                ?? (is_array($authRequest->getClient()->getRedirectUri())
-                    ? $authRequest->getClient()->getRedirectUri()[0]
-                    : $authRequest->getClient()->getRedirectUri());
-
-            $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : '?';
-
-            $uri = $uri.(str_contains($uri, $separator) ? '&' : $separator).'state='.$authRequest->getState();
-
-            return $this->withErrorHandling(function () use ($uri) {
-                throw OAuthServerException::accessDenied('Unauthenticated', $uri);
-            });
-        }
-
-        $authRequest->setUser(new User($user->getAuthIdentifier()));
-
-        $authRequest->setAuthorizationApproved(false);
-
-        return $this->withErrorHandling(fn () => $this->convertResponse(
-            $this->server->completeAuthorizationRequest($authRequest, new Psr7Response)
-        ));
+            $this->server->completeAuthorizationRequest($authRequest, $psrResponse)
+        ), $authRequest->getGrantTypeId() === 'implicit');
     }
 
     /**

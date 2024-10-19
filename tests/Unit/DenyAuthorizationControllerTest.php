@@ -8,6 +8,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
+use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
@@ -25,7 +26,6 @@ class DenyAuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
-        $request->shouldReceive('user')->andReturn(new DenyAuthorizationControllerFakeUser);
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
 
@@ -37,8 +37,11 @@ class DenyAuthorizationControllerTest extends TestCase
                 AuthorizationRequest::class
             ));
 
-        $authRequest->shouldReceive('setUser')->once();
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+        app()->instance(ResponseInterface::class, new Response);
 
         $server->shouldReceive('completeAuthorizationRequest')
             ->with($authRequest, m::type(ResponseInterface::class))
@@ -46,7 +49,7 @@ class DenyAuthorizationControllerTest extends TestCase
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 
-        $controller->deny($request);
+        $controller->deny($request, $psrResponse);
     }
 
     public function test_auth_request_should_exist()
@@ -69,9 +72,11 @@ class DenyAuthorizationControllerTest extends TestCase
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();
 
+        $psrResponse = m::mock(ResponseInterface::class);
+
         $server->shouldReceive('completeAuthorizationRequest')->never();
 
-        $controller->deny($request);
+        $controller->deny($request, $psrResponse);
     }
 }
 

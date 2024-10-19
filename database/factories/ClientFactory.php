@@ -39,6 +39,16 @@ class ClientFactory extends Factory
     }
 
     /**
+     * Use as a public client.
+     */
+    public function asPublic(): static
+    {
+        return $this->state([
+            'secret' => null,
+        ]);
+    }
+
+    /**
      * Use as a Password client.
      */
     public function asPasswordClient(): static
@@ -67,6 +77,7 @@ class ClientFactory extends Factory
     {
         return $this->state([
             'grant_types' => ['implicit'],
+            'secret' => null,
         ]);
     }
 

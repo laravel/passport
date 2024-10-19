@@ -4,9 +4,10 @@ namespace Laravel\Passport;
 
 use Lcobucci\JWT\Parser as JwtParser;
 use League\OAuth2\Server\AuthorizationServer;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Request;
 
 class PersonalAccessTokenFactory
 {
@@ -48,12 +49,12 @@ class PersonalAccessTokenFactory
      */
     protected function createRequest(string|int $userId, array $scopes, string $provider): ServerRequestInterface
     {
-        return (new ServerRequest('POST', 'not-important'))->withParsedBody([
+        return (new PsrHttpFactory())->createRequest(Request::create('not-important', 'POST', [
             'grant_type' => 'personal_access',
             'provider' => $provider,
             'user_id' => $userId,
             'scope' => implode(' ', $scopes),
-        ]);
+        ]));
     }
 
     /**
@@ -64,7 +65,7 @@ class PersonalAccessTokenFactory
     protected function dispatchRequestToAuthorizationServer(ServerRequestInterface $request): array
     {
         return json_decode($this->server->respondToAccessTokenRequest(
-            $request, new Response
+            $request, app(ResponseInterface::class)
         )->getBody()->__toString(), true);
     }
 

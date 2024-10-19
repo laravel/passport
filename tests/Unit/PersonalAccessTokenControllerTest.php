@@ -2,11 +2,14 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 use Laravel\Passport\Passport;
+use Laravel\Passport\PersonalAccessTokenResult;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -24,19 +27,17 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $token1 = new Token;
         $token2 = new Token;
-
-        $userTokens = m::mock();
         $token1->client = new Client(['grant_types' => ['personal_access']]);
         $token2->client = new Client(['grant_types' => []]);
-        $userTokens->shouldReceive('load')->with('client')->andReturn(collect([
+        $userTokens = (new Token)->newCollection([
             $token1, $token2,
-        ]));
+        ]);
 
         $tokenRepository = m::mock(TokenRepository::class);
         $tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -56,14 +57,16 @@ class PersonalAccessTokenControllerTest extends TestCase
             'user-admin' => 'second',
         ]);
 
+        $result = m::mock(PersonalAccessTokenResult::class);
+
         $request = Request::create('/', 'GET', ['name' => 'token name', 'scopes' => ['user', 'user-admin']]);
 
-        $request->setUserResolver(function () {
-            $user = m::mock();
+        $request->setUserResolver(function () use ($result) {
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('createToken')
                 ->once()
                 ->with('token name', ['user', 'user-admin'])
-                ->andReturn('response');
+                ->andReturn($result);
 
             return $user;
         });
@@ -73,15 +76,15 @@ class PersonalAccessTokenControllerTest extends TestCase
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
         ], [
-            'name' => 'required|max:191',
-            'scopes' => 'array|in:'.implode(',', Passport::scopeIds()),
+            'name' => ['required', 'max:255'],
+            'scopes' => ['array', Rule::in(Passport::scopeIds())],
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
         $tokenRepository = m::mock(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertSame('response', $controller->store($request));
+        $this->assertSame($result, $controller->store($request));
     }
 
     public function test_tokens_can_be_deleted()
@@ -96,7 +99,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $tokenRepository->shouldReceive('findForUser')->andReturn($token1);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -118,7 +121,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;

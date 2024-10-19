@@ -64,6 +64,18 @@ PR: https://github.com/laravel/passport/pull/1755
 
 When authenticating users via bearer tokens, the `User` model's `token` method now returns an instance of `Laravel\Passport\AccessToken` class instead of `Laravel\Passport\Token`.
 
+### Renamed Middlewares
+
+PR: https://github.com/laravel/passport/pull/1792, https://github.com/laravel/passport/pull/1794
+
+The following Passport's middlewares have been renamed to better reflect their functionality:
+
+* `Laravel\Passport\Http\Middleware\CheckScopes` class has been renamed to `CheckToken`.
+* `Laravel\Passport\Http\Middleware\CheckForAnyScope` class has been renamed to `CheckTokenForAnyScope`.
+* `Laravel\Passport\Http\Middleware\CheckClientCredentials` class has been renamed to `CheckToken`.
+* `Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope` class has been renamed to `CheckTokenForAnyScope`.
+* `Laravel\Passport\Http\Middleware\CheckCredentials` abstract class has been renamed to `ValidateToken`.
+
 ### Personal Access Client Table and Model Removal
 
 PR: https://github.com/laravel/passport/pull/1749, https://github.com/laravel/passport/pull/1780
@@ -73,6 +85,17 @@ Passport's `oauth_personal_access_clients` table has been redundant and unnecess
     Schema::drop('oauth_personal_access_clients');
 
 In addition, the `passport.personal_access_client` configuration value, `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
+
+### JSON API Deprecation
+
+PR: https://github.com/laravel/passport/pull/1778
+
+The JSON API provided by Passport has been deprecated. If you need to continue using the deprecated JSON API, you can do so by setting `Passport::$registersJsonApiRoutes` to `true` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class. Alternatively, you may also copy the relevant routes and controllers into your application as needed:
+
+    public function boot(): void
+    {
+        Passport::$registersJsonApiRoutes = true;
+    }
 
 ## Upgrading To 12.0 From 11.x
 

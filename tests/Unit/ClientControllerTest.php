@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
@@ -19,26 +20,30 @@ class ClientControllerTest extends TestCase
 
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('activeForUser')->once()->with(1)->andReturn($client = m::mock());
-        $client->shouldReceive('makeVisible')->with('secret')->andReturn($client);
+        $clientRepository = m::mock(ClientRepository::class);
+        $clientRepository->shouldReceive('forUser')->once()->with(1)
+            ->andReturn($clients = (new Client)->newCollection());
 
-        $request = m::mock(Request::class);
-        $request->shouldReceive('user')->andReturn(new ClientControllerFakeUser);
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
+        $request = Request::create('/', 'GET');
+        $request->setUserResolver(fn () => $user);
 
         $controller = new ClientController(
-            $clients,
+            $clientRepository,
             m::mock(Factory::class),
             m::mock(RedirectRule::class)
         );
 
-        $this->assertEquals($client, $controller->forUser($request));
+        $this->assertEquals($clients, $controller->forUser($request));
     }
 
     public function test_clients_can_be_stored()
     {
         $clients = m::mock(ClientRepository::class);
-        $user = new ClientControllerFakeUser;
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
@@ -55,7 +60,7 @@ class ClientControllerTest extends TestCase
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
-            'name' => 'required|max:191',
+            'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
@@ -71,7 +76,8 @@ class ClientControllerTest extends TestCase
     public function test_public_clients_can_be_stored()
     {
         $clients = m::mock(ClientRepository::class);
-        $user = new ClientControllerFakeUser;
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $request = Request::create(
             '/',
@@ -93,7 +99,7 @@ class ClientControllerTest extends TestCase
             'redirect' => 'http://localhost',
             'confidential' => false,
         ], [
-            'name' => 'required|max:191',
+            'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
         ])->andReturn($validator);
@@ -115,7 +121,7 @@ class ClientControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -132,7 +138,7 @@ class ClientControllerTest extends TestCase
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
-            'name' => 'required|max:191',
+            'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
@@ -152,7 +158,7 @@ class ClientControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -178,7 +184,7 @@ class ClientControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -186,7 +192,7 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('delete')->once()->with(
             m::type(Client::class)
-        )->andReturn('response');
+        );
 
         $validator = m::mock(Factory::class);
 
@@ -207,7 +213,7 @@ class ClientControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
 
         $request->setUserResolver(function () {
-            $user = m::mock();
+            $user = m::mock(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -222,15 +228,5 @@ class ClientControllerTest extends TestCase
         );
 
         $this->assertSame(404, $controller->destroy($request, 1)->status());
-    }
-}
-
-class ClientControllerFakeUser extends \Illuminate\Foundation\Auth\User
-{
-    public $id = 1;
-
-    public function getAuthIdentifier()
-    {
-        return $this->id;
     }
 }

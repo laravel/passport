@@ -42,6 +42,9 @@ class AuthorizationControllerTest extends TestCase
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
         $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock(AuthorizationRequestInterface::class));
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
@@ -51,6 +54,7 @@ class AuthorizationControllerTest extends TestCase
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
         $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
+        $authRequest->shouldReceive('setUser')->once();
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
@@ -68,11 +72,11 @@ class AuthorizationControllerTest extends TestCase
             return $response;
         });
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $psrResponse = m::mock(ResponseInterface::class);
 
-        $this->assertSame($response, $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        ));
+        $controller = new AuthorizationController($server, $guard, $clients);
+
+        $this->assertSame($response, $controller->authorize($psrRequest, $request, $psrResponse, $response));
     }
 
     public function test_authorization_exceptions_are_handled()
@@ -84,18 +88,21 @@ class AuthorizationControllerTest extends TestCase
         $guard->shouldReceive('guest')->andReturn(false);
         $server->shouldReceive('validateAuthorizationRequest')->andThrow(LeagueException::invalidCredentials());
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+        app()->instance(ResponseInterface::class, new Response);
+
         $request = m::mock(Request::class);
-        $request->shouldReceive('session')->andReturn($session = m::mock());
 
         $clients = m::mock(ClientRepository::class);
 
         $this->expectException(OAuthServerException::class);
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        );
+        $controller->authorize($psrRequest, $request, $psrResponse, $response);
     }
 
     public function test_request_is_approved_if_valid_token_exists()
@@ -118,6 +125,9 @@ class AuthorizationControllerTest extends TestCase
             ->with($authRequest, m::type(ResponseInterface::class))
             ->andReturn($psrResponse);
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
@@ -129,6 +139,7 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
@@ -137,11 +148,9 @@ class AuthorizationControllerTest extends TestCase
         $client->shouldReceive('getKey')->andReturn(1);
         $client->shouldReceive('tokens->where->pluck')->andReturn(collect([['scope-1']]));
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame('approved', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        )->getContent());
+        $this->assertSame('approved', $controller->authorize($psrRequest, $request, $psrResponse, $response)->getContent());
     }
 
     public function test_request_is_approved_if_client_can_skip_authorization()
@@ -164,6 +173,9 @@ class AuthorizationControllerTest extends TestCase
             ->with($authRequest, m::type(ResponseInterface::class))
             ->andReturn($psrResponse);
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
@@ -175,17 +187,16 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
 
         $client->shouldReceive('skipsAuthorization')->andReturn(true);
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame('approved', $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        )->getContent());
+        $this->assertSame('approved', $controller->authorize($psrRequest, $request, $psrResponse, $response)->getContent());
     }
 
     public function test_authorization_view_is_presented_if_request_has_prompt_equals_to_consent()
@@ -199,9 +210,15 @@ class AuthorizationControllerTest extends TestCase
         $guard = m::mock(StatefulGuard::class);
 
         $guard->shouldReceive('guest')->andReturn(false);
-        $guard->shouldReceive('user')->andReturn($user = m::mock());
+        $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
@@ -212,6 +229,7 @@ class AuthorizationControllerTest extends TestCase
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
@@ -226,17 +244,13 @@ class AuthorizationControllerTest extends TestCase
             return $response;
         });
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame($response, $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        ));
+        $this->assertSame($response, $controller->authorize($psrRequest, $request, $psrResponse, $response));
     }
 
     public function test_authorization_denied_if_request_has_prompt_equals_to_none()
     {
-        $this->expectException('Laravel\Passport\Exceptions\OAuthServerException');
-
         Passport::tokensCan([
             'scope-1' => 'description',
         ]);
@@ -249,12 +263,12 @@ class AuthorizationControllerTest extends TestCase
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
-        $server->shouldReceive('completeAuthorizationRequest')
-            ->with($authRequest, m::type(ResponseInterface::class))
-            ->once()
-            ->andReturnUsing(function () {
-                throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
-            });
+
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+        app()->instance(ResponseInterface::class, new Response);
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
@@ -265,7 +279,9 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
         $authRequest->shouldReceive('setUser')->once()->andReturnNull();
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
+        $authRequest->shouldReceive('getRedirectUri')->once()->andReturn('http://localhost');
+        $authRequest->shouldReceive('getState')->once()->andReturn('state');
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
@@ -273,11 +289,21 @@ class AuthorizationControllerTest extends TestCase
         $client->shouldReceive('getKey')->andReturn(1);
         $client->shouldReceive('tokens->where->pluck')->andReturn(collect());
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        );
+        try {
+            $controller->authorize($psrRequest, $request, $psrResponse, $response);
+        } catch (OAuthServerException $e) {
+            $this->assertSame($e->getMessage(), 'The authorization server requires end-user consent.');
+            $this->assertStringStartsWith(
+                'http://localhost?state=state&error=consent_required&error_description=',
+                $e->getResponse()->headers->get('location')
+            );
+
+            return;
+        }
+
+        $this->expectException(OAuthServerException::class);
     }
 
     public function test_authorization_denied_if_unauthenticated_and_request_has_prompt_equals_to_none()
@@ -291,6 +317,12 @@ class AuthorizationControllerTest extends TestCase
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
         $server->shouldNotReceive('completeAuthorizationRequest');
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+        app()->instance(ResponseInterface::class, new Response);
+
         $request = m::mock(Request::class);
         $request->shouldNotReceive('user');
         $request->shouldReceive('get')->with('prompt')->andReturn('none');
@@ -299,23 +331,26 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('setAuthorizationApproved')->with(false);
         $authRequest->shouldReceive('getRedirectUri')->andReturn('http://localhost');
         $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
-        $authRequest->shouldReceive('getState')->andReturn('state');
-        $authRequest->shouldReceive('getGrantTypeId')->andReturn('authorization_code');
+        $authRequest->shouldReceive('getState')->once()->andReturn('state');
+        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
 
         $clients = m::mock(ClientRepository::class);
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
         try {
-            $controller->authorize(
-                m::mock(ServerRequestInterface::class), $request
-            );
-        } catch (\Laravel\Passport\Exceptions\OAuthServerException $e) {
+            $controller->authorize($psrRequest, $request, $psrResponse, $response);
+        } catch (OAuthServerException $e) {
+            $this->assertSame($e->getMessage(), 'The authorization server requires end-user authentication.');
             $this->assertStringStartsWith(
-                'http://localhost?state=state&error=access_denied&error_description=',
+                'http://localhost?state=state&error=login_required&error_description=',
                 $e->getResponse()->headers->get('location')
             );
+
+            return;
         }
+
+        $this->expectException(OAuthServerException::class);
     }
 
     public function test_logout_and_prompt_login_if_request_has_prompt_equals_to_login()
@@ -330,6 +365,11 @@ class AuthorizationControllerTest extends TestCase
         $server->shouldReceive('validateAuthorizationRequest')->once();
         $guard->shouldReceive('logout')->once();
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('invalidate')->once();
@@ -341,11 +381,9 @@ class AuthorizationControllerTest extends TestCase
 
         $clients = m::mock(ClientRepository::class);
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request
-        );
+        $controller->authorize($psrRequest, $request, $psrResponse, $response);
     }
 
     public function test_user_should_be_authenticated()
@@ -359,6 +397,11 @@ class AuthorizationControllerTest extends TestCase
         $guard->shouldReceive('guest')->andReturn(true);
         $server->shouldReceive('validateAuthorizationRequest')->once();
 
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+
         $request = m::mock(Request::class);
         $request->shouldNotReceive('user');
         $request->shouldReceive('session')->andReturn($session = m::mock());
@@ -368,10 +411,8 @@ class AuthorizationControllerTest extends TestCase
 
         $clients = m::mock(ClientRepository::class);
 
-        $controller = new AuthorizationController($server, $guard, $response, $clients);
+        $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize(
-            m::mock(ServerRequestInterface::class), $request, $clients
-        );
+        $controller->authorize($psrRequest, $request, $psrResponse, $response);
     }
 }

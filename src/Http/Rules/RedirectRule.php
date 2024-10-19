@@ -5,30 +5,23 @@ namespace Laravel\Passport\Http\Rules;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * @deprecated Will be removed in a future Laravel version.
+ */
 class RedirectRule implements Rule
 {
     /**
-     * The validator instance.
-     *
-     * @var \Illuminate\Contracts\Validation\Factory
-     */
-    protected $validator;
-
-    /**
      * Create a new rule instance.
-     *
-     * @param  \Illuminate\Contracts\Validation\Factory  $validator
-     * @return void
      */
-    public function __construct(Factory $validator)
-    {
-        $this->validator = $validator;
+    public function __construct(
+        protected Factory $validator
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function passes($attribute, $value)
+    public function passes($attribute, $value): bool
     {
         foreach (explode(',', $value) as $redirect) {
             $validator = $this->validator->make(['redirect' => $redirect], ['redirect' => new UriRule]);
@@ -44,7 +37,7 @@ class RedirectRule implements Rule
     /**
      * {@inheritdoc}
      */
-    public function message()
+    public function message(): string
     {
         return 'One or more redirects have an invalid URI format.';
     }

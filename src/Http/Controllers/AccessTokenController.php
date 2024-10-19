@@ -2,11 +2,11 @@
 
 namespace Laravel\Passport\Http\Controllers;
 
-use Illuminate\Http\Response;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
-use Nyholm\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccessTokenController
 {
@@ -23,16 +23,16 @@ class AccessTokenController
     /**
      * Issue an access token.
      */
-    public function issueToken(ServerRequestInterface $request): Response
+    public function issueToken(ServerRequestInterface $psrRequest, ResponseInterface $psrResponse): Response
     {
-        return $this->withErrorHandling(function () use ($request) {
-            if (array_key_exists('grant_type', $attributes = (array) $request->getParsedBody()) &&
+        return $this->withErrorHandling(function () use ($psrRequest, $psrResponse) {
+            if (array_key_exists('grant_type', $attributes = (array) $psrRequest->getParsedBody()) &&
                 $attributes['grant_type'] === 'personal_access') {
                 throw OAuthServerException::unsupportedGrantType();
             }
 
             return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($request, new Psr7Response)
+                $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse)
             );
         });
     }

@@ -4,13 +4,13 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
 use Laravel\Passport\Client;
-use Laravel\Passport\Http\Middleware\CheckClientCredentials;
-use Laravel\Passport\Http\Middleware\CheckClientCredentialsForAnyScope;
+use Laravel\Passport\Http\Middleware\CheckToken;
+use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\Passport;
 
 class ActingAsClientTest extends PassportTestCase
 {
-    public function testActingAsClientWhenTheRouteIsProtectedByCheckClientCredentialsMiddleware()
+    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenMiddleware()
     {
         $this->withoutExceptionHandling();
 
@@ -19,7 +19,7 @@ class ActingAsClientTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckClientCredentials::class);
+        })->middleware(CheckToken::class);
 
         Passport::actingAsClient(new Client());
 
@@ -28,7 +28,7 @@ class ActingAsClientTest extends PassportTestCase
         $response->assertSee('bar');
     }
 
-    public function testActingAsClientWhenTheRouteIsProtectedByCheckClientCredentialsForAnyScope()
+    public function testActingAsClientWhenTheRouteIsProtectedByCheckTokenForAnyScope()
     {
         $this->withoutExceptionHandling();
 
@@ -37,7 +37,7 @@ class ActingAsClientTest extends PassportTestCase
 
         $router->get('/foo', function () {
             return 'bar';
-        })->middleware(CheckClientCredentialsForAnyScope::class.':testFoo');
+        })->middleware(CheckTokenForAnyScope::class.':testFoo');
 
         Passport::actingAsClient(new Client(), ['testFoo']);
 

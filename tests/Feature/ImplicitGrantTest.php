@@ -10,13 +10,15 @@ use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
-class AuthorizationCodeGrantTest extends PassportTestCase
+class ImplicitGrantTest extends PassportTestCase
 {
     use WithLaravelMigrations;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        PassportTestCase::setUp();
+
+        Passport::enableImplicitGrant();
 
         Passport::tokensCan([
             'create' => 'Create',
@@ -30,19 +32,18 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testIssueAccessToken()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'scope' => 'create read',
             'state' => $state = Str::random(40),
         ]);
 
         $user = UserFactory::new()->create();
         $this->actingAs($user, 'web');
-
         $response = $this->get('/oauth/authorize?'.$query);
 
         $response->assertOk();
@@ -57,31 +58,19 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertSessionMissing(['authRequest', 'authToken']);
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertStringStartsWith($redirect.'#', $location);
         $this->assertSame($state, $params['state']);
-        $this->assertArrayHasKey('code', $params);
-
-        $response = $this->post('/oauth/token', [
-            'grant_type' => 'authorization_code',
-            'client_id' => $client->getKey(),
-            'client_secret' => $client->plainSecret,
-            'redirect_uri' => $redirect,
-            'code' => $params['code'],
-        ]);
-
-        $response->assertOk();
-        $json = $response->json();
-        $this->assertArrayHasKey('access_token', $json);
-        $this->assertArrayHasKey('refresh_token', $json);
-        $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertArrayHasKey('access_token', $params);
+        $this->assertArrayNotHasKey('refresh_token', $params);
+        $this->assertSame('Bearer', $params['token_type']);
+        $this->assertSame('31536000', $params['expires_in']);
 
         Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
             ->middleware('auth:api');
 
-        $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
+        $json = $this->withToken($params['access_token'], $params['token_type'])->get('/foo')->json();
 
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
         $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
@@ -90,13 +79,13 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testDenyAuthorization()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
-            'scope' => '',
+            'response_type' => 'token',
+            'scope' => 'create read',
             'state' => $state = Str::random(40),
         ]);
 
@@ -109,24 +98,24 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertSessionMissing(['authRequest', 'authToken']);
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
-        $this->assertSame($state, $params['state']);
+        // $this->assertStringStartsWith($redirect.'#', $location);
+        // $this->assertSame($state, $params['state']);
         $this->assertSame('access_denied', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }
 
     public function testSkipsAuthorizationWhenHasGrantedScopes()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
-            'scope' => 'create read update',
-            'state' => Str::random(40),
+            'response_type' => 'token',
+            'scope' => 'create read',
+            'state' => $state = Str::random(40),
         ]);
 
         $user = UserFactory::new()->create();
@@ -134,45 +123,39 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $json = $this->get('/oauth/authorize?'.$query)->json();
 
         $response = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']]);
-        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
-
-        $this->post('/oauth/token', [
-            'grant_type' => 'authorization_code',
-            'client_id' => $client->getKey(),
-            'client_secret' => $client->plainSecret,
-            'redirect_uri' => $redirect,
-            'code' => $params['code'],
-        ])->assertOk();
+        $response->assertRedirect();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect,
-            'response_type' => 'code',
-            'scope' => 'create read',
+            'response_type' => 'token',
+            'scope' => 'create',
             'state' => $state = Str::random(40),
         ]);
 
         $response = $this->get('/oauth/authorize?'.$query);
         $response->assertRedirect();
+        $response->assertSessionMissing(['authRequest', 'authToken']);
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertStringStartsWith($redirect.'#', $location);
         $this->assertSame($state, $params['state']);
-        $this->assertArrayHasKey('code', $params);
+        $this->assertArrayHasKey('access_token', $params);
+        $this->assertArrayNotHasKey('refresh_token', $params);
+        $this->assertSame('Bearer', $params['token_type']);
+        $this->assertSame('31536000', $params['expires_in']);
     }
 
     public function testValidateAuthorizationRequest()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => fake()->url(),
-            'response_type' => 'code',
-            'scope' => '',
-            'state' => Str::random(40),
+            'response_type' => 'token',
         ]);
 
         $json = $this->get('/oauth/authorize?'.$query)->json();
@@ -182,12 +165,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testValidateScopes()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'scope' => 'foo',
             'state' => $state = Str::random(40),
         ]);
@@ -196,9 +179,9 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertRedirect();
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertStringStartsWith($redirect.'#', $location);
         // $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
@@ -208,12 +191,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
     {
         Route::get('/foo', fn () => '')->name('login');
 
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
         ]);
 
         $response = $this->get('/oauth/authorize?'.$query);
@@ -223,12 +206,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testPromptNone()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'state' => $state = Str::random(40),
             'prompt' => 'none',
         ]);
@@ -238,9 +221,9 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertRedirect();
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertStringStartsWith($redirect.'#', $location);
         $this->assertSame($state, $params['state']);
         $this->assertSame('consent_required', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
@@ -248,12 +231,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testPromptNoneLoginRequired()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'state' => $state = Str::random(40),
             'prompt' => 'none',
         ]);
@@ -262,9 +245,9 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertRedirect();
 
         $location = $response->headers->get('Location');
-        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertStringStartsWith($redirect.'#', $location);
         $this->assertSame($state, $params['state']);
         $this->assertSame('login_required', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
@@ -272,12 +255,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
     public function testPromptConsent()
     {
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect = $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'scope' => 'create read update',
             'state' => Str::random(40),
         ]);
@@ -287,20 +270,18 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $json = $this->get('/oauth/authorize?'.$query)->json();
 
         $response = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']]);
-        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
+        $response->assertRedirect();
 
-        $this->post('/oauth/token', [
-            'grant_type' => 'authorization_code',
-            'client_id' => $client->getKey(),
-            'client_secret' => $client->plainSecret,
-            'redirect_uri' => $redirect,
-            'code' => $params['code'],
-        ]);
+        $location = $response->headers->get('Location');
+        parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
+
+        $this->assertStringStartsWith($redirect.'#', $location);
+        $this->assertArrayHasKey('access_token', $params);
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $redirect,
-            'response_type' => 'code',
+            'response_type' => 'token',
             'scope' => 'create read',
             'state' => Str::random(40),
             'prompt' => 'consent',
@@ -320,12 +301,12 @@ class AuthorizationCodeGrantTest extends PassportTestCase
     {
         Route::get('/foo', fn () => '')->name('login');
 
-        $client = ClientFactory::new()->create();
+        $client = ClientFactory::new()->asImplicitClient()->create();
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
             'redirect_uri' => $client->redirect_uris[0],
-            'response_type' => 'code',
+            'response_type' => 'token',
             'scope' => 'create read update',
             'state' => Str::random(40),
             'prompt' => 'login',

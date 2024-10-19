@@ -4,7 +4,6 @@ namespace Laravel\Passport\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
-use Laravel\Passport\Bridge\User;
 use Laravel\Passport\Exceptions\InvalidAuthTokenException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
@@ -18,18 +17,14 @@ trait RetrievesAuthRequestFromSession
      */
     protected function getAuthRequestFromSession(Request $request): AuthorizationRequest
     {
-        if ($request->isNotFilled('auth_token') || $request->session()->pull('authToken') !== $request->get('auth_token')) {
+        if ($request->isNotFilled('auth_token') ||
+            $request->session()->pull('authToken') !== $request->get('auth_token')) {
             $request->session()->forget(['authToken', 'authRequest']);
 
             throw InvalidAuthTokenException::different();
         }
 
-        return tap($request->session()->pull('authRequest'), function ($authRequest) use ($request) {
-            if (! $authRequest) {
-                throw new Exception('Authorization request was not present in the session.');
-            }
-
-            $authRequest->setUser(new User($request->user()->getAuthIdentifier()));
-        });
+        return $request->session()->pull('authRequest')
+            ?? throw new Exception('Authorization request was not present in the session.');
     }
 }

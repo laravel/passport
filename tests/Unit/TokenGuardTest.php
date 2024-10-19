@@ -57,7 +57,6 @@ class TokenGuardTest extends TestCase
         ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('revoked')->with(1)->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user();
@@ -90,7 +89,6 @@ class TokenGuardTest extends TestCase
         ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('revoked')->with(1)->andReturn(false);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user();
