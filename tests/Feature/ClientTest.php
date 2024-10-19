@@ -75,7 +75,7 @@ final class ClientTest extends TestCase
         $client = new Client();
         $client->exists = true;
 
-        $this->assertTrue($client->hasGrantType('foo'));
+        $this->assertFalse($client->hasGrantType('foo'));
 
         $client->personal_access_client = false;
         $client->password_client = false;
@@ -100,7 +100,7 @@ final class ClientTest extends TestCase
         $client = new Client(['grant_types' => null]);
         $client->exists = true;
 
-        $this->assertTrue($client->hasGrantType('foo'));
+        $this->assertFalse($client->hasGrantType('foo'));
 
         $client->personal_access_client = false;
         $client->password_client = false;

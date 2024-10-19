@@ -22,7 +22,7 @@ class Client implements ClientEntityInterface
         array $redirectUri,
         bool $isConfidential = false,
         public ?string $provider = null,
-        public ?array $grantTypes = null,
+        public array $grantTypes = [],
     ) {
         $this->setIdentifier($identifier);
 
@@ -36,6 +36,6 @@ class Client implements ClientEntityInterface
      */
     public function hasGrantType(string $grantType): bool
     {
-        return is_null($this->grantTypes) || in_array($grantType, $this->grantTypes);
+        return in_array($grantType, $this->grantTypes);
     }
 }
