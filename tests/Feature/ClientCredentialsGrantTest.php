@@ -38,6 +38,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
         ])->assertOk()->json();
 
         $this->assertArrayHasKey('access_token', $json);
+        $this->assertArrayNotHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
@@ -80,6 +81,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
         ])->assertOk()->json();
 
         $this->assertArrayHasKey('access_token', $json);
+        $this->assertArrayNotHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
