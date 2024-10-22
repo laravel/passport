@@ -36,15 +36,7 @@ class ClientRepository implements ClientRepositoryInterface
     {
         $record = $this->clients->findActive($clientIdentifier);
 
-        return $record && ! empty($clientSecret) && $this->verifySecret($clientSecret, $record->secret);
-    }
-
-    /**
-     * Verify the client secret is valid.
-     */
-    protected function verifySecret(string $clientSecret, string $storedHash): bool
-    {
-        return $this->hasher->check($clientSecret, $storedHash);
+        return $record && ! empty($clientSecret) && $this->hasher->check($clientSecret, $record->secret);
     }
 
     /**
