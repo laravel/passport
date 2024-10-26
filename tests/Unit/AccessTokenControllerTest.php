@@ -20,7 +20,6 @@ class AccessTokenControllerTest extends TestCase
     public function test_a_token_can_be_issued()
     {
         $request = m::mock(ServerRequestInterface::class);
-        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
 
         $response = m::type(ResponseInterface::class);
 
@@ -40,7 +39,6 @@ class AccessTokenControllerTest extends TestCase
     public function test_exceptions_are_handled()
     {
         $request = m::mock(ServerRequestInterface::class);
-        $request->shouldReceive('getParsedBody')->once()->andReturn([]);
 
         app()->instance(ResponseInterface::class, new Response);
 

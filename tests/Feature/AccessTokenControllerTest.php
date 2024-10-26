@@ -2,12 +2,10 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
-use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\Token;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
@@ -51,14 +49,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame('Bearer', $decodedResponse['token_type']);
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
-
-        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
-        $this->assertInstanceOf(Token::class, $token);
-        $this->assertTrue($token->client->is($client));
-        $this->assertFalse($token->revoked);
-        $this->assertNull($token->name);
-        $this->assertNull($token->user_id);
-        $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
     }
 
     public function testGettingAccessTokenWithClientCredentialsGrantInvalidClientSecret()
@@ -141,14 +131,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame('Bearer', $decodedResponse['token_type']);
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
-
-        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
-        $this->assertInstanceOf(Token::class, $token);
-        $this->assertFalse($token->revoked);
-        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
-        $this->assertTrue($token->client->is($client));
-        $this->assertNull($token->name);
-        $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
     }
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidPassword()

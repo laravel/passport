@@ -3,6 +3,7 @@
 namespace Laravel\Passport\Bridge;
 
 use DateInterval;
+use Laravel\Passport\Passport;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
@@ -46,6 +47,10 @@ class PersonalAccessGrant extends AbstractGrant
             $userIdentifier,
             $scopes
         );
+
+        Passport::token()->newQuery()->whereKey($accessToken->getIdentifier())->update([
+            'name' => $this->getRequestParameter('name', $request)
+        ]);
 
         // Inject access token into response type
         $responseType->setAccessToken($accessToken);

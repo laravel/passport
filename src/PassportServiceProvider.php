@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Passport\Bridge\PersonalAccessBearerTokenResponse;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
@@ -26,6 +27,7 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -117,10 +119,16 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerAuthorizationServer(): void
     {
+        $this->app->when(PersonalAccessTokenFactory::class)
+            ->needs(AuthorizationServer::class)
+            ->give(fn () => tap($this->makeAuthorizationServer(new PersonalAccessBearerTokenResponse),
+                function (AuthorizationServer $server): void {
+                    $server->enableGrantType(new PersonalAccessGrant, Passport::personalAccessTokensExpireIn());
+                }
+            ));
+
         $this->app->singleton(AuthorizationServer::class,
             fn () => tap($this->makeAuthorizationServer(), function (AuthorizationServer $server): void {
-                $server->setDefaultScope(Passport::$defaultScope);
-
                 $server->enableGrantType(
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
@@ -134,10 +142,6 @@ class PassportServiceProvider extends ServiceProvider
                         $this->makePasswordGrant(), Passport::tokensExpireIn()
                     );
                 }
-
-                $server->enableGrantType(
-                    new PersonalAccessGrant, Passport::personalAccessTokensExpireIn()
-                );
 
                 $server->enableGrantType(
                     new ClientCredentialsGrant, Passport::tokensExpireIn()
@@ -210,16 +214,18 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Make the authorization service instance.
      */
-    public function makeAuthorizationServer(): AuthorizationServer
+    protected function makeAuthorizationServer(?ResponseTypeInterface $responseType = null): AuthorizationServer
     {
-        return new AuthorizationServer(
+        return tap(new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
             $this->app->make('encrypter')->getKey(),
-            Passport::$authorizationServerResponseType
-        );
+            $responseType ?? Passport::$authorizationServerResponseType
+        ), function (AuthorizationServer $server): void {
+            $server->setDefaultScope(Passport::$defaultScope);
+        });
     }
 
     /**

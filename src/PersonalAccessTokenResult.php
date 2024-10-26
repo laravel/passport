@@ -4,32 +4,70 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Str;
+use JsonSerializable;
 
 /**
- * @implements \Illuminate\Contracts\Support\Arrayable<string, mixed>
+ * @template TValue
+ *
+ * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
+ *
+ * @property string $access_token_id
+ * @property string $access_token
+ * @property string $token_type
+ * @property int $expires_in
  */
-class PersonalAccessTokenResult implements Arrayable, Jsonable
+class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
 {
     /**
-     * Create a new result instance.
+     * The token instance.
      */
-    public function __construct(
-        public string $accessToken,
-        public Token $token
-    ) {
+    protected ?Token $token = null;
+
+    /**
+     * All the attributes set on the personal access token response.
+     *
+     * @var array<string, TValue>
+     */
+    protected array $attributes = [];
+
+    /**
+     * Create a new result instance.
+     *
+     * @param  array<string, TValue>  $attributes
+     */
+    public function __construct(array $attributes = []) {
+        foreach ($attributes as $key => $value) {
+            $this->attributes[$key] = $value;
+        }
+    }
+
+    /**
+     * Get the token instance.
+     */
+    public function getToken(): ?Token
+    {
+        return $this->token ??= Passport::token()->newQuery()->find($this->attributes['access_token_id']);
     }
 
     /**
      * Get the instance as an array.
      *
-     * @return array<string, mixed>
+     * @return array<string, TValue>
      */
     public function toArray(): array
     {
-        return [
-            'accessToken' => $this->accessToken,
-            'token' => $this->token,
-        ];
+        return $this->attributes;
+    }
+
+    /**
+     * Convert the object into something JSON serializable.
+     *
+     * @return array<string, TValue>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 
     /**
@@ -39,6 +77,26 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable
      */
     public function toJson($options = 0): string
     {
-        return json_encode($this->toArray(), $options);
+        return json_encode($this->jsonSerialize(), $options);
+    }
+
+    /**
+     * Dynamically determine if an attribute is set.
+     */
+    public function __isset(string $key): bool
+    {
+        return isset($this->attributes[Str::snake($key)]);
+    }
+
+    /**
+     * Dynamically retrieve the value of an attribute.
+     */
+    public function __get(string $key): mixed
+    {
+        if ($key === 'token') {
+            return $this->getToken();
+        }
+
+        return $this->attributes[Str::snake($key)] ?? null;
     }
 }
