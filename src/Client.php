@@ -160,7 +160,7 @@ class Client extends Model
 
                 return array_keys(array_filter([
                     'authorization_code' => ! empty($this->redirect_uris),
-                    'client_credentials' => $this->confidential(),
+                    'client_credentials' => $this->confidential() && $this->firstParty(),
                     'implicit' => ! empty($this->redirect_uris),
                     'password' => $this->password_client,
                     'personal_access' => $this->personal_access_client,
