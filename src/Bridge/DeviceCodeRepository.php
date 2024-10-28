@@ -32,11 +32,12 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
             'user_code' => $deviceCodeEntity->getUserCode(),
             'scopes' => $this->formatScopesForStorage($deviceCodeEntity->getScopes()),
+            'interval' => $deviceCodeEntity->getInterval(),
             'revoked' => false,
             'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
             'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
             'expires_at' => $deviceCodeEntity->getExpiryDateTime(),
-        ], 'id', ['user_id', 'user_approved_at', 'last_polled_at']);
+        ], 'id', ['user_id', 'user_approved_at', 'interval', 'last_polled_at']);
     }
 
     /**
@@ -90,6 +91,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             $model->client_id,
             $model->user_code,
             $model->scopes,
+            $model->interval,
             ! is_null($model->user_approved_at),
             $model->last_polled_at?->toDateTimeImmutable(),
             $model->expires_at?->toDateTimeImmutable()

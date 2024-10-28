@@ -49,10 +49,13 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
     {
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
-        ['device_code' => $deviceCode] = $this->post('/oauth/device/code', [
+        $json = $this->post('/oauth/device/code', [
             'client_id' => $client->getKey(),
             'scope' => 'create read',
         ])->assertOk()->json();
+
+        // $this->assertSame(5, $json['interval']);
+        $deviceCode = $json['device_code'];
 
         $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -61,9 +64,20 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
             'device_code' => $deviceCode,
         ])->assertBadRequest()->json();
 
-        $this->assertArrayHasKey('error', $json);
-        $this->assertArrayHasKey('error_description', $json);
         $this->assertSame('authorization_pending', $json['error']);
+        $this->assertArrayHasKey('error_description', $json);
+        // $this->assertSame(5, $json['interval']);
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'device_code' => $deviceCode,
+        ])->assertBadRequest()->json();
+
+        $this->assertSame('slow_down', $json['error']);
+        $this->assertArrayHasKey('error_description', $json);
+        // $this->assertSame(10, $json['interval']);
     }
 
     public function testAuthorizationWithoutUserCodeRedirects()

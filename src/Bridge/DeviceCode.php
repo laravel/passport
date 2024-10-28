@@ -19,6 +19,7 @@ class DeviceCode implements DeviceCodeEntityInterface
      * @param  non-empty-string|null  $userIdentifier
      * @param  non-empty-string|null  $clientIdentifier
      * @param  string[]  $scopes
+     * @param  positive-int|null  $interval
      */
     public function __construct(
         ?string $identifier = null,
@@ -26,6 +27,7 @@ class DeviceCode implements DeviceCodeEntityInterface
         ?string $clientIdentifier = null,
         ?string $userCode = null,
         array $scopes = [],
+        ?int $interval = null,
         bool $userApproved = false,
         ?DateTimeImmutable $lastPolledAt = null,
         ?DateTimeImmutable $expiryDateTime = null
@@ -48,6 +50,10 @@ class DeviceCode implements DeviceCodeEntityInterface
 
         foreach ($scopes as $scope) {
             $this->addScope(new Scope($scope));
+        }
+
+        if (! is_null($interval)) {
+            $this->setInterval($interval);
         }
 
         if ($userApproved) {
