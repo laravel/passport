@@ -12,10 +12,10 @@ use JsonSerializable;
  *
  * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
  *
- * @property string $access_token_id
- * @property string $access_token
- * @property string $token_type
- * @property int $expires_in
+ * @property string $accessTokenId
+ * @property string $accessToken
+ * @property string $tokenType
+ * @property int $expiresIn
  */
 class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
 {
@@ -38,7 +38,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
      */
     public function __construct(array $attributes = []) {
         foreach ($attributes as $key => $value) {
-            $this->attributes[$key] = $value;
+            $this->attributes[Str::camel($key)] = $value;
         }
     }
 
@@ -47,7 +47,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
      */
     public function getToken(): ?Token
     {
-        return $this->token ??= Passport::token()->newQuery()->find($this->attributes['access_token_id']);
+        return $this->token ??= Passport::token()->newQuery()->find($this->accessTokenId);
     }
 
     /**
@@ -85,7 +85,7 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
      */
     public function __isset(string $key): bool
     {
-        return isset($this->attributes[Str::snake($key)]);
+        return isset($this->attributes[$key]);
     }
 
     /**
@@ -97,6 +97,6 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
             return $this->getToken();
         }
 
-        return $this->attributes[Str::snake($key)] ?? null;
+        return $this->attributes[$key] ?? null;
     }
 }

@@ -34,10 +34,10 @@ class PersonalAccessGrantTest extends PassportTestCase
         $token = $result->getToken();
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
-        $this->assertArrayHasKey('access_token', $result->toArray());
-        $this->assertSame($token->getKey(), $result->access_token_id);
-        $this->assertSame('Bearer', $result->token_type);
-        $this->assertSame(31536000, $result->expires_in);
+        $this->assertArrayHasKey('accessToken', $result->toArray());
+        $this->assertSame($token->getKey(), $result->accessTokenId);
+        $this->assertSame('Bearer', $result->tokenType);
+        $this->assertSame(31536000, $result->expiresIn);
         $this->assertSame($client->getKey(), $token->client_id);
         $this->assertSame($user->getAuthIdentifier(), $token->user_id);
         $this->assertSame(['bar'], $token->scopes);
@@ -70,7 +70,7 @@ class PersonalAccessGrantTest extends PassportTestCase
         Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
             ->middleware('auth:api');
 
-        $json = $this->withToken($result->access_token)->get('/foo')->json();
+        $json = $this->withToken($result->accessToken)->get('/foo')->json();
 
         $this->assertSame($token->getKey(), $json['oauth_access_token_id']);
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
@@ -129,9 +129,9 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertStringContainsString('and ("provider" = \'admins\')', $queries[1]['raw_query']);
         $this->assertStringContainsString('and ("provider" = \'customers\')', $queries[2]['raw_query']);
 
-        $this->assertEquals([$userToken->access_token_id], $userTokens);
-        $this->assertEquals([$adminToken->access_token_id], $adminTokens);
-        $this->assertEquals([$customerToken->access_token_id], $customerTokens);
+        $this->assertEquals([$userToken->accessTokenId], $userTokens);
+        $this->assertEquals([$adminToken->accessTokenId], $adminTokens);
+        $this->assertEquals([$customerToken->accessTokenId], $customerTokens);
     }
 
     public function testPersonalAccessTokenRequestIsDisabled()
