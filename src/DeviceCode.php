@@ -3,7 +3,6 @@
 namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DeviceCode extends Model
 {
@@ -55,16 +54,6 @@ class DeviceCode extends Model
      * @var string
      */
     protected $keyType = 'string';
-
-    /**
-     * Get the client that owns the authentication code.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Laravel\Passport\Client, $this>
-     */
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(Passport::clientModel());
-    }
 
     /**
      * Get the current connection name for the model.

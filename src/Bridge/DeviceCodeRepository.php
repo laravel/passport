@@ -11,8 +11,6 @@ use League\OAuth2\Server\Repositories\DeviceCodeRepositoryInterface;
 
 class DeviceCodeRepository implements DeviceCodeRepositoryInterface
 {
-    use FormatsScopesForStorage;
-
     /**
      * {@inheritdoc}
      */
@@ -26,18 +24,30 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
      */
     public function persistDeviceCode(DeviceCodeEntityInterface $deviceCodeEntity): void
     {
-        Passport::deviceCode()->newQuery()->upsert([
-            'id' => $deviceCodeEntity->getIdentifier(),
-            'user_id' => $deviceCodeEntity->getUserIdentifier(),
-            'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
-            'user_code' => $deviceCodeEntity->getUserCode(),
-            'scopes' => $this->formatScopesForStorage($deviceCodeEntity->getScopes()),
-            'interval' => $deviceCodeEntity->getInterval(),
-            'revoked' => false,
-            'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
-            'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
-            'expires_at' => $deviceCodeEntity->getExpiryDateTime(),
-        ], 'id', ['user_id', 'user_approved_at', 'interval', 'last_polled_at']);
+        if (! is_null($deviceCodeEntity->getUserIdentifier())) {
+            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
+                'user_id' => $deviceCodeEntity->getUserIdentifier(),
+                'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
+            ]);
+        } else if (! is_null($deviceCodeEntity->getLastPolledAt())) {
+            Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
+                'interval' => $deviceCodeEntity->getInterval(),
+                'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
+            ]);
+        } else {
+            Passport::deviceCode()->forceFill([
+                'id' => $deviceCodeEntity->getIdentifier(),
+                'user_id' => null,
+                'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
+                'user_code' => $deviceCodeEntity->getUserCode(),
+                'scopes' => $deviceCodeEntity->getScopes(),
+                'interval' => $deviceCodeEntity->getInterval(),
+                'revoked' => false,
+                'user_approved_at' => null,
+                'last_polled_at' => null,
+                'expires_at' => $deviceCodeEntity->getExpiryDateTime(),
+            ])->save();
+        }
     }
 
     /**
@@ -89,7 +99,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             $model->getKey(),
             $model->user_id,
             $model->client_id,
-            $model->user_code,
             $model->scopes,
             $model->interval,
             ! is_null($model->user_approved_at),

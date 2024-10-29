@@ -25,7 +25,6 @@ class DeviceCode implements DeviceCodeEntityInterface
         ?string $identifier = null,
         ?string $userIdentifier = null,
         ?string $clientIdentifier = null,
-        ?string $userCode = null,
         array $scopes = [],
         ?int $interval = null,
         bool $userApproved = false,
@@ -42,10 +41,6 @@ class DeviceCode implements DeviceCodeEntityInterface
 
         if (! is_null($clientIdentifier)) {
             $this->setClient(new Client($clientIdentifier));
-        }
-
-        if (! is_null($userCode)) {
-            $this->setUserCode($userCode);
         }
 
         foreach ($scopes as $scope) {
