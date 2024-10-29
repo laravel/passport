@@ -29,7 +29,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
                 'user_id' => $deviceCodeEntity->getUserIdentifier(),
                 'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
             ]);
-        } else if (! is_null($deviceCodeEntity->getLastPolledAt())) {
+        } elseif (! is_null($deviceCodeEntity->getLastPolledAt())) {
             Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'interval' => $deviceCodeEntity->getInterval(),
                 'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
