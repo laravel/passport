@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
@@ -82,11 +83,10 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
     public function testAuthorizationWithoutUserCodeRedirects()
     {
-        $user = UserFactory::new()->create();
-
-        $response = $this->actingAs($user)->get('/oauth/device/authorize');
-        $response->assertRedirect('/oauth/device');
-        $response->assertRedirectToRoute('passport.device');
+        $this->actingAs(UserFactory::new()->create())
+            ->get('/oauth/device/authorize')
+            ->assertRedirect('/oauth/device')
+            ->assertRedirectToRoute('passport.device');
     }
 
     public function testVerificationUrl()
@@ -106,23 +106,35 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertEqualsCanonicalizing(['request'], array_keys($json));
 
         $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
 
-        $response = $this->actingAs($user, 'web')->get($verificationUriComplete);
-        $response->assertRedirect('/oauth/device/authorize?user_code='.$userCode);
-        $response->assertRedirectToRoute('passport.device.authorizations.authorize', ['user_code' => $userCode]);
+        $this->get($verificationUriComplete)
+            ->assertRedirect('/oauth/device/authorize?user_code='.$userCode)
+            ->assertRedirectToRoute('passport.device.authorizations.authorize', ['user_code' => $userCode]);
+
+        $this->get('/oauth/device/authorize?user_code='.Str::substrReplace($userCode, '-', 4, 0))
+            ->assertOk()
+            ->assertSessionHas('deviceCode')
+            ->assertSessionHas('authToken')
+            ->assertSessionHasNoErrors();
     }
 
     public function testAuthorizationWithInvalidUserCode()
     {
-        $user = UserFactory::new()->create();
+        $this->actingAs(UserFactory::new()->create(), 'web');
 
-        $response = $this->actingAs($user, 'web')->get('/oauth/device/authorize?user_code=12345678');
-        $response->assertRedirectToRoute('passport.device');
-        $response->assertSessionHasInput('user_code', '12345678');
-        $response->assertSessionHasErrors(['user_code' => 'Incorrect code.']);
+        $this->get('/oauth/device/authorize?user_code=12345678')
+            ->assertRedirectToRoute('passport.device')
+            ->assertSessionHasInput('user_code', '12345678')
+            ->assertSessionHasErrors(['user_code' => 'Incorrect code.']);
+
+        $this->get('/oauth/device/authorize?user_code=ABCD-EFGH')
+            ->assertRedirectToRoute('passport.device')
+            ->assertSessionHasInput('user_code', 'ABCD-EFGH')
+            ->assertSessionHasErrors(['user_code' => 'Incorrect code.']);
     }
 
-    public function testRequestAccessToken()
+    public function testIssueAccessToken()
     {
         $client = ClientFactory::new()->asDeviceCodeClient()->create();
 
@@ -145,10 +157,15 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
         $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
 
-        $response = $this->post('/oauth/device/authorize', ['auth_token' => $json['authToken']]);
-        $response->assertRedirectToRoute('passport.device');
-        $response->assertSessionHas('status', 'authorization-approved');
-        $response->assertSessionMissing(['deviceCode', 'authToken']);
+        $this->post('/oauth/device/authorize', ['auth_token' => $json['authToken']])
+            ->assertRedirectToRoute('passport.device')
+            ->assertSessionHas('status', 'authorization-approved')
+            ->assertSessionMissing(['deviceCode', 'authToken']);
+
+        $this->get('/oauth/device/authorize?user_code='.$userCode)
+            ->assertRedirect()
+            ->assertSessionHasInput('user_code', $userCode)
+            ->assertSessionHasErrors(['user_code' => 'Incorrect code.']);
 
         $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -189,10 +206,15 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $authToken = $this->get('/oauth/device/authorize?user_code='.$userCode)->assertOk()->json('authToken');
 
-        $response = $this->delete('/oauth/device/authorize', ['auth_token' => $authToken]);
-        $response->assertRedirectToRoute('passport.device');
-        $response->assertSessionHas('status', 'authorization-denied');
-        $response->assertSessionMissing(['deviceCode', 'authToken']);
+        $this->delete('/oauth/device/authorize', ['auth_token' => $authToken])
+            ->assertRedirectToRoute('passport.device')
+            ->assertSessionHas('status', 'authorization-denied')
+            ->assertSessionMissing(['deviceCode', 'authToken']);
+
+        $this->get('/oauth/device/authorize?user_code='.$userCode)
+            ->assertRedirect()
+            ->assertSessionHasInput('user_code', $userCode)
+            ->assertSessionHasErrors(['user_code' => 'Incorrect code.']);
 
         $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',

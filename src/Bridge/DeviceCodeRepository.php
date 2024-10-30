@@ -2,7 +2,6 @@
 
 namespace Laravel\Passport\Bridge;
 
-use DateTime;
 use Illuminate\Support\Facades\Date;
 use Laravel\Passport\DeviceCode as DeviceCodeModel;
 use Laravel\Passport\Passport;
@@ -27,7 +26,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
         if (! is_null($deviceCodeEntity->getUserIdentifier())) {
             Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
                 'user_id' => $deviceCodeEntity->getUserIdentifier(),
-                'user_approved_at' => $deviceCodeEntity->getUserApproved() ? new DateTime : null,
+                'user_approved_at' => $deviceCodeEntity->getUserApproved() ? Date::now() : null,
             ]);
         } elseif (! is_null($deviceCodeEntity->getLastPolledAt())) {
             Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
@@ -67,6 +66,7 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
     {
         $record = Passport::deviceCode()->newQuery()
             ->where('user_code', $userCode)
+            ->whereNull('user_id')
             ->where('expires_at', '>', Date::now())
             ->where('revoked', false)
             ->first();
