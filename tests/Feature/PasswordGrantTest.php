@@ -120,7 +120,7 @@ class PasswordGrantTest extends PassportTestCase
 
         Route::get('/foo', fn (Request $request) => response()->json([
             'user' => $request->user(),
-            'token' => $request->user()->token()
+            'token' => $request->user()->token(),
         ]))->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -140,7 +140,7 @@ class PasswordGrantTest extends PassportTestCase
 
         Route::get('/bar', fn (Request $request) => response()->json([
             'user' => $request->user(),
-            'token' => $request->user()->token()
+            'token' => $request->user()->token(),
         ]))->middleware('auth:api-admins');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/bar')->json();

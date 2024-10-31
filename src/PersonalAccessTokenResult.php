@@ -36,7 +36,8 @@ class PersonalAccessTokenResult implements Arrayable, Jsonable, JsonSerializable
      *
      * @param  array<string, TValue>  $attributes
      */
-    public function __construct(array $attributes = []) {
+    public function __construct(array $attributes = [])
+    {
         foreach ($attributes as $key => $value) {
             $this->attributes[Str::camel($key)] = $value;
         }

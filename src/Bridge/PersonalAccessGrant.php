@@ -49,7 +49,7 @@ class PersonalAccessGrant extends AbstractGrant
         );
 
         Passport::token()->newQuery()->whereKey($accessToken->getIdentifier())->update([
-            'name' => $this->getRequestParameter('name', $request)
+            'name' => $this->getRequestParameter('name', $request),
         ]);
 
         // Inject access token into response type
