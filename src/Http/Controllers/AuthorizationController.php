@@ -145,6 +145,6 @@ class AuthorizationController
     {
         $request->session()->put('promptedForLogin', true);
 
-        throw new AuthenticationException;
+        throw new AuthenticationException(guards: isset($this->guard->name) ? [$this->guard->name] : []);
     }
 }
