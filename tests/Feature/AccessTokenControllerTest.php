@@ -292,7 +292,7 @@ class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenRes
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken)
     {
