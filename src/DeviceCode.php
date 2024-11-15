@@ -34,7 +34,6 @@ class DeviceCode extends Model
      */
     protected $casts = [
         'scopes' => 'array',
-        'interval' => 'int',
         'revoked' => 'bool',
         'user_approved_at' => 'datetime',
         'last_polled_at' => 'datetime',

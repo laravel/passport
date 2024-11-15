@@ -30,7 +30,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             ]);
         } elseif (! is_null($deviceCodeEntity->getLastPolledAt())) {
             Passport::deviceCode()->newQuery()->whereKey($deviceCodeEntity->getIdentifier())->update([
-                'interval' => $deviceCodeEntity->getInterval(),
                 'last_polled_at' => $deviceCodeEntity->getLastPolledAt(),
             ]);
         } else {
@@ -100,7 +99,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
             $model->user_id,
             $model->client_id,
             $model->scopes,
-            $model->interval,
             ! is_null($model->user_approved_at),
             $model->last_polled_at?->toDateTimeImmutable(),
             $model->expires_at?->toDateTimeImmutable()

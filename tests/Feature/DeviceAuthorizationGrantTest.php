@@ -40,7 +40,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertArrayHasKey('device_code', $json);
         $this->assertArrayHasKey('user_code', $json);
-        // $this->assertSame(5, $json['interval']);
+        $this->assertSame(5, $json['interval']);
         $this->assertSame(600, $json['expires_in']);
         $this->assertSame('http://localhost/oauth/device', $json['verification_uri']);
         $this->assertSame('http://localhost/oauth/device?user_code='.$json['user_code'], $json['verification_uri_complete']);
@@ -55,7 +55,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
             'scope' => 'create read',
         ])->assertOk()->json();
 
-        // $this->assertSame(5, $json['interval']);
+        $this->assertSame(5, $json['interval']);
         $deviceCode = $json['device_code'];
 
         $json = $this->post('/oauth/token', [
@@ -67,7 +67,6 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertSame('authorization_pending', $json['error']);
         $this->assertArrayHasKey('error_description', $json);
-        // $this->assertSame(5, $json['interval']);
 
         $json = $this->post('/oauth/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:device_code',
@@ -78,7 +77,6 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertSame('slow_down', $json['error']);
         $this->assertArrayHasKey('error_description', $json);
-        // $this->assertSame(10, $json['interval']);
     }
 
     public function testAuthorizationWithoutUserCodeRedirects()
@@ -186,7 +184,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
 
         $this->assertSame($client->getKey(), $json['oauth_client_id']);
         $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
-        // $this->assertSame(['create', 'read'], $json['oauth_scopes']);
+        $this->assertSame(['create', 'read'], $json['oauth_scopes']);
     }
 
     public function testDenyAuthorization()
