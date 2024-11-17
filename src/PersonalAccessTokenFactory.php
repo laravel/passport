@@ -39,7 +39,7 @@ class PersonalAccessTokenFactory
      */
     protected function createRequest(string|int $userId, string $name, array $scopes, string $provider): ServerRequestInterface
     {
-        return (new PsrHttpFactory())->createRequest(Request::create('', 'POST', [
+        return (new PsrHttpFactory)->createRequest(Request::create('', 'POST', [
             'grant_type' => 'personal_access',
             'provider' => $provider,
             'user_id' => $userId,
