@@ -185,7 +185,6 @@ class RevokedTest extends PassportTestCase
         $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
         $deviceCode->shouldReceive('getUserCode')->andReturn('userCode');
         $deviceCode->shouldReceive('getScopes')->andReturn([]);
-        $deviceCode->shouldReceive('getInterval')->andReturn(5);
         $deviceCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
         $deviceCode->shouldReceive('getLastPolledAt')->andReturn(null);
         $deviceCode->shouldReceive('getUserApproved')->andReturn(false);

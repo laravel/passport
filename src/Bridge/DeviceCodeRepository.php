@@ -39,7 +39,6 @@ class DeviceCodeRepository implements DeviceCodeRepositoryInterface
                 'client_id' => $deviceCodeEntity->getClient()->getIdentifier(),
                 'user_code' => $deviceCodeEntity->getUserCode(),
                 'scopes' => $deviceCodeEntity->getScopes(),
-                'interval' => $deviceCodeEntity->getInterval(),
                 'revoked' => false,
                 'user_approved_at' => null,
                 'last_polled_at' => null,
