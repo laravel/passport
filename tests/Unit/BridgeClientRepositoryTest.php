@@ -173,6 +173,7 @@ class BridgeClientRepositoryTest extends TestCase
     {
         $client = $this->clientModelRepository->findActive(1);
         $client->grant_types = null;
+        $client->redirect_uris = null;
 
         $this->assertTrue($this->repository->validateClient(1, 'secret', 'client_credentials'));
         $this->assertFalse($this->repository->validateClient(1, 'wrong-secret', 'client_credentials'));

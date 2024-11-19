@@ -21,7 +21,8 @@ class Client implements ClientEntityInterface
         string $name,
         array $redirectUri,
         bool $isConfidential = false,
-        public ?string $provider = null
+        public ?string $provider = null,
+        public array $grantTypes = []
     ) {
         $this->setIdentifier($identifier);
 
