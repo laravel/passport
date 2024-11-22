@@ -16,9 +16,6 @@ use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
-use Lcobucci\JWT\Encoding\JoseEncoder;
-use Lcobucci\JWT\Parser as ParserContract;
-use Lcobucci\JWT\Token\Parser;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -109,7 +106,6 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ClientRepository::class);
 
         $this->registerAuthorizationServer();
-        $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
     }
@@ -221,19 +217,11 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            $this->app->make('encrypter')->getKey(),
+            Passport::tokenEncryptionKey($this->app->make('encrypter')),
             $responseType ?? Passport::$authorizationServerResponseType
         ), function (AuthorizationServer $server): void {
             $server->setDefaultScope(Passport::$defaultScope);
         });
-    }
-
-    /**
-     * Register the JWT Parser.
-     */
-    protected function registerJWTParser(): void
-    {
-        $this->app->singleton(ParserContract::class, fn () => new Parser(new JoseEncoder));
     }
 
     /**

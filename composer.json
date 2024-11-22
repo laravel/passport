@@ -27,7 +27,6 @@
         "illuminate/encryption": "^11.17",
         "illuminate/http": "^11.17",
         "illuminate/support": "^11.17",
-        "lcobucci/jwt": "^5.0",
         "league/oauth2-server": "^9.0",
         "nyholm/psr7": "^1.5",
         "phpseclib/phpseclib": "^3.0",
