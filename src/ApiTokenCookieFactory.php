@@ -37,7 +37,8 @@ class ApiTokenCookieFactory
             $config['secure'],
             true,
             false,
-            $config['same_site'] ?? null
+            $config['same_site'] ?? null,
+            $config['partitioned'] ?? false
         );
     }
 
@@ -48,8 +49,8 @@ class ApiTokenCookieFactory
     {
         return JWT::encode([
             'sub' => $userId,
-            'csrf' => $csrfToken,
-            'expiry' => $expiration,
+            'jti' => $csrfToken,
+            'exp' => $expiration,
         ], Passport::tokenEncryptionKey($this->encrypter), 'HS256');
     }
 }

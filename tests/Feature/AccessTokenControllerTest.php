@@ -7,6 +7,8 @@ use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
@@ -253,25 +255,17 @@ class AccessTokenControllerTest extends PassportTestCase
     }
 }
 
-class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenResponse
+class IdTokenResponse extends BearerTokenResponse
 {
-    /**
-     * @var string Id token.
-     */
-    protected $idToken;
-
-    /**
-     * @param  string  $idToken
-     */
-    public function __construct($idToken)
-    {
-        $this->idToken = $idToken;
+    public function __construct(
+        protected string $idToken
+    ) {
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken): array
+    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
     {
         return [
             'id_token' => $this->idToken,

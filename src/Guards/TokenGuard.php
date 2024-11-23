@@ -209,11 +209,17 @@ class TokenGuard implements Guard
             return null;
         }
 
+        // Token's expiration time is checked using the "exp" claim during decoding, but
+        // legacy tokens may have an "expiry" claim instead of the standard "exp". So
+        // we must manually check token's expiry, if the "expiry" claim is present.
+        if (isset($token['expiry']) && time() >= $token['expiry']) {
+            return null;
+        }
+
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! Passport::$ignoreCsrfToken &&
-            (! $this->validCsrf($token) || time() >= $token['expiry'])) {
+        if (! Passport::$ignoreCsrfToken && ! $this->validCsrf($token)) {
             return null;
         }
 
@@ -244,9 +250,7 @@ class TokenGuard implements Guard
      */
     protected function validCsrf(array $token): bool
     {
-        return isset($token['csrf']) && hash_equals(
-            $token['csrf'], $this->getTokenFromRequest()
-        );
+        return isset($token['jti']) && hash_equals($token['jti'], $this->getTokenFromRequest());
     }
 
     /**
