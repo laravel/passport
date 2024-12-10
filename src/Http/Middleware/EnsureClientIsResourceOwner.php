@@ -15,7 +15,7 @@ class EnsureClientIsResourceOwner extends ValidateToken
      */
     protected function validate(AccessToken $token, string ...$params): void
     {
-        if ($token->oauth_user_id !== $token->oauth_client_id) {
+        if (! is_null($token->oauth_user_id) && $token->oauth_user_id !== $token->oauth_client_id) {
             throw new AuthenticationException;
         }
 

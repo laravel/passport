@@ -6,6 +6,8 @@ use DateInterval;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
+use League\OAuth2\Server\RequestAccessTokenEvent;
+use League\OAuth2\Server\RequestEvent;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -48,6 +50,10 @@ class PersonalAccessGrant extends AbstractGrant
             $scopes
         );
 
+        // Send event to emitter
+        $this->getEmitter()->emit(new RequestAccessTokenEvent(RequestEvent::ACCESS_TOKEN_ISSUED, $request, $accessToken));
+
+        // Persist access token's name
         Passport::token()->newQuery()->whereKey($accessToken->getIdentifier())->update([
             'name' => $this->getRequestParameter('name', $request),
         ]);
