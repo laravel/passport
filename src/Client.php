@@ -64,14 +64,10 @@ class Client extends Model
     public ?string $plainSecret = null;
 
     /**
-     * Create a new Eloquent model instance.
-     *
-     * @param  array<string, mixed>  $attributes
+     * Initialize the trait.
      */
-    public function __construct(array $attributes = [])
+    public function initializeHasUniqueIds(): void
     {
-        parent::__construct($attributes);
-
         $this->usesUniqueIds = Passport::$clientUuids;
     }
 
