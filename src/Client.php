@@ -202,7 +202,7 @@ class Client extends Model
      */
     public function hasScope(string $scope): bool
     {
-        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
+        return ! isset($this->attributes['scopes']) || $this->scopeExistsIn($scope, $this->scopes);
     }
 
     /**

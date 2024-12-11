@@ -59,7 +59,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
      */
     public function can(string $scope): bool
     {
-        return in_array('*', $this->oauth_scopes) || $this->scopeExists($scope, $this->oauth_scopes);
+        return in_array('*', $this->oauth_scopes) || $this->scopeExistsIn($scope, $this->oauth_scopes);
     }
 
     /**
