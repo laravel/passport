@@ -8,10 +8,11 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class AccessTokenControllerTest extends TestCase
 {
@@ -23,7 +24,7 @@ class AccessTokenControllerTest extends TestCase
 
         $response = m::type(ResponseInterface::class);
 
-        $psrResponse = new Response();
+        $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
 
         $server = m::mock(AuthorizationServer::class);
@@ -40,7 +41,7 @@ class AccessTokenControllerTest extends TestCase
     {
         $request = m::mock(ServerRequestInterface::class);
 
-        app()->instance(ResponseInterface::class, new Response);
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server = m::mock(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(

@@ -8,9 +8,10 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class ApproveAuthorizationControllerTest extends TestCase
 {
@@ -38,7 +39,7 @@ class ApproveAuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
-        $psrResponse = new Response();
+        $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('response');
 
         $server->shouldReceive('completeAuthorizationRequest')

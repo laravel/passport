@@ -19,10 +19,11 @@ use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizationControllerTest extends TestCase
 {
@@ -92,7 +93,7 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
 
         $psrResponse = m::mock(ResponseInterface::class);
-        app()->instance(ResponseInterface::class, new Response);
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $request = m::mock(Request::class);
 
@@ -117,7 +118,7 @@ class AuthorizationControllerTest extends TestCase
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
-        $psrResponse = new Response();
+        $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
@@ -165,7 +166,7 @@ class AuthorizationControllerTest extends TestCase
 
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
-        $psrResponse = new Response();
+        $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('approved');
         $server->shouldReceive('validateAuthorizationRequest')
             ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
@@ -268,7 +269,7 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
 
         $psrResponse = m::mock(ResponseInterface::class);
-        app()->instance(ResponseInterface::class, new Response);
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
@@ -321,7 +322,7 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
 
         $psrResponse = m::mock(ResponseInterface::class);
-        app()->instance(ResponseInterface::class, new Response);
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $request = m::mock(Request::class);
         $request->shouldNotReceive('user');
