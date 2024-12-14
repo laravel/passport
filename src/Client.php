@@ -4,13 +4,13 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasVersion7Uuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
@@ -18,6 +18,7 @@ class Client extends Model
     /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Laravel\Passport\Database\Factories\ClientFactory> */
     use HasFactory;
     use ResolvesInheritedScopes;
+    use HasVersion7Uuids;
 
     /**
      * The database table used by the model.
@@ -66,7 +67,7 @@ class Client extends Model
     /**
      * Initialize the trait.
      */
-    public function initializeHasUniqueIds(): void
+    public function initializeHasUniqueStringIds(): void
     {
         $this->usesUniqueIds = Passport::$clientUuids;
     }
@@ -207,40 +208,6 @@ class Client extends Model
     public function confidential(): bool
     {
         return ! empty($this->secret);
-    }
-
-    /**
-     * Get the columns that should receive a unique identifier.
-     *
-     * @return array<string>
-     */
-    public function uniqueIds(): array
-    {
-        return $this->usesUniqueIds ? [$this->getKeyName()] : [];
-    }
-
-    /**
-     * Generate a new key for the model.
-     */
-    public function newUniqueId(): ?string
-    {
-        return $this->usesUniqueIds ? (string) Str::uuid7() : null;
-    }
-
-    /**
-     * Get the auto-incrementing key type.
-     */
-    public function getKeyType(): string
-    {
-        return $this->usesUniqueIds ? 'string' : $this->keyType;
-    }
-
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     */
-    public function getIncrementing(): bool
-    {
-        return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**
