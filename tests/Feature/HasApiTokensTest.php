@@ -20,9 +20,9 @@ class HasApiTokensTest extends PassportTestCase
             'auth.guards.api-customers' => ['driver' => 'passport', 'provider' => 'customers'],
         ]);
 
-        $this->assertSame('users', UserFactory::new()->create()->getProvider());
-        $this->assertSame('admins', (new AdminHasApiTokensStub)->getProvider());
-        $this->assertSame('customers', (new CustomerHasApiTokensStub)->getProvider());
+        $this->assertSame('users', UserFactory::new()->create()->provider());
+        $this->assertSame('admins', (new AdminHasApiTokensStub)->provider());
+        $this->assertSame('customers', (new CustomerHasApiTokensStub)->provider());
     }
 }
 

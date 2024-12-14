@@ -34,7 +34,7 @@ trait HasApiTokens
             ->where(function (Builder $query): void {
                 $query->whereHas('client', function (Builder $query): void {
                     $query->where(function (Builder $query): void {
-                        $provider = $this->getProvider();
+                        $provider = $this->provider();
 
                         $query->when($provider === config('auth.guards.api.provider'), function (Builder $query): void {
                             $query->orWhereNull('provider');
@@ -74,7 +74,7 @@ trait HasApiTokens
     public function createToken(string $name, array $scopes = []): PersonalAccessTokenResult
     {
         return app(PersonalAccessTokenFactory::class)->make(
-            $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
+            $this->getAuthIdentifier(), $name, $scopes, $this->provider()
         );
     }
 
@@ -83,7 +83,7 @@ trait HasApiTokens
      *
      * @throws \LogicException
      */
-    public function getProvider(): string
+    public function provider(): string
     {
         $providers = collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all();
 

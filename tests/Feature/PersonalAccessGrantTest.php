@@ -141,7 +141,7 @@ class PersonalAccessGrantTest extends PassportTestCase
 
         $response = $this->post('/oauth/token', [
             'grant_type' => 'personal_access',
-            'provider' => $user->getProvider(),
+            'provider' => $user->provider(),
             'user_id' => $user->getKey(),
             'scope' => '',
         ]);
