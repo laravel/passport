@@ -118,10 +118,10 @@ class AuthorizationController
             ['user_id', '=', $user->getAuthIdentifier()],
             ['revoked', '=', false],
             ['expires_at', '>', Date::now()],
-        ])->pluck('scopes');
+        ])->pluck('scopes')->flatten();
 
         return $tokensScopes->isNotEmpty() &&
-            collect($scopes)->pluck('id')->diff($tokensScopes->flatten())->isEmpty();
+            collect($scopes)->pluck('id')->diff($tokensScopes)->isEmpty();
     }
 
     /**
