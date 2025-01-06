@@ -148,26 +148,20 @@ class Client extends Model
     }
 
     /**
-     * Get the client's grant types.
+     * Interact with the client's grant types.
      */
     protected function grantTypes(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value, array $attributes) {
-                if (isset($value)) {
-                    return $this->fromJson($value);
-                }
-
-                return array_keys(array_filter([
-                    'authorization_code' => ! empty($this->redirect_uris),
-                    'client_credentials' => $this->confidential() && $this->firstParty(),
-                    'implicit' => ! empty($this->redirect_uris),
-                    'password' => $this->password_client,
-                    'personal_access' => $this->personal_access_client,
-                    'refresh_token' => true,
-                    'urn:ietf:params:oauth:grant-type:device_code' => true,
-                ]));
-            },
+            get: fn (?string $value): array => isset($value) ? $this->fromJson($value) : array_keys(array_filter([
+                'authorization_code' => ! empty($this->redirect_uris),
+                'client_credentials' => $this->confidential() && $this->firstParty(),
+                'implicit' => ! empty($this->redirect_uris),
+                'password' => $this->password_client,
+                'personal_access' => $this->personal_access_client && $this->confidential(),
+                'refresh_token' => true,
+                'urn:ietf:params:oauth:grant-type:device_code' => true,
+            ])),
         );
     }
 
