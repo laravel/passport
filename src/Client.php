@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
@@ -109,62 +108,48 @@ class Client extends Model
     }
 
     /**
-     * The temporary non-hashed client secret.
-     *
-     * This is only available once during the request that created the client.
+     * Interact with the client's secret.
      */
-    public function getPlainSecretAttribute(): ?string
-    {
-        return $this->plainSecret;
-    }
-
-    /**
-     * Set the value of the secret attribute.
-     */
-    public function setSecretAttribute(?string $value): void
-    {
-        $this->plainSecret = $value;
-
-        $this->attributes['secret'] = is_null($value) ? $value : Hash::make($value);
-    }
-
-    /**
-     * Get the client's redirect URIs.
-     */
-    protected function redirectUris(): Attribute
+    protected function secret(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value, array $attributes) {
-                if (isset($value)) {
-                    return $this->fromJson($value);
-                }
+            set: function (?string $value): ?string {
+                $this->plainSecret = $value;
 
-                return empty($attributes['redirect']) ? [] : explode(',', $attributes['redirect']);
+                return $this->castAttributeAsHashedString('secret', $value);
             },
         );
     }
 
     /**
-     * Get the client's grant types.
+     * Interact with the client's redirect URIs.
+     */
+    protected function redirectUris(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value, array $attributes): array => match (true) {
+                isset($value) => $this->fromJson($value),
+                ! empty($attributes['redirect']) => explode(',', $attributes['redirect']),
+                default => [],
+            },
+        );
+    }
+
+    /**
+     * Interact with the client's grant types.
      */
     protected function grantTypes(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value) {
-                if (isset($value)) {
-                    return $this->fromJson($value);
-                }
-
-                return array_keys(array_filter([
-                    'authorization_code' => ! empty($this->redirect_uris),
-                    'client_credentials' => $this->confidential() && $this->firstParty(),
-                    'implicit' => ! empty($this->redirect_uris),
-                    'password' => $this->password_client,
-                    'personal_access' => $this->personal_access_client && $this->confidential(),
-                    'refresh_token' => true,
-                    'urn:ietf:params:oauth:grant-type:device_code' => true,
-                ]));
-            },
+            get: fn (?string $value): array => isset($value) ? $this->fromJson($value) : array_keys(array_filter([
+                'authorization_code' => ! empty($this->redirect_uris),
+                'client_credentials' => $this->confidential() && $this->firstParty(),
+                'implicit' => ! empty($this->redirect_uris),
+                'password' => $this->password_client,
+                'personal_access' => $this->personal_access_client && $this->confidential(),
+                'refresh_token' => true,
+                'urn:ietf:params:oauth:grant-type:device_code' => true,
+            ])),
         );
     }
 
