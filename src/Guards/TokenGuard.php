@@ -161,7 +161,7 @@ class TokenGuard implements Guard
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
         // conversion for us to a new PSR-7 implementation from this Symfony request.
-        $psr = (new PsrHttpFactory())->createRequest($this->request);
+        $psr = (new PsrHttpFactory)->createRequest($this->request);
 
         try {
             return $this->server->validateAuthenticatedRequest($psr);

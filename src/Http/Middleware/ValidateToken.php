@@ -67,7 +67,7 @@ abstract class ValidateToken
         // Otherwise, we will convert the request to a PSR-7 implementation and
         // pass it to the OAuth2 server to be validated. If the bearer token
         // passed the validation, we will return an access token instance.
-        $psrRequest = (new PsrHttpFactory())->createRequest($request);
+        $psrRequest = (new PsrHttpFactory)->createRequest($request);
 
         try {
             $psrRequest = $this->server->validateAuthenticatedRequest($psrRequest);
