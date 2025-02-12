@@ -25,7 +25,7 @@ class RefreshTokenGrantTest extends PassportTestCase
             'delete' => 'Delete',
         ]);
 
-        Passport::$revokeRefreshTokens = true;
+        Passport::$revokeRefreshTokenAfterUse = true;
 
         Passport::authorizationView(fn ($params) => $params);
     }
@@ -76,7 +76,7 @@ class RefreshTokenGrantTest extends PassportTestCase
 
     public function testRefreshingTokenWithoutRevoking()
     {
-        Passport::$revokeRefreshTokens = false;
+        Passport::$revokeRefreshTokenAfterUse = false;
 
         $client = ClientFactory::new()->create();
 
