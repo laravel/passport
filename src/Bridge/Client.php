@@ -34,7 +34,8 @@ class Client implements ClientEntityInterface
     /**
      * {@inheritdoc}
      */
-    public function hasGrantType(string $grantType): bool
+    #[\Override]
+    public function supportsGrantType(string $grantType): bool
     {
         return in_array($grantType, $this->grantTypes);
     }

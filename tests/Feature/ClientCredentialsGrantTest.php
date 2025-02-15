@@ -55,6 +55,20 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $response->assertForbidden();
     }
 
+    public function testPublicClient()
+    {
+        $client = ClientFactory::new()->asClientCredentials()->asPublic()->create();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+        ])->assertUnauthorized()->json();
+
+        $this->assertSame('invalid_client', $json['error']);
+        $this->assertSame('Client authentication failed', $json['error_description']);
+    }
+
     public function testUnauthorizedClient()
     {
         $client = ClientFactory::new()->create();
