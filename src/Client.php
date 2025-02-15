@@ -176,7 +176,17 @@ class Client extends Model
      */
     public function hasGrantType(string $grantType): bool
     {
-        return in_array($grantType, $this->grant_types);
+        if (isset($this->attributes['grant_types']) && is_array($this->grant_types)) {
+            return in_array($grantType, $this->grant_types);
+        }
+
+        return match ($grantType) {
+            'authorization_code' => ! $this->personal_access_client && ! $this->password_client,
+            'personal_access' => $this->personal_access_client && $this->confidential(),
+            'password' => $this->password_client,
+            'client_credentials' => $this->confidential(),
+            default => true,
+        };
     }
 
     /**
