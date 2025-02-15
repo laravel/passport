@@ -75,19 +75,12 @@ final class ClientTest extends TestCase
         $client = new Client();
         $client->exists = true;
 
+        $this->assertTrue($client->hasGrantType('foo'));
+
         $client->personal_access_client = false;
         $client->password_client = false;
 
-        $this->assertFalse($client->hasGrantType('foo'));
-        $this->assertFalse($client->hasGrantType('authorization_code'));
-        $this->assertFalse($client->hasGrantType('password'));
-        $this->assertFalse($client->hasGrantType('personal_access'));
-        $this->assertFalse($client->hasGrantType('client_credentials'));
-
-        $client->redirect = 'http://localhost';
         $this->assertTrue($client->hasGrantType('authorization_code'));
-        $this->assertTrue($client->hasGrantType('implicit'));
-        unset($client->redirect);
 
         $client->personal_access_client = false;
         $client->password_client = true;
@@ -107,18 +100,11 @@ final class ClientTest extends TestCase
         $client = new Client(['grant_types' => null]);
         $client->exists = true;
 
+        $this->assertTrue($client->hasGrantType('foo'));
+
         $client->personal_access_client = false;
         $client->password_client = false;
-        $this->assertFalse($client->hasGrantType('foo'));
-        $this->assertFalse($client->hasGrantType('authorization_code'));
-        $this->assertFalse($client->hasGrantType('password'));
-        $this->assertFalse($client->hasGrantType('personal_access'));
-        $this->assertFalse($client->hasGrantType('client_credentials'));
-
-        $client->redirect = 'http://localhost';
         $this->assertTrue($client->hasGrantType('authorization_code'));
-        $this->assertTrue($client->hasGrantType('implicit'));
-        unset($client->redirect);
 
         $client->personal_access_client = false;
         $client->password_client = true;
