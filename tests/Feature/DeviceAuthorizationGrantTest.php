@@ -226,7 +226,7 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertSame('access_denied', $json['error']);
     }
 
-    public function testRequestAccessTokenWithPublicClient()
+    public function testPublicClient()
     {
         $client = ClientFactory::new()->asDeviceCodeClient()->asPublic()->create();
 
