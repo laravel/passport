@@ -23,6 +23,11 @@ class Passport
     public static bool $validateKeyPermissions = false;
 
     /**
+     * Indicates if the refresh token should be revoked after use.
+     */
+    public static bool $revokeRefreshTokenAfterUse = true;
+
+    /**
      * Indicates if the implicit grant type is enabled.
      */
     public static bool $implicitGrantEnabled = false;
