@@ -226,8 +226,6 @@ class PassportServiceProvider extends ServiceProvider
 
     /**
      * Register the resource server.
-     *
-     * @return void
      */
     protected function registerResourceServer(): void
     {
