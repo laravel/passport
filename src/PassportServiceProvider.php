@@ -221,6 +221,7 @@ class PassportServiceProvider extends ServiceProvider
             $responseType ?? Passport::$authorizationServerResponseType
         ), function (AuthorizationServer $server): void {
             $server->setDefaultScope(Passport::$defaultScope);
+            $server->revokeRefreshTokens(Passport::$revokeRefreshTokenAfterUse);
         });
     }
 
@@ -246,7 +247,7 @@ class PassportServiceProvider extends ServiceProvider
             $key = 'file://'.Passport::keyPath('oauth-'.$type.'.key');
         }
 
-        return new CryptKey($key, null, Passport::$validateKeyPermissions && ! windows_os());
+        return new CryptKey($key, null, Passport::$validateKeyPermissions);
     }
 
     /**
