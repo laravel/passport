@@ -319,4 +319,29 @@ class ImplicitGrantTest extends PassportTestCase
         $response->assertSessionHas('promptedForLogin', true);
         $response->assertRedirectToRoute('login');
     }
+
+    public function testUnauthorizedClient()
+    {
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $client->redirect_uris[0],
+            'response_type' => 'token',
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+
+        $json = $this->get('/oauth/authorize?'.$query)
+            ->assertBadRequest()
+            ->assertSessionMissing(['authRequest', 'authToken'])
+            ->json();
+
+        $this->assertSame('unauthorized_client', $json['error']);
+        $this->assertSame(
+            'The authenticated client is not authorized to use this authorization grant type.',
+            $json['error_description']
+        );
+    }
 }
