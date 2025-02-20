@@ -21,7 +21,8 @@ class Client implements ClientEntityInterface
         ?string $name = null,
         array $redirectUri = [],
         bool $isConfidential = false,
-        public ?string $provider = null
+        public ?string $provider = null,
+        public array $grantTypes = [],
     ) {
         $this->setIdentifier($identifier);
 
@@ -31,5 +32,13 @@ class Client implements ClientEntityInterface
 
         $this->isConfidential = $isConfidential;
         $this->redirectUri = $redirectUri;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsGrantType(string $grantType): bool
+    {
+        return in_array($grantType, $this->grantTypes);
     }
 }

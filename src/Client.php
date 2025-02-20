@@ -148,6 +148,24 @@ class Client extends Model
     }
 
     /**
+     * Interact with the client's grant types.
+     */
+    protected function grantTypes(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value): array => isset($value) ? $this->fromJson($value) : array_keys(array_filter([
+                'authorization_code' => ! empty($this->redirect_uris),
+                'client_credentials' => $this->confidential() && $this->firstParty(),
+                'implicit' => ! empty($this->redirect_uris),
+                'password' => $this->password_client,
+                'personal_access' => $this->personal_access_client && $this->confidential(),
+                'refresh_token' => true,
+                'urn:ietf:params:oauth:grant-type:device_code' => true,
+            ])),
+        );
+    }
+
+    /**
      * Determine if the client is a "first party" client.
      */
     public function firstParty(): bool
@@ -170,17 +188,7 @@ class Client extends Model
      */
     public function hasGrantType(string $grantType): bool
     {
-        if (isset($this->attributes['grant_types']) && is_array($this->grant_types)) {
-            return in_array($grantType, $this->grant_types);
-        }
-
-        return match ($grantType) {
-            'authorization_code' => ! $this->personal_access_client && ! $this->password_client,
-            'personal_access' => $this->personal_access_client && $this->confidential(),
-            'password' => $this->password_client,
-            'client_credentials' => $this->confidential(),
-            default => true,
-        };
+        return in_array($grantType, $this->grant_types);
     }
 
     /**
