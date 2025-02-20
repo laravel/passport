@@ -256,4 +256,16 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
     }
+
+    public function testUnauthorizedClient()
+    {
+        $client = ClientFactory::new()->create();
+
+        $json = $this->post('/oauth/device/code', [
+            'client_id' => $client->getKey(),
+        ])->assertBadRequest()->json();
+
+        $this->assertSame('unauthorized_client', $json['error']);
+        $this->assertArrayHasKey('error_description', $json);
+    }
 }
