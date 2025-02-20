@@ -54,4 +54,35 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $response = $this->withToken($json['access_token'], $json['token_type'])->get('/bar');
         $response->assertForbidden();
     }
+
+    public function testPublicClient()
+    {
+        $client = ClientFactory::new()->asClientCredentials()->asPublic()->create();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+        ])->assertUnauthorized()->json();
+
+        $this->assertSame('invalid_client', $json['error']);
+        $this->assertSame('Client authentication failed', $json['error_description']);
+    }
+
+    public function testUnauthorizedClient()
+    {
+        $client = ClientFactory::new()->create();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+        ])->assertBadRequest()->json();
+
+        $this->assertSame('unauthorized_client', $json['error']);
+        $this->assertSame(
+            'The authenticated client is not authorized to use this authorization grant type.',
+            $json['error_description']
+        );
+    }
 }

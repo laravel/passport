@@ -338,4 +338,67 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertSessionHas('promptedForLogin', true);
         $response->assertRedirectToRoute('login');
     }
+
+    public function testUnauthorizedClient()
+    {
+        $client = ClientFactory::new()->create([
+            'grant_types' => [],
+        ]);
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $client->redirect_uris[0],
+            'response_type' => 'code',
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+
+        $json = $this->get('/oauth/authorize?'.$query)
+            ->assertBadRequest()
+            ->assertSessionMissing(['authRequest', 'authToken'])
+            ->json();
+
+        $this->assertSame('unauthorized_client', $json['error']);
+        $this->assertSame(
+            'The authenticated client is not authorized to use this authorization grant type.',
+            $json['error_description']
+        );
+    }
+
+    public function testIssueAccessTokenWithoutRefreshToken()
+    {
+        $client = ClientFactory::new()->create([
+            'grant_types' => ['authorization_code'],
+        ]);
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+
+        $authToken = $this->get('/oauth/authorize?'.$query)
+            ->assertOk()
+            ->json('authToken');
+
+        $response = $this->post('/oauth/authorize', ['auth_token' => $authToken])->assertRedirect();
+        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'redirect_uri' => $redirect,
+            'code' => $params['code'],
+        ])->assertOk()->json();
+
+        $this->assertArrayHasKey('access_token', $json);
+        $this->assertArrayNotHasKey('refresh_token', $json);
+        $this->assertSame('Bearer', $json['token_type']);
+        $this->assertArrayHasKey('expires_in', $json);
+    }
 }
