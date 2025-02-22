@@ -156,6 +156,7 @@ class ClientRepository
      * Store a new authorization code grant client.
      *
      * @param  string[]  $redirectUris
+     * @param  \Laravel\Passport\HasApiTokens|null  $user
      */
     public function createAuthorizationCodeGrantClient(
         string $name,
