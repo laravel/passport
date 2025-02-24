@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.4.1...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.4.2...12.x)
+
+## [v12.4.2](https://github.com/laravel/passport/compare/v12.4.1...v12.4.2) - 2025-02-12
+
+* [12.x] Update property annotation for $userId to match constructor type by [@ukkok](https://github.com/ukkok) in https://github.com/laravel/passport/pull/1805
 
 ## [v12.4.1](https://github.com/laravel/passport/compare/v12.4.0...v12.4.1) - 2025-01-28
 
