@@ -171,7 +171,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
@@ -203,7 +203,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
@@ -231,7 +231,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
@@ -256,7 +256,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
@@ -289,7 +289,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], Passport::tokenEncryptionKey($encrypter), 'HS256'), false)
         );
@@ -329,7 +329,7 @@ class TokenGuardTest extends TestCase
             JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], Passport::tokenEncryptionKey($encrypter), 'HS256')
         );
@@ -361,7 +361,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
@@ -386,7 +386,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->subMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
@@ -536,7 +536,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'jti' => 'token',
+                'csrf' => 'token',
                 'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );

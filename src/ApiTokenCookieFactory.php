@@ -49,7 +49,7 @@ class ApiTokenCookieFactory
     {
         return JWT::encode([
             'sub' => $userId,
-            'jti' => $csrfToken,
+            'csrf' => $csrfToken,
             'exp' => $expiration,
         ], Passport::tokenEncryptionKey($this->encrypter), 'HS256');
     }
