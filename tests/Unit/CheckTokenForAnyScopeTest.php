@@ -112,7 +112,7 @@ class CheckTokenForAnyScopeTest extends TestCase
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(true);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 
@@ -131,7 +131,7 @@ class CheckTokenForAnyScopeTest extends TestCase
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(false);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 

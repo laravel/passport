@@ -85,7 +85,7 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
 
         $refreshToken = $json['refresh_token'];
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();

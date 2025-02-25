@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
+use Laravel\Passport\Contracts\TokenAuthenticatable;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
@@ -49,7 +50,7 @@ class PasswordGrantTest extends PassportTestCase
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -78,7 +79,7 @@ class PasswordGrantTest extends PassportTestCase
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -120,7 +121,7 @@ class PasswordGrantTest extends PassportTestCase
 
         Route::get('/foo', fn (Request $request) => response()->json([
             'user' => $request->user(),
-            'token' => $request->user()->token(),
+            'token' => $request->user()->currentAccessToken(),
         ]))->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -140,7 +141,7 @@ class PasswordGrantTest extends PassportTestCase
 
         Route::get('/bar', fn (Request $request) => response()->json([
             'user' => $request->user(),
-            'token' => $request->user()->token(),
+            'token' => $request->user()->currentAccessToken(),
         ]))->middleware('auth:api-admins');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/bar')->json();
@@ -190,7 +191,7 @@ class PasswordGrantTest extends PassportTestCase
     }
 }
 
-class AdminProviderPasswordStub extends Authenticatable
+class AdminProviderPasswordStub extends Authenticatable implements TokenAuthenticatable
 {
     use HasApiTokens;
 

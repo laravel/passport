@@ -60,8 +60,8 @@ abstract class ValidateToken
         // If the user is authenticated and already has an access token set via
         // the token guard, there's no need to validate the request's bearer
         // token again, so we'll return the access token as the valid one.
-        if ($request->user()?->token()) {
-            return $request->user()->token();
+        if ($request->user()?->currentAccessToken()) {
+            return $request->user()->currentAccessToken();
         }
 
         // Otherwise, we will convert the request to a PSR-7 implementation and

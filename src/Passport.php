@@ -333,8 +333,9 @@ class Passport
     /**
      * Set the current user for the application with the given scopes.
      *
-     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
      * @param  string[]  $scopes
+     * @return \Laravel\Passport\Contracts\TokenAuthenticatable
      */
     public static function actingAs(Authenticatable $user, array $scopes = [], ?string $guard = 'api'): Authenticatable
     {

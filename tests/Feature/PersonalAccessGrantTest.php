@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
+use Laravel\Passport\Contracts\TokenAuthenticatable;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
@@ -67,7 +68,7 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertSame(['*'], $token->scopes);
         $this->assertSame('test', $token->name);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($result->accessToken)->get('/foo')->json();
@@ -141,7 +142,7 @@ class PersonalAccessGrantTest extends PassportTestCase
 
         $response = $this->post('/oauth/token', [
             'grant_type' => 'personal_access',
-            'provider' => $user->provider(),
+            'provider' => $user->getProviderName(),
             'user_id' => $user->getKey(),
             'scope' => '',
         ]);
@@ -157,14 +158,14 @@ class PersonalAccessGrantTest extends PassportTestCase
     }
 }
 
-class AdminProviderStub extends Authenticatable
+class AdminProviderStub extends Authenticatable implements TokenAuthenticatable
 {
     use HasApiTokens;
 
     protected $attributes = ['id' => 1];
 }
 
-class CustomerProviderStub extends Authenticatable
+class CustomerProviderStub extends Authenticatable implements TokenAuthenticatable
 {
     use HasApiTokens;
 

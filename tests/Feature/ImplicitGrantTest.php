@@ -67,7 +67,7 @@ class ImplicitGrantTest extends PassportTestCase
         $this->assertSame('Bearer', $params['token_type']);
         $this->assertSame('31536000', $params['expires_in']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($params['access_token'], $params['token_type'])->get('/foo')->json();

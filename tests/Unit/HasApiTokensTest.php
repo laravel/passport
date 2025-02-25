@@ -5,6 +5,7 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Container\Container;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\TokenAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
@@ -31,7 +32,7 @@ class HasApiTokensTest extends TestCase
     }
 }
 
-class HasApiTokensTestStub extends Authenticatable
+class HasApiTokensTestStub extends Authenticatable implements TokenAuthenticatable
 {
     use HasApiTokens;
 

@@ -62,7 +62,7 @@ class TokenGuardTest extends TestCase
         $user = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
     }
 
     public function test_user_is_resolved_only_once()
@@ -98,7 +98,7 @@ class TokenGuardTest extends TestCase
         $user2 = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
         $this->assertSame($user, $user2);
     }
 
