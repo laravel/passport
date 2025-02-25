@@ -15,7 +15,7 @@ trait HasApiTokens
     /**
      * The current access token for the authentication user.
      */
-    protected ?TokenAuthorizable $accessToken;
+    protected ?TokenAuthorizable $accessToken = null;
 
     /**
      * Get all of the user's registered OAuth clients.
