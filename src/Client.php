@@ -4,7 +4,7 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Concerns\HasVersion7Uuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +17,7 @@ class Client extends Model
     /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Laravel\Passport\Database\Factories\ClientFactory> */
     use HasFactory;
     use ResolvesInheritedScopes;
-    use HasVersion7Uuids;
+    use HasUuids;
 
     /**
      * The database table used by the model.
