@@ -256,7 +256,9 @@ class TokenGuard implements Guard
      */
     protected function validCsrf(array $token): bool
     {
-        return isset($token['csrf']) && hash_equals($token['csrf'], $this->getTokenFromRequest());
+        return isset($token['csrf']) && hash_equals(
+            $token['csrf'], $this->getTokenFromRequest()
+        );
     }
 
     /**
