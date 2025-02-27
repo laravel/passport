@@ -56,7 +56,7 @@ class TokenGuard implements Guard
     /**
      * Get the user for the incoming request.
      *
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function user(): ?Authenticatable
     {
@@ -120,7 +120,7 @@ class TokenGuard implements Guard
     /**
      * Authenticate the incoming request via the Bearer token.
      *
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaBearerToken(): ?Authenticatable
     {
@@ -181,7 +181,7 @@ class TokenGuard implements Guard
     /**
      * Authenticate the incoming request via the token cookie.
      *
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaCookie(): ?Authenticatable
     {

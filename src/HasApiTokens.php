@@ -9,7 +9,7 @@ use Laravel\Passport\Contracts\TokenAuthorizable;
 use LogicException;
 
 /**
- * @phpstan-require-implements \Laravel\Passport\Contracts\TokenAuthenticatable
+ * @phpstan-require-implements \Laravel\Passport\Contracts\OAuthenticatable
  */
 trait HasApiTokens
 {

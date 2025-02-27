@@ -3,7 +3,7 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Laravel\Passport\Contracts\TokenAuthenticatable;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
@@ -27,12 +27,12 @@ class HasApiTokensTest extends PassportTestCase
     }
 }
 
-class AdminHasApiTokensStub extends Authenticatable implements TokenAuthenticatable
+class AdminHasApiTokensStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 }
 
-class CustomerHasApiTokensStub extends Authenticatable implements TokenAuthenticatable
+class CustomerHasApiTokensStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 }

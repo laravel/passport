@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Passport\PersonalAccessTokenResult;
 
-interface TokenAuthenticatable extends Authenticatable
+interface OAuthenticatable extends Authenticatable
 {
     /**
      * Get all the user's registered OAuth applications.

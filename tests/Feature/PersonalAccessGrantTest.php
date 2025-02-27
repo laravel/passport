@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
-use Laravel\Passport\Contracts\TokenAuthenticatable;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
@@ -158,14 +158,14 @@ class PersonalAccessGrantTest extends PassportTestCase
     }
 }
 
-class AdminProviderStub extends Authenticatable implements TokenAuthenticatable
+class AdminProviderStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 
     protected $attributes = ['id' => 1];
 }
 
-class CustomerProviderStub extends Authenticatable implements TokenAuthenticatable
+class CustomerProviderStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 

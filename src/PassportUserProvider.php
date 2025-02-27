@@ -20,7 +20,7 @@ class PassportUserProvider implements UserProvider
      * Retrieve a user by their unique identifier.
      *
      * @param  string|int  $identifier
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function retrieveById($identifier): ?Authenticatable
     {
@@ -32,7 +32,7 @@ class PassportUserProvider implements UserProvider
      *
      * @param  string|int  $identifier
      * @param  string  $token
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function retrieveByToken($identifier, #[\SensitiveParameter] $token): ?Authenticatable
     {
@@ -42,7 +42,7 @@ class PassportUserProvider implements UserProvider
     /**
      * Update the "remember me" token for the given user in storage.
      *
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @param  string  $token
      * @return void
      */
@@ -55,7 +55,7 @@ class PassportUserProvider implements UserProvider
      * Retrieve a user by the given credentials.
      *
      * @param  array  $credentials
-     * @return \Laravel\Passport\Contracts\TokenAuthenticatable|null
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function retrieveByCredentials(#[\SensitiveParameter] array $credentials): ?Authenticatable
     {
@@ -65,7 +65,7 @@ class PassportUserProvider implements UserProvider
     /**
      * Validate a user against the given credentials.
      *
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @param  array  $credentials
      * @return bool
      */
@@ -77,7 +77,7 @@ class PassportUserProvider implements UserProvider
     /**
      * Rehash the user's password if required and supported.
      *
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @param  array  $credentials
      * @param  bool  $force
      * @return void

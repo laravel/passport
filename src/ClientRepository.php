@@ -33,7 +33,7 @@ class ClientRepository
      *
      * @deprecated Use $user->oauthApps()->find()
      *
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      */
     public function findForUser(string|int $clientId, Authenticatable $user): ?Client
     {
@@ -45,7 +45,7 @@ class ClientRepository
      *
      * @deprecated Use $user->oauthApps()
      *
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @return \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client>
      */
     public function forUser(Authenticatable $user): Collection
@@ -81,7 +81,7 @@ class ClientRepository
      *
      * @param  string[]  $grantTypes
      * @param  string[]  $redirectUris
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable|null  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
      */
     protected function create(
         string $name,
@@ -157,7 +157,7 @@ class ClientRepository
      * Store a new authorization code grant client.
      *
      * @param  string[]  $redirectUris
-     * @param  \Laravel\Passport\Contracts\TokenAuthenticatable|null  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
      */
     public function createAuthorizationCodeGrantClient(
         string $name,
