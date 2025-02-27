@@ -26,7 +26,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -61,7 +61,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -105,7 +105,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -146,7 +146,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -190,7 +190,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -235,7 +235,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',

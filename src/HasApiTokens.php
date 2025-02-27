@@ -4,6 +4,7 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Passport\Contracts\TokenAuthorizable;
 use LogicException;
 
@@ -20,11 +21,23 @@ trait HasApiTokens
     /**
      * Get all of the user's registered OAuth clients.
      *
+     * @deprecated Use oauthApps()
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Client, $this>
      */
     public function clients(): HasMany
     {
         return $this->hasMany(Passport::clientModel(), 'user_id');
+    }
+
+    /**
+     * Get all of the user's registered OAuth applications.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\Laravel\Passport\Client, $this>
+     */
+    public function oauthApps(): MorphMany
+    {
+        return $this->morphMany(Passport::clientModel(), 'owner');
     }
 
     /**

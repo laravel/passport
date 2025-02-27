@@ -31,7 +31,7 @@ class ClientRepository
     /**
      * Get a client instance for the given ID and user ID.
      *
-     * @deprecated Use $user->clients()->find()
+     * @deprecated Use $user->oauthApps()->find()
      *
      * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
      */
@@ -43,7 +43,7 @@ class ClientRepository
     /**
      * Get the client instances for the given user ID.
      *
-     * @deprecated Use $user->clients()
+     * @deprecated Use $user->oauthApps()
      *
      * @param  \Laravel\Passport\Contracts\TokenAuthenticatable  $user
      * @return \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Client>
@@ -63,7 +63,6 @@ class ClientRepository
         return Passport::client()
             ->newQuery()
             ->where('revoked', false)
-            ->whereNull('user_id')
             ->where(function (Builder $query) use ($provider): void {
                 $query->when($provider === config('auth.guards.api.provider'), function (Builder $query): void {
                     $query->orWhereNull('provider');
@@ -113,9 +112,11 @@ class ClientRepository
             ]),
         ];
 
-        return $user
-            ? $user->clients()->forceCreate($attributes)
-            : $client->newQuery()->forceCreate($attributes);
+        return match (true) {
+            ! is_null($user) && in_array('user_id', $columns) => $user->clients()->forceCreate($attributes),
+            ! is_null($user) => $user->oauthApps()->forceCreate($attributes),
+            default => $client->newQuery()->forceCreate($attributes),
+        };
     }
 
     /**

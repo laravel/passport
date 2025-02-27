@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
@@ -74,6 +75,8 @@ class Client extends Model
     /**
      * Get the user that the client belongs to.
      *
+     * @deprecated Use owner()
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Foundation\Auth\User, $this>
      */
     public function user(): BelongsTo
@@ -83,6 +86,16 @@ class Client extends Model
         return $this->belongsTo(
             config("auth.providers.$provider.model")
         );
+    }
+
+    /**
+     * Get the owner of the registered client.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Foundation\Auth\User, $this>
+     */
+    public function owner(): MorphTo
+    {
+        return $this->morphTo('owner');
     }
 
     /**
@@ -158,7 +171,11 @@ class Client extends Model
      */
     public function firstParty(): bool
     {
-        return empty($this->user_id);
+        if (array_key_exists('user_id', $this->attributes)) {
+            return empty($this->user_id);
+        }
+
+        return empty($this->owner_id);
     }
 
     /**

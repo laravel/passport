@@ -10,11 +10,11 @@ use Laravel\Passport\PersonalAccessTokenResult;
 interface TokenAuthenticatable extends Authenticatable
 {
     /**
-     * Get all the user's registered OAuth clients.
+     * Get all the user's registered OAuth applications.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Client, \Illuminate\Foundation\Auth\User>|\Illuminate\Database\Eloquent\Relations\MorphMany<\Laravel\Passport\Client, \Illuminate\Foundation\Auth\User>
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\Laravel\Passport\Client, \Illuminate\Foundation\Auth\User>
      */
-    public function clients(): HasMany|MorphMany;
+    public function oauthApps(): MorphMany;
 
     /**
      * Get all the access tokens for the user.
