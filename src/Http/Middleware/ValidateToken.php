@@ -24,22 +24,21 @@ abstract class ValidateToken
     /**
      * Specify the parameters for the middleware.
      *
-     * @param  string[]|string  ...$params
+     * @param  string[]|string  $param
      */
-    public static function using(...$params): string
+    public static function using(array|string $param, string ...$params): string
     {
-        if (is_array($params[0])) {
-            return static::class.':'.implode(',', $params[0]);
+        if (is_array($param)) {
+            return static::class.':'.implode(',', $param);
         }
 
-        return static::class.':'.implode(',', $params);
+        return static::class.':'.implode(',', [$param, ...$params]);
     }
 
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @param  string[]|string  ...$params
      */
     public function handle(Request $request, Closure $next, string ...$params): Response
     {
