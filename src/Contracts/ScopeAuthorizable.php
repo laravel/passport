@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Contracts;
 
-interface TokenAuthorizable
+interface ScopeAuthorizable
 {
     /**
      * Determine if the token has a given scope.

@@ -5,7 +5,7 @@ namespace Laravel\Passport;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Laravel\Passport\Contracts\TokenAuthorizable;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use LogicException;
 
 /**
@@ -16,7 +16,7 @@ trait HasApiTokens
     /**
      * The current access token for the authentication user.
      */
-    protected ?TokenAuthorizable $accessToken = null;
+    protected ?ScopeAuthorizable $accessToken = null;
 
     /**
      * Get all of the user's registered OAuth clients.
@@ -64,7 +64,7 @@ trait HasApiTokens
     /**
      * Get the access token currently associated with the user.
      */
-    public function token(): ?TokenAuthorizable
+    public function token(): ?ScopeAuthorizable
     {
         return $this->currentAccessToken();
     }
@@ -72,7 +72,7 @@ trait HasApiTokens
     /**
      * Get the access token currently associated with the user.
      */
-    public function currentAccessToken(): ?TokenAuthorizable
+    public function currentAccessToken(): ?ScopeAuthorizable
     {
         return $this->accessToken;
     }
@@ -126,7 +126,7 @@ trait HasApiTokens
     /**
      * Set the current access token for the user.
      */
-    public function withAccessToken(?TokenAuthorizable $accessToken): static
+    public function withAccessToken(?ScopeAuthorizable $accessToken): static
     {
         $this->accessToken = $accessToken;
 

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
-use Laravel\Passport\Contracts\TokenAuthorizable;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -19,7 +19,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @property string $oauth_user_id
  * @property string[] $oauth_scopes
  */
-class AccessToken implements TokenAuthorizable, Arrayable, Jsonable, JsonSerializable
+class AccessToken implements ScopeAuthorizable, Arrayable, Jsonable, JsonSerializable
 {
     use ResolvesInheritedScopes, ForwardsCalls;
 

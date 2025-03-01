@@ -43,12 +43,12 @@ interface OAuthenticatable extends Authenticatable
     /**
      * Get the access token currently associated with the user.
      */
-    public function currentAccessToken(): ?TokenAuthorizable;
+    public function currentAccessToken(): ?ScopeAuthorizable;
 
     /**
      * Set the current access token for the user.
      */
-    public function withAccessToken(?TokenAuthorizable $accessToken): static;
+    public function withAccessToken(?ScopeAuthorizable $accessToken): static;
 
     /**
      * Get the user provider name.
