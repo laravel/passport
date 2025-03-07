@@ -156,7 +156,7 @@ class ClientRepository
     /**
      * Store a new device authorization grant client.
      *
-     * @param  \Laravel\Passport\HasApiTokens|null  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
      */
     public function createDeviceAuthorizationGrantClient(
         string $name,
