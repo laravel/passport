@@ -46,6 +46,7 @@ class PurgeCommand extends Command
         Passport::token()->newQuery()->where($constraint)->delete();
         Passport::authCode()->newQuery()->where($constraint)->delete();
         Passport::refreshToken()->newQuery()->where($constraint)->delete();
+        Passport::deviceCode()->newQuery()->where($constraint)->delete();
 
         $this->components->info(sprintf('Purged %s.', implode(' and ', array_filter([
             $revoked ? 'revoked items' : null,
