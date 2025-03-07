@@ -147,7 +147,7 @@ class ClientCommand extends Command
             ? ! $this->option('public')
             : $this->confirm('Would you like to make this client confidential?', true);
 
-        $enableDeviceFlow = $this->confirm('Would you like to enable device authorization flow for this client?');
+        $enableDeviceFlow = $this->confirm('Would you like to enable the device authorization flow for this client?');
 
         return $clients->createAuthorizationCodeGrantClient(
             $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow
