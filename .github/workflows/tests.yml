@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.2, 8.3]
-        laravel: [11]
+        php: [8.2, 8.3, 8.4]
+        laravel: [11, 12]
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
@@ -36,8 +36,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-           composer require "illuminate/contracts=^${{ matrix.laravel }}" --no-update
-           composer update --prefer-dist --no-interaction --no-progress
+           composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts=^${{ matrix.laravel }}"
 
       - name: Execute tests
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit ${{ matrix.laravel >= 10 && '--display-deprecations' || '' }}
