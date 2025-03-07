@@ -18,15 +18,18 @@ class Client implements ClientEntityInterface
      */
     public function __construct(
         string $identifier,
-        string $name,
-        array $redirectUri,
+        ?string $name = null,
+        array $redirectUri = [],
         bool $isConfidential = false,
         public ?string $provider = null,
         public array $grantTypes = [],
     ) {
         $this->setIdentifier($identifier);
 
-        $this->name = $name;
+        if (! is_null($name)) {
+            $this->name = $name;
+        }
+
         $this->isConfidential = $isConfidential;
         $this->redirectUri = $redirectUri;
     }
