@@ -1,6 +1,23 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.3.0...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.4.2...12.x)
+
+## [v12.4.2](https://github.com/laravel/passport/compare/v12.4.1...v12.4.2) - 2025-02-12
+
+* [12.x] Update property annotation for $userId to match constructor type by [@ukkok](https://github.com/ukkok) in https://github.com/laravel/passport/pull/1805
+
+## [v12.4.1](https://github.com/laravel/passport/compare/v12.4.0...v12.4.1) - 2025-01-28
+
+* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1803
+
+## [v12.4.0](https://github.com/laravel/passport/compare/v12.3.1...v12.4.0) - 2025-01-13
+
+* [12.x] Supports PHP 8.4 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1799
+
+## [v12.3.1](https://github.com/laravel/passport/compare/v12.3.0...v12.3.1) - 2024-11-11
+
+* Update logo to support dark/light theme by [@milewski](https://github.com/milewski) in https://github.com/laravel/passport/pull/1787
+* Fix repeated word "the" in upgrade guide by [@caendesilva](https://github.com/caendesilva) in https://github.com/laravel/passport/pull/1798
 
 ## [v12.3.0](https://github.com/laravel/passport/compare/v12.2.1...v12.3.0) - 2024-08-05
 
