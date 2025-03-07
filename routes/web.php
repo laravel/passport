@@ -15,16 +15,16 @@ Route::get('/authorize', [
     'middleware' => 'web',
 ]);
 
-Route::post('/device/code', [
-    'uses' => 'DeviceCodeController',
-    'as' => 'device.code',
-    'middleware' => 'throttle',
-]);
-
 Route::get('/device', [
     'uses' => 'DeviceUserCodeController',
     'as' => 'device',
     'middleware' => 'web',
+]);
+
+Route::post('/device/code', [
+    'uses' => 'DeviceCodeController',
+    'as' => 'device.code',
+    'middleware' => 'throttle',
 ]);
 
 $guard = config('passport.guard', null);

@@ -110,9 +110,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->when([
             AuthorizationController::class,
             DeviceAuthorizationController::class,
-        ])
-            ->needs(StatefulGuard::class)
-            ->give(fn () => Auth::guard(config('passport.guard', null)));
+        ])->needs(StatefulGuard::class)->give(fn () => Auth::guard(config('passport.guard', null)));
 
         $this->app->singleton(ClientRepository::class);
 
