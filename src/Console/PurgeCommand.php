@@ -4,7 +4,7 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Laravel\Passport\Passport;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -36,10 +36,10 @@ class PurgeCommand extends Command
         $revoked = $this->option('revoked') || ! $this->option('expired');
 
         $expired = $this->option('expired') || ! $this->option('revoked')
-            ? Carbon::now()->subHours($this->option('hours'))
+            ? Date::now()->subHours($this->option('hours'))
             : false;
 
-        $constraint = fn (Builder $query) => $query
+        $constraint = fn (Builder $query): Builder => $query
             ->when($revoked, fn () => $query->orWhere('revoked', true))
             ->when($expired, fn () => $query->orWhere('expires_at', '<', $expired));
 

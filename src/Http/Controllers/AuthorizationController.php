@@ -45,7 +45,7 @@ class AuthorizationController
         AuthorizationViewResponse $viewResponse
     ): Response|AuthorizationViewResponse {
         $authRequest = $this->withErrorHandling(
-            fn () => $this->server->validateAuthorizationRequest($psrRequest),
+            fn (): AuthorizationRequestInterface => $this->server->validateAuthorizationRequest($psrRequest),
             ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
         );
 
@@ -118,10 +118,10 @@ class AuthorizationController
             ['user_id', '=', $user->getAuthIdentifier()],
             ['revoked', '=', false],
             ['expires_at', '>', Date::now()],
-        ])->pluck('scopes');
+        ])->pluck('scopes')->flatten();
 
         return $tokensScopes->isNotEmpty() &&
-            collect($scopes)->pluck('id')->diff($tokensScopes->flatten())->isEmpty();
+            collect($scopes)->pluck('id')->diff($tokensScopes)->isEmpty();
     }
 
     /**
@@ -145,6 +145,6 @@ class AuthorizationController
     {
         $request->session()->put('promptedForLogin', true);
 
-        throw new AuthenticationException;
+        throw new AuthenticationException(guards: isset($this->guard->name) ? [$this->guard->name] : []);
     }
 }

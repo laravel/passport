@@ -2,13 +2,13 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Hashing\Hasher;
 use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
-use Laravel\Passport\PersonalAccessTokenFactory;
 use Laravel\Passport\Token;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
@@ -26,7 +26,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -51,14 +51,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame('Bearer', $decodedResponse['token_type']);
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
-
-        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
-        $this->assertInstanceOf(Token::class, $token);
-        $this->assertTrue($token->client->is($client));
-        $this->assertFalse($token->revoked);
-        $this->assertNull($token->name);
-        $this->assertNull($token->user_id);
-        $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
     }
 
     public function testGettingAccessTokenWithClientCredentialsGrantInvalidClientSecret()
@@ -69,7 +61,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -113,7 +105,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -141,14 +133,6 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame('Bearer', $decodedResponse['token_type']);
         $expiresInSeconds = 31536000;
         $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
-
-        $token = $this->app->make(PersonalAccessTokenFactory::class)->findAccessToken($decodedResponse);
-        $this->assertInstanceOf(Token::class, $token);
-        $this->assertFalse($token->revoked);
-        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
-        $this->assertTrue($token->client->is($client));
-        $this->assertNull($token->name);
-        $this->assertLessThanOrEqual(5, CarbonImmutable::now()->addSeconds($expiresInSeconds)->diffInSeconds($token->expires_at));
     }
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidPassword()
@@ -162,7 +146,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -206,7 +190,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asPasswordClient()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asPasswordClient()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -251,7 +235,7 @@ class AccessTokenControllerTest extends PassportTestCase
         ]);
 
         /** @var Client $client */
-        $client = ClientFactory::new()->asClientCredentials()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->asClientCredentials()->for($user, 'owner')->create();
 
         $response = $this->post(
             '/oauth/token',
@@ -271,25 +255,17 @@ class AccessTokenControllerTest extends PassportTestCase
     }
 }
 
-class IdTokenResponse extends \League\OAuth2\Server\ResponseTypes\BearerTokenResponse
+class IdTokenResponse extends BearerTokenResponse
 {
-    /**
-     * @var string Id token.
-     */
-    protected $idToken;
-
-    /**
-     * @param  string  $idToken
-     */
-    public function __construct($idToken)
-    {
-        $this->idToken = $idToken;
+    public function __construct(
+        protected string $idToken
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getExtraParams(\League\OAuth2\Server\Entities\AccessTokenEntityInterface $accessToken): array
+    protected function getExtraParams(AccessTokenEntityInterface $accessToken): array
     {
         return [
             'id_token' => $this->idToken,

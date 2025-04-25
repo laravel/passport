@@ -13,6 +13,6 @@ trait ConvertsPsrResponses
      */
     public function convertResponse(ResponseInterface $psrResponse): Response
     {
-        return (new HttpFoundationFactory())->createResponse($psrResponse);
+        return (new HttpFoundationFactory)->createResponse($psrResponse);
     }
 }

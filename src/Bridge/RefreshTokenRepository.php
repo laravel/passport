@@ -31,12 +31,12 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity): void
     {
-        Passport::refreshToken()->newQuery()->create([
+        Passport::refreshToken()->forceFill([
             'id' => $id = $refreshTokenEntity->getIdentifier(),
             'access_token_id' => $accessTokenId = $refreshTokenEntity->getAccessToken()->getIdentifier(),
             'revoked' => false,
             'expires_at' => $refreshTokenEntity->getExpiryDateTime(),
-        ]);
+        ])->save();
 
         $this->events->dispatch(new RefreshTokenCreated($id, $accessTokenId));
     }

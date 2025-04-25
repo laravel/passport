@@ -112,7 +112,7 @@ class CheckTokenTest extends TestCase
         $middleware = new CheckToken($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('cant')->with('foo')->andReturn(false);
         $token->shouldReceive('cant')->with('bar')->andReturn(false);
 
@@ -131,7 +131,7 @@ class CheckTokenTest extends TestCase
         $middleware = new CheckToken($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('cant')->with('foo')->andReturn(true);
 
         $middleware->handle($request, function () {

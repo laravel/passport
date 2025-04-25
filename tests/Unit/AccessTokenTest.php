@@ -5,7 +5,6 @@ namespace Laravel\Passport\Tests\Unit;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Passport;
 use PHPUnit\Framework\TestCase;
-use ReflectionObject;
 
 class AccessTokenTest extends TestCase
 {
@@ -87,10 +86,7 @@ class AccessTokenTest extends TestCase
     {
         $token = new AccessToken;
 
-        $reflector = new ReflectionObject($token);
-        $method = $reflector->getMethod('resolveInheritedScopes');
-        $method->setAccessible(true);
-        $inheritedScopes = $method->invoke($token, 'admin:webhooks:read');
+        $inheritedScopes = (fn () => $this->resolveInheritedScopes('admin:webhooks:read'))->call($token);
 
         $this->assertSame([
             'admin',

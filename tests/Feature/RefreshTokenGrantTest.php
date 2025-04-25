@@ -49,7 +49,7 @@ class RefreshTokenGrantTest extends PassportTestCase
         $this->assertSame(31536000, $newToken['expires_in']);
         $this->assertSame('Bearer', $newToken['token_type']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $this->getJson('/foo', [
@@ -95,7 +95,7 @@ class RefreshTokenGrantTest extends PassportTestCase
         $this->assertSame(31536000, $newToken['expires_in']);
         $this->assertSame('Bearer', $newToken['token_type']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $this->getJson('/foo', [

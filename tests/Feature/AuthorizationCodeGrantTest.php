@@ -78,7 +78,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertSame(31536000, $json['expires_in']);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -199,7 +199,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         parse_str(parse_url($location, PHP_URL_QUERY), $params);
 
         $this->assertStringStartsWith($redirect.'?', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }

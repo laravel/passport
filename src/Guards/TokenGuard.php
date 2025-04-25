@@ -55,6 +55,8 @@ class TokenGuard implements Guard
 
     /**
      * Get the user for the incoming request.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function user(): ?Authenticatable
     {
@@ -117,6 +119,8 @@ class TokenGuard implements Guard
 
     /**
      * Authenticate the incoming request via the Bearer token.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaBearerToken(): ?Authenticatable
     {
@@ -161,7 +165,7 @@ class TokenGuard implements Guard
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
         // conversion for us to a new PSR-7 implementation from this Symfony request.
-        $psr = (new PsrHttpFactory())->createRequest($this->request);
+        $psr = (new PsrHttpFactory)->createRequest($this->request);
 
         try {
             return $this->server->validateAuthenticatedRequest($psr);
@@ -176,6 +180,8 @@ class TokenGuard implements Guard
 
     /**
      * Authenticate the incoming request via the token cookie.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaCookie(): ?Authenticatable
     {
@@ -209,11 +215,17 @@ class TokenGuard implements Guard
             return null;
         }
 
+        // Token's expiration time is checked using the "exp" claim during decoding, but
+        // legacy tokens may have an "expiry" claim instead of the standard "exp". So
+        // we must manually check token's expiry, if the "expiry" claim is present.
+        if (isset($token['expiry']) && time() >= $token['expiry']) {
+            return null;
+        }
+
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! Passport::$ignoreCsrfToken &&
-            (! $this->validCsrf($token) || time() >= $token['expiry'])) {
+        if (! Passport::$ignoreCsrfToken && ! $this->validCsrf($token)) {
             return null;
         }
 

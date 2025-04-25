@@ -20,12 +20,12 @@ class ClientControllerTest extends TestCase
 
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
-        $clientRepository = m::mock(ClientRepository::class);
-        $clientRepository->shouldReceive('forUser')->once()->with(1)
-            ->andReturn($clients = (new Client)->newCollection());
-
         $user = m::mock(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
+        $clientRepository = m::mock(ClientRepository::class);
+        $clientRepository->shouldReceive('forUser')->once()->with($user)
+            ->andReturn($clients = (new Client)->newCollection());
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);
@@ -114,18 +114,15 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_updated()
     {
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
         $clients = m::mock(ClientRepository::class);
         $client = m::mock(Client::class);
-        $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
+        $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
-
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => $user);
 
         $clients->shouldReceive('update')->once()->with(
             $client, 'client name', ['http://localhost']
@@ -152,17 +149,14 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
         $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
+        $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
-
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => $user);
 
         $clients->shouldReceive('update')->never();
 
@@ -177,18 +171,15 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_deleted()
     {
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
         $clients = m::mock(ClientRepository::class);
         $client = m::mock(Client::class);
-        $clients->shouldReceive('findForUser')->with(1, 1)->andReturn($client);
+        $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
-
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => $user);
 
         $clients->shouldReceive('delete')->once()->with(
             m::type(Client::class)
@@ -207,17 +198,14 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
         $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findForUser')->with(1, 1)->andReturnNull();
+        $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
-
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => $user);
 
         $clients->shouldReceive('delete')->never();
 
