@@ -1,6 +1,4 @@
 php:
   preset: laravel
-  enabled:
-    - nullable_type_declarations
 js: true
 css: true
