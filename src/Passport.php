@@ -404,7 +404,7 @@ class Passport
     {
         $file = ltrim($file, '/\\');
 
-        return static::$keyPath
+        return isset(static::$keyPath)
             ? rtrim(static::$keyPath, '/\\').DIRECTORY_SEPARATOR.$file
             : storage_path($file);
     }
