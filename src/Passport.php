@@ -82,7 +82,7 @@ class Passport
     /**
      * The storage location of the encryption keys.
      */
-    public static string|null $keyPath = null;
+    public static ?string $keyPath = null;
 
     /**
      * The access token entity class name.
