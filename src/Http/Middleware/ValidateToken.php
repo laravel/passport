@@ -5,6 +5,7 @@ namespace Laravel\Passport\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
@@ -54,7 +55,7 @@ abstract class ValidateToken
      *
      * @throws \Laravel\Passport\Exceptions\AuthenticationException
      */
-    protected function validateToken(Request $request): AccessToken
+    protected function validateToken(Request $request): ScopeAuthorizable
     {
         // If the user is authenticated and already has an access token set via
         // the token guard, there's no need to validate the request's bearer
@@ -80,5 +81,5 @@ abstract class ValidateToken
     /**
      * Validate the given access token.
      */
-    abstract protected function validate(AccessToken $token, string ...$params): void;
+    abstract protected function validate(ScopeAuthorizable $token, string ...$params): void;
 }
