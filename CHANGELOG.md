@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.1...13.x)
+
+## [v13.0.1](https://github.com/laravel/passport/compare/v13.0.0...v13.0.1) - 2025-05-07
+
+* [13.x] Fix access to undefined route by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1812
+* [13.x] Fix access to uninitialised typed static property by [@owenvoke](https://github.com/owenvoke) in https://github.com/laravel/passport/pull/1811
+* Use isset to check for initialisation by [@patrickomeara](https://github.com/patrickomeara) in https://github.com/laravel/passport/pull/1813
+* [13.x] Fix middleware type error by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1815
 
 ## [v13.0.0](https://github.com/laravel/passport/compare/v12.4.2...v13.0.0) - 2025-04-25
 
