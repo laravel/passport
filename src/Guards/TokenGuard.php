@@ -8,6 +8,7 @@ use Firebase\JWT\Key;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -269,10 +270,14 @@ class TokenGuard implements Guard
         $token = $this->request->header('X-CSRF-TOKEN');
 
         if (! $token && $header = $this->request->header('X-XSRF-TOKEN')) {
-            $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
+            try {
+                $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
+            } catch (DecryptException) {
+                $token = '';
+            }
         }
 
-        return $token;
+        return $token ?? '';
     }
 
     /**
