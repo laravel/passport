@@ -275,7 +275,7 @@ class TokenGuard implements Guard
             try {
                 $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
             } catch (DecryptException) {
-                $token = '';
+                $token = null;
             }
         }
 
