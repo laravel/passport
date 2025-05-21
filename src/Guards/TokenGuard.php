@@ -257,15 +257,17 @@ class TokenGuard implements Guard
      */
     protected function validCsrf(array $token): bool
     {
-        return isset($token['csrf']) && hash_equals(
-            $token['csrf'], $this->getTokenFromRequest()
-        );
+        $requestToken = $this->getTokenFromRequest();
+
+        return isset($token['csrf']) &&
+               is_string($requestToken) &&
+               hash_equals($token['csrf'], $requestToken);
     }
 
     /**
      * Get the CSRF token from the request.
      */
-    protected function getTokenFromRequest(): string
+    protected function getTokenFromRequest(): ?string
     {
         $token = $this->request->header('X-CSRF-TOKEN');
 
@@ -277,7 +279,7 @@ class TokenGuard implements Guard
             }
         }
 
-        return $token ?? '';
+        return $token;
     }
 
     /**
