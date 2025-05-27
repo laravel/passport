@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.1...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.2...13.x)
+
+## [v13.0.2](https://github.com/laravel/passport/compare/v13.0.1...v13.0.2) - 2025-05-27
+
+* Changed getTokenFromRequest method to handle null value and prevent type error by [@eldair](https://github.com/eldair) in https://github.com/laravel/passport/pull/1819
+* fix: possible php error if redirect column is an empty string by [@Tofandel](https://github.com/Tofandel) in https://github.com/laravel/passport/pull/1821
 
 ## [v13.0.1](https://github.com/laravel/passport/compare/v13.0.0...v13.0.1) - 2025-05-07
 
