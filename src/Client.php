@@ -141,7 +141,7 @@ class Client extends Model
     {
         return Attribute::make(
             get: fn (?string $value, array $attributes): array => match (true) {
-                isset($value) => $this->fromJson($value),
+                ! empty($value) => $this->fromJson($value),
                 ! empty($attributes['redirect']) => explode(',', $attributes['redirect']),
                 default => [],
             },
