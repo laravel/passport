@@ -378,6 +378,7 @@ class Passport
             fn (ServerRequestInterface $request) => $request
                 ->withAttribute('oauth_client_id', $client->getKey())
                 ->withAttribute('oauth_scopes', $scopes)
+                ->withAttribute('oauth_user_id', null)
         );
 
         app()->instance(ResourceServer::class, $mock);
