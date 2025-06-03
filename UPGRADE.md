@@ -99,6 +99,8 @@ The JSON API provided by Passport has been deprecated. If you need to continue u
 
 ### OAuth Client Table Changes
 
+PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
+
 Passport's `oauth_clients` table has been changed in several ways:
 
 * The `user_id` column has been replaced by the `owner_type` and `owner_id` columns.
