@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.2...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.3...13.x)
+
+## [v13.0.3](https://github.com/laravel/passport/compare/v13.0.2...v13.0.3) - 2025-06-02
+
+* [13.x] Fix object returned by mocked `validateAuthenticatedRequest()` method in `Passport::actingAsClient()` method by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1822
 
 ## [v13.0.2](https://github.com/laravel/passport/compare/v13.0.1...v13.0.2) - 2025-05-27
 
