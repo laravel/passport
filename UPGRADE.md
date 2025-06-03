@@ -97,6 +97,14 @@ The JSON API provided by Passport has been deprecated. If you need to continue u
         Passport::$registersJsonApiRoutes = true;
     }
 
+### OAuth Client Table Changes
+
+Passport's `oauth_clients` table has been changed in several ways:
+
+* The `user_id` column has been replaced by the `owner_type` and `owner_id` columns.
+* The `redirect` column has been replaced by the `redirect_uris` column. The new column needs to contains an array of urls.
+* The `personal_access_client` and `password_client` columns have been replaced by the `grant_types` column. The new column needs to contain an array of oauth2 grant types.
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes
