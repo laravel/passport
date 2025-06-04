@@ -114,14 +114,25 @@ class AuthorizationController
      */
     protected function hasGrantedScopes(Authenticatable $user, Client $client, array $scopes): bool
     {
-        $tokensScopes = $client->tokens()->where([
+        $activeTokens = $client->tokens()->where([
             ['user_id', '=', $user->getAuthIdentifier()],
             ['revoked', '=', false],
             ['expires_at', '>', Date::now()],
-        ])->pluck('scopes')->flatten();
+        ]);
 
-        return $tokensScopes->isNotEmpty() &&
-            collect($scopes)->pluck('id')->diff($tokensScopes)->isEmpty();
+        // If no specific scope is requested, we'll simply check whether the given
+        // user has any active tokens that grant access to the specified client
+        // In this case, comparing the granted scopes is no longer necessary.
+        if (empty($scopes)) {
+            return $activeTokens->exists();
+        }
+
+        // Otherwise, we list all previously granted scopes from the active tokens
+        // of the given user that authorize access to the specified client, and
+        // check whether the newly requested scopes are included in that set.
+        return collect($scopes)->pluck('id')->diff(
+            $activeTokens->pluck('scopes')->flatten()
+        )->isEmpty();
     }
 
     /**
