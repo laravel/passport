@@ -107,7 +107,7 @@ Passport's `oauth_clients` table has been changed in several ways:
 - The `redirect` column has been replaced by the `redirect_uris` column. The new column needs to store an array of URLs.
 - The `personal_access_client` and `password_client` columns have been replaced by the `grant_types` column. The new column needs to store an array of OAuth 2 grant types.
 
-Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
+Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
 
 ## Upgrading To 12.0 From 11.x
 
