@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.3...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.4...13.x)
+
+## [v13.0.4](https://github.com/laravel/passport/compare/v13.0.3...v13.0.4) - 2025-06-06
+
+* [13.x] Fix skipping authorization consent when no scopes are requested by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1825
+* [13.x] Document changes to `oauth_clients` table in upgrade guide by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1823
 
 ## [v13.0.3](https://github.com/laravel/passport/compare/v13.0.2...v13.0.3) - 2025-06-02
 
