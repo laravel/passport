@@ -351,6 +351,7 @@ class Passport
         $token = new AccessToken([
             'oauth_user_id' => $user->getAuthIdentifier(),
             'oauth_scopes' => $scopes,
+            'oauth_access_token_id' => null,
         ]);
 
         $user->withAccessToken($token);
