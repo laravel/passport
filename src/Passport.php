@@ -349,8 +349,8 @@ class Passport
     public static function actingAs(Authenticatable $user, array $scopes = [], ?string $guard = 'api'): Authenticatable
     {
         $token = new AccessToken([
-            'oauth_user_id' => $user->getAuthIdentifier(),
             'oauth_access_token_id' => null,
+            'oauth_user_id' => $user->getAuthIdentifier(),
             'oauth_scopes' => $scopes,
         ]);
 
