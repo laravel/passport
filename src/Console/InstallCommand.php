@@ -35,7 +35,14 @@ class InstallCommand extends Command
     {
         $this->call('passport:keys', ['--force' => $this->option('force'), '--length' => $this->option('length')]);
 
-        $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
+        //  Check if Passport migrations are already exist
+        $migrationFilesExist = collect(glob(database_path('migrations/*_create_oauth_*.php')))->isNotEmpty();
+
+        if (! $migrationFilesExist) {
+            $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
+        } else {
+            $this->components->info('Passport migration files already exist. Skipping publishing...');
+        }
 
         if ($this->option('uuids')) {
             $this->configureUuids();
