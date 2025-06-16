@@ -4,6 +4,8 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'passport:install')]
