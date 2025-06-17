@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.4...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.5...13.x)
+
+## [v13.0.5](https://github.com/laravel/passport/compare/v13.0.4...v13.0.5) - 2025-06-12
+
+* [13.x] Fix Exception Caused by Missing `AccessToken` Attributes by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1829
 
 ## [v13.0.4](https://github.com/laravel/passport/compare/v13.0.3...v13.0.4) - 2025-06-06
 
