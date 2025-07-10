@@ -47,7 +47,7 @@ trait HasApiTokens
      */
     public function tokens(): HasMany
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')
+        return $this->hasMany(Passport::tokenModel(), 'user_id', $this->getAuthIdentifierName())
             ->where(function (Builder $query): void {
                 $query->whereHas('client', function (Builder $query): void {
                     $query->where(function (Builder $query): void {
