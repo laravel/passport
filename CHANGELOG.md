@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.5...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.6...13.x)
+
+## [v13.0.6](https://github.com/laravel/passport/compare/v13.0.5...v13.0.6) - 2025-07-10
+
+* [13.x] Fix broken token relation when auth identifier is not PK by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1835
 
 ## [v13.0.5](https://github.com/laravel/passport/compare/v13.0.4...v13.0.5) - 2025-06-12
 
