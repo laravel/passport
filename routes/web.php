@@ -5,7 +5,7 @@ use Laravel\Passport\Passport;
 
 Route::post('/token', [
     'uses' => 'AccessTokenController@issueToken',
-    'as' => 'token',
+    'as' => 'token.issue',
     'middleware' => 'throttle',
 ]);
 
