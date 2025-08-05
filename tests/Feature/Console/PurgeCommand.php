@@ -1,6 +1,6 @@
 <?php
 
-namespace Console;
+namespace Laravel\Passport\Tests\Feature\Console;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;

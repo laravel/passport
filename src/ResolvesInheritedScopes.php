@@ -9,7 +9,7 @@ trait ResolvesInheritedScopes
      *
      * @param  string[]  $haystack
      */
-    protected function scopeExists(string $scope, array $haystack): bool
+    protected function scopeExistsIn(string $scope, array $haystack): bool
     {
         $scopes = Passport::$withInheritedScopes
             ? $this->resolveInheritedScopes($scope)

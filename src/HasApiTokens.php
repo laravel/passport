@@ -4,17 +4,24 @@ namespace Laravel\Passport;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use LogicException;
 
+/**
+ * @phpstan-require-implements \Laravel\Passport\Contracts\OAuthenticatable
+ */
 trait HasApiTokens
 {
     /**
      * The current access token for the authentication user.
      */
-    protected AccessToken|TransientToken|null $accessToken;
+    protected ?ScopeAuthorizable $accessToken = null;
 
     /**
      * Get all of the user's registered OAuth clients.
+     *
+     * @deprecated Use oauthApps()
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Client, $this>
      */
@@ -24,19 +31,29 @@ trait HasApiTokens
     }
 
     /**
+     * Get all of the user's registered OAuth applications.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany<\Laravel\Passport\Client, $this>
+     */
+    public function oauthApps(): MorphMany
+    {
+        return $this->morphMany(Passport::clientModel(), 'owner');
+    }
+
+    /**
      * Get all of the access tokens for the user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<\Laravel\Passport\Token, $this>
      */
     public function tokens(): HasMany
     {
-        return $this->hasMany(Passport::tokenModel(), 'user_id')
-            ->where(function (Builder $query) {
-                $query->whereHas('client', function (Builder $query) {
-                    $query->where(function (Builder $query) {
-                        $provider = $this->getProvider();
+        return $this->hasMany(Passport::tokenModel(), 'user_id', $this->getAuthIdentifierName())
+            ->where(function (Builder $query): void {
+                $query->whereHas('client', function (Builder $query): void {
+                    $query->where(function (Builder $query): void {
+                        $provider = $this->getProviderName();
 
-                        $query->when($provider === config('auth.guards.api.provider'), function (Builder $query) {
+                        $query->when($provider === config('auth.guards.api.provider'), function (Builder $query): void {
                             $query->orWhereNull('provider');
                         })->orWhere('provider', $provider);
                     });
@@ -45,19 +62,19 @@ trait HasApiTokens
     }
 
     /**
-     * Get the current access token being used by the user.
+     * Get the access token currently associated with the user.
      */
-    public function token(): AccessToken|TransientToken|null
+    public function token(): ?ScopeAuthorizable
     {
-        return $this->accessToken;
+        return $this->currentAccessToken();
     }
 
     /**
      * Get the access token currently associated with the user.
      */
-    public function currentAccessToken(): AccessToken|TransientToken|null
+    public function currentAccessToken(): ?ScopeAuthorizable
     {
-        return $this->token();
+        return $this->accessToken;
     }
 
     /**
@@ -69,12 +86,22 @@ trait HasApiTokens
     }
 
     /**
+     * Determine if the current API token is missing a given scope.
+     */
+    public function tokenCant(string $scope): bool
+    {
+        return ! $this->tokenCan($scope);
+    }
+
+    /**
      * Create a new personal access token for the user.
+     *
+     * @param  string[]  $scopes
      */
     public function createToken(string $name, array $scopes = []): PersonalAccessTokenResult
     {
         return app(PersonalAccessTokenFactory::class)->make(
-            $this->getAuthIdentifier(), $name, $scopes, $this->getProvider()
+            $this->getAuthIdentifier(), $name, $scopes, $this->getProviderName()
         );
     }
 
@@ -83,7 +110,7 @@ trait HasApiTokens
      *
      * @throws \LogicException
      */
-    public function getProvider(): string
+    public function getProviderName(): string
     {
         $providers = collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all();
 
@@ -99,7 +126,7 @@ trait HasApiTokens
     /**
      * Set the current access token for the user.
      */
-    public function withAccessToken(AccessToken|TransientToken|null $accessToken): static
+    public function withAccessToken(?ScopeAuthorizable $accessToken): static
     {
         $this->accessToken = $accessToken;
 

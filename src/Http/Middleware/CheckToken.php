@@ -2,7 +2,7 @@
 
 namespace Laravel\Passport\Http\Middleware;
 
-use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
 class CheckToken extends ValidateToken
@@ -12,7 +12,7 @@ class CheckToken extends ValidateToken
      *
      * @throws \Laravel\Passport\Exceptions\MissingScopeException
      */
-    protected function validate(AccessToken $token, string ...$params): void
+    protected function validate(ScopeAuthorizable $token, string ...$params): void
     {
         foreach ($params as $scope) {
             if ($token->cant($scope)) {

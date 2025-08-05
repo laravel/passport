@@ -2,12 +2,13 @@
 
 namespace Laravel\Passport;
 
-use Carbon\Carbon;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Laravel\Passport\Contracts\AuthorizationViewResponse;
 use Laravel\Passport\Contracts\DeviceAuthorizationViewResponse;
 use Laravel\Passport\Contracts\DeviceUserCodeViewResponse;
@@ -56,17 +57,17 @@ class Passport
     /**
      * The interval when access tokens expire.
      */
-    public static ?DateInterval $tokensExpireIn;
+    public static ?DateInterval $tokensExpireIn = null;
 
     /**
      * The date when refresh tokens expire.
      */
-    public static ?DateInterval $refreshTokensExpireIn;
+    public static ?DateInterval $refreshTokensExpireIn = null;
 
     /**
      * The date when personal access tokens expire.
      */
-    public static ?DateInterval $personalAccessTokensExpireIn;
+    public static ?DateInterval $personalAccessTokensExpireIn = null;
 
     /**
      * The name for API token cookies.
@@ -81,7 +82,7 @@ class Passport
     /**
      * The storage location of the encryption keys.
      */
-    public static string $keyPath;
+    public static ?string $keyPath = null;
 
     /**
      * The access token entity class name.
@@ -286,7 +287,7 @@ class Passport
         }
 
         return static::$tokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -300,7 +301,7 @@ class Passport
         }
 
         return static::$refreshTokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -314,7 +315,7 @@ class Passport
         }
 
         return static::$personalAccessTokensExpireIn = $date instanceof DateTimeInterface
-            ? Carbon::now()->diff($date)
+            ? Date::now()->diff($date)
             : $date;
     }
 
@@ -341,13 +342,11 @@ class Passport
     /**
      * Set the current user for the application with the given scopes.
      *
-     * @template TUserModel of \Laravel\Passport\HasApiTokens
-     *
-     * @param  TUserModel  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @param  string[]  $scopes
-     * @return TUserModel
+     * @return \Laravel\Passport\Contracts\OAuthenticatable
      */
-    public static function actingAs($user, array $scopes = [], ?string $guard = 'api')
+    public static function actingAs(Authenticatable $user, array $scopes = [], ?string $guard = 'api'): Authenticatable
     {
         $token = new AccessToken([
             'oauth_user_id' => $user->getAuthIdentifier(),
@@ -375,11 +374,12 @@ class Passport
     public static function actingAsClient(Client $client, array $scopes = [], ?string $guard = 'api'): Client
     {
         $mock = Mockery::mock(ResourceServer::class);
-        $mock->shouldReceive('validateAuthenticatedRequest')
-            ->andReturnUsing(function (ServerRequestInterface $request) use ($client, $scopes) {
-                return $request->withAttribute('oauth_client_id', $client->getKey())
-                    ->withAttribute('oauth_scopes', $scopes);
-            });
+        $mock->shouldReceive('validateAuthenticatedRequest')->andReturnUsing(
+            fn (ServerRequestInterface $request) => $request
+                ->withAttribute('oauth_client_id', $client->getKey())
+                ->withAttribute('oauth_scopes', $scopes)
+                ->withAttribute('oauth_user_id', null)
+        );
 
         app()->instance(ResourceServer::class, $mock);
 
@@ -405,7 +405,7 @@ class Passport
     {
         $file = ltrim($file, '/\\');
 
-        return static::$keyPath
+        return isset(static::$keyPath)
             ? rtrim(static::$keyPath, '/\\').DIRECTORY_SEPARATOR.$file
             : storage_path($file);
     }

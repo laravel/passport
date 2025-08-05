@@ -35,7 +35,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes,
         string $grantType,
         ClientEntityInterface $clientEntity,
-        string|null $userIdentifier = null,
+        ?string $userIdentifier = null,
         ?string $authCodeId = null
     ): array {
         return collect($scopes)

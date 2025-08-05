@@ -37,10 +37,10 @@ class InstallCommand extends Command
         $this->call('vendor:publish', ['--tag' => 'passport-config']);
         $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
 
-        if ($this->confirm('Would you like to run all pending database migrations?', true)) {
+        if ($this->components->confirm('Would you like to run all pending database migrations?', true)) {
             $this->call('migrate');
 
-            if ($this->confirm('Would you like to create the "personal access" grant client?', true)) {
+            if ($this->components->confirm('Would you like to create the "personal access" grant client?', true)) {
                 $this->call('passport:client', [
                     '--personal' => true,
                     '--name' => config('app.name'),

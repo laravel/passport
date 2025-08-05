@@ -1,6 +1,72 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.4.2...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.0.6...13.x)
+
+## [v13.0.6](https://github.com/laravel/passport/compare/v13.0.5...v13.0.6) - 2025-07-10
+
+* [13.x] Fix broken token relation when auth identifier is not PK by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1835
+
+## [v13.0.5](https://github.com/laravel/passport/compare/v13.0.4...v13.0.5) - 2025-06-12
+
+* [13.x] Fix Exception Caused by Missing `AccessToken` Attributes by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1829
+
+## [v13.0.4](https://github.com/laravel/passport/compare/v13.0.3...v13.0.4) - 2025-06-06
+
+* [13.x] Fix skipping authorization consent when no scopes are requested by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1825
+* [13.x] Document changes to `oauth_clients` table in upgrade guide by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1823
+
+## [v13.0.3](https://github.com/laravel/passport/compare/v13.0.2...v13.0.3) - 2025-06-02
+
+* [13.x] Fix object returned by mocked `validateAuthenticatedRequest()` method in `Passport::actingAsClient()` method by [@gdebrauwer](https://github.com/gdebrauwer) in https://github.com/laravel/passport/pull/1822
+
+## [v13.0.2](https://github.com/laravel/passport/compare/v13.0.1...v13.0.2) - 2025-05-27
+
+* Changed getTokenFromRequest method to handle null value and prevent type error by [@eldair](https://github.com/eldair) in https://github.com/laravel/passport/pull/1819
+* fix: possible php error if redirect column is an empty string by [@Tofandel](https://github.com/Tofandel) in https://github.com/laravel/passport/pull/1821
+
+## [v13.0.1](https://github.com/laravel/passport/compare/v13.0.0...v13.0.1) - 2025-05-07
+
+* [13.x] Fix access to undefined route by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1812
+* [13.x] Fix access to uninitialised typed static property by [@owenvoke](https://github.com/owenvoke) in https://github.com/laravel/passport/pull/1811
+* Use isset to check for initialisation by [@patrickomeara](https://github.com/patrickomeara) in https://github.com/laravel/passport/pull/1813
+* [13.x] Fix middleware type error by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1815
+
+## [v13.0.0](https://github.com/laravel/passport/compare/v12.4.2...v13.0.0) - 2025-04-25
+
+* [13.x] Support OAuth2 Server v9 by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1734
+* [13.x] Always hash client secret by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1745
+* [13.x] Remove redundant PAT client table and model by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1749
+* [13.x] Fix determining revoked records by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1751
+* [13.x] Use the `oauth_scopes` property of the bearer token on `TokenGuard` by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1755
+* [13.x] Refactor migrations by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1759
+* [13.x] Cleanup by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1758
+* [13.x] Use unique IDs on client model by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1757
+* [13.x] Force confidential PAT client by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1761
+* [13.x] Fix register a custom rendering closure for `OAuthServerException` by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1763
+* [13.x] Use UUID to identify clients by default by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1764
+* [13.x] Disable PAT requests by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1766
+* [13.x] Cleanup and add feature tests by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1767
+* [13.x] Always validate auth token  by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1769
+* [13.x] Configure the user provider for PAT by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1768
+* [13.x] Fix user-token relations by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1773
+* [13.x] Make client RFC compatible by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1744
+* [13.x] Fix skipping consent prompt by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1777
+* [13.x] Improve issuing PATs by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1780
+* [13.x] Fix clients confidentiality by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1782
+* [13.x] Make Passport headless (Support Laravel Jetstream and Breeze) by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1771
+* [13.x] Improve performance, fix minor bugs, and add tests by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1783
+* bug: mockery not setup correctly by [@JimTools](https://github.com/JimTools) in https://github.com/laravel/passport/pull/1785
+* [13.x] Cleanup, improve types and tests by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1788
+* [13.x] Enhance error responses by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1791
+* [13.x] Rename `CheckClientCredentials` middleware by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1792
+* [13.x] Improve resolving and converting PSR responses by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1793
+* [13.x] Deprecate JSON API by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1778
+* [13.x] Add new `EnsureClientIsResourceOwner` middleware by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1794
+* [13.x] Make revoking refresh tokens optional by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1790
+* [13.x] Validate key files' permissions by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1789
+* [13.x] Determine if the client handles the specified grant by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1762
+* [13.x] Device Authorization Grant RFC8628 by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1750
+* [13.x] Release Passport 13.x by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1797
 
 ## [v12.4.2](https://github.com/laravel/passport/compare/v12.4.1...v12.4.2) - 2025-02-12
 

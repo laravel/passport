@@ -4,13 +4,13 @@ namespace Laravel\Passport;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Passport\Database\Factories\ClientFactory;
 
 class Client extends Model
@@ -18,6 +18,7 @@ class Client extends Model
     /** @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Laravel\Passport\Database\Factories\ClientFactory> */
     use HasFactory;
     use ResolvesInheritedScopes;
+    use HasUuids;
 
     /**
      * The database table used by the model.
@@ -45,7 +46,7 @@ class Client extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
+     * @var array<string, string>
      */
     protected $casts = [
         'grant_types' => 'array',
@@ -64,19 +65,17 @@ class Client extends Model
     public ?string $plainSecret = null;
 
     /**
-     * Create a new Eloquent model instance.
-     *
-     * @param  array<string, mixed>  $attributes
+     * Initialize the trait.
      */
-    public function __construct(array $attributes = [])
+    public function initializeHasUniqueStringIds(): void
     {
-        parent::__construct($attributes);
-
         $this->usesUniqueIds = Passport::$clientUuids;
     }
 
     /**
      * Get the user that the client belongs to.
+     *
+     * @deprecated Use owner()
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Foundation\Auth\User, $this>
      */
@@ -87,6 +86,16 @@ class Client extends Model
         return $this->belongsTo(
             config("auth.providers.$provider.model")
         );
+    }
+
+    /**
+     * Get the owner of the registered client.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Foundation\Auth\User, $this>
+     */
+    public function owner(): MorphTo
+    {
+        return $this->morphTo('owner');
     }
 
     /**
@@ -112,37 +121,29 @@ class Client extends Model
     }
 
     /**
-     * The temporary non-hashed client secret.
-     *
-     * This is only available once during the request that created the client.
+     * Interact with the client's secret.
      */
-    public function getPlainSecretAttribute(): ?string
+    protected function secret(): Attribute
     {
-        return $this->plainSecret;
+        return Attribute::make(
+            set: function (?string $value): ?string {
+                $this->plainSecret = $value;
+
+                return $this->castAttributeAsHashedString('secret', $value);
+            },
+        );
     }
 
     /**
-     * Set the value of the secret attribute.
-     */
-    public function setSecretAttribute(?string $value): void
-    {
-        $this->plainSecret = $value;
-
-        $this->attributes['secret'] = is_null($value) ? $value : Hash::make($value);
-    }
-
-    /**
-     * Get the client's redirect URIs.
+     * Interact with the client's redirect URIs.
      */
     protected function redirectUris(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value, array $attributes) {
-                if (isset($value)) {
-                    return $this->fromJson($value);
-                }
-
-                return empty($attributes['redirect']) ? [] : explode(',', $attributes['redirect']);
+            get: fn (?string $value, array $attributes): array => match (true) {
+                ! empty($value) => $this->fromJson($value),
+                ! empty($attributes['redirect']) => explode(',', $attributes['redirect']),
+                default => [],
             },
         );
     }
@@ -170,7 +171,11 @@ class Client extends Model
      */
     public function firstParty(): bool
     {
-        return empty($this->user_id);
+        if (array_key_exists('user_id', $this->attributes)) {
+            return empty($this->user_id);
+        }
+
+        return empty($this->owner_id);
     }
 
     /**
@@ -196,7 +201,7 @@ class Client extends Model
      */
     public function hasScope(string $scope): bool
     {
-        return ! isset($this->attributes['scopes']) || $this->scopeExists($scope, $this->scopes);
+        return ! isset($this->attributes['scopes']) || $this->scopeExistsIn($scope, $this->scopes);
     }
 
     /**
@@ -205,40 +210,6 @@ class Client extends Model
     public function confidential(): bool
     {
         return ! empty($this->secret);
-    }
-
-    /**
-     * Get the columns that should receive a unique identifier.
-     *
-     * @return array<string>
-     */
-    public function uniqueIds(): array
-    {
-        return $this->usesUniqueIds ? [$this->getKeyName()] : [];
-    }
-
-    /**
-     * Generate a new key for the model.
-     */
-    public function newUniqueId(): ?string
-    {
-        return $this->usesUniqueIds ? (string) Str::orderedUuid() : null;
-    }
-
-    /**
-     * Get the auto-incrementing key type.
-     */
-    public function getKeyType(): string
-    {
-        return $this->usesUniqueIds ? 'string' : $this->keyType;
-    }
-
-    /**
-     * Get the value indicating whether the IDs are incrementing.
-     */
-    public function getIncrementing(): bool
-    {
-        return $this->usesUniqueIds ? false : $this->incrementing;
     }
 
     /**

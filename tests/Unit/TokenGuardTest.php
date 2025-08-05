@@ -62,7 +62,7 @@ class TokenGuardTest extends TestCase
         $user = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
     }
 
     public function test_user_is_resolved_only_once()
@@ -98,7 +98,7 @@ class TokenGuardTest extends TestCase
         $user2 = $guard->user();
 
         $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->token());
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
         $this->assertSame($user, $user2);
     }
 
@@ -172,7 +172,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
 
@@ -204,7 +204,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
 
@@ -232,7 +232,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
 
@@ -257,7 +257,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
 
@@ -290,7 +290,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], Passport::tokenEncryptionKey($encrypter), 'HS256'), false)
         );
 
@@ -330,7 +330,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], Passport::tokenEncryptionKey($encrypter), 'HS256')
         );
 
@@ -362,7 +362,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
 
@@ -387,7 +387,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->subMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'))
         );
 
@@ -416,7 +416,7 @@ class TokenGuardTest extends TestCase
             $encrypter->encrypt(CookieValuePrefix::create('laravel_token', $encrypter->getKey()).JWT::encode([
                 'sub' => 1,
                 'aud' => 1,
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
 
@@ -537,7 +537,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'csrf' => 'token',
-                'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
+                'exp' => Carbon::now()->addMinutes(10)->getTimestamp(),
             ], str_repeat('a', 16), 'HS256'), false)
         );
 
