@@ -110,6 +110,12 @@ if (! windows_os()) {
 }
 ```
 
+Alternatively, you may disable this validation entirely (not recommended) by setting `Passport::$validateKeyPermissions` to `false` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class:
+
+```php
+Passport::$validateKeyPermissions = false;
+```
+
 ### OAuth Client Table Changes (Optional)
 
 PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
