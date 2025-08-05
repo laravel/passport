@@ -90,7 +90,8 @@ class ClientCommand extends Command
     {
         $provider = $this->option('provider') ?: $this->choice(
             'Which user provider should this client use to retrieve users?',
-            collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all(),
+            collect(config('auth.guards'))->where('driver', 'passport')->pluck('provider')->all()
+                ?: collect(config('auth.providers'))->keys()->all(),
             config('auth.guards.api.provider')
         );
 
