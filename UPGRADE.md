@@ -140,6 +140,7 @@ If you prefer to use the new structure, you may create a migration to apply the 
 ```php
 Schema::table('oauth_clients', function (Blueprint $table) {
     $table->nullableMorphs('owner')->after('user_id');
+
     $table->after('provider', function (Blueprint $table) {
         $table->text('redirect_uris');
         $table->text('grant_types');
