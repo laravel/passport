@@ -32,7 +32,13 @@ All the authorization view's rendering logic may be customized using the appropr
 
     public function boot(): void
     {
+        // By providing the view names...
         Passport::authorizationView('auth.oauth.authorize');
+        Passport::deviceUserCodeView('auth.oauth.device.user-code');
+        Passport::deviceAuthorizationView('auth.oauth.device.authorize');
+
+        // Or using conventional names under the given prefix...
+        Passport::viewPrefix('auth.oauth');
     }
 
 ### Identify Clients by UUIDs
