@@ -160,7 +160,7 @@ Schema::table('oauth_clients', function (Blueprint $table) {
 });
 ```
 
-Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
+Additionally, Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
 
 ## Upgrading To 12.0 From 11.x
 
