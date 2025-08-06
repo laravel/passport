@@ -31,6 +31,11 @@ class Passport
     public static bool $revokeRefreshTokenAfterUse = true;
 
     /**
+     * Indicates if the device authorization grant type is enabled.
+     */
+    public static bool $deviceCodeGrantEnabled = true;
+
+    /**
      * Indicates if the implicit grant type is enabled.
      */
     public static bool $implicitGrantEnabled = false;
