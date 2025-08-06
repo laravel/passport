@@ -103,6 +103,25 @@ The JSON API provided by Passport has been deprecated. If you need to continue u
         Passport::$registersJsonApiRoutes = true;
     }
 
+### Key Files Permissions Validation
+
+PR: https://github.com/laravel/passport/pull/1789
+
+Passport now validates the permissions of key files on supported operating systems. If you encounter an exception indicating incorrect permissions, you can fix it by running the following code once:
+
+```php
+if (! windows_os()) {
+    chmod(Passport::keyPath('oauth-public.key'), 0660);
+    chmod(Passport::keyPath('oauth-private.key'), 0600);
+}
+```
+
+Alternatively, you may disable this validation entirely (not recommended) by setting `Passport::$validateKeyPermissions` to `false` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class:
+
+```php
+Passport::$validateKeyPermissions = false;
+```
+
 ### OAuth Client Table Changes (Optional)
 
 PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
