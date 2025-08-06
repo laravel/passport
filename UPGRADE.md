@@ -126,11 +126,39 @@ Passport::$validateKeyPermissions = false;
 
 PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
 
-Passport's `oauth_clients` table has been changed in several ways:
 
-- The `user_id` column has been replaced by the `owner_type` and `owner_id` columns.
-- The `redirect` column has been replaced by the `redirect_uris` column. The new column needs to store an array of URLs.
-- The `personal_access_client` and `password_client` columns have been replaced by the `grant_types` column. The new column needs to store an array of OAuth 2 grant types.
+Passport 13 introduces a new schema for the `oauth_clients` table. However, These changes are **fully backward compatible**, and **no action is required** on your part.
+
+For reference, here are the changes on the `oauth_clients` table:
+
+- The `user_id` column has been replaced with `owner_type` and `owner_id` columns.
+- The `redirect` column has been replaced with `redirect_uris` column, which now stores an array of URIs.
+- The `personal_access_client` and `password_client` columns have been replaced with `grant_types` column, which stores an array of supported OAuth 2 grant types.
+
+If you prefer to use the new structure, you may create a migration to apply the changes:
+
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->nullableMorphs('owner')->after('user_id');
+    $table->after('provider', function (Blueprint $table) {
+        $table->text('redirect_uris');
+        $table->text('grant_types');
+    });
+});
+
+foreach (Passport::client()->cursor() as $client) {
+    Model::withoutTimestamps(fn () => $client->forceFill([
+        'owner_id' => $client->user_id,
+        'owner_type' => $client->user_id ? config('auth.providers.'.$client->provider.'.model') : null,
+        'redirect_uris' => $client->redirect_uris,
+        'grant_types' => $client->grant_types,
+    ])->save());
+}
+
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->dropColumn(['user_id', 'redirect', 'personal_access_client', 'password_client']);
+});
+```
 
 Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
 
