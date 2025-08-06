@@ -15,17 +15,19 @@ Route::get('/authorize', [
     'middleware' => 'web',
 ]);
 
-Route::get('/device', [
-    'uses' => 'DeviceUserCodeController',
-    'as' => 'device',
-    'middleware' => 'web',
-]);
+if (Passport::$deviceCodeGrantEnabled) {
+    Route::get('/device', [
+        'uses' => 'DeviceUserCodeController',
+        'as' => 'device',
+        'middleware' => 'web',
+    ]);
 
-Route::post('/device/code', [
-    'uses' => 'DeviceCodeController',
-    'as' => 'device.code',
-    'middleware' => 'throttle',
-]);
+    Route::post('/device/code', [
+        'uses' => 'DeviceCodeController',
+        'as' => 'device.code',
+        'middleware' => 'throttle',
+    ]);
+}
 
 $guard = config('passport.guard', null);
 
@@ -45,20 +47,22 @@ Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () 
         'as' => 'authorizations.deny',
     ]);
 
-    Route::get('/device/authorize', [
-        'uses' => 'DeviceAuthorizationController',
-        'as' => 'device.authorizations.authorize',
-    ]);
+    if (Passport::$deviceCodeGrantEnabled) {
+        Route::get('/device/authorize', [
+            'uses' => 'DeviceAuthorizationController',
+            'as' => 'device.authorizations.authorize',
+        ]);
 
-    Route::post('/device/authorize', [
-        'uses' => 'ApproveDeviceAuthorizationController',
-        'as' => 'device.authorizations.approve',
-    ]);
+        Route::post('/device/authorize', [
+            'uses' => 'ApproveDeviceAuthorizationController',
+            'as' => 'device.authorizations.approve',
+        ]);
 
-    Route::delete('/device/authorize', [
-        'uses' => 'DenyDeviceAuthorizationController',
-        'as' => 'device.authorizations.deny',
-    ]);
+        Route::delete('/device/authorize', [
+            'uses' => 'DenyDeviceAuthorizationController',
+            'as' => 'device.authorizations.deny',
+        ]);
+    }
 
     if (Passport::$registersJsonApiRoutes) {
         Route::get('/tokens', [
