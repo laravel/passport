@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.0.6...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.1.0...13.x)
+
+## [v13.1.0](https://github.com/laravel/passport/compare/v13.0.6...v13.1.0) - 2025-08-07
+
+* [13.x] Add an option to disable device code grant by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1842
+* [13.x] Add an upgrade guide entry for key file permissions by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1841
+* [13.x] Fallback to list of auth user providers if no auth guard for Passport is defined by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1840
+* [13.x] Add an optional migration for `oauth_clients` table to the upgrade guide by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1843
+* Fix viewPrefix Method to Match Documentation Example by [@trippo](https://github.com/trippo) in https://github.com/laravel/passport/pull/1844
 
 ## [v13.0.6](https://github.com/laravel/passport/compare/v13.0.5...v13.0.6) - 2025-07-10
 
