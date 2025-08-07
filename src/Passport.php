@@ -598,6 +598,8 @@ class Passport
      */
     public static function viewPrefix(string $prefix): void
     {
+        $prefix = rtrim($prefix, '.');
+
         static::authorizationView($prefix.'.authorize');
         static::deviceAuthorizationView($prefix.'.device.authorize');
         static::deviceUserCodeView($prefix.'.device.user-code');
