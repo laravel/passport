@@ -46,6 +46,7 @@ class PurgeCommand extends Command
         Passport::token()->newQuery()->where($constraint)->delete();
         Passport::authCode()->newQuery()->where($constraint)->delete();
         Passport::refreshToken()->newQuery()->where($constraint)->delete();
+
         if (Passport::$deviceCodeGrantEnabled) {
             Passport::deviceCode()->newQuery()->where($constraint)->delete();
         }
