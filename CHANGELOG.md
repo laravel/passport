@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.1.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.2.0...13.x)
+
+## [v13.2.0](https://github.com/laravel/passport/compare/v13.1.0...v13.2.0) - 2025-08-19
+
+* [13.x] Added device code grant exception to purge command by [@SuperDJ](https://github.com/SuperDJ) in https://github.com/laravel/passport/pull/1846
 
 ## [v13.1.0](https://github.com/laravel/passport/compare/v13.0.6...v13.1.0) - 2025-08-07
 
