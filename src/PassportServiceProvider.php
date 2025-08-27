@@ -169,7 +169,7 @@ class PassportServiceProvider extends ServiceProvider
 
                 if (Passport::$deviceCodeGrantEnabled && Route::has('passport.device')) {
                     $server->enableGrantType(
-                        $this->makeDeviceCodeGrant(), Passport::tokensExpireIn()
+                        $this->makeDeviceCodeGrant(), Passport::deviceCodeTokensExpireIn() ?? Passport::tokensExpireIn()
                     );
                 }
             })

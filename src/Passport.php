@@ -75,6 +75,11 @@ class Passport
     public static ?DateInterval $personalAccessTokensExpireIn = null;
 
     /**
+     * The date when device code tokens expire.
+     */
+    public static ?DateInterval $deviceCodeTokensExpireIn = null;
+
+    /**
      * The name for API token cookies.
      */
     public static string $cookie = 'laravel_token';
@@ -320,6 +325,20 @@ class Passport
         }
 
         return static::$personalAccessTokensExpireIn = $date instanceof DateTimeInterface
+            ? Date::now()->diff($date)
+            : $date;
+    }
+
+    /**
+     * Get or set when device code tokens expire.
+     */
+    public static function deviceCodeTokensExpireIn(DateTimeInterface|DateInterval|null $date = null): DateInterval
+    {
+        if (is_null($date)) {
+            return static::$deviceCodeTokensExpireIn ??= new DateInterval('P1Y');
+        }
+
+        return static::$deviceCodeTokensExpireIn = $date instanceof DateTimeInterface
             ? Date::now()->diff($date)
             : $date;
     }
