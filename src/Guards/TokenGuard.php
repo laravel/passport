@@ -49,7 +49,7 @@ class TokenGuard implements Guard
         PassportUserProvider $provider,
         protected ClientRepository $clients,
         protected Encrypter $encrypter,
-        protected Request $request
+        protected Request $request,
     ) {
         $this->provider = $provider;
     }

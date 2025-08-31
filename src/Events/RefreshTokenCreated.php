@@ -9,7 +9,7 @@ class RefreshTokenCreated
      */
     public function __construct(
         public string $refreshTokenId,
-        public string $accessTokenId
+        public string $accessTokenId,
     ) {
     }
 }

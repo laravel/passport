@@ -14,7 +14,7 @@ class PersonalAccessTokenFactory
      * Create a new personal access token factory instance.
      */
     public function __construct(
-        protected AuthorizationServer $server
+        protected AuthorizationServer $server,
     ) {
     }
 

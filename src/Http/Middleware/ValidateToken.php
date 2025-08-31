@@ -18,7 +18,7 @@ abstract class ValidateToken
      * Create a new middleware instance.
      */
     public function __construct(
-        protected ResourceServer $server
+        protected ResourceServer $server,
     ) {
     }
 

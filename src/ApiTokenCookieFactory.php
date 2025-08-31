@@ -15,7 +15,7 @@ class ApiTokenCookieFactory
      */
     public function __construct(
         protected Config $config,
-        protected Encrypter $encrypter
+        protected Encrypter $encrypter,
     ) {
     }
 

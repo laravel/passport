@@ -16,7 +16,7 @@ class ScopeRepository implements ScopeRepositoryInterface
      * Create a new scope repository.
      */
     public function __construct(
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
     ) {
     }
 

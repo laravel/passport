@@ -14,7 +14,7 @@ class RedirectRule implements Rule
      * Create a new rule instance.
      */
     public function __construct(
-        protected Factory $validator
+        protected Factory $validator,
     ) {
     }
 

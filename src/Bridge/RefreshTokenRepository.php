@@ -14,7 +14,7 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
      * Create a new repository instance.
      */
     public function __construct(
-        protected Dispatcher $events
+        protected Dispatcher $events,
     ) {
     }
 

@@ -21,7 +21,7 @@ class CreateFreshApiToken
      * Create a new middleware instance.
      */
     public function __construct(
-        protected ApiTokenCookieFactory $cookieFactory
+        protected ApiTokenCookieFactory $cookieFactory,
     ) {
     }
 

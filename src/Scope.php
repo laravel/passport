@@ -15,7 +15,7 @@ class Scope implements Arrayable, Jsonable
      */
     public function __construct(
         public string $id,
-        public string $description
+        public string $description,
     ) {
     }
 
