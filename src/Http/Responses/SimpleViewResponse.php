@@ -26,7 +26,7 @@ class SimpleViewResponse implements
      * @param  (\Closure(array<string, mixed>): (\Symfony\Component\HttpFoundation\Response))|string  $view
      */
     public function __construct(
-        protected Closure|string $view
+        protected Closure|string $view,
     ) {
     }
 

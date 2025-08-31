@@ -258,7 +258,7 @@ class AccessTokenControllerTest extends PassportTestCase
 class IdTokenResponse extends BearerTokenResponse
 {
     public function __construct(
-        protected string $idToken
+        protected string $idToken,
     ) {
     }
 

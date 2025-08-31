@@ -10,7 +10,7 @@ class AccessTokenCreated
     public function __construct(
         public string $tokenId,
         public ?string $userId,
-        public string $clientId
+        public string $clientId,
     ) {
     }
 }

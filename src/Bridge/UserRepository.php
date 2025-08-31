@@ -14,7 +14,7 @@ class UserRepository implements UserRepositoryInterface
      * Create a new repository instance.
      */
     public function __construct(
-        protected Hasher $hasher
+        protected Hasher $hasher,
     ) {
     }
 

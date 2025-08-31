@@ -15,7 +15,7 @@ class ClientRepository implements ClientRepositoryInterface
      */
     public function __construct(
         protected ClientModelRepository $clients,
-        protected Hasher $hasher
+        protected Hasher $hasher,
     ) {
     }
 

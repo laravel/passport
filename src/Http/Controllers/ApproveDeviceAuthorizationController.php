@@ -14,7 +14,7 @@ class ApproveDeviceAuthorizationController
      * Create a new controller instance.
      */
     public function __construct(
-        protected AuthorizationServer $server
+        protected AuthorizationServer $server,
     ) {
     }
 

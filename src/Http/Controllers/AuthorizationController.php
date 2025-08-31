@@ -31,7 +31,7 @@ class AuthorizationController
     public function __construct(
         protected AuthorizationServer $server,
         protected StatefulGuard $guard,
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
     ) {
     }
 

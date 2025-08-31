@@ -27,7 +27,7 @@ class DeviceCode implements DeviceCodeEntityInterface
         array $scopes = [],
         bool $userApproved = false,
         ?DateTimeImmutable $lastPolledAt = null,
-        ?DateTimeImmutable $expiryDateTime = null
+        ?DateTimeImmutable $expiryDateTime = null,
     ) {
         if (! is_null($identifier)) {
             $this->setIdentifier($identifier);

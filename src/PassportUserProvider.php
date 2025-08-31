@@ -12,7 +12,7 @@ class PassportUserProvider implements UserProvider
      */
     public function __construct(
         protected UserProvider $provider,
-        protected string $providerName
+        protected string $providerName,
     ) {
     }
 

@@ -17,7 +17,7 @@ class AuthorizedAccessTokenController
      * Create a new controller instance.
      */
     public function __construct(
-        protected TokenRepository $tokenRepository
+        protected TokenRepository $tokenRepository,
     ) {
     }
 

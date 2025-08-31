@@ -21,7 +21,7 @@ class ClientController
     public function __construct(
         protected ClientRepository $clients,
         protected ValidationFactory $validation,
-        protected RedirectRule $redirectRule
+        protected RedirectRule $redirectRule,
     ) {
     }
 
