@@ -209,7 +209,7 @@ class Client extends Model
      */
     public function confidential(): bool
     {
-        return ! empty($this->secret);
+        return ! empty($this->getAttributes()['secret'] ?? null);
     }
 
     /**
