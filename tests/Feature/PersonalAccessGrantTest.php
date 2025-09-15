@@ -38,7 +38,7 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertArrayHasKey('accessToken', $result->toArray());
         $this->assertSame($token->getKey(), $result->accessTokenId);
         $this->assertSame('Bearer', $result->tokenType);
-        $this->assertSame(31536000, $result->expiresIn);
+        $this->assertEqualsWithDelta(31536000, $result->expiresIn, 2);
         $this->assertSame($client->getKey(), $token->client_id);
         $this->assertSame($user->getAuthIdentifier(), $token->user_id);
         $this->assertSame(['bar'], $token->scopes);

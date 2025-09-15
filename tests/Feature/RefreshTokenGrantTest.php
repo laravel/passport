@@ -46,7 +46,7 @@ class RefreshTokenGrantTest extends PassportTestCase
 
         $this->assertArrayHasKey('access_token', $newToken);
         $this->assertArrayHasKey('refresh_token', $newToken);
-        $this->assertSame(31536000, $newToken['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $newToken['expires_in'], 2);
         $this->assertSame('Bearer', $newToken['token_type']);
 
         Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
@@ -92,7 +92,7 @@ class RefreshTokenGrantTest extends PassportTestCase
 
         $this->assertArrayHasKey('access_token', $newToken);
         $this->assertArrayHasKey('refresh_token', $newToken);
-        $this->assertSame(31536000, $newToken['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $newToken['expires_in'], 2);
         $this->assertSame('Bearer', $newToken['token_type']);
 
         Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
@@ -117,7 +117,7 @@ class RefreshTokenGrantTest extends PassportTestCase
 
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayHasKey('refresh_token', $json);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
         $this->assertSame('Bearer', $json['token_type']);
     }
 

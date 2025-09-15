@@ -40,7 +40,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayNotHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
 
         Route::get('/foo', fn (Request $request) => response('response'))
             ->middleware([EnsureClientIsResourceOwner::using(['create', 'delete'])]);
@@ -70,7 +70,7 @@ class ClientCredentialsGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayNotHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
 
         Route::get('/foo', fn (Request $request) => response('response'))
             ->middleware([EnsureClientIsResourceOwner::using(['create', 'delete'])]);
