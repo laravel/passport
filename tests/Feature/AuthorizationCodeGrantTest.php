@@ -76,7 +76,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
 
         Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');

@@ -49,8 +49,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('expires_in', $decodedResponse);
         $this->assertArrayHasKey('access_token', $decodedResponse);
         $this->assertSame('Bearer', $decodedResponse['token_type']);
-        $expiresInSeconds = 31536000;
-        $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
+        $this->assertEqualsWithDelta(31536000, $decodedResponse['expires_in'], 2);
     }
 
     public function testGettingAccessTokenWithClientCredentialsGrantInvalidClientSecret()
@@ -131,8 +130,7 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $decodedResponse);
         $this->assertArrayHasKey('refresh_token', $decodedResponse);
         $this->assertSame('Bearer', $decodedResponse['token_type']);
-        $expiresInSeconds = 31536000;
-        $this->assertEqualsWithDelta($expiresInSeconds, $decodedResponse['expires_in'], 5);
+        $this->assertEqualsWithDelta(31536000, $decodedResponse['expires_in'], 2);
     }
 
     public function testGettingAccessTokenWithPasswordGrantWithInvalidPassword()

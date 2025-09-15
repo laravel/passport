@@ -5,6 +5,7 @@ namespace Laravel\Passport\Console;
 use Illuminate\Console\Command;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
+use Laravel\Passport\Passport;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'passport:client')]
@@ -149,7 +150,8 @@ class ClientCommand extends Command
             ? ! $this->option('public')
             : $this->components->confirm('Would you like to make this client confidential?', true);
 
-        $enableDeviceFlow = $this->confirm('Would you like to enable the device authorization flow for this client?');
+        $enableDeviceFlow = Passport::$deviceCodeGrantEnabled &&
+            $this->confirm('Would you like to enable the device authorization flow for this client?');
 
         return $clients->createAuthorizationCodeGrantClient(
             $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow

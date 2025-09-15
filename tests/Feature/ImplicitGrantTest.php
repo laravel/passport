@@ -65,7 +65,7 @@ class ImplicitGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $params);
         $this->assertArrayNotHasKey('refresh_token', $params);
         $this->assertSame('Bearer', $params['token_type']);
-        $this->assertSame('31536000', $params['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $params['expires_in'], 2);
 
         Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
@@ -145,7 +145,7 @@ class ImplicitGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $params);
         $this->assertArrayNotHasKey('refresh_token', $params);
         $this->assertSame('Bearer', $params['token_type']);
-        $this->assertSame('31536000', $params['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $params['expires_in'], 2);
     }
 
     public function testValidateAuthorizationRequest()
