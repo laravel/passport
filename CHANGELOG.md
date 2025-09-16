@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.2.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.2.1...13.x)
+
+## [v13.2.1](https://github.com/laravel/passport/compare/v13.2.0...v13.2.1) - 2025-09-15
+
+* [13.x] add trailing commas in multiline constructor signatures by [@browner12](https://github.com/browner12) in https://github.com/laravel/passport/pull/1848
+* Update Client Model by [@samsin33](https://github.com/samsin33) in https://github.com/laravel/passport/pull/1850
+* [13.x] Test Improvements by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1853
+* [13.x] Fix issuing PAT with configured trusted hosts by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1852
 
 ## [v13.2.0](https://github.com/laravel/passport/compare/v13.1.0...v13.2.0) - 2025-08-19
 
