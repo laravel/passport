@@ -56,7 +56,7 @@ class InstallCommand extends Command
             if (empty($existing)) {
                 // No migration yet → copy it with a new timestamp
                 $newName = date('Y_m_d_His').$baseName;
-+               $target = $migrationPath.'/'.$newName;
+                $target = $migrationPath.'/'.$newName;
                 copy($stubPath, $target);
 
                 $this->components->info("Published Passport migration: {$newName}");
