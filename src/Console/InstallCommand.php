@@ -35,7 +35,36 @@ class InstallCommand extends Command
         ]);
 
         $this->call('vendor:publish', ['--tag' => 'passport-config']);
-        $this->call('vendor:publish', ['--tag' => 'passport-migrations']);
+                
+        // Selectively publish Passport migrations (plain PHP)
+        $migrationPath = database_path('migrations');
+        $passportMigrationPath = base_path('vendor/laravel/passport/database/migrations');
+
+        // Build a list of all migration stubs in the package
+        $stubFiles = glob($passportMigrationPath . '/*.php');
+
+        $this->components->info('Checking Passport migrations…');
+
+        foreach ($stubFiles as $stubPath) {
+            // Strip the timestamp from the stub filename
+            $stubFilename = basename($stubPath);
+            $baseName = preg_replace('/^\d+_\d+_\d+_\d+_/', '_', $stubFilename);
+
+            // Check if a migration with this base name already exists
+            $existing = glob($migrationPath . '/*' . $baseName);
+
+            if (empty($existing)) {
+                // No migration yet → copy it with a new timestamp
+                $newName = date('Y_m_d_His') . $baseName;
+                $target = $migrationPath . '/' . $newName;
+                copy($stubPath, $target);
+
+                $this->components->info("Published Passport migration: {$newName}");
+                usleep(100000); // small delay so timestamps differ
+            } else {
+                $this->components->warn("Skipped existing Passport migration: {$baseName}");
+            }
+        }
 
         if ($this->components->confirm('Would you like to run all pending database migrations?', true)) {
             $this->call('migrate');
