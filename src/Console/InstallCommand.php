@@ -35,13 +35,13 @@ class InstallCommand extends Command
         ]);
 
         $this->call('vendor:publish', ['--tag' => 'passport-config']);
-                
+
         // Selectively publish Passport migrations (plain PHP)
         $migrationPath = database_path('migrations');
         $passportMigrationPath = base_path('vendor/laravel/passport/database/migrations');
 
         // Build a list of all migration stubs in the package
-        $stubFiles = glob($passportMigrationPath . '/*.php');
+        $stubFiles = glob($passportMigrationPath.'/*.php');
 
         $this->components->info('Checking Passport migrations…');
 
@@ -51,12 +51,12 @@ class InstallCommand extends Command
             $baseName = preg_replace('/^\d+_\d+_\d+_\d+_/', '_', $stubFilename);
 
             // Check if a migration with this base name already exists
-            $existing = glob($migrationPath . '/*' . $baseName);
+            $existing = glob($migrationPath.'/*'.$baseName);
 
             if (empty($existing)) {
                 // No migration yet → copy it with a new timestamp
-                $newName = date('Y_m_d_His') . $baseName;
-                $target = $migrationPath . '/' . $newName;
+                $newName = date('Y_m_d_His').$baseName;
++                $target = $migrationPath.'/'.$newName;
                 copy($stubPath, $target);
 
                 $this->components->info("Published Passport migration: {$newName}");
