@@ -37,6 +37,14 @@ if (Passport::$tokenRevocationEnabled) {
     ]);
 }
 
+if (Passport::$tokenIntrospectionEnabled) {
+    Route::post('/introspect', [
+        'uses' => 'IntrospectTokenController',
+        'as' => 'introspect',
+        'middleware' => 'throttle',
+    ]);
+}
+
 $guard = config('passport.guard', null);
 
 Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () {
