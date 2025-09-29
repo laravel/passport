@@ -32,6 +32,7 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use League\OAuth2\Server\TokenServer;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -116,6 +117,7 @@ class PassportServiceProvider extends ServiceProvider
         $this->registerResponseBindings();
         $this->registerAuthorizationServer();
         $this->registerResourceServer();
+        $this->registerTokenServer();
         $this->registerGuard();
     }
 
@@ -275,6 +277,20 @@ class PassportServiceProvider extends ServiceProvider
         $this->app->singleton(ResourceServer::class, fn ($container) => new ResourceServer(
             $container->make(Bridge\AccessTokenRepository::class),
             $this->makeCryptKey('public')
+        ));
+    }
+
+    /**
+     * Register the token server.
+     */
+    protected function registerTokenServer(): void
+    {
+        $this->app->singleton(TokenServer::class, fn ($container) => new TokenServer(
+            $container->make(Bridge\ClientRepository::class),
+            $container->make(Bridge\AccessTokenRepository::class),
+            $container->make(Bridge\RefreshTokenRepository::class),
+            $this->makeCryptKey('public'),
+            Passport::tokenEncryptionKey($container->make('encrypter'))
         ));
     }
 
