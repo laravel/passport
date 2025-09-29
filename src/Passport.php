@@ -46,6 +46,11 @@ class Passport
     public static bool $passwordGrantEnabled = false;
 
     /**
+     * Indicates if the token revocation is enabled.
+     */
+    public static bool $tokenRevocationEnabled = true;
+
+    /**
      * The default scope.
      */
     public static string $defaultScope = '';

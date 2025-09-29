@@ -29,6 +29,14 @@ if (Passport::$deviceCodeGrantEnabled) {
     ]);
 }
 
+if (Passport::$tokenRevocationEnabled) {
+    Route::post('/revoke', [
+        'uses' => 'RevokeTokenController',
+        'as' => 'revoke',
+        'middleware' => 'throttle',
+    ]);
+}
+
 $guard = config('passport.guard', null);
 
 Route::middleware(['web', $guard ? 'auth:'.$guard : 'auth'])->group(function () {
