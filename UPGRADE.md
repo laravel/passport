@@ -151,7 +151,7 @@ foreach (Passport::client()->cursor() as $client) {
     Model::withoutTimestamps(fn () => $client->forceFill([
         'owner_id' => $client->user_id,
         'owner_type' => $client->user_id
-            ? config('auth.providers.'.$client->provider.'.model', \App\Models\User::class)
+            ? config('auth.providers.'.($client->provider ?: config('auth.guards.api.provider')).'.model')
             : null,
         'redirect_uris' => $client->redirect_uris,
         'grant_types' => $client->grant_types,
