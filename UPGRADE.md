@@ -150,7 +150,9 @@ Schema::table('oauth_clients', function (Blueprint $table) {
 foreach (Passport::client()->cursor() as $client) {
     Model::withoutTimestamps(fn () => $client->forceFill([
         'owner_id' => $client->user_id,
-        'owner_type' => $client->user_id ? config('auth.providers.'.$client->provider.'.model') : null,
+        'owner_type' => $client->user_id
+            ? config('auth.providers.'.$client->provider.'.model', \App\Models\User::class)
+            : null,
         'redirect_uris' => $client->redirect_uris,
         'grant_types' => $client->grant_types,
     ])->save());
