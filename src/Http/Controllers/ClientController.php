@@ -53,7 +53,7 @@ class ClientController
             $request->user(),
         );
 
-        return $confidential ? $client->mergeAppends(['plain_secret']) : $client;
+        return $confidential ? $client->append(['plain_secret']) : $client;
     }
 
     /**
