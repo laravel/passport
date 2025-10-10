@@ -17,6 +17,8 @@ class TokenIntrospectionTest extends PassportTestCase
 
     protected function setUp(): void
     {
+        Passport::enableTokenIntrospection();
+
         parent::setUp();
 
         Passport::tokensCan([

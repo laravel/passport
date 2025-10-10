@@ -14,6 +14,9 @@ class TokenRevocationTest extends PassportTestCase
 
     protected function setUp(): void
     {
+        Passport::enableTokenRevocation();
+        Passport::enableTokenIntrospection();
+
         parent::setUp();
 
         Passport::tokensCan([
