@@ -38,7 +38,7 @@ class ClientController
     /**
      * Store a new client.
      */
-    public function store(Request $request): Client
+    public function store(Request $request): array
     {
         $this->validation->make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -53,9 +53,7 @@ class ClientController
             $request->user(),
         );
 
-        $client->secret = $client->plainSecret;
-
-        return $client->makeVisible('secret');
+        return ['plainSecret' => $client->plainSecret] + $client->toArray();
     }
 
     /**

@@ -51,7 +51,7 @@ class ClientControllerTest extends TestCase
         $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
             ->with('client name', ['http://localhost'], true, $user)
-            ->andReturn($client = new Client);
+            ->andReturn($client = new Client(['name' => 'client']));
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -70,7 +70,10 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals($client, $controller->store($request));
+        $this->assertEquals([
+            'name' => $client->name,
+            'plainSecret' => $client->plainSecret,
+        ], $controller->store($request));
     }
 
     public function test_public_clients_can_be_stored()
@@ -89,7 +92,7 @@ class ClientControllerTest extends TestCase
         $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
             ->with('client name', ['http://localhost'], false, $user)
-            ->andReturn($client = new Client);
+            ->andReturn($client = new Client(['name' => 'client']));
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -109,7 +112,10 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals($client, $controller->store($request));
+        $this->assertEquals([
+            'name' => $client->name,
+            'plainSecret' => $client->plainSecret,
+        ], $controller->store($request));
     }
 
     public function test_clients_can_be_updated()
