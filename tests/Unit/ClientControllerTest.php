@@ -5,6 +5,7 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Controllers\ClientController;
@@ -41,6 +42,9 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_stored()
     {
+        Hash::expects('isHashed')->once()->with('secret')->andReturn(false);
+        Hash::expects('make')->once()->with('secret')->andReturn('hashed_secret');
+
         $clients = m::mock(ClientRepository::class);
         $user = m::mock(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
@@ -51,7 +55,11 @@ class ClientControllerTest extends TestCase
         $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
             ->with('client name', ['http://localhost'], true, $user)
-            ->andReturn($client = new Client(['name' => 'client']));
+            ->andReturn($client = new Client([
+                'name' => 'client name',
+                'redirect' => 'http://localhost',
+                'secret' => 'secret',
+            ]));
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -70,10 +78,13 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals([
-            'name' => $client->name,
-            'plainSecret' => $client->plainSecret,
-        ], $controller->store($request));
+        $this->assertEquals($client, $controller->store($request));
+        $this->assertSame('hashed_secret', $client->secret);
+        $this->assertSame([
+            'name' => 'client name',
+            'redirect' => 'http://localhost',
+            'plain_secret' => 'secret',
+        ], $client->toArray());
     }
 
     public function test_public_clients_can_be_stored()
@@ -92,7 +103,11 @@ class ClientControllerTest extends TestCase
         $clients->shouldReceive('createAuthorizationCodeGrantClient')
             ->once()
             ->with('client name', ['http://localhost'], false, $user)
-            ->andReturn($client = new Client(['name' => 'client']));
+            ->andReturn($client = new Client([
+                'name' => 'client name',
+                'redirect' => 'http://localhost',
+                'secret' => null,
+            ]));
 
         $redirectRule = m::mock(RedirectRule::class);
 
@@ -112,10 +127,12 @@ class ClientControllerTest extends TestCase
             $clients, $validator, $redirectRule
         );
 
-        $this->assertEquals([
-            'name' => $client->name,
-            'plainSecret' => $client->plainSecret,
-        ], $controller->store($request));
+        $this->assertEquals($client, $controller->store($request));
+        $this->assertNull($client->secret);
+        $this->assertSame([
+            'name' => 'client name',
+            'redirect' => 'http://localhost',
+        ], $client->toArray());
     }
 
     public function test_clients_can_be_updated()

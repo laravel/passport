@@ -38,7 +38,7 @@ class ClientController
     /**
      * Store a new client.
      */
-    public function store(Request $request): array
+    public function store(Request $request): Client
     {
         $this->validation->make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -49,11 +49,11 @@ class ClientController
         $client = $this->clients->createAuthorizationCodeGrantClient(
             $request->name,
             explode(',', $request->redirect),
-            (bool) $request->input('confidential', true),
+            $confidential = (bool) $request->input('confidential', true),
             $request->user(),
         );
 
-        return ['plainSecret' => $client->plainSecret] + $client->toArray();
+        return $confidential ? $client->mergeAppends(['plain_secret']) : $client;
     }
 
     /**
