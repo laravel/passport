@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.2.1...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.2.2...13.x)
+
+## [v13.2.2](https://github.com/laravel/passport/compare/v13.2.1...v13.2.2) - 2025-10-10
+
+* Fix »OAuth Client Table Changes« migration snippet in the upgrade guide by [@hettiger](https://github.com/hettiger) in https://github.com/laravel/passport/pull/1859
+* [13.x] Fix accessing the plain secret after creating a new confidential client via deprecated `ClientController::store` by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1861
 
 ## [v13.2.1](https://github.com/laravel/passport/compare/v13.2.0...v13.2.1) - 2025-09-15
 
