@@ -160,6 +160,7 @@ foreach (Passport::client()->cursor() as $client) {
 
 Schema::table('oauth_clients', function (Blueprint $table) {
     $table->dropColumn(['user_id', 'redirect', 'personal_access_client', 'password_client']);
+
     $table->text('redirect_uris')->nullable(false)->change();
     $table->text('grant_types')->nullable(false)->change();
 });
