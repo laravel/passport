@@ -6,7 +6,6 @@ use Illuminate\Contracts\Hashing\Hasher;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use ReflectionMethod;
 use RuntimeException;
 
 class UserRepository implements UserRepositoryInterface
@@ -35,7 +34,7 @@ class UserRepository implements UserRepositoryInterface
         }
 
         if (method_exists($model, 'findAndValidateForPassport')) {
-            $user = (new $model)->findAndValidateForPassport($username, $password);
+            $user = (new $model)->findAndValidateForPassport($username, $password, $clientEntity);
 
             return $user ? new User($user->getAuthIdentifier()) : null;
         }
