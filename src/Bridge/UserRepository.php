@@ -44,7 +44,7 @@ class UserRepository implements UserRepositoryInterface
             $method = new ReflectionMethod($instance, 'findForPassport');
             $args = [$username];
             if ($method->getNumberOfParameters() >= 2) {
-                $args[] = $client;
+                $args[] = $clientEntity;
             }
             $user = $method->invokeArgs($instance, $args);
         } else {
