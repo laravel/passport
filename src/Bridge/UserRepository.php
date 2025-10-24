@@ -6,8 +6,8 @@ use Illuminate\Contracts\Hashing\Hasher;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
-use RuntimeException;
 use ReflectionMethod;
+use RuntimeException;
 
 class UserRepository implements UserRepositoryInterface
 {
