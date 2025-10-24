@@ -40,17 +40,9 @@ class UserRepository implements UserRepositoryInterface
             return $user ? new User($user->getAuthIdentifier()) : null;
         }
 
-        $instance = new $model;
-        if (method_exists($instance, 'findForPassport')) {
-            $method = new ReflectionMethod($instance, 'findForPassport');
-            $args = [$username];
-            if ($method->getNumberOfParameters() >= 2) {
-                $args[] = $clientEntity;
-            }
-            $user = $method->invokeArgs($instance, $args);
-        } else {
-            $user = $instance->where('email', $username)->first();
-        }
+        $user = method_exists($model, 'findForPassport')
+            ? (new $model)->findForPassport($username, $clientEntity)
+            : (new $model)->where('email', $username)->first();
 
         if (! $user) {
             return null;
