@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.2.2...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.3.0...13.x)
+
+## [v13.3.0](https://github.com/laravel/passport/compare/v13.2.2...v13.3.0) - 2025-10-26
+
+* chore(UPGRADE): v13, update oauth_clients table schema changes by [@maximepvrt](https://github.com/maximepvrt) in https://github.com/laravel/passport/pull/1865
+* feat: Allow `findForPassport` to optionally receive the OAuth client by [@maximepvrt](https://github.com/maximepvrt) in https://github.com/laravel/passport/pull/1866
 
 ## [v13.2.2](https://github.com/laravel/passport/compare/v13.2.1...v13.2.2) - 2025-10-10
 
