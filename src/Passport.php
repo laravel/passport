@@ -454,7 +454,7 @@ class Passport
     }
 
     /**
-     * Set the default ResponseType that should be used by the Authorization Server.
+     * Set the default ResponseType that should be used by the authorization server.
      */
     public static function useAuthorizationServerResponseType(?ResponseTypeInterface $authorizationServerResponseType): void
     {
