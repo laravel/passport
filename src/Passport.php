@@ -454,6 +454,14 @@ class Passport
     }
 
     /**
+     * Set the default ResponseType that should be used by the authorization server.
+     */
+    public static function useAuthorizationServerResponseType(?ResponseTypeInterface $authorizationServerResponseType): void
+    {
+        static::$authorizationServerResponseType = $authorizationServerResponseType;
+    }
+
+    /**
      * Set the device code model class name.
      *
      * @param  class-string<\Laravel\Passport\DeviceCode>  $deviceCodeModel
