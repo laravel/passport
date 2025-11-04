@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.3.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.0...13.x)
+
+## [v13.4.0](https://github.com/laravel/passport/compare/v13.3.0...v13.4.0) - 2025-11-02
+
+* [13.x] Add static setter for authorizationServerResponseType by [@RSpeekenbrink](https://github.com/RSpeekenbrink) in https://github.com/laravel/passport/pull/1867
 
 ## [v13.3.0](https://github.com/laravel/passport/compare/v13.2.2...v13.3.0) - 2025-10-26
 
