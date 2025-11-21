@@ -144,18 +144,18 @@ class TokenGuard implements Guard
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->provider->retrieveById(
-            $psr->getAttribute('oauth_user_id') ?: null
-        );
-
-        if (! $user) {
+        try {
+            $user = $this->provider->retrieveById(
+                $psr->getAttribute('oauth_user_id') ?: null
+            );
+        } catch (Exception) {
             return null;
         }
 
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
-        return $user->withAccessToken(AccessToken::fromPsrRequest($psr));
+        return $user?->withAccessToken(AccessToken::fromPsrRequest($psr));
     }
 
     /**
@@ -193,11 +193,13 @@ class TokenGuard implements Guard
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
-        if ($user = $this->provider->retrieveById($token['sub'])) {
-            return $user->withAccessToken(new TransientToken);
+        try {
+            $user = $this->provider->retrieveById($token['sub']);
+        } catch (Exception) {
+            return null;
         }
 
-        return null;
+        return $user?->withAccessToken(new TransientToken);
     }
 
     /**
