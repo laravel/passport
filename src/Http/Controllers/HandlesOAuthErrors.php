@@ -13,7 +13,7 @@ trait HandlesOAuthErrors
      *
      * @template TResult
      *
-     * @param  \Closure(): TResult  $callback
+     * @param  (\Closure(): TResult)  $callback
      * @return TResult
      *
      * @throws \Laravel\Passport\Exceptions\OAuthServerException

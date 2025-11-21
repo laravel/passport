@@ -131,7 +131,7 @@ class ClientCommand extends Command
     {
         $confidential = $this->hasOption('public')
             ? ! $this->option('public')
-            : $this->confirm('Would you like to make this client confidential?', true);
+            : $this->components->confirm('Would you like to make this client confidential?', true);
 
         return $clients->createDeviceAuthorizationGrantClient($this->option('name'), $confidential);
     }
@@ -151,7 +151,7 @@ class ClientCommand extends Command
             : $this->components->confirm('Would you like to make this client confidential?', true);
 
         $enableDeviceFlow = Passport::$deviceCodeGrantEnabled &&
-            $this->confirm('Would you like to enable the device authorization flow for this client?');
+            $this->components->confirm('Would you like to enable the device authorization flow for this client?');
 
         return $clients->createAuthorizationCodeGrantClient(
             $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow
