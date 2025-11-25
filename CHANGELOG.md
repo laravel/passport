@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.4.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.1...13.x)
+
+## [v13.4.1](https://github.com/laravel/passport/compare/v13.4.0...v13.4.1) - 2025-11-21
+
+* [13.x] Fix possible 500 error when retrieving user on token guard by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1871
 
 ## [v13.4.0](https://github.com/laravel/passport/compare/v13.3.0...v13.4.0) - 2025-11-02
 
