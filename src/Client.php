@@ -153,6 +153,7 @@ class Client extends Model
             get: fn (?string $value, array $attributes): array => match (true) {
                 ! empty($value) => $this->fromJson($value),
                 ! empty($attributes['redirect']) => explode(',', $attributes['redirect']),
+                ! empty($attributes['redirect_uris']) => $this->fromJson($attributes['redirect_uris']),
                 default => [],
             },
         );
