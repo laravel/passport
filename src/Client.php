@@ -135,6 +135,16 @@ class Client extends Model
     }
 
     /**
+     * Interact with the client's plain secret.
+     */
+    protected function plainSecret(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): ?string => $this->plainSecret
+        );
+    }
+
+    /**
      * Interact with the client's redirect URIs.
      */
     protected function redirectUris(): Attribute

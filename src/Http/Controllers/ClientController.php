@@ -49,13 +49,11 @@ class ClientController
         $client = $this->clients->createAuthorizationCodeGrantClient(
             $request->name,
             explode(',', $request->redirect),
-            (bool) $request->input('confidential', true),
+            $confidential = (bool) $request->input('confidential', true),
             $request->user(),
         );
 
-        $client->secret = $client->plainSecret;
-
-        return $client->makeVisible('secret');
+        return $confidential ? $client->append(['plain_secret']) : $client;
     }
 
     /**

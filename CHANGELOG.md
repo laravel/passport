@@ -1,6 +1,24 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.2.1...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.1...13.x)
+
+## [v13.4.1](https://github.com/laravel/passport/compare/v13.4.0...v13.4.1) - 2025-11-21
+
+* [13.x] Fix possible 500 error when retrieving user on token guard by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1871
+
+## [v13.4.0](https://github.com/laravel/passport/compare/v13.3.0...v13.4.0) - 2025-11-02
+
+* [13.x] Add static setter for authorizationServerResponseType by [@RSpeekenbrink](https://github.com/RSpeekenbrink) in https://github.com/laravel/passport/pull/1867
+
+## [v13.3.0](https://github.com/laravel/passport/compare/v13.2.2...v13.3.0) - 2025-10-26
+
+* chore(UPGRADE): v13, update oauth_clients table schema changes by [@maximepvrt](https://github.com/maximepvrt) in https://github.com/laravel/passport/pull/1865
+* feat: Allow `findForPassport` to optionally receive the OAuth client by [@maximepvrt](https://github.com/maximepvrt) in https://github.com/laravel/passport/pull/1866
+
+## [v13.2.2](https://github.com/laravel/passport/compare/v13.2.1...v13.2.2) - 2025-10-10
+
+* Fix »OAuth Client Table Changes« migration snippet in the upgrade guide by [@hettiger](https://github.com/hettiger) in https://github.com/laravel/passport/pull/1859
+* [13.x] Fix accessing the plain secret after creating a new confidential client via deprecated `ClientController::store` by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1861
 
 ## [v13.2.1](https://github.com/laravel/passport/compare/v13.2.0...v13.2.1) - 2025-09-15
 
