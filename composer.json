@@ -35,10 +35,8 @@
         "symfony/psr-http-message-bridge": "^7.1"
     },
     "require-dev": {
-        "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^9.9|^10.0",
-        "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.5|^12.0"
+        "orchestra/testbench": "^9.15|^10.8",
+        "phpstan/phpstan": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -70,6 +68,6 @@
         "post-autoload-dump": "@prepare",
         "prepare": "@php vendor/bin/testbench package:discover --ansi"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
