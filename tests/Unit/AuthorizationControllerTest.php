@@ -51,7 +51,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('get')->with('prompt')->andReturn(null);
+        $request->shouldReceive('input')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
         $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
@@ -134,7 +134,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
-        $request->shouldReceive('get')->with('prompt')->andReturn(null);
+        $request->shouldReceive('input')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -182,7 +182,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldNotReceive('session');
-        $request->shouldReceive('get')->with('prompt')->andReturn(null);
+        $request->shouldReceive('input')->with('prompt')->andReturn(null);
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -226,7 +226,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
         $session->shouldReceive('put')->with('authRequest', $authRequest);
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
-        $request->shouldReceive('get')->with('prompt')->andReturn('consent');
+        $request->shouldReceive('input')->with('prompt')->andReturn('consent');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -275,7 +275,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-        $request->shouldReceive('get')->with('prompt')->andReturn('none');
+        $request->shouldReceive('input')->with('prompt')->andReturn('none');
 
         $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
         $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
@@ -326,7 +326,7 @@ class AuthorizationControllerTest extends TestCase
 
         $request = m::mock(Request::class);
         $request->shouldNotReceive('user');
-        $request->shouldReceive('get')->with('prompt')->andReturn('none');
+        $request->shouldReceive('input')->with('prompt')->andReturn('none');
 
         $authRequest->shouldNotReceive('setUser');
         $authRequest->shouldReceive('setAuthorizationApproved')->with(false);
@@ -378,7 +378,7 @@ class AuthorizationControllerTest extends TestCase
         $session->shouldReceive('get')->with('promptedForLogin', false)->once()->andReturn(false);
         $session->shouldReceive('put')->with('promptedForLogin', true)->once();
         $session->shouldNotReceive('forget')->with('promptedForLogin');
-        $request->shouldReceive('get')->with('prompt')->andReturn('login');
+        $request->shouldReceive('input')->with('prompt')->andReturn('login');
 
         $clients = m::mock(ClientRepository::class);
 
@@ -408,7 +408,7 @@ class AuthorizationControllerTest extends TestCase
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->with('promptedForLogin', true)->once();
         $session->shouldNotReceive('forget')->with('promptedForLogin');
-        $request->shouldReceive('get')->with('prompt')->andReturn(null);
+        $request->shouldReceive('input')->with('prompt')->andReturn(null);
 
         $clients = m::mock(ClientRepository::class);
 
