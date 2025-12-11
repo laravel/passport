@@ -28,7 +28,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
+        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')
@@ -68,7 +68,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
+        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();

@@ -18,7 +18,7 @@ trait RetrievesDeviceCodeFromSession
     protected function getDeviceCodeFromSession(Request $request): DeviceCodeEntityInterface
     {
         if ($request->isNotFilled('auth_token') ||
-            $request->session()->pull('authToken') !== $request->get('auth_token')) {
+            $request->session()->pull('authToken') !== $request->input('auth_token')) {
             $request->session()->forget(['authToken', 'deviceCode']);
 
             throw InvalidAuthTokenException::different();

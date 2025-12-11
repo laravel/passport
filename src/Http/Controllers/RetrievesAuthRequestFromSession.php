@@ -18,7 +18,7 @@ trait RetrievesAuthRequestFromSession
     protected function getAuthRequestFromSession(Request $request): AuthorizationRequestInterface
     {
         if ($request->isNotFilled('auth_token') ||
-            $request->session()->pull('authToken') !== $request->get('auth_token')) {
+            $request->session()->pull('authToken') !== $request->input('auth_token')) {
             $request->session()->forget(['authToken', 'authRequest']);
 
             throw InvalidAuthTokenException::different();
