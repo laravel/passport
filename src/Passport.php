@@ -351,9 +351,14 @@ class Passport
      * @param  string[]  $scopes
      * @return \Laravel\Passport\Contracts\OAuthenticatable
      */
-    public static function actingAs(Authenticatable $user, array $scopes = [], ?string $guard = 'api'): Authenticatable
-    {
+    public static function actingAs(
+        Authenticatable $user,
+        array $scopes = [],
+        ?string $guard = 'api',
+        ?Client $client = null,
+    ): Authenticatable {
         $token = new AccessToken([
+            'oauth_client_id' => $client?->getKey(),
             'oauth_user_id' => $user->getAuthIdentifier(),
             'oauth_scopes' => $scopes,
         ]);
