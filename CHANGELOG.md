@@ -1,6 +1,12 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.4.1...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.2...13.x)
+
+## [v13.4.2](https://github.com/laravel/passport/compare/v13.4.1...v13.4.2) - 2025-12-15
+
+* [13.x] PHP 8.5 Compatibility by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1869
+* Remove the usage of deprecated `$request->get()` by [@hivokas](https://github.com/hivokas) in https://github.com/laravel/passport/pull/1873
+* [13.x] Allow setting the client with `Passport::actingAs()` by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1876
 
 ## [v13.4.1](https://github.com/laravel/passport/compare/v13.4.0...v13.4.1) - 2025-11-21
 
