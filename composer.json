@@ -17,7 +17,7 @@
         "php": "^8.2",
         "ext-json": "*",
         "ext-openssl": "*",
-        "firebase/php-jwt": "^6.4",
+        "firebase/php-jwt": "^6.4|^7.0",
         "illuminate/auth": "^11.35|^12.0",
         "illuminate/console": "^11.35|^12.0",
         "illuminate/container": "^11.35|^12.0",
