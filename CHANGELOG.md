@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.4.2...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.3...13.x)
+
+## [v13.4.3](https://github.com/laravel/passport/compare/v13.4.2...v13.4.3) - 2025-12-22
+
+* [13.x] Allow `firebase/php-jwt` v7 by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1879
 
 ## [v13.4.2](https://github.com/laravel/passport/compare/v13.4.1...v13.4.2) - 2025-12-15
 
