@@ -46,6 +46,16 @@ class Passport
     public static bool $passwordGrantEnabled = false;
 
     /**
+     * Indicates if the token introspection is enabled.
+     */
+    public static bool $tokenIntrospectionEnabled = false;
+
+    /**
+     * Indicates if the token revocation is enabled.
+     */
+    public static bool $tokenRevocationEnabled = false;
+
+    /**
      * The default scope.
      */
     public static string $defaultScope = '';
@@ -189,6 +199,22 @@ class Passport
     public static function enablePasswordGrant(): void
     {
         static::$passwordGrantEnabled = true;
+    }
+
+    /**
+     * Enable the token introspection.
+     */
+    public static function enableTokenIntrospection(): void
+    {
+        static::$tokenIntrospectionEnabled = true;
+    }
+
+    /**
+     * Enable the token revocation.
+     */
+    public static function enableTokenRevocation(): void
+    {
+        static::$tokenRevocationEnabled = true;
     }
 
     /**
