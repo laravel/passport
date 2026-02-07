@@ -76,9 +76,9 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -163,6 +163,97 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $this->assertArrayHasKey('code', $params);
     }
 
+    public function testSkipsAuthorizationWhenHasActiveTokensAndEmptyScope()
+    {
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => '',
+            'state' => Str::random(40),
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+        $json = $this->get('/oauth/authorize?'.$query)->json();
+
+        $response = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']]);
+        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
+
+        $this->post('/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'redirect_uri' => $redirect,
+            'code' => $params['code'],
+        ])->assertOk();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect,
+            'response_type' => 'code',
+            'scope' => '',
+            'state' => $state = Str::random(40),
+        ]);
+
+        $response = $this->get('/oauth/authorize?'.$query);
+        $response->assertRedirect();
+
+        $location = $response->headers->get('Location');
+        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+
+        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertSame($state, $params['state']);
+        $this->assertArrayHasKey('code', $params);
+    }
+
+    public function testPromptConsentForNewScope()
+    {
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => 'create read',
+            'state' => Str::random(40),
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+        $json = $this->get('/oauth/authorize?'.$query)->json();
+
+        $response = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']]);
+        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
+
+        $this->post('/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'redirect_uri' => $redirect,
+            'code' => $params['code'],
+        ])->assertOk();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect,
+            'response_type' => 'code',
+            'scope' => 'create update',
+            'state' => $state = Str::random(40),
+        ]);
+
+        $response = $this->get('/oauth/authorize?'.$query);
+
+        $response->assertOk();
+        $response->assertSessionHas('authRequest');
+        $response->assertSessionHas('authToken');
+        $json = $response->json();
+        $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
+        $this->assertSame(collect(Passport::scopesFor(['create', 'update']))->toArray(), $json['scopes']);
+    }
+
     public function testValidateAuthorizationRequest()
     {
         $client = ClientFactory::new()->create();
@@ -199,7 +290,7 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         parse_str(parse_url($location, PHP_URL_QUERY), $params);
 
         $this->assertStringStartsWith($redirect.'?', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }

@@ -8,9 +8,10 @@ use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
-use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
+use Symfony\Component\HttpFoundation\Response;
 
 class DenyAuthorizationControllerTest extends TestCase
 {
@@ -27,7 +28,7 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
+        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')
@@ -41,7 +42,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
 
         $psrResponse = m::mock(ResponseInterface::class);
-        app()->instance(ResponseInterface::class, new Response);
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server->shouldReceive('completeAuthorizationRequest')
             ->with($authRequest, m::type(ResponseInterface::class))
@@ -67,7 +68,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('get')->with('auth_token')->andReturn('foo');
+        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();

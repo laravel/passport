@@ -99,16 +99,13 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+
         $request = Request::create('/', 'GET');
+        $request->setUserResolver(fn () => $user);
 
-        $this->tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
-
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $this->tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
 
         $this->assertSame(404, $this->controller->destroy($request, 3)->status());
     }

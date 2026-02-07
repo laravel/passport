@@ -26,7 +26,7 @@ class ApiTokenCookieFactoryTest extends TestCase
             'secure' => true,
             'same_site' => 'lax',
         ]);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 
         $cookie = $factory->make(1, 'token');
@@ -48,7 +48,7 @@ class ApiTokenCookieFactoryTest extends TestCase
             'secure' => true,
             'same_site' => 'lax',
         ]);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 
         $cookie = $factory->make(1, 'token');

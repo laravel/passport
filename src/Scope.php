@@ -5,6 +5,9 @@ namespace Laravel\Passport;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
+/**
+ * @implements \Illuminate\Contracts\Support\Arrayable<string, string>
+ */
 class Scope implements Arrayable, Jsonable
 {
     /**
@@ -12,7 +15,7 @@ class Scope implements Arrayable, Jsonable
      */
     public function __construct(
         public string $id,
-        public string $description
+        public string $description,
     ) {
     }
 

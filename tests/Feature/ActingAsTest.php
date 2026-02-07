@@ -3,7 +3,9 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Contracts\Routing\Registrar;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Passport\Client;
 use Laravel\Passport\Http\Middleware\CheckToken;
 use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\Passport;
@@ -18,11 +20,18 @@ class ActingAsTest extends PassportTestCase
         /** @var Registrar $router */
         $router = $this->app->make(Registrar::class);
 
-        $router->get('/foo', function () {
+        $router->get('/foo', function (Request $request) {
+            $this->assertSame('client-1234', $request->user()->token()->oauth_client_id);
+            $this->assertSame(1234, $request->user()->token()->oauth_user_id);
+            $this->assertSame(['admin'], $request->user()->token()->oauth_scopes);
+
             return 'bar';
         })->middleware('auth:api');
 
-        Passport::actingAs(new User());
+        $client = new Client(['id' => 'client-1234']);
+        $user = (new User())->forceFill(['id' => 1234]);
+
+        Passport::actingAs($user, ['admin'], client: $client);
 
         $response = $this->get('/foo');
         $response->assertSuccessful();

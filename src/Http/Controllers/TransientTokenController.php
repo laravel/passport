@@ -12,7 +12,7 @@ class TransientTokenController
      * Create a new controller instance.
      */
     public function __construct(
-        protected ApiTokenCookieFactory $cookieFactory
+        protected ApiTokenCookieFactory $cookieFactory,
     ) {
     }
 

@@ -2,7 +2,9 @@
 
 namespace Laravel\Passport;
 
-class TransientToken
+use Laravel\Passport\Contracts\ScopeAuthorizable;
+
+class TransientToken implements ScopeAuthorizable
 {
     /**
      * Determine if the token has a given scope.

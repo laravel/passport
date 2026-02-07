@@ -14,7 +14,7 @@ class UserFactory extends \Orchestra\Testbench\Factories\UserFactory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var class-string<\TModel>
+     * @var class-string<TModel>
      */
     protected $model = User::class;
 }

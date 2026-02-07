@@ -41,7 +41,7 @@ class Token extends Model
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array<string, \Illuminate\Contracts\Database\Eloquent\Castable|string>
+     * @var array<string, string>
      */
     protected $casts = [
         'scopes' => 'array',

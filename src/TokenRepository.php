@@ -16,7 +16,7 @@ class TokenRepository
      *
      * @deprecated Use $user->tokens()->find()
      *
-     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      */
     public function findForUser(string $id, Authenticatable $user): ?Token
     {
@@ -32,7 +32,7 @@ class TokenRepository
      *
      * @deprecated Use $user->tokens()
      *
-     * @param  \Laravel\Passport\HasApiTokens  $user
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
      * @return \Illuminate\Database\Eloquent\Collection<int, \Laravel\Passport\Token>
      */
     public function forUser(Authenticatable $user): Collection

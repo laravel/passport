@@ -115,17 +115,14 @@ class PersonalAccessTokenControllerTest extends TestCase
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
-        $request = Request::create('/', 'GET');
+        $user = m::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $tokenRepository = m::mock(TokenRepository::class);
-        $tokenRepository->shouldReceive('findForUser')->with(3, 1)->andReturnNull();
+        $tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
 
-        $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-
-            return $user;
-        });
+        $request = Request::create('/', 'GET');
+        $request->setUserResolver(fn () => $user);
 
         $validator = m::mock(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);

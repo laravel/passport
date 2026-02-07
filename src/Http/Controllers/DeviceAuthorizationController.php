@@ -21,7 +21,7 @@ class DeviceAuthorizationController
     public function __construct(
         protected StatefulGuard $guard,
         protected DeviceCodeRepository $deviceCodes,
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
     ) {
     }
 

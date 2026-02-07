@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\DeviceCodeRepository;
+use Laravel\Passport\Bridge\PersonalAccessBearerTokenResponse;
 use Laravel\Passport\Bridge\PersonalAccessGrant;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
 use Laravel\Passport\Contracts\ApprovedDeviceAuthorizationResponse as ApprovedDeviceAuthorizationResponseContract;
@@ -21,9 +22,6 @@ use Laravel\Passport\Http\Controllers\AuthorizationController;
 use Laravel\Passport\Http\Controllers\DeviceAuthorizationController;
 use Laravel\Passport\Http\Responses\ApprovedDeviceAuthorizationResponse;
 use Laravel\Passport\Http\Responses\DeniedDeviceAuthorizationResponse;
-use Lcobucci\JWT\Encoding\JoseEncoder;
-use Lcobucci\JWT\Parser as ParserContract;
-use Lcobucci\JWT\Token\Parser;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -33,6 +31,7 @@ use League\OAuth2\Server\Grant\ImplicitGrant;
 use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
+use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -58,7 +57,7 @@ class PassportServiceProvider extends ServiceProvider
                 'as' => 'passport.',
                 'prefix' => config('passport.path', 'oauth'),
                 'namespace' => 'Laravel\Passport\Http\Controllers',
-            ], function () {
+            ], function (): void {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
         }
@@ -116,7 +115,6 @@ class PassportServiceProvider extends ServiceProvider
 
         $this->registerResponseBindings();
         $this->registerAuthorizationServer();
-        $this->registerJWTParser();
         $this->registerResourceServer();
         $this->registerGuard();
     }
@@ -135,11 +133,16 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerAuthorizationServer(): void
     {
-        $this->app->singleton(AuthorizationServer::class, function () {
-            return tap($this->makeAuthorizationServer(), function (AuthorizationServer $server) {
-                $server->setDefaultScope(Passport::$defaultScope);
-                $server->revokeRefreshTokens(Passport::$revokeRefreshTokenAfterUse);
+        $this->app->when(PersonalAccessTokenFactory::class)
+            ->needs(AuthorizationServer::class)
+            ->give(fn () => tap($this->makeAuthorizationServer(new PersonalAccessBearerTokenResponse),
+                function (AuthorizationServer $server): void {
+                    $server->enableGrantType(new PersonalAccessGrant, Passport::personalAccessTokensExpireIn());
+                }
+            ));
 
+        $this->app->singleton(AuthorizationServer::class,
+            fn () => tap($this->makeAuthorizationServer(), function (AuthorizationServer $server): void {
                 $server->enableGrantType(
                     $this->makeAuthCodeGrant(), Passport::tokensExpireIn()
                 );
@@ -155,10 +158,6 @@ class PassportServiceProvider extends ServiceProvider
                 }
 
                 $server->enableGrantType(
-                    new PersonalAccessGrant, Passport::personalAccessTokensExpireIn()
-                );
-
-                $server->enableGrantType(
                     new ClientCredentialsGrant, Passport::tokensExpireIn()
                 );
 
@@ -168,11 +167,13 @@ class PassportServiceProvider extends ServiceProvider
                     );
                 }
 
-                $server->enableGrantType(
-                    $this->makeDeviceCodeGrant(), Passport::tokensExpireIn()
-                );
-            });
-        });
+                if (Passport::$deviceCodeGrantEnabled && Route::has('passport.device')) {
+                    $server->enableGrantType(
+                        $this->makeDeviceCodeGrant(), Passport::tokensExpireIn()
+                    );
+                }
+            })
+        );
     }
 
     /**
@@ -180,7 +181,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeAuthCodeGrant(): AuthCodeGrant
     {
-        return tap($this->buildAuthCodeGrant(), function (AuthCodeGrant $grant) {
+        return tap($this->buildAuthCodeGrant(), function (AuthCodeGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -202,9 +203,9 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function makeRefreshTokenGrant(): RefreshTokenGrant
     {
-        $repository = $this->app->make(RefreshTokenRepository::class);
-
-        return tap(new RefreshTokenGrant($repository), function (RefreshTokenGrant $grant) {
+        return tap(new RefreshTokenGrant(
+            $this->app->make(RefreshTokenRepository::class)
+        ), function (RefreshTokenGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -217,7 +218,7 @@ class PassportServiceProvider extends ServiceProvider
         return tap(new PasswordGrant(
             $this->app->make(Bridge\UserRepository::class),
             $this->app->make(Bridge\RefreshTokenRepository::class)
-        ), function (PasswordGrant $grant) {
+        ), function (PasswordGrant $grant): void {
             $grant->setRefreshTokenTTL(Passport::refreshTokensExpireIn());
         });
     }
@@ -251,30 +252,23 @@ class PassportServiceProvider extends ServiceProvider
     /**
      * Make the authorization service instance.
      */
-    public function makeAuthorizationServer(): AuthorizationServer
+    protected function makeAuthorizationServer(?ResponseTypeInterface $responseType = null): AuthorizationServer
     {
-        return new AuthorizationServer(
+        return tap(new AuthorizationServer(
             $this->app->make(Bridge\ClientRepository::class),
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            $this->app->make('encrypter')->getKey(),
-            Passport::$authorizationServerResponseType
-        );
-    }
-
-    /**
-     * Register the JWT Parser.
-     */
-    protected function registerJWTParser(): void
-    {
-        $this->app->singleton(ParserContract::class, fn () => new Parser(new JoseEncoder));
+            Passport::tokenEncryptionKey($this->app->make('encrypter')),
+            $responseType ?? Passport::$authorizationServerResponseType
+        ), function (AuthorizationServer $server): void {
+            $server->setDefaultScope(Passport::$defaultScope);
+            $server->revokeRefreshTokens(Passport::$revokeRefreshTokenAfterUse);
+        });
     }
 
     /**
      * Register the resource server.
-     *
-     * @return void
      */
     protected function registerResourceServer(): void
     {
@@ -303,8 +297,8 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function registerGuard(): void
     {
-        Auth::resolved(function ($auth) {
-            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard) {
+        Auth::resolved(function ($auth): void {
+            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard): void {
                 app()->refresh('request', $guard, 'setRequest');
             }));
         });
@@ -331,7 +325,7 @@ class PassportServiceProvider extends ServiceProvider
      */
     protected function deleteCookieOnLogout(): void
     {
-        Event::listen(Logout::class, function () {
+        Event::listen(Logout::class, function (): void {
             if (Request::hasCookie(Passport::cookie())) {
                 Cookie::queue(Cookie::forget(Passport::cookie()));
             }

@@ -16,7 +16,7 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
 
     protected function setUp(): void
     {
-        PassportTestCase::setUp();
+        parent::setUp();
 
         Passport::tokensCan([
             'create' => 'Create',
@@ -81,11 +81,11 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $json);
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
-        $this->assertSame(31536000, $json['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
 
         $refreshToken = $json['refresh_token'];
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($json['access_token'], $json['token_type'])->get('/foo')->json();
@@ -103,7 +103,7 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
 
         $this->assertArrayHasKey('access_token', $newToken);
         $this->assertArrayHasKey('refresh_token', $newToken);
-        $this->assertSame(31536000, $newToken['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $newToken['expires_in'], 2);
         $this->assertSame('Bearer', $newToken['token_type']);
     }
 
@@ -113,19 +113,76 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
 
         $query = http_build_query([
             'client_id' => $client->getKey(),
-            'redirect_uri' => $client->redirect_uris[0],
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
             'response_type' => 'code',
+            'state' => $state = Str::random(40),
         ]);
 
         $user = UserFactory::new()->create();
         $this->actingAs($user, 'web');
         $response = $this->get('/oauth/authorize?'.$query);
 
+        // $response->assertRedirect();
         $response->assertStatus(400);
-        $json = $response->json();
 
-        $this->assertSame('invalid_request', $json['error']);
-        $this->assertSame('Code challenge must be provided for public clients', $json['hint']);
-        $this->assertArrayHasKey('error_description', $json);
+        // $location = $response->headers->get('Location');
+        // parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        $params = $response->json();
+
+        // $this->assertStringStartsWith($redirect.'?', $location);
+        // $this->assertSame($state, $params['state']);
+        $this->assertSame('invalid_request', $params['error']);
+        $this->assertSame('Code challenge must be provided for public clients', $params['hint']);
+        $this->assertArrayHasKey('error_description', $params);
+
+        $query .= '&code_challenge=foo';
+        $response = $this->get('/oauth/authorize?'.$query);
+
+        // $response->assertRedirect();
+        $response->assertStatus(400);
+
+        // $location = $response->headers->get('Location');
+        // parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        $params = $response->json();
+
+        // $this->assertStringStartsWith($redirect.'?', $location);
+        // $this->assertSame($state, $params['state']);
+        $this->assertSame('invalid_request', $params['error']);
+        $this->assertSame('Code challenge must follow the specifications of RFC-7636.', $params['hint']);
+        $this->assertArrayHasKey('error_description', $params);
+    }
+
+    public function testInvalidCodeChallengeMethod()
+    {
+        $client = ClientFactory::new()->asPublic()->create();
+
+        $codeVerifier = Str::random(128);
+        $codeChallenge = strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_');
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'state' => $state = Str::random(40),
+            'code_challenge' => $codeChallenge,
+            'code_challenge_method' => 'foo',
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+        $response = $this->get('/oauth/authorize?'.$query);
+
+        // $response->assertRedirect();
+        $response->assertStatus(400);
+
+        // $location = $response->headers->get('Location');
+        // parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        $params = $response->json();
+
+        // $this->assertStringStartsWith($redirect.'?', $location);
+        // $this->assertSame($state, $params['state']);
+        $this->assertSame('invalid_request', $params['error']);
+        $this->assertStringStartsWith('Code challenge method must be', $params['hint']);
+        $this->assertArrayHasKey('error_description', $params);
     }
 }

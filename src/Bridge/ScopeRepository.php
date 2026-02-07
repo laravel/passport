@@ -16,7 +16,7 @@ class ScopeRepository implements ScopeRepositoryInterface
      * Create a new scope repository.
      */
     public function __construct(
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
     ) {
     }
 
@@ -35,7 +35,7 @@ class ScopeRepository implements ScopeRepositoryInterface
         array $scopes,
         string $grantType,
         ClientEntityInterface $clientEntity,
-        string|null $userIdentifier = null,
+        ?string $userIdentifier = null,
         ?string $authCodeId = null
     ): array {
         return collect($scopes)

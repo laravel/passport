@@ -3,8 +3,11 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Client;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\HasApiTokens;
 use Laravel\Passport\Passport;
@@ -29,18 +32,51 @@ class PersonalAccessGrantTest extends PassportTestCase
         ]);
 
         $result = $user->createToken('test', ['bar']);
+        $token = $result->getToken();
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
-        $this->assertSame($client->getKey(), $result->token->client_id);
-        $this->assertSame($user->getAuthIdentifier(), $result->token->user_id);
-        $this->assertSame(['bar'], $result->token->scopes);
+        $this->assertArrayHasKey('accessToken', $result->toArray());
+        $this->assertSame($token->getKey(), $result->accessTokenId);
+        $this->assertSame('Bearer', $result->tokenType);
+        $this->assertEqualsWithDelta(31536000, $result->expiresIn, 2);
+        $this->assertSame($client->getKey(), $token->client_id);
+        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
+        $this->assertSame(['bar'], $token->scopes);
+        $this->assertSame('test', $token->name);
 
         $this->assertDatabaseHas('oauth_access_tokens', [
-            'id' => $result->token->id,
-            'user_id' => $result->token->user_id,
-            'client_id' => $result->token->client_id,
-            'name' => $result->token->name,
+            'id' => $token->id,
+            'user_id' => $token->user_id,
+            'client_id' => $token->client_id,
+            'name' => $token->name,
         ]);
+    }
+
+    public function testIssueTokenWithAllScopes()
+    {
+        $user = UserFactory::new()->create();
+
+        /** @var Client $client */
+        $client = ClientFactory::new()->asPersonalAccessTokenClient()->create();
+
+        $result = $user->createToken('test', ['*']);
+        $token = $result->getToken();
+
+        $this->assertInstanceOf(PersonalAccessTokenResult::class, $result);
+        $this->assertSame($client->getKey(), $token->client_id);
+        $this->assertSame($user->getAuthIdentifier(), $token->user_id);
+        $this->assertSame(['*'], $token->scopes);
+        $this->assertSame('test', $token->name);
+
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
+            ->middleware('auth:api');
+
+        $json = $this->withToken($result->accessToken)->get('/foo')->json();
+
+        $this->assertSame($token->getKey(), $json['oauth_access_token_id']);
+        $this->assertSame($client->getKey(), $json['oauth_client_id']);
+        $this->assertEquals($user->getAuthIdentifier(), $json['oauth_user_id']);
+        $this->assertSame(['*'], $json['oauth_scopes']);
     }
 
     public function testIssueTokenWithDifferentProviders()
@@ -58,24 +94,30 @@ class PersonalAccessGrantTest extends PassportTestCase
 
         $user = UserFactory::new()->create();
         $userToken = $user->createToken('test user');
+        $userTokenRecord = $userToken->getToken();
 
         $admin = new AdminProviderStub;
         $adminToken = $admin->createToken('test admin');
+        $adminTokenRecord = $adminToken->getToken();
 
         $customer = new CustomerProviderStub;
         $customerToken = $customer->createToken('test customer');
+        $customerTokenRecord = $customerToken->getToken();
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $userToken);
-        $this->assertSame($client->getKey(), $userToken->token->client_id);
-        $this->assertSame($user->getAuthIdentifier(), $userToken->token->user_id);
+        $this->assertSame($client->getKey(), $userTokenRecord->client_id);
+        $this->assertSame($user->getAuthIdentifier(), $userTokenRecord->user_id);
+        $this->assertSame('test user', $userTokenRecord->name);
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $adminToken);
-        $this->assertSame($adminClient->getKey(), $adminToken->token->client_id);
-        $this->assertSame($admin->getAuthIdentifier(), $adminToken->token->user_id);
+        $this->assertSame($adminClient->getKey(), $adminTokenRecord->client_id);
+        $this->assertSame($admin->getAuthIdentifier(), $adminTokenRecord->user_id);
+        $this->assertSame('test admin', $adminTokenRecord->name);
 
         $this->assertInstanceOf(PersonalAccessTokenResult::class, $customerToken);
-        $this->assertSame($customerClient->getKey(), $customerToken->token->client_id);
-        $this->assertSame($customer->getAuthIdentifier(), $customerToken->token->user_id);
+        $this->assertSame($customerClient->getKey(), $customerTokenRecord->client_id);
+        $this->assertSame($customer->getAuthIdentifier(), $customerTokenRecord->user_id);
+        $this->assertSame('test customer', $customerTokenRecord->name);
 
         DB::enableQueryLog();
         $userTokens = $user->tokens()->pluck('id')->all();
@@ -88,9 +130,9 @@ class PersonalAccessGrantTest extends PassportTestCase
         $this->assertStringContainsString('and ("provider" = \'admins\')', $queries[1]['raw_query']);
         $this->assertStringContainsString('and ("provider" = \'customers\')', $queries[2]['raw_query']);
 
-        $this->assertEquals([$userToken->token->id], $userTokens);
-        $this->assertEquals([$adminToken->token->id], $adminTokens);
-        $this->assertEquals([$customerToken->token->id], $customerTokens);
+        $this->assertEquals([$userToken->accessTokenId], $userTokens);
+        $this->assertEquals([$adminToken->accessTokenId], $adminTokens);
+        $this->assertEquals([$customerToken->accessTokenId], $customerTokens);
     }
 
     public function testPersonalAccessTokenRequestIsDisabled()
@@ -100,7 +142,7 @@ class PersonalAccessGrantTest extends PassportTestCase
 
         $response = $this->post('/oauth/token', [
             'grant_type' => 'personal_access',
-            'provider' => $user->getProvider(),
+            'provider' => $user->getProviderName(),
             'user_id' => $user->getKey(),
             'scope' => '',
         ]);
@@ -116,14 +158,14 @@ class PersonalAccessGrantTest extends PassportTestCase
     }
 }
 
-class AdminProviderStub extends Authenticatable
+class AdminProviderStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 
     protected $attributes = ['id' => 1];
 }
 
-class CustomerProviderStub extends Authenticatable
+class CustomerProviderStub extends Authenticatable implements OAuthenticatable
 {
     use HasApiTokens;
 

@@ -8,8 +8,6 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
-    use FormatsScopesForStorage;
-
     /**
      * {@inheritdoc}
      */
@@ -27,7 +25,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
             'id' => $authCodeEntity->getIdentifier(),
             'user_id' => $authCodeEntity->getUserIdentifier(),
             'client_id' => $authCodeEntity->getClient()->getIdentifier(),
-            'scopes' => $this->formatScopesForStorage($authCodeEntity->getScopes()),
+            'scopes' => json_encode($authCodeEntity->getScopes()),
             'revoked' => false,
             'expires_at' => $authCodeEntity->getExpiryDateTime(),
         ])->save();

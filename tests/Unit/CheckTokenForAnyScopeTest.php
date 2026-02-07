@@ -5,8 +5,10 @@ namespace Laravel\Passport\Tests\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
+use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
@@ -33,6 +35,27 @@ class CheckTokenForAnyScopeTest extends TestCase
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
+
+        $response = $middleware->handle($request, function () {
+            return new Response('response');
+        }, 'notfoo');
+
+        $this->assertSame('response', $response->getContent());
+    }
+
+    public function test_request_is_passed_along_if_token_is_transient()
+    {
+        $user = m::mock(OAuthenticatable::class);
+        $user->shouldReceive('currentAccessToken')->andReturn(new TransientToken());
+
+        $resourceServer = m::mock(ResourceServer::class);
+        $resourceServer->shouldNotReceive('validateAuthenticatedRequest');
+
+        $middleware = new CheckTokenForAnyScope($resourceServer);
+
+        $request = Request::create('/');
+        $request->headers->set('Authorization', 'Bearer token');
+        $request->setUserResolver(fn () => $user);
 
         $response = $middleware->handle($request, function () {
             return new Response('response');
@@ -112,7 +135,7 @@ class CheckTokenForAnyScopeTest extends TestCase
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(true);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 
@@ -131,7 +154,7 @@ class CheckTokenForAnyScopeTest extends TestCase
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = m::mock(Request::class);
         $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('token')->andReturn($token = m::mock(AccessToken::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(false);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 

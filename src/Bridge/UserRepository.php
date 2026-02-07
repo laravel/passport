@@ -14,7 +14,7 @@ class UserRepository implements UserRepositoryInterface
      * Create a new repository instance.
      */
     public function __construct(
-        protected Hasher $hasher
+        protected Hasher $hasher,
     ) {
     }
 
@@ -34,13 +34,13 @@ class UserRepository implements UserRepositoryInterface
         }
 
         if (method_exists($model, 'findAndValidateForPassport')) {
-            $user = (new $model)->findAndValidateForPassport($username, $password);
+            $user = (new $model)->findAndValidateForPassport($username, $password, $clientEntity);
 
             return $user ? new User($user->getAuthIdentifier()) : null;
         }
 
         $user = method_exists($model, 'findForPassport')
-            ? (new $model)->findForPassport($username)
+            ? (new $model)->findForPassport($username, $clientEntity)
             : (new $model)->where('email', $username)->first();
 
         if (! $user) {

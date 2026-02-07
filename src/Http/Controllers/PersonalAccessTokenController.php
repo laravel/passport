@@ -21,7 +21,7 @@ class PersonalAccessTokenController
      */
     public function __construct(
         protected TokenRepository $tokenRepository,
-        protected ValidationFactory $validation
+        protected ValidationFactory $validation,
     ) {
     }
 

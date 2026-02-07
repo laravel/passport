@@ -6,39 +6,39 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Support\Traits\ForwardsCalls;
 use JsonSerializable;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * @template TKey of string
  * @template TValue
  *
- * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
  *
  * @property string $oauth_access_token_id
  * @property string $oauth_client_id
  * @property string $oauth_user_id
  * @property string[] $oauth_scopes
  */
-class AccessToken implements Arrayable, Jsonable, JsonSerializable
+class AccessToken implements ScopeAuthorizable, Arrayable, Jsonable, JsonSerializable
 {
     use ResolvesInheritedScopes, ForwardsCalls;
 
     /**
      * The token instance.
      */
-    protected ?Token $token;
+    protected ?Token $token = null;
 
     /**
      * All the attributes set on the access token instance.
      *
-     * @var array<TKey, TValue>
+     * @var array<string, TValue>
      */
     protected array $attributes = [];
 
     /**
      * Create a new access token instance.
      *
-     * @param  array<TKey, TValue>  $attributes
+     * @param  array<string, TValue>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -60,7 +60,12 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
      */
     public function can(string $scope): bool
     {
-        return in_array('*', $this->oauth_scopes) || $this->scopeExists($scope, $this->oauth_scopes);
+        if (empty($this->attributes['oauth_scopes'])) {
+            return false;
+        }
+
+        return in_array('*', $this->attributes['oauth_scopes'])
+            || $this->scopeExistsIn($scope, $this->attributes['oauth_scopes']);
     }
 
     /**
@@ -84,7 +89,15 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
      */
     public function revoke(): bool
     {
-        return (bool) Passport::token()->newQuery()->whereKey($this->oauth_access_token_id)->update(['revoked' => true]);
+        if ($this->token) {
+            return $this->token->revoke();
+        }
+
+        if (isset($this->attributes['oauth_access_token_id'])) {
+            return (bool) Passport::token()->newQuery()->whereKey($this->attributes['oauth_access_token_id'])->update(['revoked' => true]);
+        }
+
+        return false;
     }
 
     /**
@@ -92,13 +105,21 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
      */
     protected function getToken(): ?Token
     {
-        return $this->token ??= Passport::token()->newQuery()->find($this->oauth_access_token_id);
+        if ($this->token) {
+            return $this->token;
+        }
+
+        if (isset($this->attributes['oauth_access_token_id'])) {
+            return $this->token = Passport::token()->newQuery()->find($this->attributes['oauth_access_token_id']);
+        }
+
+        return null;
     }
 
     /**
      * Convert the access token instance to an array.
      *
-     * @return array<TKey, TValue>
+     * @return array<string, TValue>
      */
     public function toArray(): array
     {
@@ -108,7 +129,7 @@ class AccessToken implements Arrayable, Jsonable, JsonSerializable
     /**
      * Convert the object into something JSON serializable.
      *
-     * @return array<TKey, TValue>
+     * @return array<string, TValue>
      */
     public function jsonSerialize(): array
     {

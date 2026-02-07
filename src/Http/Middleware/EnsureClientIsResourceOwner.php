@@ -2,8 +2,9 @@
 
 namespace Laravel\Passport\Http\Middleware;
 
-use Illuminate\Auth\AuthenticationException;
 use Laravel\Passport\AccessToken;
+use Laravel\Passport\Contracts\ScopeAuthorizable;
+use Laravel\Passport\Exceptions\AuthenticationException;
 use Laravel\Passport\Exceptions\MissingScopeException;
 
 class EnsureClientIsResourceOwner extends ValidateToken
@@ -11,11 +12,15 @@ class EnsureClientIsResourceOwner extends ValidateToken
     /**
      * Determine if the token's client is the resource owner and has all the given scopes.
      *
-     * @throws \Exception
+     * @throws \Laravel\Passport\Exceptions\AuthenticationException|\Laravel\Passport\Exceptions\MissingScopeException
      */
-    protected function validate(AccessToken $token, string ...$params): void
+    protected function validate(ScopeAuthorizable $token, string ...$params): void
     {
-        if ($token->oauth_user_id !== $token->oauth_client_id) {
+        if (
+            $token instanceof AccessToken
+            && ! is_null($token->oauth_user_id)
+            && $token->oauth_user_id !== $token->oauth_client_id
+        ) {
             throw new AuthenticationException;
         }
 

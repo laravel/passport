@@ -7,11 +7,6 @@ use Laravel\Passport\PassportServiceProvider;
 
 class PassportServiceProviderTest extends PassportTestCase
 {
-    protected function tearDown(): void
-    {
-        @unlink(__DIR__.'/../keys/oauth-private.key');
-    }
-
     public function test_can_use_crypto_keys_from_config()
     {
         $privateKey = openssl_pkey_new();

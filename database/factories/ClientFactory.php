@@ -29,7 +29,8 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => null,
+            'owner_id' => null,
+            'owner_type' => null,
             'name' => $this->faker->company(),
             'secret' => Str::random(40),
             'redirect_uris' => [$this->faker->url()],

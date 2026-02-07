@@ -8,6 +8,7 @@ use Firebase\JWT\Key;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -48,13 +49,15 @@ class TokenGuard implements Guard
         PassportUserProvider $provider,
         protected ClientRepository $clients,
         protected Encrypter $encrypter,
-        protected Request $request
+        protected Request $request,
     ) {
         $this->provider = $provider;
     }
 
     /**
      * Get the user for the incoming request.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     public function user(): ?Authenticatable
     {
@@ -117,6 +120,8 @@ class TokenGuard implements Guard
 
     /**
      * Authenticate the incoming request via the Bearer token.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaBearerToken(): ?Authenticatable
     {
@@ -139,18 +144,18 @@ class TokenGuard implements Guard
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
-        $user = $this->provider->retrieveById(
-            $psr->getAttribute('oauth_user_id') ?: null
-        );
-
-        if (! $user) {
+        try {
+            $user = $this->provider->retrieveById(
+                $psr->getAttribute('oauth_user_id') ?: null
+            );
+        } catch (Exception) {
             return null;
         }
 
         // Next, we will assign a token instance to this user which the developers may use
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
-        return $user->withAccessToken(AccessToken::fromPsrRequest($psr));
+        return $user?->withAccessToken(AccessToken::fromPsrRequest($psr));
     }
 
     /**
@@ -161,7 +166,7 @@ class TokenGuard implements Guard
         // First, we will convert the Symfony request to a PSR-7 implementation which will
         // be compatible with the base OAuth2 library. The Symfony bridge can perform a
         // conversion for us to a new PSR-7 implementation from this Symfony request.
-        $psr = (new PsrHttpFactory())->createRequest($this->request);
+        $psr = (new PsrHttpFactory)->createRequest($this->request);
 
         try {
             return $this->server->validateAuthenticatedRequest($psr);
@@ -176,6 +181,8 @@ class TokenGuard implements Guard
 
     /**
      * Authenticate the incoming request via the token cookie.
+     *
+     * @return \Laravel\Passport\Contracts\OAuthenticatable|null
      */
     protected function authenticateViaCookie(): ?Authenticatable
     {
@@ -186,11 +193,13 @@ class TokenGuard implements Guard
         // If this user exists, we will return this user and attach a "transient" token to
         // the user model. The transient token assumes it has all scopes since the user
         // is physically logged into the application via the application's interface.
-        if ($user = $this->provider->retrieveById($token['sub'])) {
-            return $user->withAccessToken(new TransientToken);
+        try {
+            $user = $this->provider->retrieveById($token['sub']);
+        } catch (Exception) {
+            return null;
         }
 
-        return null;
+        return $user?->withAccessToken(new TransientToken);
     }
 
     /**
@@ -209,11 +218,17 @@ class TokenGuard implements Guard
             return null;
         }
 
+        // Token's expiration time is checked using the "exp" claim during decoding, but
+        // legacy tokens may have an "expiry" claim instead of the standard "exp". So
+        // we must manually check token's expiry, if the "expiry" claim is present.
+        if (isset($token['expiry']) && time() >= $token['expiry']) {
+            return null;
+        }
+
         // We will compare the CSRF token in the decoded API token against the CSRF header
         // sent with the request. If they don't match then this request isn't sent from
         // a valid source and we won't authenticate the request for further handling.
-        if (! Passport::$ignoreCsrfToken &&
-            (! $this->validCsrf($token) || time() >= $token['expiry'])) {
+        if (! Passport::$ignoreCsrfToken && ! $this->validCsrf($token)) {
             return null;
         }
 
@@ -244,20 +259,26 @@ class TokenGuard implements Guard
      */
     protected function validCsrf(array $token): bool
     {
-        return isset($token['csrf']) && hash_equals(
-            $token['csrf'], $this->getTokenFromRequest()
-        );
+        $requestToken = $this->getTokenFromRequest();
+
+        return isset($token['csrf']) &&
+               is_string($requestToken) &&
+               hash_equals($token['csrf'], $requestToken);
     }
 
     /**
      * Get the CSRF token from the request.
      */
-    protected function getTokenFromRequest(): string
+    protected function getTokenFromRequest(): ?string
     {
         $token = $this->request->header('X-CSRF-TOKEN');
 
         if (! $token && $header = $this->request->header('X-XSRF-TOKEN')) {
-            $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
+            try {
+                $token = CookieValuePrefix::remove($this->encrypter->decrypt($header, static::serialized()));
+            } catch (DecryptException) {
+                $token = null;
+            }
         }
 
         return $token;

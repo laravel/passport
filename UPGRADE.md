@@ -12,9 +12,9 @@ PHP 8.2 is now the minimum required version.
 
 ### Minimum Laravel Version
 
-PR: https://github.com/laravel/passport/pull/1757, https://github.com/laravel/passport/pull/1783
+PR: https://github.com/laravel/passport/pull/1757, https://github.com/laravel/passport/pull/1783, https://github.com/laravel/passport/pull/1797 
 
-Laravel 11.14 is now the minimum required version.
+Laravel 11.35 is now the minimum required version.
 
 ### OAuth2 Server
 
@@ -32,7 +32,13 @@ All the authorization view's rendering logic may be customized using the appropr
 
     public function boot(): void
     {
+        // By providing the view names...
         Passport::authorizationView('auth.oauth.authorize');
+        Passport::deviceUserCodeView('auth.oauth.device.user-code');
+        Passport::deviceAuthorizationView('auth.oauth.device.authorize');
+
+        // Or using conventional names under the given prefix...
+        Passport::viewPrefix('auth.oauth');
     }
 
 ### Identify Clients by UUIDs
@@ -96,6 +102,71 @@ The JSON API provided by Passport has been deprecated. If you need to continue u
     {
         Passport::$registersJsonApiRoutes = true;
     }
+
+### Key Files Permissions Validation
+
+PR: https://github.com/laravel/passport/pull/1789
+
+Passport now validates the permissions of key files on supported operating systems. If you encounter an exception indicating incorrect permissions, you can fix it by running the following code once:
+
+```php
+if (! windows_os()) {
+    chmod(Passport::keyPath('oauth-public.key'), 0660);
+    chmod(Passport::keyPath('oauth-private.key'), 0600);
+}
+```
+
+Alternatively, you may disable this validation entirely (not recommended) by setting `Passport::$validateKeyPermissions` to `false` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class:
+
+```php
+Passport::$validateKeyPermissions = false;
+```
+
+### OAuth Client Table Changes (Optional)
+
+PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
+
+
+Passport 13 introduces a new schema for the `oauth_clients` table. However, These changes are **fully backward compatible**, and **no action is required** on your part.
+
+For reference, here are the changes on the `oauth_clients` table:
+
+- The `user_id` column has been replaced with `owner_type` and `owner_id` columns.
+- The `redirect` column has been replaced with `redirect_uris` column, which now stores an array of URIs.
+- The `personal_access_client` and `password_client` columns have been replaced with `grant_types` column, which stores an array of supported OAuth 2 grant types.
+
+If you prefer to use the new structure, you may create a migration to apply the changes:
+
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->nullableMorphs('owner', after: 'user_id');
+
+    $table->after('provider', function (Blueprint $table) {
+        $table->text('redirect_uris')->nullable();
+        $table->text('grant_types')->nullable();
+    });
+});
+
+foreach (Passport::client()->cursor() as $client) {
+    Model::withoutTimestamps(fn () => $client->forceFill([
+        'owner_id' => $client->user_id,
+        'owner_type' => $client->user_id
+            ? config('auth.providers.'.($client->provider ?: config('auth.guards.api.provider')).'.model')
+            : null,
+        'redirect_uris' => $client->redirect_uris,
+        'grant_types' => $client->grant_types,
+    ])->save());
+}
+
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->dropColumn(['user_id', 'redirect', 'personal_access_client', 'password_client']);
+
+    $table->text('redirect_uris')->nullable(false)->change();
+    $table->text('grant_types')->nullable(false)->change();
+});
+```
+
+Additionally, Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
 
 ## Upgrading To 12.0 From 11.x
 

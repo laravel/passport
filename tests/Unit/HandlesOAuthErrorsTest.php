@@ -7,7 +7,9 @@ use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\HandlesOAuthErrors;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 
 class HandlesOAuthErrorsTest extends TestCase
 {
@@ -27,16 +29,16 @@ class HandlesOAuthErrorsTest extends TestCase
     {
         $controller = new HandlesOAuthErrorsStubController;
 
-        $exception = new LeagueException('Error', 1, 'fatal');
+        app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $e = null;
 
         try {
-            $controller->test(function () use ($exception) {
-                throw $exception;
+            $controller->test(function () {
+                throw new LeagueException('Error', 1, 'fatal');
             });
-        } catch (OAuthServerException $e) {
-            $e = $e;
+        } catch (OAuthServerException $exception) {
+            $e = $exception;
         }
 
         $this->assertInstanceOf(OAuthServerException::class, $e);

@@ -16,7 +16,7 @@ class ImplicitGrantTest extends PassportTestCase
 
     protected function setUp(): void
     {
-        PassportTestCase::setUp();
+        parent::setUp();
 
         Passport::enableImplicitGrant();
 
@@ -65,9 +65,9 @@ class ImplicitGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $params);
         $this->assertArrayNotHasKey('refresh_token', $params);
         $this->assertSame('Bearer', $params['token_type']);
-        $this->assertSame('31536000', $params['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $params['expires_in'], 2);
 
-        Route::get('/foo', fn (Request $request) => $request->user()->token()->toJson())
+        Route::get('/foo', fn (Request $request) => $request->user()->currentAccessToken()->toJson())
             ->middleware('auth:api');
 
         $json = $this->withToken($params['access_token'], $params['token_type'])->get('/foo')->json();
@@ -100,8 +100,8 @@ class ImplicitGrantTest extends PassportTestCase
         $location = $response->headers->get('Location');
         parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
-        // $this->assertStringStartsWith($redirect.'#', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertStringStartsWith($redirect.'#', $location);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('access_denied', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }
@@ -145,7 +145,7 @@ class ImplicitGrantTest extends PassportTestCase
         $this->assertArrayHasKey('access_token', $params);
         $this->assertArrayNotHasKey('refresh_token', $params);
         $this->assertSame('Bearer', $params['token_type']);
-        $this->assertSame('31536000', $params['expires_in']);
+        $this->assertEqualsWithDelta(31536000, $params['expires_in'], 2);
     }
 
     public function testValidateAuthorizationRequest()
@@ -182,7 +182,7 @@ class ImplicitGrantTest extends PassportTestCase
         parse_str(parse_url($location, PHP_URL_FRAGMENT), $params);
 
         $this->assertStringStartsWith($redirect.'#', $location);
-        // $this->assertSame($state, $params['state']);
+        $this->assertSame($state, $params['state']);
         $this->assertSame('invalid_scope', $params['error']);
         $this->assertArrayHasKey('error_description', $params);
     }

@@ -21,7 +21,7 @@ class ClientController
     public function __construct(
         protected ClientRepository $clients,
         protected ValidationFactory $validation,
-        protected RedirectRule $redirectRule
+        protected RedirectRule $redirectRule,
     ) {
     }
 
@@ -49,13 +49,11 @@ class ClientController
         $client = $this->clients->createAuthorizationCodeGrantClient(
             $request->name,
             explode(',', $request->redirect),
-            (bool) $request->input('confidential', true),
+            $confidential = (bool) $request->input('confidential', true),
             $request->user(),
         );
 
-        $client->secret = $client->plainSecret;
-
-        return $client->makeVisible('secret');
+        return $confidential ? $client->append(['plain_secret']) : $client;
     }
 
     /**
