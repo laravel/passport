@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Token extends Model
 {
+    use ResolvesInheritedScopes;
+
     /**
      * The database table used by the model.
      *
@@ -81,6 +83,27 @@ class Token extends Model
         $model = config('auth.providers.'.$provider.'.model');
 
         return $this->belongsTo($model, 'user_id', (new $model)->getAuthIdentifierName());
+    }
+
+    /**
+     * Determine if the token has a given scope.
+     */
+    public function can(string $scope): bool
+    {
+        if (empty($this->scopes)) {
+            return false;
+        }
+
+        return in_array('*', $this->scopes)
+            || $this->scopeExistsIn($scope, $this->scopes);
+    }
+
+    /**
+     * Determine if the token is missing a given scope.
+     */
+    public function cant(string $scope): bool
+    {
+        return ! $this->can($scope);
     }
 
     /**
