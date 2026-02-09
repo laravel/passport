@@ -298,7 +298,9 @@ class PassportServiceProvider extends ServiceProvider
     protected function registerGuard(): void
     {
         Auth::resolved(function ($auth): void {
-            $auth->extend('passport', fn ($app, $name, array $config) => tap($this->makeGuard($config), function ($guard): void {
+            $requestGuardCreator = fn ($config) => $this->makeGuard($config);
+
+            $auth->extend('passport', fn ($app, $name, array $config) => tap($requestGuardCreator($config), function ($guard): void {
                 app()->refresh('request', $guard, 'setRequest');
             }));
         });
