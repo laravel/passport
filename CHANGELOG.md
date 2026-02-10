@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.4.3...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.4.4...13.x)
+
+## [v13.4.4](https://github.com/laravel/passport/compare/v13.4.3...v13.4.4) - 2026-02-09
+
+* [13.x] Supports Laravel 13 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1885
+* [13.x] Add `can` and `cant` methods to `Token` model by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1882
 
 ## [v13.4.3](https://github.com/laravel/passport/compare/v13.4.2...v13.4.3) - 2025-12-22
 
