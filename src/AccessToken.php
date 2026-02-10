@@ -14,6 +14,8 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
  *
+ * @mixin \Laravel\Passport\Token
+ *
  * @property string $oauth_access_token_id
  * @property string $oauth_client_id
  * @property string $oauth_user_id
