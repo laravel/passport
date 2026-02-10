@@ -13,6 +13,8 @@ use Psr\Http\Message\ServerRequestInterface;
  * @template TValue
  *
  * @implements \Illuminate\Contracts\Support\Arrayable<string, TValue>
+ * 
+ * @mixin \Laravel\Passport\Token
  *
  * @property string $oauth_access_token_id
  * @property string $oauth_client_id
