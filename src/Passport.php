@@ -75,6 +75,11 @@ class Passport
     public static ?DateInterval $personalAccessTokensExpireIn = null;
 
     /**
+     * The interval when client credentials tokens expire.
+     */
+    public static ?DateInterval $clientCredentialsTokensExpireIn = null;
+
+    /**
      * The name for API token cookies.
      */
     public static string $cookie = 'laravel_token';
@@ -320,6 +325,20 @@ class Passport
         }
 
         return static::$personalAccessTokensExpireIn = $date instanceof DateTimeInterface
+            ? Date::now()->diff($date)
+            : $date;
+    }
+
+    /**
+     * Get or set when client credentials grant tokens expire.
+     */
+    public static function clientCredentialsTokensExpireIn(DateTimeInterface|DateInterval|null $date = null): ?DateInterval
+    {
+        if (is_null($date)) {
+            return static::$clientCredentialsTokensExpireIn;
+        }
+
+        return static::$clientCredentialsTokensExpireIn = $date instanceof DateTimeInterface
             ? Date::now()->diff($date)
             : $date;
     }

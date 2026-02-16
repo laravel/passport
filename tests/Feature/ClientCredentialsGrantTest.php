@@ -16,6 +16,8 @@ class ClientCredentialsGrantTest extends PassportTestCase
 
     protected function setUp(): void
     {
+        Passport::$clientCredentialsTokensExpireIn = null;
+
         parent::setUp();
 
         Passport::tokensCan([
@@ -113,5 +115,21 @@ class ClientCredentialsGrantTest extends PassportTestCase
             'The authenticated client is not authorized to use this authorization grant type.',
             $json['error_description']
         );
+    }
+
+    public function testCustomClientCredentialsTokenExpiration()
+    {
+        Passport::clientCredentialsTokensExpireIn(new \DateInterval('P7D'));
+
+        $client = ClientFactory::new()->asClientCredentials()->create();
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+        ])->assertOk()->json();
+
+        // 7 days = 604800 seconds
+        $this->assertEqualsWithDelta(604800, $json['expires_in'], 2);
     }
 }
