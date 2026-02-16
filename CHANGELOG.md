@@ -2,8 +2,6 @@
 
 ## [Unreleased](https://github.com/laravel/passport/compare/v13.4.4...13.x)
 
-* [13.x] Add dedicated token lifetime for client credentials grant by [@sajanp](https://github.com/sajanp) in https://github.com/laravel/passport/pull/1880
-
 ## [v13.4.4](https://github.com/laravel/passport/compare/v13.4.3...v13.4.4) - 2026-02-09
 
 * [13.x] Supports Laravel 13 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1885
