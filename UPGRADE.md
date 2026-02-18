@@ -70,6 +70,23 @@ PR: https://github.com/laravel/passport/pull/1755
 
 When authenticating users via bearer tokens, the `User` model's `token` method now returns an instance of `Laravel\Passport\AccessToken` class instead of `Laravel\Passport\Token`.
 
+### User Model Interface
+
+PR: https://github.com/laravel/passport/pull/1797
+
+Passport 13 introduces the `Laravel\Passport\Contracts\OAuthenticatable` interface, which must now be
+implemented by your `App\Models\User` model alongside the existing `HasApiTokens` trait:
+
+```php
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
+
+class User extends Authenticatable implements OAuthenticatable
+{
+    use HasApiTokens;
+}
+```
+
 ### Renamed Middlewares
 
 PR: https://github.com/laravel/passport/pull/1792, https://github.com/laravel/passport/pull/1794
