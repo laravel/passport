@@ -30,16 +30,18 @@ Passport's views were not rendering properly for several release cycles. Passpor
 
 All the authorization view's rendering logic may be customized using the appropriate methods available via the `Laravel\Passport\Passport` class. Typically, you should call these methods within the `boot` method of your application's `App\Providers\AppServiceProvider` class. Passport will take care of defining the routes that return these views:
 
-    public function boot(): void
-    {
-        // By providing the view names...
-        Passport::authorizationView('auth.oauth.authorize');
-        Passport::deviceUserCodeView('auth.oauth.device.user-code');
-        Passport::deviceAuthorizationView('auth.oauth.device.authorize');
+```php
+public function boot(): void
+{
+    // By providing the view names...
+    Passport::authorizationView('auth.oauth.authorize');
+    Passport::deviceUserCodeView('auth.oauth.device.user-code');
+    Passport::deviceAuthorizationView('auth.oauth.device.authorize');
 
-        // Or using conventional names under the given prefix...
-        Passport::viewPrefix('auth.oauth');
-    }
+    // Or using conventional names under the given prefix...
+    Passport::viewPrefix('auth.oauth');
+}
+```
 
 ### User Model Interface
 
@@ -64,10 +66,12 @@ PR: https://github.com/laravel/passport/pull/1764
 
 By default, Passport now uses UUIDs to identify clients. You may keep using incremental integer IDs by setting `Passport::$clientUuids` to `false` within the `boot` method of your application's `App\Providers\AppServiceProvider` class:
 
-    public function boot(): void
-    {
-        Passport::$clientUuids = false;
-    }
+```php
+public function boot(): void
+{
+    Passport::$clientUuids = false;
+}
+```
 
 As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
 
@@ -77,7 +81,9 @@ PR: https://github.com/laravel/passport/pull/1745
 
 Passport now always hashes client secrets using Laravel's `Hash` facade. If you are currently storing your client secrets in plain text, you may invoke the `passport:hash` Artisan command to hash all of your existing client secrets:
 
-    php artisan passport:hash
+```bash
+php artisan passport:hash
+```
 
 In light of this change, the `Passport::$hashesClientSecrets` property and `Passport::hashClientSecrets()` method has been removed.
 
@@ -105,7 +111,9 @@ PR: https://github.com/laravel/passport/pull/1749, https://github.com/laravel/pa
 
 Passport's `oauth_personal_access_clients` table has been redundant and unnecessary for several release cycles. Therefore, this release of Passport no longer interacts with this table or its corresponding model. If you wish, you may create a migration that drops this table:
 
-    Schema::drop('oauth_personal_access_clients');
+```php
+Schema::drop('oauth_personal_access_clients');
+```
 
 In addition, the `passport.personal_access_client` configuration value, `Laravel\Passport\PersonalAccessClient` model, `Passport::$personalAccessClientModel` property, `Passport::usePersonalAccessClientModel()`, `Passport::personalAccessClientModel()`, and `Passport::personalAccessClient()` methods have been removed.
 
@@ -115,10 +123,12 @@ PR: https://github.com/laravel/passport/pull/1778
 
 The JSON API provided by Passport has been deprecated. If you need to continue using the deprecated JSON API, you can do so by setting `Passport::$registersJsonApiRoutes` to `true` within the `boot` method of your application’s `App\Providers\AppServiceProvider` class. Alternatively, you may also copy the relevant routes and controllers into your application as needed:
 
-    public function boot(): void
-    {
-        Passport::$registersJsonApiRoutes = true;
-    }
+```php
+public function boot(): void
+{
+    Passport::$registersJsonApiRoutes = true;
+}
+```
 
 ### Key Files Permissions Validation
 
@@ -276,9 +286,11 @@ PR: https://github.com/laravel/passport/pull/1220
 
 Passport now has support for multiple guard user providers. Because of this change, you must add a `provider` column to the `oauth_clients` database table:
 
-    Schema::table('oauth_clients', function (Blueprint $table) {
-        $table->string('provider')->after('secret')->nullable();
-    });
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->string('provider')->after('secret')->nullable();
+});
+```
 
 If you have not previously published the Passport migrations, you should manually add the `provider` column to your database.
 
@@ -292,13 +304,17 @@ Client secrets may now be stored using a Bcrypt hash. However, before enabling t
 
 Before you continue, you should set your personal access client ID and unhashed secret in your `.env` file:
 
-    PASSPORT_PERSONAL_ACCESS_CLIENT_ID=client-id-value
-    PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=unhashed-client-secret-value
+```env
+PASSPORT_PERSONAL_ACCESS_CLIENT_ID=client-id-value
+PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=unhashed-client-secret-value
+```
 
 Next, you should register these values by placing the following calls within the `boot` method of your `AppServiceProvider`:
 
-    Passport::personalAccessClientId(config('passport.personal_access_client.id'));
-    Passport::personalAccessClientSecret(config('passport.personal_access_client.secret'));
+```php
+Passport::personalAccessClientId(config('passport.personal_access_client.id'));
+Passport::personalAccessClientSecret(config('passport.personal_access_client.secret'));
+```
 
 > Make sure you follow the instructions above before hashing your secrets. Otherwise, irreversible data loss may occur.
 
@@ -306,7 +322,9 @@ Next, you should register these values by placing the following calls within the
 
 You may enable client secret hashing by calling the `Passport::hashClientSecrets()` method within the `boot` method of your `AppServiceProvider`. For convenience, we've included a new Artisan command which you can run to hash all existing client secrets:
 
-    php artisan passport:hash
+```bash
+php artisan passport:hash
+```
 
 **Again, please be aware that running this command cannot be undone. For extra precaution, you may wish to create a backup of your database before running the command.**
 
@@ -343,9 +361,11 @@ PR: https://github.com/laravel/passport/pull/1065
 
 Passport now supports public clients and PCKE. To leverage this feature, you should update the `secret` column of the `oauth_clients` table to be `nullable`:
 
-    Schema::table('oauth_clients', function (Blueprint $table) {
-        $table->string('secret', 100)->nullable()->change();
-    });
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->string('secret', 100)->nullable()->change();
+});
+```
 
 ### Renderable Exceptions For OAuth Errors
 
