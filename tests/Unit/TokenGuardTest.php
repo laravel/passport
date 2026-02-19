@@ -152,7 +152,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -166,7 +166,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'), false)
+            ], $key, 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -185,7 +185,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -199,7 +199,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'), false)
+            ], $key, 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -218,7 +218,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'wrong_token');
@@ -228,7 +228,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'))
+            ], $key, 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -244,7 +244,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt('wrong_token', false));
@@ -254,7 +254,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'))
+            ], $key, 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -274,7 +274,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -315,7 +315,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -352,7 +352,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
         $request->cookies->set('XSRF-TOKEN', $encrypter->encrypt('token', false));
@@ -362,7 +362,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'))
+            ], $key, 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -378,7 +378,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
@@ -388,7 +388,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->subMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'))
+            ], $key, 'HS256'))
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -404,7 +404,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -418,7 +418,7 @@ class TokenGuardTest extends TestCase
                 'sub' => 1,
                 'aud' => 1,
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'), false)
+            ], $key, 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
@@ -534,7 +534,7 @@ class TokenGuardTest extends TestCase
         $userProvider = m::mock(PassportUserProvider::class);
         $tokens = m::mock(TokenRepository::class);
         $clients = m::mock(ClientRepository::class);
-        $encrypter = new Encrypter(str_repeat('a', 16));
+        $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
@@ -544,7 +544,7 @@ class TokenGuardTest extends TestCase
                 'aud' => 1,
                 'csrf' => 'token',
                 'expiry' => Carbon::now()->addMinutes(10)->getTimestamp(),
-            ], str_repeat('a', 16), 'HS256'), false)
+            ], $key, 'HS256'), false)
         );
 
         $guard = new TokenGuard($resourceServer, $userProvider, $tokens, $clients, $encrypter, $request);
