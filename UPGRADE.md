@@ -75,6 +75,8 @@ public function boot(): void
 
 As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
 
+> If you plan to update the type and value for `client_id`, then all issued tokens will become invalid.
+
 ### Client Secrets Hashed by Default
 
 PR: https://github.com/laravel/passport/pull/1745
