@@ -57,6 +57,7 @@ class PassportServiceProvider extends ServiceProvider
                 'as' => 'passport.',
                 'prefix' => config('passport.path', 'oauth'),
                 'namespace' => 'Laravel\Passport\Http\Controllers',
+                'middleware' => config('passport.middleware', []),
             ], function (): void {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
