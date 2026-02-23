@@ -75,7 +75,7 @@ public function boot(): void
 
 As a consequence of this change, the `'passport.client_uuids'` configuration property has been removed, as well as the `Passport::clientUuids()` and `Passport::setClientUuids()` methods.
 
-> If you plan to update the type and value for `client_id`, then all issued tokens will become invalid.
+> Changing the client ID in the database will invalidate all tokens previously issued for that client, as tokens are bound to the original client identifier.
 
 ### Client Secrets Hashed by Default
 
