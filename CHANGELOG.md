@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.4.4...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.5.0...13.x)
+
+## [v13.5.0](https://github.com/laravel/passport/compare/v13.4.4...v13.5.0) - 2026-02-23
+
+* Add mixin annotation for `Token` model in `AccessToken` by [@fjkorf](https://github.com/fjkorf) in https://github.com/laravel/passport/pull/1886
+* Add dedicated token lifetime for client credentials grant by [@sajanp](https://github.com/sajanp) in https://github.com/laravel/passport/pull/1880
+* Add missing `OAuthenticatable` interface step to upgrade guide by [@FeBe95](https://github.com/FeBe95) in https://github.com/laravel/passport/pull/1887
+* Improve code syntax highlighting in upgrade guide by [@FeBe95](https://github.com/FeBe95) in https://github.com/laravel/passport/pull/1890
+* Allow custom middleware to be registered by [@timacdonald](https://github.com/timacdonald) in https://github.com/laravel/passport/pull/1892
+* Update UPGRADE.md by [@siarheipashkevich](https://github.com/siarheipashkevich) in https://github.com/laravel/passport/pull/1891
 
 ## [v13.4.4](https://github.com/laravel/passport/compare/v13.4.3...v13.4.4) - 2026-02-09
 
