@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v12.4.2...12.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v12.4.3...12.x)
+
+## [v12.4.3](https://github.com/laravel/passport/compare/v12.4.2...v12.4.3) - 2026-02-19
+
+* Fix firebase/php jwt vuln by [@jszoja](https://github.com/jszoja) in https://github.com/laravel/passport/pull/1889
 
 ## [v12.4.2](https://github.com/laravel/passport/compare/v12.4.1...v12.4.2) - 2025-02-12
 
