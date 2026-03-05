@@ -32,11 +32,11 @@ Activate this skill when:
 - Configuring SPA cookie-based authentication
 - Choosing between Passport and Sanctum
 
-## Passport vs Sanctum
+## Passport vs. Sanctum
 
-**Passport** is a full OAuth2 server — use it when third-party applications need to consume your API, when you need authorization code grants, client credentials for machine-to-machine auth, or device authorization flow.
+**Passport** is a full OAuth2 server — use it when third-party applications need to consume your API and when you need OAuth2 authorization code grants, client credentials for machine-to-machine auth, or device authorization flow.
 
-**Sanctum** is simpler — use it when only first-party SPAs or mobile apps consume the API and you don't need OAuth2 grant flows.
+**Sanctum** is simpler — use it when first-party SPAs, third parties, or mobile apps consume the API but you don't need the full OAuth2 grant flows.
 
 ## Installation
 
@@ -117,7 +117,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:api');
 ```
 
-### Scope enforcement
+### Scope Enforcement
 
 Scope middleware must come alongside `auth:api`:
 
@@ -183,7 +183,7 @@ Passport::actingAsClient($client, ['scope1']);
 {{ $assist->artisanCommand('passport:purge --expired') }}    # Only expired
 ```
 
-Schedule `passport:purge` for regular cleanup.
+Schedule `passport:purge` for regular expired token clean-up.
 
 ## Events
 
