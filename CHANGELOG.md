@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.5.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.6.0...13.x)
+
+## [v13.6.0](https://github.com/laravel/passport/compare/v13.5.0...v13.6.0) - 2026-03-05
+
+* Add Boost skill for Passport development by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/passport/pull/1893
 
 ## [v13.5.0](https://github.com/laravel/passport/compare/v13.4.4...v13.5.0) - 2026-02-23
 
