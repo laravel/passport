@@ -24,7 +24,13 @@ trait RetrievesAuthRequestFromSession
             throw InvalidAuthTokenException::different();
         }
 
-        return $request->session()->pull('authRequest')
+        $authRequest = $request->session()->pull('authRequest')
             ?? throw new Exception('Authorization request was not present in the session.');
+
+        if (is_string($authRequest)) {
+            $authRequest = unserialize($authRequest);
+        }
+
+        return $authRequest;
     }
 }

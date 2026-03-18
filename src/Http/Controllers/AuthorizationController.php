@@ -82,7 +82,7 @@ class AuthorizationController
         }
 
         $request->session()->put('authToken', $authToken = Str::random());
-        $request->session()->put('authRequest', $authRequest);
+        $request->session()->put('authRequest', serialize($authRequest));
 
         return $viewResponse->withParameters([
             'client' => $client,

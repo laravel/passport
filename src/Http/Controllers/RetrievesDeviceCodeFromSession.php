@@ -24,7 +24,13 @@ trait RetrievesDeviceCodeFromSession
             throw InvalidAuthTokenException::different();
         }
 
-        return $request->session()->pull('deviceCode')
+        $deviceCode = $request->session()->pull('deviceCode')
             ?? throw new Exception('Device code was not present in the session.');
+
+        if (is_string($deviceCode)) {
+            $deviceCode = unserialize($deviceCode);
+        }
+
+        return $deviceCode;
     }
 }
