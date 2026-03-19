@@ -11,9 +11,9 @@ use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 class AuthorizeToken extends Middleware
 {
     /**
-     * @param array<string>|string $scopes
-     * @param array<string>|null $only
-     * @param array<string>|null $except
+     * @param  array<string>|string  $scopes
+     * @param  array<string>|null  $only
+     * @param  array<string>|null  $except
      */
     public function __construct(
         array|string $scopes,
