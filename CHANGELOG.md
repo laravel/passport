@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.6.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.0...13.x)
+
+## [v13.7.0](https://github.com/laravel/passport/compare/v13.6.0...v13.7.0) - 2026-03-21
+
+* [13.x] Add  middleware attribute by [@axlon](https://github.com/axlon) in https://github.com/laravel/passport/pull/1897
 
 ## [v13.6.0](https://github.com/laravel/passport/compare/v13.5.0...v13.6.0) - 2026-03-05
 
