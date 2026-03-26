@@ -49,13 +49,16 @@ class AuthorizationController
             ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
         );
 
+        $prompt = $request->input('prompt');
+        $promptValues = $prompt ? explode(' ', $prompt) : [];
+
         if ($this->guard->guest()) {
-            $request->input('prompt') === 'none'
+            in_array('none', $promptValues)
                 ? throw OAuthServerException::loginRequired($authRequest)
                 : $this->promptForLogin($request);
         }
 
-        if ($request->input('prompt') === 'login' &&
+        if (in_array('login', $promptValues) &&
             ! $request->session()->get('promptedForLogin', false)) {
             $this->guard->logout();
             $request->session()->invalidate();
@@ -72,12 +75,12 @@ class AuthorizationController
         $scopes = $this->parseScopes($authRequest);
         $client = $this->clients->find($authRequest->getClient()->getIdentifier());
 
-        if ($request->input('prompt') !== 'consent' &&
+        if (! in_array('consent', $promptValues) &&
             ($client->skipsAuthorization($user, $scopes) || $this->hasGrantedScopes($user, $client, $scopes))) {
             return $this->approveRequest($authRequest, $psrResponse);
         }
 
-        if ($request->input('prompt') === 'none') {
+        if (in_array('none', $promptValues)) {
             throw OAuthServerException::consentRequired($authRequest);
         }
 

@@ -387,6 +387,90 @@ class AuthorizationControllerTest extends TestCase
         $controller->authorize($psrRequest, $request, $psrResponse, $response);
     }
 
+    public function test_logout_and_prompt_login_if_request_has_prompt_with_login_and_consent()
+    {
+        $this->expectException(AuthenticationException::class);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(AuthorizationViewResponse::class);
+        $guard = m::mock(StatefulGuard::class);
+
+        $guard->shouldReceive('guest')->andReturn(false);
+        $server->shouldReceive('validateAuthorizationRequest')->once();
+        $guard->shouldReceive('logout')->once();
+
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $session->shouldReceive('invalidate')->once();
+        $session->shouldReceive('regenerateToken')->once();
+        $session->shouldReceive('get')->with('promptedForLogin', false)->once()->andReturn(false);
+        $session->shouldReceive('put')->with('promptedForLogin', true)->once();
+        $session->shouldNotReceive('forget')->with('promptedForLogin');
+        $request->shouldReceive('input')->with('prompt')->andReturn('login consent');
+
+        $clients = m::mock(ClientRepository::class);
+
+        $controller = new AuthorizationController($server, $guard, $clients);
+
+        $controller->authorize($psrRequest, $request, $psrResponse, $response);
+    }
+
+    public function test_authorization_view_is_presented_if_request_has_prompt_with_login_and_consent_after_login()
+    {
+        Passport::tokensCan([
+            'scope-1' => 'description',
+        ]);
+
+        $server = m::mock(AuthorizationServer::class);
+        $response = m::mock(AuthorizationViewResponse::class);
+        $guard = m::mock(StatefulGuard::class);
+
+        $guard->shouldReceive('guest')->andReturn(false);
+        $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
+        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $server->shouldReceive('validateAuthorizationRequest')
+            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+
+        $psrRequest = m::mock(ServerRequestInterface::class);
+        $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
+
+        $psrResponse = m::mock(ResponseInterface::class);
+
+        $request = m::mock(Request::class);
+        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $session->shouldReceive('get')->with('promptedForLogin', false)->andReturn(true);
+        $session->shouldReceive('forget')->with('promptedForLogin')->once();
+        $session->shouldReceive('put')->withSomeOfArgs('authToken');
+        $session->shouldReceive('put')->with('authRequest', $authRequest);
+        $request->shouldReceive('input')->with('prompt')->andReturn('login consent');
+
+        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
+        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
+
+        $clients = m::mock(ClientRepository::class);
+        $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
+        $client->shouldReceive('skipsAuthorization')->andReturn(true);
+
+        $response->shouldReceive('withParameters')->once()->andReturnUsing(function ($data) use ($client, $user, $request, $response) {
+            $this->assertEquals($client, $data['client']);
+            $this->assertEquals($user, $data['user']);
+            $this->assertEquals($request, $data['request']);
+            $this->assertSame('description', $data['scopes'][0]->description);
+
+            return $response;
+        });
+
+        $controller = new AuthorizationController($server, $guard, $clients);
+
+        $this->assertSame($response, $controller->authorize($psrRequest, $request, $psrResponse, $response));
+    }
+
     public function test_user_should_be_authenticated()
     {
         $this->expectException(AuthenticationException::class);
