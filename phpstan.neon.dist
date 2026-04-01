@@ -7,5 +7,9 @@ parameters:
 
   level: 0
 
+  reportUnmatchedIgnoredErrors: false
+
   ignoreErrors:
     - "#Unsafe usage of new static\\(\\)#"
+    - "#extends unknown class Illuminate\\\\Routing\\\\Attributes\\\\Controllers\\\\Middleware#"
+    - "#calls parent::__construct\\(\\) but .+ does not extend any class#"

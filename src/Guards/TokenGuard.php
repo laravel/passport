@@ -141,9 +141,9 @@ class TokenGuard implements Guard
 
         $this->setClient($client);
 
-        $oauthUserId = $psr->getAttribute('oauth_user_id');
+        $oauthUserId = $psr->getAttribute('oauth_user_id') ?: null;
 
-        if (empty($oauthUserId) || $oauthUserId === $psr->getAttribute('oauth_client_id')) {
+        if (is_null($oauthUserId) || $oauthUserId === $psr->getAttribute('oauth_client_id')) {
             return null;
         }
 
