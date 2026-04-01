@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.1...13.x)
+
+## [v13.7.1](https://github.com/laravel/passport/compare/v13.7.0...v13.7.1) - 2026-04-01
+
+* Prevent user impersonation via client credentials token by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/passport/pull/1901
 
 ## [v13.7.0](https://github.com/laravel/passport/compare/v13.6.0...v13.7.0) - 2026-03-21
 
