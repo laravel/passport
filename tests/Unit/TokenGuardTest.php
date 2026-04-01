@@ -176,9 +176,44 @@ class TokenGuardTest extends TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn($clientId);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn($clientId);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->shouldReceive('retrieveById')->with($clientId)->andReturn(null);
 
         $this->assertNull($guard->user());
+    }
+
+    public function test_user_is_resolved_when_user_id_matches_client_id()
+    {
+        $resourceServer = m::mock(ResourceServer::class);
+        $userProvider = m::mock(PassportUserProvider::class);
+        $clients = m::mock(ClientRepository::class);
+        $encrypter = m::mock(Encrypter::class);
+
+        $clients->shouldReceive('findActive')
+            ->with(1)
+            ->andReturn(new TokenGuardTestClient);
+
+        $request = Request::create('/');
+        $request->headers->set('Authorization', 'Bearer token');
+
+        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
+
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
+        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
+        $psr->shouldReceive('getAttributes')->andReturn([
+            'oauth_user_id' => 1,
+            'oauth_client_id' => 1,
+            'oauth_access_token_id' => 'token',
+            'oauth_scopes' => [],
+        ]);
+        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
+
+        $user = $guard->user();
+
+        $this->assertInstanceOf(TokenGuardTestUser::class, $user);
+        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
     }
 
     public function test_users_may_be_retrieved_from_cookies_with_csrf_token_header()
