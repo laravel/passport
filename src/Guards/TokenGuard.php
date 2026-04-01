@@ -141,13 +141,17 @@ class TokenGuard implements Guard
 
         $this->setClient($client);
 
+        $oauthUserId = $psr->getAttribute('oauth_user_id');
+
+        if (empty($oauthUserId) || $oauthUserId === $psr->getAttribute('oauth_client_id')) {
+            return null;
+        }
+
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
         try {
-            $user = $this->provider->retrieveById(
-                $psr->getAttribute('oauth_user_id') ?: null
-            );
+            $user = $this->provider->retrieveById($oauthUserId);
         } catch (Exception) {
             return null;
         }
