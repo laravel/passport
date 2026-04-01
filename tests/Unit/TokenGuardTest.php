@@ -47,17 +47,17 @@ class TokenGuardTest extends TestCase
 
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(2);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
         $psr->shouldReceive('getAttributes')->andReturn([
             'oauth_user_id' => 1,
-            'oauth_client_id' => 2,
+            'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
             'oauth_scopes' => [],
         ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('findActive')->with(2)->andReturn(new TokenGuardTestClient);
+        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user();
 
@@ -79,17 +79,17 @@ class TokenGuardTest extends TestCase
 
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(2);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
         $psr->shouldReceive('getAttributes')->andReturn([
             'oauth_user_id' => 1,
-            'oauth_client_id' => 2,
+            'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
             'oauth_scopes' => [],
         ]);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('findActive')->with(2)->andReturn(new TokenGuardTestClient);
+        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
         $user = $guard->user();
 
@@ -137,7 +137,7 @@ class TokenGuardTest extends TestCase
         $encrypter = m::mock(Encrypter::class);
 
         $clients->shouldReceive('findActive')
-            ->with(2)
+            ->with(1)
             ->andReturn(new TokenGuardTestClient);
 
         $request = Request::create('/');
@@ -147,7 +147,7 @@ class TokenGuardTest extends TestCase
 
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(2);
+        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(null);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
 
@@ -163,9 +163,12 @@ class TokenGuardTest extends TestCase
 
         $clientId = '019c9d23-9763-7303-9bdb-3a0a6bf0ef90';
 
+        $client = new TokenGuardTestClient;
+        $client->grant_types = ['client_credentials'];
+
         $clients->shouldReceive('findActive')
             ->with($clientId)
-            ->andReturn(new TokenGuardTestClient);
+            ->andReturn($client);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -176,7 +179,7 @@ class TokenGuardTest extends TestCase
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn($clientId);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn($clientId);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $userProvider->shouldReceive('retrieveById')->with($clientId)->andReturn(null);
+        $userProvider->shouldReceive('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
