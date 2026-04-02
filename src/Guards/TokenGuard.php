@@ -143,13 +143,13 @@ class TokenGuard implements Guard
 
         $oauthUserId = $psr->getAttribute('oauth_user_id');
 
-        if (empty($oauthUserId) || $oauthUserId === $psr->getAttribute('oauth_client_id')) {
-            return null;
-        }
-
         // If the access token is valid we will retrieve the user according to the user ID
         // associated with the token. We will use the provider implementation which may
         // be used to retrieve users from Eloquent. Next, we'll be ready to continue.
+        if (empty($oauthUserId) || ($client->hasGrantType('client_credentials') && ! $this->hasUserToken($psr))) {
+            return null;
+        }
+
         try {
             $user = $this->provider->retrieveById($oauthUserId);
         } catch (Exception) {
@@ -160,6 +160,21 @@ class TokenGuard implements Guard
         // to determine if the token has a given scope, etc. This will be useful during
         // authorization such as within the developer's Laravel model policy classes.
         return $user?->withAccessToken(AccessToken::fromPsrRequest($psr));
+    }
+
+    /**
+     * Determine if the access token has an associated user.
+     *
+     * The JWT "sub" claim may contain the client ID as a fallback when no user
+     * is associated with the token, so we use the database record as the source
+     * of truth to avoid incorrect user resolution due to type casting.
+     */
+    protected function hasUserToken(ServerRequestInterface $psr): bool
+    {
+        return Passport::token()->newQuery()
+            ->whereKey($psr->getAttribute('oauth_access_token_id'))
+            ->whereNotNull('user_id')
+            ->exists();
     }
 
     /**

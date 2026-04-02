@@ -9,6 +9,7 @@ use Laravel\Passport\Http\Middleware\CheckToken;
 use Laravel\Passport\Http\Middleware\EnsureClientIsResourceOwner;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
+use Workbench\App\Models\User;
 
 class ClientCredentialsGrantTest extends PassportTestCase
 {
@@ -85,6 +86,44 @@ class ClientCredentialsGrantTest extends PassportTestCase
 
         $response = $this->withToken($json['access_token'], $json['token_type'])->get('/bar');
         $response->assertOk();
+    }
+
+    public function testClientCredentialsTokenDoesNotResolveUserWithMatchingId()
+    {
+        Passport::$clientUuids = false;
+
+        // When the client ID and user ID are the same, the JWT "sub" claim
+        // (set to the client ID for client_credentials tokens) could resolve
+        // the wrong user through implicit type casting.
+        $client = ClientFactory::new()->asClientCredentials()->create(['id' => 1]);
+
+        User::forceCreate([
+            'id' => 1,
+            'name' => 'User 1',
+            'email' => 'user1@example.com',
+            'password' => 'password',
+        ]);
+
+        $json = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+        ])->assertOk()->json();
+
+        Route::get('/foo', fn (Request $request) => response()->json([
+            'user_id' => $request->user()?->getKey(),
+        ]))->middleware('auth:api');
+
+        $this->withToken($json['access_token'])->getJson('/foo')
+            ->assertUnauthorized();
+
+        Route::get('/bar', fn (Request $request) => response('response'))
+            ->middleware(EnsureClientIsResourceOwner::class);
+
+        $this->withToken($json['access_token'])->get('/bar')
+            ->assertOk();
+
+        Passport::$clientUuids = true;
     }
 
     public function testPublicClient()

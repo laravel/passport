@@ -163,14 +163,19 @@ class TokenGuardTest extends TestCase
 
         $clientId = '019c9d23-9763-7303-9bdb-3a0a6bf0ef90';
 
+        $client = new TokenGuardTestClient;
+        $client->grant_types = ['client_credentials'];
+
         $clients->shouldReceive('findActive')
             ->with($clientId)
-            ->andReturn(new TokenGuardTestClient);
+            ->andReturn($client);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
+        $guard = m::mock(TokenGuard::class, [$resourceServer, $userProvider, $clients, $encrypter, $request])
+            ->makePartial()->shouldAllowMockingProtectedMethods();
+        $guard->shouldReceive('hasUserToken')->andReturn(false);
 
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn($clientId);
