@@ -430,6 +430,89 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $response->assertRedirectToRoute('login');
     }
 
+    public function testPromptLoginConsent()
+    {
+        Route::get('/foo', fn () => '')->name('login');
+
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => 'create read update',
+            'state' => Str::random(40),
+        ]);
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+        $json = $this->get('/oauth/authorize?'.$query)->json();
+
+        $response = $this->post('/oauth/authorize', ['auth_token' => $json['authToken']]);
+        parse_str(parse_url($response->headers->get('Location'), PHP_URL_QUERY), $params);
+
+        $this->post('/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'redirect_uri' => $redirect,
+            'code' => $params['code'],
+        ]);
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => 'create read',
+            'state' => Str::random(40),
+            'prompt' => 'login consent',
+        ]);
+
+        $this->get('/oauth/authorize?'.$query)
+            ->assertSessionHas('promptedForLogin', true)
+            ->assertRedirectToRoute('login');
+
+        $intendedUrl = session()->get('url.intended');
+        parse_str(parse_url($intendedUrl, PHP_URL_QUERY), $params);
+
+        dump($params);
+
+        $this->actingAs($user, 'web');
+        $json = $this->get($intendedUrl)
+            ->assertOk()
+            ->assertSessionHas('authRequest')
+            ->assertSessionHas('authToken')
+            ->json();
+
+        $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
+        $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
+    }
+
+    public function testPromptContainsNone()
+    {
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'state' => $state = Str::random(40),
+            'prompt' => 'none login consent select_account',
+        ]);
+
+        $this->actingAs(UserFactory::new()->create(), 'web');
+        $response = $this->get('/oauth/authorize?'.$query);
+        $response->assertRedirect();
+
+        $location = $response->headers->get('Location');
+        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+
+        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertSame($state, $params['state']);
+        $this->assertSame('consent_required', $params['error']);
+        $this->assertArrayHasKey('error_description', $params);
+    }
+
     public function testUnauthorizedClient()
     {
         $client = ClientFactory::new()->create([
