@@ -38,7 +38,7 @@ class AuthorizationControllerTest extends TestCase
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $authRequest = new AuthorizationRequest();
+        $authRequest = new AuthorizationRequest;
         $authRequest->setClient(new \Laravel\Passport\Bridge\Client('1', 'Test Client'));
         $authRequest->setScopes([new Scope('scope-1')]);
 
@@ -209,7 +209,7 @@ class AuthorizationControllerTest extends TestCase
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
-        $authRequest = new AuthorizationRequest();
+        $authRequest = new AuthorizationRequest;
         $authRequest->setClient(new \Laravel\Passport\Bridge\Client('1', 'Test Client'));
         $authRequest->setScopes([new Scope('scope-1')]);
 
