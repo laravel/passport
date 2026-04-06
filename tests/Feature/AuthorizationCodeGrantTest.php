@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
+use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
@@ -252,6 +253,35 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $json = $response->json();
         $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
         $this->assertSame(collect(Passport::scopesFor(['create', 'update']))->toArray(), $json['scopes']);
+    }
+
+    #[WithConfig('session.serialization', 'json')]
+    public function testAuthRequestSerialization()
+    {
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => 'create read',
+            'state' => Str::random(40),
+        ]);
+
+        $this->actingAs(UserFactory::new()->create(), 'web');
+
+        $json = $this->get('/oauth/authorize?'.$query)
+            ->assertOk()
+            ->assertSessionHas('authRequest')
+            ->assertSessionHas('authToken')
+            ->json();
+
+        $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
+        $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
+
+        $this->post('/oauth/authorize', ['auth_token' => $json['authToken']])
+            ->assertRedirect()
+            ->assertSessionMissing(['authRequest', 'authToken']);
     }
 
     public function testValidateAuthorizationRequest()

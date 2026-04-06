@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
+use Orchestra\Testbench\Attributes\WithConfig;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
@@ -224,6 +225,33 @@ class DeviceAuthorizationGrantTest extends PassportTestCase
         $this->assertArrayHasKey('error', $json);
         $this->assertArrayHasKey('error_description', $json);
         $this->assertSame('access_denied', $json['error']);
+    }
+
+    #[WithConfig('session.serialization', 'json')]
+    public function testDeviceCodeSerialization()
+    {
+        $client = ClientFactory::new()->asDeviceCodeClient()->create();
+
+        ['user_code' => $userCode] = $this->post('/oauth/device/code', [
+            'client_id' => $client->getKey(),
+            'scope' => 'create read',
+        ])->assertOk()->json();
+
+        $user = UserFactory::new()->create();
+        $this->actingAs($user, 'web');
+
+        $json = $this->get('/oauth/device/authorize?user_code='.$userCode)
+            ->assertOk()
+            ->assertSessionHas('deviceCode')
+            ->assertSessionHas('authToken')
+            ->json();
+        $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
+        $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
+
+        $this->post('/oauth/device/authorize', ['auth_token' => $json['authToken']])
+            ->assertRedirectToRoute('passport.device')
+            ->assertSessionHas('status', 'authorization-approved')
+            ->assertSessionMissing(['deviceCode', 'authToken']);
     }
 
     public function testPublicClient()
