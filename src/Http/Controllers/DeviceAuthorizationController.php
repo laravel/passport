@@ -55,7 +55,7 @@ class DeviceAuthorizationController
         $client = $this->clients->find($deviceCode->getClient()->getIdentifier());
 
         $request->session()->put('authToken', $authToken = Str::random());
-        $request->session()->put('deviceCode', $deviceCode);
+        $request->session()->put('deviceCode', serialize($deviceCode));
 
         return $viewResponse->withParameters([
             'client' => $client,
