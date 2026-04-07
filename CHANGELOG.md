@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.2...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.3...13.x)
+
+## [v13.7.3](https://github.com/laravel/passport/compare/v13.7.2...v13.7.3) - 2026-04-07
+
+* [13.x] Fix session JSON serialization by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1905
 
 ## [v13.7.2](https://github.com/laravel/passport/compare/v13.7.1...v13.7.2) - 2026-04-02
 
