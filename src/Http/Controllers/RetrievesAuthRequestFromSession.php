@@ -24,7 +24,14 @@ trait RetrievesAuthRequestFromSession
             throw InvalidAuthTokenException::different();
         }
 
-        return $request->session()->pull('authRequest')
+        $authRequest = $request->session()->pull('authRequest')
             ?? throw new Exception('Authorization request was not present in the session.');
+
+        return unserialize($authRequest, ['allowed_classes' => [
+            \League\OAuth2\Server\RequestTypes\AuthorizationRequest::class,
+            \Laravel\Passport\Bridge\Client::class,
+            \Laravel\Passport\Bridge\Scope::class,
+            \Laravel\Passport\Bridge\User::class,
+        ]]);
     }
 }

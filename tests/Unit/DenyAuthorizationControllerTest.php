@@ -30,22 +30,23 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
+        $authRequest = new AuthorizationRequest;
+        $authRequest->setGrantTypeId('authorization_code');
+
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')
             ->once()
             ->with('authRequest')
-            ->andReturn($authRequest = m::mock(
-                AuthorizationRequest::class
-            ));
-
-        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(false);
+            ->andReturn(serialize($authRequest));
 
         $psrResponse = m::mock(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server->shouldReceive('completeAuthorizationRequest')
-            ->with($authRequest, m::type(ResponseInterface::class))
+            ->with(
+                m::on(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
+                m::type(ResponseInterface::class)
+            )
             ->andReturnUsing(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
@@ -78,15 +79,5 @@ class DenyAuthorizationControllerTest extends TestCase
         $server->shouldReceive('completeAuthorizationRequest')->never();
 
         $controller->deny($request, $psrResponse);
-    }
-}
-
-class DenyAuthorizationControllerFakeUser
-{
-    public $id = 1;
-
-    public function getAuthIdentifier()
-    {
-        return $this->id;
     }
 }

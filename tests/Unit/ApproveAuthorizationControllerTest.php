@@ -28,22 +28,25 @@ class ApproveAuthorizationControllerTest extends TestCase
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
+        $authRequest = new AuthorizationRequest;
+        $authRequest->setGrantTypeId('authorization_code');
+
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')
             ->once()
             ->with('authRequest')
-            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+            ->andReturn(serialize($authRequest));
 
         $request->shouldReceive('user')->andReturn(new ApproveAuthorizationControllerFakeUser);
-
-        $authRequest->shouldReceive('getGrantTypeId')->once()->andReturn('authorization_code');
-        $authRequest->shouldReceive('setAuthorizationApproved')->once()->with(true);
 
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('response');
 
         $server->shouldReceive('completeAuthorizationRequest')
-            ->with($authRequest, m::type(ResponseInterface::class))
+            ->with(
+                m::on(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
+                m::type(ResponseInterface::class)
+            )
             ->andReturn($psrResponse);
 
         $this->assertSame('response', $controller->approve($request, $psrResponse)->getContent());

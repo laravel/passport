@@ -16,7 +16,6 @@ use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use League\OAuth2\Server\RequestTypes\AuthorizationRequestInterface;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
@@ -39,9 +38,13 @@ class AuthorizationControllerTest extends TestCase
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
+        $authRequest = new AuthorizationRequest;
+        $authRequest->setClient(new \Laravel\Passport\Bridge\Client('1', 'Test Client'));
+        $authRequest->setScopes([new Scope('scope-1')]);
+
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
-        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest = m::mock(AuthorizationRequestInterface::class));
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest);
 
         $psrRequest = m::mock(ServerRequestInterface::class);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
@@ -49,13 +52,9 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
-        $session->shouldReceive('put')->with('authRequest', $authRequest);
+        $session->shouldReceive('put')->with('authRequest', m::on(fn ($value) => is_string($value)))->once();
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('input')->with('prompt')->andReturn(null);
-
-        $authRequest->shouldReceive('getClient->getIdentifier')->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->andReturn([new Scope('scope-1')]);
-        $authRequest->shouldReceive('setUser')->once();
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));
@@ -210,11 +209,14 @@ class AuthorizationControllerTest extends TestCase
         $response = m::mock(AuthorizationViewResponse::class);
         $guard = m::mock(StatefulGuard::class);
 
+        $authRequest = new AuthorizationRequest;
+        $authRequest->setClient(new \Laravel\Passport\Bridge\Client('1', 'Test Client'));
+        $authRequest->setScopes([new Scope('scope-1')]);
+
         $guard->shouldReceive('guest')->andReturn(false);
         $guard->shouldReceive('user')->andReturn($user = m::mock(Authenticatable::class));
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
-        $server->shouldReceive('validateAuthorizationRequest')
-            ->andReturn($authRequest = m::mock(AuthorizationRequest::class));
+        $server->shouldReceive('validateAuthorizationRequest')->andReturn($authRequest);
 
         $psrRequest = m::mock(ServerRequestInterface::class);
         $psrRequest->shouldReceive('getQueryParams')->andReturn([]);
@@ -224,13 +226,9 @@ class AuthorizationControllerTest extends TestCase
         $request = m::mock(Request::class);
         $request->shouldReceive('session')->andReturn($session = m::mock());
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
-        $session->shouldReceive('put')->with('authRequest', $authRequest);
+        $session->shouldReceive('put')->with('authRequest', m::on(fn ($value) => is_string($value)))->once();
         $session->shouldReceive('forget')->with('promptedForLogin')->once();
         $request->shouldReceive('input')->with('prompt')->andReturn('consent');
-
-        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
-        $authRequest->shouldReceive('getScopes')->once()->andReturn([new Scope('scope-1')]);
-        $authRequest->shouldReceive('setUser')->once()->andReturnNull();
 
         $clients = m::mock(ClientRepository::class);
         $clients->shouldReceive('find')->with(1)->andReturn($client = m::mock(Client::class));

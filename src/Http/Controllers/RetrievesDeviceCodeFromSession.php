@@ -24,7 +24,14 @@ trait RetrievesDeviceCodeFromSession
             throw InvalidAuthTokenException::different();
         }
 
-        return $request->session()->pull('deviceCode')
+        $deviceCode = $request->session()->pull('deviceCode')
             ?? throw new Exception('Device code was not present in the session.');
+
+        return unserialize($deviceCode, ['allowed_classes' => [
+            \Laravel\Passport\Bridge\DeviceCode::class,
+            \Laravel\Passport\Bridge\Client::class,
+            \Laravel\Passport\Bridge\Scope::class,
+            \DateTimeImmutable::class,
+        ]]);
     }
 }
