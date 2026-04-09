@@ -49,13 +49,22 @@ class AuthorizationController
             ($psrRequest->getQueryParams()['response_type'] ?? null) === 'token'
         );
 
+        $prompt = $request->string('prompt')->explode(' ')->map(trim(...))->filter()->values();
+
+        // If the prompt parameter includes "none", all other prompt values will be ignored
+        // An error will be returned if the end-user is not already authenticated or the
+        // OAuth client does not have pre-configured consent for the requested scopes.
+        if ($prompt->contains('none')) {
+            $prompt = collect(['none']);
+        }
+
         if ($this->guard->guest()) {
-            $request->input('prompt') === 'none'
+            $prompt->contains('none')
                 ? throw OAuthServerException::loginRequired($authRequest)
                 : $this->promptForLogin($request);
         }
 
-        if ($request->input('prompt') === 'login' &&
+        if ($prompt->contains('login') &&
             ! $request->session()->get('promptedForLogin', false)) {
             $this->guard->logout();
             $request->session()->invalidate();
@@ -72,12 +81,12 @@ class AuthorizationController
         $scopes = $this->parseScopes($authRequest);
         $client = $this->clients->find($authRequest->getClient()->getIdentifier());
 
-        if ($request->input('prompt') !== 'consent' &&
+        if ($prompt->doesntContain('consent') &&
             ($client->skipsAuthorization($user, $scopes) || $this->hasGrantedScopes($user, $client, $scopes))) {
             return $this->approveRequest($authRequest, $psrResponse);
         }
 
-        if ($request->input('prompt') === 'none') {
+        if ($prompt->contains('none')) {
             throw OAuthServerException::consentRequired($authRequest);
         }
 
