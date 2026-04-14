@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.3...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.4...13.x)
+
+## [v13.7.4](https://github.com/laravel/passport/compare/v13.7.3...v13.7.4) - 2026-04-09
+
+* [13.x] Support space-delimited prompt parameter by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1906
 
 ## [v13.7.3](https://github.com/laravel/passport/compare/v13.7.2...v13.7.3) - 2026-04-07
 
