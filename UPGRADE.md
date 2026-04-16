@@ -85,7 +85,7 @@ As a consequence of this change, the `'passport.client_uuids'` configuration pro
 
 PR: https://github.com/laravel/passport/pull/1745
 
-Passport now always hashes client secrets using Laravel's `Hash` facade. If you are currently storing your client secrets in plain text, you may invoke the `passport:hash` Artisan command to hash all of your existing client secrets:
+Passport now always hashes client secrets using Laravel's `Hash` facade. If you are currently storing your client secrets in plain text, you must invoke the `passport:hash` Artisan command to hash all of your existing client secrets:
 
 ```bash
 php artisan passport:hash
