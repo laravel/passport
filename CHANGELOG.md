@@ -1,6 +1,11 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.4...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.5...13.x)
+
+## [v13.7.5](https://github.com/laravel/passport/compare/v13.7.4...v13.7.5) - 2026-04-16
+
+* Add notice of invalid tokens when user and client id match by [@Levivb](https://github.com/Levivb) in https://github.com/laravel/passport/pull/1910
+* Clarify that running `passport:hash` is not optional by [@bram-pkg](https://github.com/bram-pkg) in https://github.com/laravel/passport/pull/1911
 
 ## [v13.7.4](https://github.com/laravel/passport/compare/v13.7.3...v13.7.4) - 2026-04-09
 
@@ -13,6 +18,7 @@
 ## [v13.7.2](https://github.com/laravel/passport/compare/v13.7.1...v13.7.2) - 2026-04-02
 
 * [13.X] fix: resolve user as null when user ID matches client ID on integer key setups by [@Can-Kar](https://github.com/Can-Kar) in https://github.com/laravel/passport/pull/1902
+
 > This change permanently invalidates client credential tokens for any user whose user ID happens to match the client ID of the token issuer.
 
 ## [v13.7.1](https://github.com/laravel/passport/compare/v13.7.0...v13.7.1) - 2026-04-01
