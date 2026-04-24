@@ -155,12 +155,13 @@ Alternatively, you may disable this validation entirely (not recommended) by set
 Passport::$validateKeyPermissions = false;
 ```
 
-### OAuth Client Table Changes (Optional)
+### OAuth Client Table Changes
 
 PR: https://github.com/laravel/passport/pull/1744, https://github.com/laravel/passport/pull/1797
 
+Passport 13 introduces a new schema for the `oauth_clients` table. However, these changes are **fully backward compatible**, and **no action is required** on your part.
 
-Passport 13 introduces a new schema for the `oauth_clients` table. However, These changes are **fully backward compatible**, and **no action is required** on your part.
+> **Note:** If you use integer-based client IDs (`Passport::$clientUuids = false`), running this migration is **strongly recommended**. Without it, any user whose integer ID matches a client ID will have their token requests incorrectly rejected with a 401. See [#1912](https://github.com/laravel/passport/issues/1912) for details.
 
 For reference, here are the changes on the `oauth_clients` table:
 
