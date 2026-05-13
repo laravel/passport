@@ -55,7 +55,7 @@ class AuthorizationControllerTest extends TestCase
 
         $client->shouldReceive('skipsAuthorization')->andReturn(false);
 
-        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($authRequest, $client, $user) {
+        $response->shouldReceive('view')->once()->andReturnUsing(function ($view, $data) use ($client, $user) {
             $this->assertEquals('passport::authorize', $view);
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);

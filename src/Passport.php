@@ -311,7 +311,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function tokensExpireIn(DateTimeInterface $date = null)
+    public static function tokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$tokensExpireAt
@@ -330,7 +330,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function refreshTokensExpireIn(DateTimeInterface $date = null)
+    public static function refreshTokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$refreshTokensExpireAt
@@ -349,7 +349,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function personalAccessTokensExpireIn(DateTimeInterface $date = null)
+    public static function personalAccessTokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$personalAccessTokensExpireAt
@@ -424,9 +424,9 @@ class Passport
     /**
      * Set the current client for the application with the given scopes.
      *
-     * @param  \Laravel\Passport\Client  $client
-     * @param  array  $scopes
-     * @return \Laravel\Passport\Client
+     * @param  \Laravel\Passport\Client    $client
+     * @param  array    $scopes
+     * @return \Laravel\Passport\Client
      */
     public static function actingAsClient($client, $scopes = [])
     {
