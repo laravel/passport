@@ -302,7 +302,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function tokensExpireIn(DateTimeInterface $date = null)
+    public static function tokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$tokensExpireIn ?? new DateInterval('P1Y');
@@ -320,7 +320,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function refreshTokensExpireIn(DateTimeInterface $date = null)
+    public static function refreshTokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$refreshTokensExpireIn ?? new DateInterval('P1Y');
@@ -338,7 +338,7 @@ class Passport
      * @param  \DateTimeInterface|null  $date
      * @return \DateInterval|static
      */
-    public static function personalAccessTokensExpireIn(DateTimeInterface $date = null)
+    public static function personalAccessTokensExpireIn(?DateTimeInterface $date = null)
     {
         if (is_null($date)) {
             return static::$personalAccessTokensExpireIn ?? new DateInterval('P1Y');
