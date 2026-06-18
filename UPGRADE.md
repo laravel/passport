@@ -42,6 +42,22 @@ public function boot(): void
     Passport::viewPrefix('auth.oauth');
 }
 ```
+> **Breaking change for upgrading applications**
+> 
+> Passport 12 shipped a default `authorize.blade.php` consent view. Passport 13 does not. If your application relied on the default view and never called `Passport::authorizationView()`, every `GET /oauth/authorize` request will throw:
+> 
+> ```
+> Illuminate\Contracts\Container\BindingResolutionException:
+> Target [Laravel\Passport\Contracts\AuthorizationViewResponse] is not instantiable
+> ```
+> 
+> To restore the endpoint, create a Blade view for the consent screen (the view receives `$client`, `$user`, `$scopes`, `$request`, `$authToken`) and register it in a service provider:
+> 
+> ```php
+> Passport::authorizationView('auth.oauth.authorize');
+> ```
+> 
+> The legacy view is available for reference at [`laravel/passport@12.x — resources/views/authorize.blade.php`](https://github.com/laravel/passport/blob/12.x/resources/views/authorize.blade.php).
 
 ### User Model Interface
 
