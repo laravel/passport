@@ -59,6 +59,6 @@ class DeviceCode extends Model
      */
     public function getConnectionName(): ?string
     {
-        return $this->connection ?? config('passport.connection');
+        return parent::getConnectionName() ?? config('passport.connection');
     }
 }
