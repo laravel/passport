@@ -1,6 +1,19 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.5...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.7.6...13.x)
+
+## [v13.7.6](https://github.com/laravel/passport/compare/v13.7.5...v13.7.6) - 2026-07-22
+
+* [13.x] Clarify grant_types migration is required for integer-based cl… by [@jaapredeker](https://github.com/jaapredeker) in https://github.com/laravel/passport/pull/1913
+* Pin GitHub Actions to commit SHAs and add Dependabot config by [@joetannenbaum](https://github.com/joetannenbaum) in https://github.com/laravel/passport/pull/1915
+* Bump shivammathur/setup-php from 2.37.0 to 2.37.1 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1921
+* Add Dependabot cooldown of 5 days by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/passport/pull/1922
+* Enable Dependabot auto-merge by [@nunomaduro](https://github.com/nunomaduro) in https://github.com/laravel/passport/pull/1928
+* Bump actions/checkout from 6.0.2 to 6.0.3 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1931
+* Bump shivammathur/setup-php from 2.37.1 to 2.37.2 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1933
+* Bump actions/checkout from 6.0.3 to 7.0.0 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1935
+* Fix enum support for database connection name by [@rickgoemans](https://github.com/rickgoemans) in https://github.com/laravel/passport/pull/1936
+* Bump actions/checkout from 7.0.0 to 7.0.1 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1937
 
 ## [v13.7.5](https://github.com/laravel/passport/compare/v13.7.4...v13.7.5) - 2026-04-16
 
