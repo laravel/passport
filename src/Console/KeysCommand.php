@@ -4,7 +4,7 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Laravel\Passport\Passport;
-use phpseclib3\Crypt\RSA;
+use phpseclib4\Crypt\RSA;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'passport:keys')]
