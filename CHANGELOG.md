@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.7.6...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.8.0...13.x)
+
+## [v13.8.0](https://github.com/laravel/passport/compare/v13.7.6...v13.8.0) - 2026-08-28
+
+* Upgrade phpseclib to v4 by [@godismyjudge95](https://github.com/godismyjudge95) in https://github.com/laravel/passport/pull/1939
 
 ## [v13.7.6](https://github.com/laravel/passport/compare/v13.7.5...v13.7.6) - 2026-07-22
 
