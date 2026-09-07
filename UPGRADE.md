@@ -204,7 +204,16 @@ Additionally, Passport's `Laravel\Passport\Database\Factories\ClientFactory` fac
 
 ### Client Logo and Client URI Columns
 
-Passport now supports optional `logo_uri` and `client_uri` metadata for OAuth clients, which are made available to the authorization view via the `$client` variable. These columns have been added to Passport's `oauth_clients` migration, and the `createAuthorizationCodeGrantClient`, `createImplicitGrantClient`, and `createDeviceAuthorizationGrantClient` methods on the `ClientRepository` accept optional `$logoUri` and `$clientUri` arguments.
+Passport now supports optional `logo_uri` and `client_uri` metadata for OAuth clients, which are made available to the authorization view via the `$client` variable. These columns have been added to Passport's `oauth_clients` migration, and the client creation methods on the `ClientRepository` accept an optional `$metadata` array:
+
+```php
+$clients->createAuthorizationCodeGrantClient('My App', $redirectUris, metadata: [
+    'logo_uri' => 'https://my-app.example.com/logo.png',
+    'client_uri' => 'https://my-app.example.com',
+]);
+```
+
+The `passport:client` command also accepts optional `--logo_uri` and `--client_uri` options.
 
 This change is **fully backward compatible**, and **no action is required** on your part. If the columns do not exist on your `oauth_clients` table, Passport will simply not store these values.
 

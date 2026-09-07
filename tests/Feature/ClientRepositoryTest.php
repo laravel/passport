@@ -14,11 +14,15 @@ class ClientRepositoryTest extends PassportTestCase
         $logoUri = 'https://client.example.com/logo?version='.str_repeat('a', 300);
         $clientUri = 'https://client.example.com/about?version='.str_repeat('b', 300);
         $redirectUris = ['https://client.example.com/callback'];
+        $metadata = ['logo_uri' => $logoUri, 'client_uri' => $clientUri];
 
         foreach ([
-            $repository->createAuthorizationCodeGrantClient('Client', $redirectUris, logoUri: $logoUri, clientUri: $clientUri),
-            $repository->createImplicitGrantClient('Client', $redirectUris, logoUri: $logoUri, clientUri: $clientUri),
-            $repository->createDeviceAuthorizationGrantClient('Client', logoUri: $logoUri, clientUri: $clientUri),
+            $repository->createAuthorizationCodeGrantClient('Client', $redirectUris, metadata: $metadata),
+            $repository->createImplicitGrantClient('Client', $redirectUris, $metadata),
+            $repository->createDeviceAuthorizationGrantClient('Client', metadata: $metadata),
+            $repository->createPersonalAccessGrantClient('Client', metadata: $metadata),
+            $repository->createPasswordGrantClient('Client', metadata: $metadata),
+            $repository->createClientCredentialsGrantClient('Client', $metadata),
         ] as $client) {
             $client->refresh();
             $this->assertSame($logoUri, $client->logo_uri);
@@ -35,9 +39,10 @@ class ClientRepositoryTest extends PassportTestCase
         $repository = new ClientRepository;
 
         foreach ([null, 'https://client.example.com/logo.png'] as $logoUri) {
-            $client = $repository->createAuthorizationCodeGrantClient(
-                'Client', ['https://client.example.com/callback'], logoUri: $logoUri, clientUri: 'https://client.example.com'
-            );
+            $client = $repository->createAuthorizationCodeGrantClient('Client', ['https://client.example.com/callback'], metadata: [
+                'logo_uri' => $logoUri,
+                'client_uri' => 'https://client.example.com',
+            ]);
 
             $this->assertArrayNotHasKey('logo_uri', $client->getAttributes());
             $this->assertArrayNotHasKey('logo_uri', $client->fresh()->getAttributes());

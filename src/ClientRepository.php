@@ -82,6 +82,7 @@ class ClientRepository
      * @param  string[]  $grantTypes
      * @param  string[]  $redirectUris
      * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
+     * @param  array<string, string|null>  $metadata
      */
     protected function create(
         string $name,
@@ -90,8 +91,7 @@ class ClientRepository
         ?string $provider = null,
         bool $confidential = true,
         ?Authenticatable $user = null,
-        ?string $logoUri = null,
-        ?string $clientUri = null
+        array $metadata = []
     ): Client {
         $client = Passport::client();
         $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
@@ -114,12 +114,10 @@ class ClientRepository
             ]),
         ];
 
-        if (! is_null($logoUri) && in_array('logo_uri', $columns)) {
-            $attributes['logo_uri'] = $logoUri;
-        }
-
-        if (! is_null($clientUri) && in_array('client_uri', $columns)) {
-            $attributes['client_uri'] = $clientUri;
+        foreach (['logo_uri', 'client_uri'] as $key) {
+            if (isset($metadata[$key]) && in_array($key, $columns)) {
+                $attributes[$key] = $metadata[$key];
+            }
         }
 
         return match (true) {
@@ -131,52 +129,63 @@ class ClientRepository
 
     /**
      * Store a new personal access token client.
+     *
+     * @param  array<string, string|null>  $metadata
      */
-    public function createPersonalAccessGrantClient(string $name, ?string $provider = null): Client
+    public function createPersonalAccessGrantClient(string $name, ?string $provider = null, array $metadata = []): Client
     {
-        return $this->create($name, ['personal_access'], [], $provider);
+        return $this->create($name, ['personal_access'], [], $provider, metadata: $metadata);
     }
 
     /**
      * Store a new password grant client.
+     *
+     * @param  array<string, string|null>  $metadata
      */
-    public function createPasswordGrantClient(string $name, ?string $provider = null, bool $confidential = false): Client
-    {
-        return $this->create($name, ['password', 'refresh_token'], [], $provider, $confidential);
+    public function createPasswordGrantClient(
+        string $name,
+        ?string $provider = null,
+        bool $confidential = false,
+        array $metadata = []
+    ): Client {
+        return $this->create($name, ['password', 'refresh_token'], [], $provider, $confidential, metadata: $metadata);
     }
 
     /**
      * Store a new client credentials grant client.
+     *
+     * @param  array<string, string|null>  $metadata
      */
-    public function createClientCredentialsGrantClient(string $name): Client
+    public function createClientCredentialsGrantClient(string $name, array $metadata = []): Client
     {
-        return $this->create($name, ['client_credentials']);
+        return $this->create($name, ['client_credentials'], metadata: $metadata);
     }
 
     /**
      * Store a new implicit grant client.
      *
      * @param  string[]  $redirectUris
+     * @param  array<string, string|null>  $metadata
      */
-    public function createImplicitGrantClient(string $name, array $redirectUris, ?string $logoUri = null, ?string $clientUri = null): Client
+    public function createImplicitGrantClient(string $name, array $redirectUris, array $metadata = []): Client
     {
-        return $this->create($name, ['implicit'], $redirectUris, null, false, logoUri: $logoUri, clientUri: $clientUri);
+        return $this->create($name, ['implicit'], $redirectUris, null, false, metadata: $metadata);
     }
 
     /**
      * Store a new device authorization grant client.
      *
      * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
+     * @param  array<string, string|null>  $metadata
      */
     public function createDeviceAuthorizationGrantClient(
         string $name,
         bool $confidential = true,
         ?Authenticatable $user = null,
-        ?string $logoUri = null,
-        ?string $clientUri = null
+        array $metadata = []
     ): Client {
         return $this->create(
-            $name, ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'], [], null, $confidential, $user, $logoUri, $clientUri
+            $name, ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'], [], null, $confidential, $user, $metadata
         );
     }
 
@@ -185,6 +194,7 @@ class ClientRepository
      *
      * @param  string[]  $redirectUris
      * @param  \Laravel\Passport\Contracts\OAuthenticatable|null  $user
+     * @param  array<string, string|null>  $metadata
      */
     public function createAuthorizationCodeGrantClient(
         string $name,
@@ -192,8 +202,7 @@ class ClientRepository
         bool $confidential = true,
         ?Authenticatable $user = null,
         bool $enableDeviceFlow = false,
-        ?string $logoUri = null,
-        ?string $clientUri = null
+        array $metadata = []
     ): Client {
         $grantTypes = ['authorization_code', 'refresh_token'];
 
@@ -201,7 +210,7 @@ class ClientRepository
             $grantTypes[] = 'urn:ietf:params:oauth:grant-type:device_code';
         }
 
-        return $this->create($name, $grantTypes, $redirectUris, null, $confidential, $user, $logoUri, $clientUri);
+        return $this->create($name, $grantTypes, $redirectUris, null, $confidential, $user, $metadata);
     }
 
     /**

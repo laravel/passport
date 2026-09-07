@@ -25,6 +25,8 @@ class ClientCommand extends Command
             {--name= : The name of the client}
             {--provider= : The name of the user provider}
             {--redirect_uri= : The URI to redirect to after authorization }
+            {--logo_uri= : The URI of the client logo}
+            {--client_uri= : The URI of the client website}
             {--public : Create a public client (without secret) }';
 
     /**
@@ -79,7 +81,7 @@ class ClientCommand extends Command
             config('auth.guards.api.provider')
         );
 
-        $clients->createPersonalAccessGrantClient($this->option('name'), $provider);
+        $clients->createPersonalAccessGrantClient($this->option('name'), $provider, metadata: $this->metadata());
 
         return null;
     }
@@ -100,7 +102,7 @@ class ClientCommand extends Command
             ? ! $this->option('public')
             : $this->components->confirm('Would you like to make this client confidential?');
 
-        return $clients->createPasswordGrantClient($this->option('name'), $provider, $confidential);
+        return $clients->createPasswordGrantClient($this->option('name'), $provider, $confidential, metadata: $this->metadata());
     }
 
     /**
@@ -108,7 +110,7 @@ class ClientCommand extends Command
      */
     protected function createClientCredentialsClient(ClientRepository $clients): Client
     {
-        return $clients->createClientCredentialsGrantClient($this->option('name'));
+        return $clients->createClientCredentialsGrantClient($this->option('name'), metadata: $this->metadata());
     }
 
     /**
@@ -121,7 +123,7 @@ class ClientCommand extends Command
             url('/auth/callback')
         );
 
-        return $clients->createImplicitGrantClient($this->option('name'), explode(',', $redirect));
+        return $clients->createImplicitGrantClient($this->option('name'), explode(',', $redirect), metadata: $this->metadata());
     }
 
     /**
@@ -133,7 +135,7 @@ class ClientCommand extends Command
             ? ! $this->option('public')
             : $this->components->confirm('Would you like to make this client confidential?', true);
 
-        return $clients->createDeviceAuthorizationGrantClient($this->option('name'), $confidential);
+        return $clients->createDeviceAuthorizationGrantClient($this->option('name'), $confidential, metadata: $this->metadata());
     }
 
     /**
@@ -154,7 +156,20 @@ class ClientCommand extends Command
             $this->components->confirm('Would you like to enable the device authorization flow for this client?');
 
         return $clients->createAuthorizationCodeGrantClient(
-            $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow
+            $this->option('name'), explode(',', $redirect), $confidential, null, $enableDeviceFlow, metadata: $this->metadata()
         );
+    }
+
+    /**
+     * Get the client metadata.
+     *
+     * @return array<string, string|null>
+     */
+    protected function metadata(): array
+    {
+        return [
+            'logo_uri' => $this->option('logo_uri'),
+            'client_uri' => $this->option('client_uri'),
+        ];
     }
 }
