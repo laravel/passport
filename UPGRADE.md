@@ -202,6 +202,23 @@ Schema::table('oauth_clients', function (Blueprint $table) {
 
 Additionally, Passport's `Laravel\Passport\Database\Factories\ClientFactory` factory class has been updated to reflect the changes to this table. If you do not want to make these changes to your application's `oauth_clients` table, you may use the [old Client factory class](https://github.com/laravel/passport/blob/12.x/database/factories/ClientFactory.php).
 
+### Client Logo and Client URI Columns
+
+Passport now supports optional `logo_uri` and `client_uri` metadata for OAuth clients, which are made available to the authorization view via the `$client` variable. These columns have been added to Passport's `oauth_clients` migration, and the `createAuthorizationCodeGrantClient`, `createImplicitGrantClient`, and `createDeviceAuthorizationGrantClient` methods on the `ClientRepository` accept optional `$logoUri` and `$clientUri` arguments.
+
+This change is **fully backward compatible**, and **no action is required** on your part. If the columns do not exist on your `oauth_clients` table, Passport will simply not store these values.
+
+If you wish to use this feature on an existing application, you may create a migration to add the columns:
+
+```php
+Schema::table('oauth_clients', function (Blueprint $table) {
+    $table->after('name', function (Blueprint $table) {
+        $table->text('logo_uri')->nullable();
+        $table->text('client_uri')->nullable();
+    });
+});
+```
+
 ## Upgrading To 12.0 From 11.x
 
 ### Migration Changes

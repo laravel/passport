@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->nullableMorphs('owner');
             $table->string('name');
+            $table->text('logo_uri')->nullable();
+            $table->text('client_uri')->nullable();
             $table->string('secret')->nullable();
             $table->string('provider')->nullable();
             $table->text('redirect_uris');

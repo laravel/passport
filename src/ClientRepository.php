@@ -89,7 +89,9 @@ class ClientRepository
         array $redirectUris = [],
         ?string $provider = null,
         bool $confidential = true,
-        ?Authenticatable $user = null
+        ?Authenticatable $user = null,
+        ?string $logoUri = null,
+        ?string $clientUri = null
     ): Client {
         $client = Passport::client();
         $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
@@ -111,6 +113,14 @@ class ClientRepository
                 'password_client' => in_array('password', $grantTypes),
             ]),
         ];
+
+        if (! is_null($logoUri) && in_array('logo_uri', $columns)) {
+            $attributes['logo_uri'] = $logoUri;
+        }
+
+        if (! is_null($clientUri) && in_array('client_uri', $columns)) {
+            $attributes['client_uri'] = $clientUri;
+        }
 
         return match (true) {
             ! is_null($user) && in_array('user_id', $columns) => $user->clients()->forceCreate($attributes),
@@ -148,9 +158,9 @@ class ClientRepository
      *
      * @param  string[]  $redirectUris
      */
-    public function createImplicitGrantClient(string $name, array $redirectUris): Client
+    public function createImplicitGrantClient(string $name, array $redirectUris, ?string $logoUri = null, ?string $clientUri = null): Client
     {
-        return $this->create($name, ['implicit'], $redirectUris, null, false);
+        return $this->create($name, ['implicit'], $redirectUris, null, false, logoUri: $logoUri, clientUri: $clientUri);
     }
 
     /**
@@ -161,10 +171,12 @@ class ClientRepository
     public function createDeviceAuthorizationGrantClient(
         string $name,
         bool $confidential = true,
-        ?Authenticatable $user = null
+        ?Authenticatable $user = null,
+        ?string $logoUri = null,
+        ?string $clientUri = null
     ): Client {
         return $this->create(
-            $name, ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'], [], null, $confidential, $user
+            $name, ['urn:ietf:params:oauth:grant-type:device_code', 'refresh_token'], [], null, $confidential, $user, $logoUri, $clientUri
         );
     }
 
@@ -179,7 +191,9 @@ class ClientRepository
         array $redirectUris,
         bool $confidential = true,
         ?Authenticatable $user = null,
-        bool $enableDeviceFlow = false
+        bool $enableDeviceFlow = false,
+        ?string $logoUri = null,
+        ?string $clientUri = null
     ): Client {
         $grantTypes = ['authorization_code', 'refresh_token'];
 
@@ -187,7 +201,7 @@ class ClientRepository
             $grantTypes[] = 'urn:ietf:params:oauth:grant-type:device_code';
         }
 
-        return $this->create($name, $grantTypes, $redirectUris, null, $confidential, $user);
+        return $this->create($name, $grantTypes, $redirectUris, null, $confidential, $user, $logoUri, $clientUri);
     }
 
     /**

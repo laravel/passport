@@ -30,7 +30,10 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
 
     public function testIssueAccessToken()
     {
-        $client = ClientFactory::new()->asPublic()->create();
+        $client = ClientFactory::new()->asPublic()->create([
+            'logo_uri' => 'https://client.example.com/logo.png',
+            'client_uri' => 'https://client.example.com',
+        ]);
 
         $codeVerifier = Str::random(128);
         $codeChallenge = strtr(rtrim(base64_encode(hash('sha256', $codeVerifier, true)), '='), '+/', '-_');
@@ -54,6 +57,8 @@ class AuthorizationCodeGrantWithPkceTest extends PassportTestCase
         $response->assertSessionHas('authRequest');
         $response->assertSessionHas('authToken');
         $json = $response->json();
+        $this->assertSame($client->logo_uri, $json['client']['logo_uri']);
+        $this->assertSame($client->client_uri, $json['client']['client_uri']);
         $this->assertEqualsCanonicalizing(['client', 'user', 'scopes', 'request', 'authToken'], array_keys($json));
         $this->assertSame(collect(Passport::scopesFor(['create', 'read']))->toArray(), $json['scopes']);
 
