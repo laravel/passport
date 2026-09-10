@@ -5,6 +5,7 @@ namespace Laravel\Passport;
 use Closure;
 use DateInterval;
 use DateTimeInterface;
+use Defuse\Crypto\Key;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Support\Collection;
@@ -157,6 +158,13 @@ class Passport
      * @var (\Closure(\Illuminate\Contracts\Encryption\Encrypter): string)|null
      */
     public static ?Closure $tokenEncryptionKeyCallback = null;
+
+    /**
+     * The callback that resolves the authorization server's encryption key.
+     *
+     * @var (\Closure(\Illuminate\Contracts\Encryption\Encrypter): (\Defuse\Crypto\Key|string))|null
+     */
+    public static ?Closure $authorizationServerEncryptionKeyCallback = null;
 
     /**
      * Indicates the scope should inherit its parent scope.
@@ -605,6 +613,34 @@ class Passport
     public static function encryptTokensUsing(?Closure $callback): void
     {
         static::$tokenEncryptionKeyCallback = $callback;
+    }
+
+    /**
+     * Specify the callback that resolves the authorization server's encryption key.
+     *
+     * Returning a Defuse key makes league/oauth2-server encrypt authorization codes and
+     * refresh tokens in raw-key mode. Returning a string keeps the password mode, which
+     * derives a key with PBKDF2 on every encrypt and every decrypt.
+     *
+     * The two modes are not interchangeable: switching invalidates any authorization code
+     * or refresh token issued under the other one.
+     */
+    public static function encryptAuthorizationServerTokensUsing(?Closure $callback): void
+    {
+        static::$authorizationServerEncryptionKeyCallback = $callback;
+    }
+
+    /**
+     * Resolve the encryption key used by the authorization server.
+     *
+     * Defaults to the token encryption key, so the value is unchanged unless an
+     * application registers its own callback.
+     */
+    public static function authorizationServerEncryptionKey(Encrypter $encrypter): Key|string
+    {
+        return is_callable(static::$authorizationServerEncryptionKeyCallback)
+            ? (static::$authorizationServerEncryptionKeyCallback)($encrypter)
+            : static::tokenEncryptionKey($encrypter);
     }
 
     /**

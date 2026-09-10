@@ -260,7 +260,7 @@ class PassportServiceProvider extends ServiceProvider
             $this->app->make(Bridge\AccessTokenRepository::class),
             $this->app->make(Bridge\ScopeRepository::class),
             $this->makeCryptKey('private'),
-            Passport::tokenEncryptionKey($this->app->make('encrypter')),
+            Passport::authorizationServerEncryptionKey($this->app->make('encrypter')),
             $responseType ?? Passport::$authorizationServerResponseType
         ), function (AuthorizationServer $server): void {
             $server->setDefaultScope(Passport::$defaultScope);
