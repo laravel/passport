@@ -1,7 +1,11 @@
 {
     "name": "laravel/passport",
     "description": "Laravel Passport provides OAuth2 server support to Laravel.",
-    "keywords": ["laravel", "passport", "oauth"],
+    "keywords": [
+        "laravel",
+        "passport",
+        "oauth"
+    ],
     "license": "MIT",
     "support": {
         "issues": "https://github.com/laravel/passport/issues",
@@ -36,7 +40,8 @@
     },
     "require-dev": {
         "orchestra/testbench": "^9.15|^10.8|^11.0",
-        "phpstan/phpstan": "^2.0"
+        "phpstan/phpstan": "^2.0",
+        "jasonmccreary/double": "~0.10"
     },
     "autoload": {
         "psr-4": {
