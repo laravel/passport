@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use JMac\Testing\Double;
@@ -68,8 +69,8 @@ class ClientControllerTest extends TestCase
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
-        ])->returns($validator);
-        $validator->expects('validate');
+        ])->returns($validation = Double::for(Validator::class));
+        $validation->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule
@@ -114,8 +115,8 @@ class ClientControllerTest extends TestCase
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
-        ])->returns($validator);
-        $validator->expects('validate');
+        ])->returns($validation = Double::for(Validator::class));
+        $validation->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule
@@ -152,8 +153,8 @@ class ClientControllerTest extends TestCase
         ], [
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
-        ])->returns($validator);
-        $validator->expects('validate');
+        ])->returns($validation = Double::for(Validator::class));
+        $validation->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule

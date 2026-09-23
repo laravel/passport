@@ -4,11 +4,13 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Client;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\Http\Controllers\PersonalAccessTokenController;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PersonalAccessTokenResult;
@@ -62,7 +64,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'token name', 'scopes' => ['user', 'user-admin']]);
 
         $request->setUserResolver(function () use ($result) {
-            $user = Double::for(Authenticatable::class);
+            $user = Double::for(OAuthenticatable::class);
             $user->expects('createToken')->with('token name', ['user', 'user-admin'])->returns($result);
 
             return $user;
@@ -75,8 +77,8 @@ class PersonalAccessTokenControllerTest extends TestCase
         ], [
             'name' => ['required', 'max:255'],
             'scopes' => ['array', Rule::in(Passport::scopeIds())],
-        ])->returns($validator);
-        $validator->expects('validate');
+        ])->returns($validation = Double::for(Validator::class));
+        $validation->expects('validate');
 
         $tokenRepository = Double::for(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);

@@ -107,7 +107,7 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
+        $container->instance(ExceptionHandler::class, $handler = Double::for(ExceptionHandler::class));
         $handler->expects('report')->with(Argument::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
@@ -529,7 +529,7 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
+        $container->instance(ExceptionHandler::class, $handler = Double::for(ExceptionHandler::class));
         $handler->expects('report')->with(Argument::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
