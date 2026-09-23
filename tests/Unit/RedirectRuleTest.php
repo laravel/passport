@@ -2,12 +2,11 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Validator;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Http\Rules\RedirectRule;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class RedirectRuleTest extends TestCase

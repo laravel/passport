@@ -2,14 +2,13 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Http\Request;
+use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Matching\Argument;
-use JMac\Testing\Double;
-use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
@@ -42,7 +41,7 @@ class DenyAuthorizationControllerTest extends TestCase
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server->allows('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
-                Argument::type(ResponseInterface::class))->resolves(function () {
+            Argument::type(ResponseInterface::class))->resolves(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 

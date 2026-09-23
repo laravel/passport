@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Client;
 use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshToken;

@@ -2,14 +2,13 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Illuminate\Container\Container;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class HasApiTokensTest extends TestCase

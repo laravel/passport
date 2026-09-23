@@ -2,9 +2,6 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Matching\Argument;
-use JMac\Testing\Double;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
@@ -13,6 +10,9 @@ use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
+use JMac\Testing\Matching\Argument;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
@@ -21,7 +21,6 @@ use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use Workbench\App\Models\User as TokenGuardTestUser;

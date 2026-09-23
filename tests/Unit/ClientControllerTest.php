@@ -2,18 +2,17 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Matching\Argument;
-use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
+use JMac\Testing\Matching\Argument;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Http\Controllers\ClientController;
 use Laravel\Passport\Http\Rules\RedirectRule;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -54,10 +53,10 @@ class ClientControllerTest extends TestCase
         $request->setUserResolver(fn () => $user);
 
         $clients->expects('createAuthorizationCodeGrantClient')->with('client name', ['http://localhost'], true, $user)->returns($client = new Client([
-                'name' => 'client name',
-                'redirect' => 'http://localhost',
-                'secret' => 'secret',
-            ]));
+            'name' => 'client name',
+            'redirect' => 'http://localhost',
+            'secret' => 'secret',
+        ]));
 
         $redirectRule = Double::for(RedirectRule::class);
 
@@ -99,10 +98,10 @@ class ClientControllerTest extends TestCase
         $request->setUserResolver(fn () => $user);
 
         $clients->expects('createAuthorizationCodeGrantClient')->with('client name', ['http://localhost'], false, $user)->returns($client = new Client([
-                'name' => 'client name',
-                'redirect' => 'http://localhost',
-                'secret' => null,
-            ]));
+            'name' => 'client name',
+            'redirect' => 'http://localhost',
+            'secret' => null,
+        ]));
 
         $redirectRule = Double::for(RedirectRule::class);
 

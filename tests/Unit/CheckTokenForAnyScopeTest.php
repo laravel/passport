@@ -2,10 +2,10 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\Exceptions\AuthenticationException;
@@ -13,7 +13,6 @@ use Laravel\Passport\Http\Middleware\CheckTokenForAnyScope;
 use Laravel\Passport\TransientToken;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 

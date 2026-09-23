@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Illuminate\Contracts\Hashing\Hasher;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;

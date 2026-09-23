@@ -2,15 +2,14 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Double;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Events\Dispatcher;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
-use Mockery as m;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class BridgeAccessTokenRepositoryTest extends PassportTestCase
