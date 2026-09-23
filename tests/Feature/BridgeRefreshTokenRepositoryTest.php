@@ -5,7 +5,6 @@ namespace Laravel\Passport\Tests\Feature;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Events\Dispatcher;
 use JMac\Testing\Double;
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\RefreshToken;
@@ -15,7 +14,6 @@ use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 {
     use WithLaravelMigrations;
-    use VerifiesDoubles;
 
     public function test_access_tokens_can_be_persisted()
     {
