@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
@@ -10,14 +11,13 @@ use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizedAccessTokenControllerTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
     /**
      * @var \Mockery\Mock|\Laravel\Passport\TokenRepository
      */

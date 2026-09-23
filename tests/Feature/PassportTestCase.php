@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Laravel\Passport\Passport;
@@ -11,6 +12,8 @@ use Workbench\App\Models\User;
 
 abstract class PassportTestCase extends TestCase
 {
+    use VerifiesDoubles;
+
     use LazilyRefreshDatabase, WithWorkbench;
 
     const KEYS = __DIR__.'/../keys';

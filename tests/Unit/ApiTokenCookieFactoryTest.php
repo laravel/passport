@@ -2,20 +2,20 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Double;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Passport;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class ApiTokenCookieFactoryTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     public function test_cookie_can_be_successfully_created()
     {

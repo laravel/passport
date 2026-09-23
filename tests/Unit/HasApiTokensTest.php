@@ -2,19 +2,19 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Double;
 use Illuminate\Container\Container;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class HasApiTokensTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     protected function tearDown(): void
     {

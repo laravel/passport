@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Double;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
@@ -9,13 +10,12 @@ use Laravel\Passport\Bridge\ScopeRepository;
 use Laravel\Passport\Client as ClientModel;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class BridgeScopeRepositoryTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     protected function tearDown(): void
     {

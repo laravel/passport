@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Carbon\Carbon;
@@ -20,7 +21,6 @@ use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,7 +28,7 @@ use Workbench\App\Models\User as TokenGuardTestUser;
 
 class TokenGuardTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     protected function tearDown(): void
     {
