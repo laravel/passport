@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
@@ -196,7 +197,7 @@ class ClientControllerTest extends TestCase
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->expects('delete')->with(m::type(Client::class));
+        $clients->expects('delete')->with(Argument::type(Client::class));
 
         $validator = Double::for(Factory::class);
 

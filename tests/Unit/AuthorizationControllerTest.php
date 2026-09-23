@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -54,7 +55,7 @@ class AuthorizationControllerTest extends TestCase
         $request = Double::for(Request::class);
         $request->allows('session')->returns($session = Double::for(\stdClass::class));
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
-        $session->expects('put')->with('authRequest', m::on(fn ($value) => is_string($value)));
+        $session->expects('put')->with('authRequest', Argument::satisfies(fn ($value) => is_string($value)));
         $session->expects('forget')->with('promptedForLogin');
         $request->allows('string')->with('prompt')->returns(Str::of(null));
 
@@ -122,7 +123,7 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('approved');
         $server->allows('validateAuthorizationRequest')->returns($authRequest = Double::for(AuthorizationRequest::class));
-        $server->allows('completeAuthorizationRequest')->with($authRequest, m::type(ResponseInterface::class))->returns($psrResponse);
+        $server->allows('completeAuthorizationRequest')->with($authRequest, Argument::type(ResponseInterface::class))->returns($psrResponse);
 
         $psrRequest = Double::for(ServerRequestInterface::class);
         $psrRequest->allows('getQueryParams')->returns([]);
@@ -167,7 +168,7 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('approved');
         $server->allows('validateAuthorizationRequest')->returns($authRequest = Double::for(AuthorizationRequest::class));
-        $server->allows('completeAuthorizationRequest')->with($authRequest, m::type(ResponseInterface::class))->returns($psrResponse);
+        $server->allows('completeAuthorizationRequest')->with($authRequest, Argument::type(ResponseInterface::class))->returns($psrResponse);
 
         $psrRequest = Double::for(ServerRequestInterface::class);
         $psrRequest->allows('getQueryParams')->returns([]);
@@ -222,7 +223,7 @@ class AuthorizationControllerTest extends TestCase
         $request = Double::for(Request::class);
         $request->allows('session')->returns($session = Double::for(\stdClass::class));
         $session->shouldReceive('put')->withSomeOfArgs('authToken');
-        $session->expects('put')->with('authRequest', m::on(fn ($value) => is_string($value)));
+        $session->expects('put')->with('authRequest', Argument::satisfies(fn ($value) => is_string($value)));
         $session->expects('forget')->with('promptedForLogin');
         $request->allows('string')->with('prompt')->returns(Str::of('consent'));
 

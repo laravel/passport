@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
@@ -40,8 +41,8 @@ class ApproveAuthorizationControllerTest extends TestCase
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('response');
 
-        $server->allows('completeAuthorizationRequest')->with(m::on(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
-                m::type(ResponseInterface::class))->returns($psrResponse);
+        $server->allows('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
+                Argument::type(ResponseInterface::class))->returns($psrResponse);
 
         $this->assertSame('response', $controller->approve($request, $psrResponse)->getContent());
     }

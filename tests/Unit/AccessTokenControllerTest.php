@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
@@ -23,7 +24,7 @@ class AccessTokenControllerTest extends TestCase
     {
         $request = Double::for(ServerRequestInterface::class);
 
-        $response = m::type(ResponseInterface::class);
+        $response = Argument::type(ResponseInterface::class);
 
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
@@ -43,7 +44,7 @@ class AccessTokenControllerTest extends TestCase
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server = Double::for(AuthorizationServer::class);
-        $server->allows('respondToAccessTokenRequest')->with($request, m::type(ResponseInterface::class))->throws(LeagueException::invalidCredentials());
+        $server->allows('respondToAccessTokenRequest')->with($request, Argument::type(ResponseInterface::class))->throws(LeagueException::invalidCredentials());
 
         $controller = new AccessTokenController($server);
 

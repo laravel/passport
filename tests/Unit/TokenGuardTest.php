@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
@@ -108,7 +109,7 @@ class TokenGuardTest extends TestCase
         $container = new Container;
         Container::setInstance($container);
         $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
-        $handler->expects('report')->with(m::type(OAuthServerException::class));
+        $handler->expects('report')->with(Argument::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
         $userProvider = Double::for(PassportUserProvider::class);
@@ -530,7 +531,7 @@ class TokenGuardTest extends TestCase
         $container = new Container;
         Container::setInstance($container);
         $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
-        $handler->expects('report')->with(m::type(OAuthServerException::class));
+        $handler->expects('report')->with(Argument::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
         $userProvider = Double::for(PassportUserProvider::class);

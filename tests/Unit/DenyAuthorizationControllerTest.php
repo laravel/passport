@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
@@ -40,8 +41,8 @@ class DenyAuthorizationControllerTest extends TestCase
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $server->allows('completeAuthorizationRequest')->with(m::on(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
-                m::type(ResponseInterface::class))->resolves(function () {
+        $server->allows('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
+                Argument::type(ResponseInterface::class))->resolves(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 
