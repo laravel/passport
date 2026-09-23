@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Http\Controllers\TransientTokenController;
@@ -16,11 +17,11 @@ class TransientTokenControllerTest extends TestCase
 
     public function test_token_can_be_refreshed()
     {
-        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
+        $cookieFactory = Double::for(ApiTokenCookieFactory::class);
         $cookieFactory->shouldReceive('make')->once()->with(1, 'token')->andReturn(new Cookie('cookie'));
 
-        $request = m::mock(Request::class);
-        $request->shouldReceive('user')->andReturn($user = m::mock());
+        $request = Double::for(Request::class);
+        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
         $request->shouldReceive('session->token')->andReturn('token');
 

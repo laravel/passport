@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
@@ -18,7 +19,7 @@ class ApiTokenCookieFactoryTest extends TestCase
 
     public function test_cookie_can_be_successfully_created()
     {
-        $config = m::mock(Repository::class);
+        $config = Double::for(Repository::class);
         $config->shouldReceive('get')->with('session')->andReturn([
             'lifetime' => 120,
             'path' => '/',
@@ -40,7 +41,7 @@ class ApiTokenCookieFactoryTest extends TestCase
             return $encrypter->getKey().'.mykey';
         });
 
-        $config = m::mock(Repository::class);
+        $config = Double::for(Repository::class);
         $config->shouldReceive('get')->with('session')->andReturn([
             'lifetime' => 120,
             'path' => '/',

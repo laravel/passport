@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AccessTokenController;
 use League\OAuth2\Server\AuthorizationServer;
@@ -20,14 +21,14 @@ class AccessTokenControllerTest extends TestCase
 
     public function test_a_token_can_be_issued()
     {
-        $request = m::mock(ServerRequestInterface::class);
+        $request = Double::for(ServerRequestInterface::class);
 
         $response = m::type(ResponseInterface::class);
 
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
 
-        $server = m::mock(AuthorizationServer::class);
+        $server = Double::for(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')
             ->with($request, $response)
             ->andReturn($psrResponse);
@@ -39,11 +40,11 @@ class AccessTokenControllerTest extends TestCase
 
     public function test_exceptions_are_handled()
     {
-        $request = m::mock(ServerRequestInterface::class);
+        $request = Double::for(ServerRequestInterface::class);
 
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $server = m::mock(AuthorizationServer::class);
+        $server = Double::for(AuthorizationServer::class);
         $server->shouldReceive('respondToAccessTokenRequest')->with(
             $request, m::type(ResponseInterface::class)
         )->andThrow(LeagueException::invalidCredentials());
@@ -52,7 +53,7 @@ class AccessTokenControllerTest extends TestCase
 
         $this->expectException(OAuthServerException::class);
 
-        $controller->issueToken($request, m::mock(ResponseInterface::class));
+        $controller->issueToken($request, Double::for(ResponseInterface::class));
     }
 }
 

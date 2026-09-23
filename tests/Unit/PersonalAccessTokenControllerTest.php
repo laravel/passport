@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
@@ -33,17 +34,17 @@ class PersonalAccessTokenControllerTest extends TestCase
             $token1, $token2,
         ]);
 
-        $tokenRepository = m::mock(TokenRepository::class);
+        $tokenRepository = Double::for(TokenRepository::class);
         $tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
         $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
+            $user = Double::for(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertCount(1, $controller->forUser($request));
@@ -57,12 +58,12 @@ class PersonalAccessTokenControllerTest extends TestCase
             'user-admin' => 'second',
         ]);
 
-        $result = m::mock(PersonalAccessTokenResult::class);
+        $result = Double::for(PersonalAccessTokenResult::class);
 
         $request = Request::create('/', 'GET', ['name' => 'token name', 'scopes' => ['user', 'user-admin']]);
 
         $request->setUserResolver(function () use ($result) {
-            $user = m::mock(Authenticatable::class);
+            $user = Double::for(Authenticatable::class);
             $user->shouldReceive('createToken')
                 ->once()
                 ->with('token name', ['user', 'user-admin'])
@@ -71,7 +72,7 @@ class PersonalAccessTokenControllerTest extends TestCase
             return $user;
         });
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
@@ -81,7 +82,7 @@ class PersonalAccessTokenControllerTest extends TestCase
         ])->andReturn($validator);
         $validator->shouldReceive('validate')->once();
 
-        $tokenRepository = m::mock(TokenRepository::class);
+        $tokenRepository = Double::for(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertSame($result, $controller->store($request));
@@ -91,21 +92,21 @@ class PersonalAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $token1 = m::mock(Token::class.'[revoke]');
+        $token1 = Double::for(Token::class)->passthru();
         $token1->id = 1;
         $token1->shouldReceive('revoke')->once();
 
-        $tokenRepository = m::mock(TokenRepository::class);
+        $tokenRepository = Double::for(TokenRepository::class);
         $tokenRepository->shouldReceive('findForUser')->andReturn($token1);
 
         $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
+            $user = Double::for(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
         });
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $response = $controller->destroy($request, 1);
@@ -115,16 +116,16 @@ class PersonalAccessTokenControllerTest extends TestCase
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $tokenRepository = m::mock(TokenRepository::class);
+        $tokenRepository = Double::for(TokenRepository::class);
         $tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
         $this->assertSame(404, $controller->destroy($request, 3)->status());

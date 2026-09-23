@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
@@ -35,17 +36,17 @@ class TokenGuardTest extends TestCase
 
     public function test_user_can_be_pulled_via_bearer_token()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -67,17 +68,17 @@ class TokenGuardTest extends TestCase
 
     public function test_user_is_resolved_only_once()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -106,13 +107,13 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = m::mock());
+        $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
         $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
 
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -131,10 +132,10 @@ class TokenGuardTest extends TestCase
 
     public function test_null_is_returned_if_no_user_is_found()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -145,7 +146,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(null);
@@ -156,10 +157,10 @@ class TokenGuardTest extends TestCase
 
     public function test_null_is_returned_for_client_credentials_token()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $clientId = '019c9d23-9763-7303-9bdb-3a0a6bf0ef90';
 
@@ -175,7 +176,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn($clientId);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn($clientId);
         $userProvider->shouldReceive('getProviderName')->andReturn(null);
@@ -186,10 +187,10 @@ class TokenGuardTest extends TestCase
 
     public function test_user_is_resolved_when_user_id_matches_client_id()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $clients->shouldReceive('findActive')
             ->with(1)
@@ -200,7 +201,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
@@ -221,9 +222,9 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_csrf_token_header()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
@@ -253,9 +254,9 @@ class TokenGuardTest extends TestCase
 
     public function test_users_may_be_retrieved_from_cookies_with_xsrf_token_header()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
@@ -285,9 +286,9 @@ class TokenGuardTest extends TestCase
 
     public function test_cookie_xsrf_is_verified_against_csrf_token_header()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
@@ -310,9 +311,9 @@ class TokenGuardTest extends TestCase
 
     public function test_cookie_xsrf_is_verified_against_xsrf_token_header()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
@@ -339,9 +340,9 @@ class TokenGuardTest extends TestCase
             return $encrypter->getKey().'.mykey';
         });
 
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
@@ -379,9 +380,9 @@ class TokenGuardTest extends TestCase
             return $encrypter->getKey().'.mykey';
         });
 
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
@@ -415,9 +416,9 @@ class TokenGuardTest extends TestCase
 
     public function test_xsrf_token_cookie_without_a_token_header_is_not_accepted()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
@@ -440,9 +441,9 @@ class TokenGuardTest extends TestCase
 
     public function test_expired_cookies_may_not_be_used()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');
@@ -465,9 +466,9 @@ class TokenGuardTest extends TestCase
 
     public function test_csrf_check_can_be_disabled()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $clients->shouldReceive('findActive')
@@ -497,17 +498,17 @@ class TokenGuardTest extends TestCase
 
     public function test_client_can_be_pulled_via_bearer_token()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -518,17 +519,17 @@ class TokenGuardTest extends TestCase
 
     public function test_client_is_resolved_only_once()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
 
@@ -546,13 +547,13 @@ class TokenGuardTest extends TestCase
     {
         $container = new Container;
         Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = m::mock());
+        $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
         $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
 
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
@@ -571,17 +572,17 @@ class TokenGuardTest extends TestCase
 
     public function test_null_is_returned_if_no_client_is_found()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
-        $encrypter = m::mock(Encrypter::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
+        $encrypter = Double::for(Encrypter::class);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
         $clients->shouldReceive('findActive')->with(1)->andReturn(null);
 
@@ -590,9 +591,9 @@ class TokenGuardTest extends TestCase
 
     public function test_clients_may_be_retrieved_from_cookies()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $userProvider = m::mock(PassportUserProvider::class);
-        $clients = m::mock(ClientRepository::class);
+        $resourceServer = Double::for(ResourceServer::class);
+        $userProvider = Double::for(PassportUserProvider::class);
+        $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
         $request = Request::create('/');

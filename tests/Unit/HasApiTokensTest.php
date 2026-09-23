@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Container\Container;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\AccessToken;
@@ -23,7 +24,7 @@ class HasApiTokensTest extends TestCase
     public function test_token_can_indicates_if_token_has_given_scope()
     {
         $user = new HasApiTokensTestStub;
-        $token = m::mock(AccessToken::class);
+        $token = Double::for(AccessToken::class);
         $token->shouldReceive('can')->with('scope')->andReturn(true);
         $token->shouldReceive('can')->with('another-scope')->andReturn(false);
 

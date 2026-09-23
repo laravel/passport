@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\DenyAuthorizationController;
 use League\OAuth2\Server\AuthorizationServer;
@@ -21,12 +22,12 @@ class DenyAuthorizationControllerTest extends TestCase
     {
         $this->expectException('Laravel\Passport\Exceptions\OAuthServerException');
 
-        $server = m::mock(AuthorizationServer::class);
+        $server = Double::for(AuthorizationServer::class);
         $controller = new DenyAuthorizationController($server);
 
-        $request = m::mock(Request::class);
+        $request = Double::for(Request::class);
 
-        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 
@@ -39,7 +40,7 @@ class DenyAuthorizationControllerTest extends TestCase
             ->with('authRequest')
             ->andReturn(serialize($authRequest));
 
-        $psrResponse = m::mock(ResponseInterface::class);
+        $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server->shouldReceive('completeAuthorizationRequest')
@@ -59,13 +60,13 @@ class DenyAuthorizationControllerTest extends TestCase
         $this->expectException('Exception');
         $this->expectExceptionMessage('Authorization request was not present in the session.');
 
-        $server = m::mock(AuthorizationServer::class);
+        $server = Double::for(AuthorizationServer::class);
 
         $controller = new DenyAuthorizationController($server);
 
-        $request = m::mock(Request::class);
+        $request = Double::for(Request::class);
 
-        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
         $request->shouldReceive('user')->never();
         $request->shouldReceive('input')->never();
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
@@ -74,7 +75,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
         $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();
 
-        $psrResponse = m::mock(ResponseInterface::class);
+        $psrResponse = Double::for(ResponseInterface::class);
 
         $server->shouldReceive('completeAuthorizationRequest')->never();
 

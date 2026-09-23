@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use JMac\Testing\Double;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Bridge\AccessToken;
@@ -21,11 +22,11 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
     {
         $expiration = CarbonImmutable::now();
 
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
 
         $events->shouldReceive('dispatch')->once();
 
-        $accessToken = new AccessToken('3', [], m::mock(Client::class));
+        $accessToken = new AccessToken('3', [], Double::for(Client::class));
         $accessToken->setIdentifier('2');
 
         $refreshToken = new RefreshToken;
@@ -47,7 +48,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 
     public function test_can_get_new_refresh_token()
     {
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
         $repository = new RefreshTokenRepository($events);
 
         $token = $repository->getNewRefreshToken();

@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use JMac\Testing\Double;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Events\Dispatcher;
 use Laravel\Passport\Bridge\AccessToken;
@@ -21,7 +22,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
     {
         $expiration = CarbonImmutable::now();
 
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
 
         $events->shouldReceive('dispatch')->once();
 
@@ -45,7 +46,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
 
     public function test_access_tokens_can_be_revoked()
     {
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
         $events->shouldReceive('dispatch')->twice();
 
         $accessToken = new AccessToken(2, [], new Client('client-id', 'name', ['redirect']));
@@ -60,7 +61,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
 
     public function test_access_token_revoke_event_is_not_dispatched_when_nothing_happened()
     {
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
         $events->shouldNotReceive('dispatch');
 
         $repository = new AccessTokenRepository($events);
@@ -69,7 +70,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
 
     public function test_can_get_new_access_token()
     {
-        $events = m::mock(Dispatcher::class);
+        $events = Double::for(Dispatcher::class);
         $repository = new AccessTokenRepository($events);
         $client = new Client('client-id', 'name', ['redirect']);
         $scopes = [new Scope('place-orders'), new Scope('check-status')];

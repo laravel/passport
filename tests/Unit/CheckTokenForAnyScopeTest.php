@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\AccessToken;
@@ -22,8 +23,8 @@ class CheckTokenForAnyScopeTest extends TestCase
 
     public function test_request_is_passed_along_if_token_is_valid()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer = Double::for(ResourceServer::class);
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttributes')->andReturn([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
@@ -45,10 +46,10 @@ class CheckTokenForAnyScopeTest extends TestCase
 
     public function test_request_is_passed_along_if_token_is_transient()
     {
-        $user = m::mock(OAuthenticatable::class);
+        $user = Double::for(OAuthenticatable::class);
         $user->shouldReceive('currentAccessToken')->andReturn(new TransientToken());
 
-        $resourceServer = m::mock(ResourceServer::class);
+        $resourceServer = Double::for(ResourceServer::class);
         $resourceServer->shouldNotReceive('validateAuthenticatedRequest');
 
         $middleware = new CheckTokenForAnyScope($resourceServer);
@@ -66,8 +67,8 @@ class CheckTokenForAnyScopeTest extends TestCase
 
     public function test_request_is_passed_along_if_token_has_any_required_scope()
     {
-        $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer = Double::for(ResourceServer::class);
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttributes')->andReturn([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
@@ -91,7 +92,7 @@ class CheckTokenForAnyScopeTest extends TestCase
     {
         $this->expectException(AuthenticationException::class);
 
-        $resourceServer = m::mock(ResourceServer::class);
+        $resourceServer = Double::for(ResourceServer::class);
         $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
             new OAuthServerException('message', 500, 'error type')
         );
@@ -110,8 +111,8 @@ class CheckTokenForAnyScopeTest extends TestCase
     {
         $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
 
-        $resourceServer = m::mock(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = m::mock(ServerRequestInterface::class));
+        $resourceServer = Double::for(ResourceServer::class);
+        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
         $psr->shouldReceive('getAttributes')->andReturn([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
@@ -131,11 +132,11 @@ class CheckTokenForAnyScopeTest extends TestCase
 
     public function test_request_is_passed_along_if_scopes_are_present_on_token()
     {
-        $resourceServer = m::mock(ResourceServer::class);
+        $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
-        $request = m::mock(Request::class);
-        $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
+        $request = Double::for(Request::class);
+        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = Double::for(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(true);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 
@@ -150,11 +151,11 @@ class CheckTokenForAnyScopeTest extends TestCase
     {
         $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
 
-        $resourceServer = m::mock(ResourceServer::class);
+        $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
-        $request = m::mock(Request::class);
-        $request->shouldReceive('user')->andReturn($user = m::mock());
-        $user->shouldReceive('currentAccessToken')->andReturn($token = m::mock(AccessToken::class));
+        $request = Double::for(Request::class);
+        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
+        $user->shouldReceive('currentAccessToken')->andReturn($token = Double::for(AccessToken::class));
         $token->shouldReceive('can')->with('foo')->andReturn(false);
         $token->shouldReceive('can')->with('bar')->andReturn(false);
 

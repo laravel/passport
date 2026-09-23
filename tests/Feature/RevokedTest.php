@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use JMac\Testing\Double;
 use Carbon\CarbonImmutable;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository as BridgeAccessTokenRepository;
@@ -120,7 +121,7 @@ class RevokedTest extends PassportTestCase
 
     private function accessTokenRepository(): BridgeAccessTokenRepository
     {
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
         $events->shouldReceive('dispatch');
 
         return new BridgeAccessTokenRepository($events);
@@ -128,7 +129,7 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
     {
-        $accessToken = m::mock(AccessToken::class);
+        $accessToken = Double::for(AccessToken::class);
         $accessToken->shouldReceive('getIdentifier')->andReturn($id);
         $accessToken->shouldReceive('getUserIdentifier')->andReturn('1');
         $accessToken->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
@@ -145,7 +146,7 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewAuthCode(BridgeAuthCodeRepository $repository, string $id): void
     {
-        $authCode = m::mock(AuthCode::class);
+        $authCode = Double::for(AuthCode::class);
         $authCode->shouldReceive('getIdentifier')->andReturn($id);
         $authCode->shouldReceive('getUserIdentifier')->andReturn('1');
         $authCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
@@ -157,7 +158,7 @@ class RevokedTest extends PassportTestCase
 
     private function refreshTokenRepository(): BridgeRefreshTokenRepository
     {
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
+        $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
         $events->shouldReceive('dispatch');
 
         return new BridgeRefreshTokenRepository($events);
@@ -165,7 +166,7 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void
     {
-        $refreshToken = m::mock(RefreshToken::class);
+        $refreshToken = Double::for(RefreshToken::class);
         $refreshToken->shouldReceive('getIdentifier')->andReturn($id);
         $refreshToken->shouldReceive('getAccessToken->getIdentifier')->andReturn('accessTokenId');
         $refreshToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
@@ -180,7 +181,7 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
     {
-        $deviceCode = m::mock(DeviceCode::class);
+        $deviceCode = Double::for(DeviceCode::class);
         $deviceCode->shouldReceive('getIdentifier')->andReturn($id);
         $deviceCode->shouldReceive('getUserIdentifier')->andReturn(null);
         $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');

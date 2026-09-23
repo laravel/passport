@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Laravel\Passport\Http\Controllers\ApproveAuthorizationController;
 use League\OAuth2\Server\AuthorizationServer;
@@ -19,12 +20,12 @@ class ApproveAuthorizationControllerTest extends TestCase
 
     public function test_complete_authorization_request()
     {
-        $server = m::mock(AuthorizationServer::class);
+        $server = Double::for(AuthorizationServer::class);
 
         $controller = new ApproveAuthorizationController($server);
 
-        $request = m::mock(Request::class);
-        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request = Double::for(Request::class);
+        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
         $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
         $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
 

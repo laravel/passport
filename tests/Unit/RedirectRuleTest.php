@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Contracts\Validation\Validator;
 use Laravel\Passport\Http\Rules\RedirectRule;
@@ -36,10 +37,10 @@ class RedirectRuleTest extends TestCase
 
     private function rule(bool $fails): RedirectRule
     {
-        $validator = m::mock(Validator::class);
+        $validator = Double::for(Validator::class);
         $validator->shouldReceive('fails')->andReturn($fails);
 
-        $factory = m::mock(Factory::class);
+        $factory = Double::for(Factory::class);
         $factory->shouldReceive('make')->andReturn($validator);
 
         return new RedirectRule($factory);

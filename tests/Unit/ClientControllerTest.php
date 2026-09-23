@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
@@ -21,10 +22,10 @@ class ClientControllerTest extends TestCase
 
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $clientRepository = m::mock(ClientRepository::class);
+        $clientRepository = Double::for(ClientRepository::class);
         $clientRepository->shouldReceive('forUser')->once()->with($user)
             ->andReturn($clients = (new Client)->newCollection());
 
@@ -33,8 +34,8 @@ class ClientControllerTest extends TestCase
 
         $controller = new ClientController(
             $clientRepository,
-            m::mock(Factory::class),
-            m::mock(RedirectRule::class)
+            Double::for(Factory::class),
+            Double::for(RedirectRule::class)
         );
 
         $this->assertEquals($clients, $controller->forUser($request));
@@ -45,8 +46,8 @@ class ClientControllerTest extends TestCase
         Hash::expects('isHashed')->once()->with('secret')->andReturn(false);
         Hash::expects('make')->once()->with('secret')->andReturn('hashed_secret');
 
-        $clients = m::mock(ClientRepository::class);
-        $user = m::mock(Authenticatable::class);
+        $clients = Double::for(ClientRepository::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -61,9 +62,9 @@ class ClientControllerTest extends TestCase
                 'secret' => 'secret',
             ]));
 
-        $redirectRule = m::mock(RedirectRule::class);
+        $redirectRule = Double::for(RedirectRule::class);
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
@@ -89,8 +90,8 @@ class ClientControllerTest extends TestCase
 
     public function test_public_clients_can_be_stored()
     {
-        $clients = m::mock(ClientRepository::class);
-        $user = m::mock(Authenticatable::class);
+        $clients = Double::for(ClientRepository::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $request = Request::create(
@@ -109,9 +110,9 @@ class ClientControllerTest extends TestCase
                 'secret' => null,
             ]));
 
-        $redirectRule = m::mock(RedirectRule::class);
+        $redirectRule = Double::for(RedirectRule::class);
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
@@ -137,11 +138,11 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_updated()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $clients = m::mock(ClientRepository::class);
-        $client = m::mock(Client::class);
+        $clients = Double::for(ClientRepository::class);
+        $client = Double::for(Client::class);
         $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -151,9 +152,9 @@ class ClientControllerTest extends TestCase
             $client, 'client name', ['http://localhost']
         )->andReturn(true);
 
-        $redirectRule = m::mock(RedirectRule::class);
+        $redirectRule = Double::for(RedirectRule::class);
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
         $validator->shouldReceive('make')->once()->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
@@ -172,10 +173,10 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $clients = m::mock(ClientRepository::class);
+        $clients = Double::for(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -183,10 +184,10 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('update')->never();
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator, Double::for(RedirectRule::class)
         );
 
         $this->assertSame(404, $controller->update($request, 1)->status());
@@ -194,11 +195,11 @@ class ClientControllerTest extends TestCase
 
     public function test_clients_can_be_deleted()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $clients = m::mock(ClientRepository::class);
-        $client = m::mock(Client::class);
+        $clients = Double::for(ClientRepository::class);
+        $client = Double::for(Client::class);
         $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -208,10 +209,10 @@ class ClientControllerTest extends TestCase
             m::type(Client::class)
         );
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator, Double::for(RedirectRule::class)
         );
 
         $response = $controller->destroy($request, 1);
@@ -221,10 +222,10 @@ class ClientControllerTest extends TestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
-        $clients = m::mock(ClientRepository::class);
+        $clients = Double::for(ClientRepository::class);
         $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
@@ -232,10 +233,10 @@ class ClientControllerTest extends TestCase
 
         $clients->shouldReceive('delete')->never();
 
-        $validator = m::mock(Factory::class);
+        $validator = Double::for(Factory::class);
 
         $controller = new ClientController(
-            $clients, $validator, m::mock(RedirectRule::class)
+            $clients, $validator, Double::for(RedirectRule::class)
         );
 
         $this->assertSame(404, $controller->destroy($request, 1)->status());

@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Laravel\Passport\Client;
@@ -29,7 +30,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->tokenRepository = m::mock(TokenRepository::class);
+        $this->tokenRepository = Double::for(TokenRepository::class);
         $this->controller = new AuthorizedAccessTokenController($this->tokenRepository);
     }
 
@@ -61,7 +62,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $this->tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
 
         $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
+            $user = Double::for(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -77,16 +78,16 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     {
         $request = Request::create('/', 'GET');
 
-        $token1 = m::mock(Token::class.'[revoke]');
+        $token1 = Double::for(Token::class)->passthru();
         $token1->id = 1;
-        $token1->refreshToken = m::mock(RefreshToken::class);
+        $token1->refreshToken = Double::for(RefreshToken::class);
         $token1->refreshToken->shouldReceive('revoke')->once();
         $token1->shouldReceive('revoke')->once();
 
         $this->tokenRepository->shouldReceive('findForUser')->andReturn($token1);
 
         $request->setUserResolver(function () {
-            $user = m::mock(Authenticatable::class);
+            $user = Double::for(Authenticatable::class);
             $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
             return $user;
@@ -99,7 +100,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
-        $user = m::mock(Authenticatable::class);
+        $user = Double::for(Authenticatable::class);
         $user->shouldReceive('getAuthIdentifier')->andReturn(1);
 
         $request = Request::create('/', 'GET');

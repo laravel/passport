@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Passport\ApiTokenCookieFactory;
@@ -18,20 +19,20 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldReceiveAFreshToken()
     {
-        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
+        $cookieFactory = Double::for(ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
-        $request = m::mock(Request::class)->makePartial();
+        $request = Double::for(Request::class)->passthru();
 
         $response = new Response;
 
         $guard = 'guard';
-        $user = m::mock()
+        $user = Double::for(\stdClass::class)
             ->shouldReceive('getAuthIdentifier')
             ->andReturn($userKey = 1)
             ->getMock();
 
-        $request->shouldReceive('session')->andReturn($session = m::mock());
+        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
         $request->shouldReceive('isMethod')->with('GET')->once()->andReturn(true);
         $request->shouldReceive('user')->with($guard)->twice()->andReturn($user);
         $session->shouldReceive('token')->withNoArgs()->once()->andReturn($token = 't0k3n');
@@ -51,7 +52,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForOtherHttpVerbs()
     {
-        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
+        $cookieFactory = Double::for(ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'POST');
@@ -67,7 +68,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForAnInvalidUser()
     {
-        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
+        $cookieFactory = Double::for(ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'GET');
@@ -86,7 +87,7 @@ class CreateFreshApiTokenTest extends TestCase
 
     public function testShouldNotReceiveAFreshTokenForResponseThatAlreadyHasToken()
     {
-        $cookieFactory = m::mock(ApiTokenCookieFactory::class);
+        $cookieFactory = Double::for(ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
         $request = Request::create('/', 'GET');
@@ -96,7 +97,7 @@ class CreateFreshApiTokenTest extends TestCase
         );
 
         $request->setUserResolver(function () {
-            return m::mock()
+            return Double::for(\stdClass::class)
                 ->shouldReceive('getAuthIdentifier')
                 ->andReturn(1)
                 ->getMock();
