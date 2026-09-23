@@ -24,7 +24,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
 
         $events = Double::for(Dispatcher::class);
 
-        $events->shouldReceive('dispatch')->once();
+        $events->expects('dispatch');
 
         $accessToken = new AccessToken(2, [new Scope('scopes')], new Client('client-id', 'name', ['redirect']));
         $accessToken->setIdentifier(1);
@@ -47,7 +47,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
     public function test_access_tokens_can_be_revoked()
     {
         $events = Double::for(Dispatcher::class);
-        $events->shouldReceive('dispatch')->twice();
+        $events->expects('dispatch')->times(2);
 
         $accessToken = new AccessToken(2, [], new Client('client-id', 'name', ['redirect']));
         $accessToken->setIdentifier('token-id');
@@ -62,7 +62,7 @@ class BridgeAccessTokenRepositoryTest extends PassportTestCase
     public function test_access_token_revoke_event_is_not_dispatched_when_nothing_happened()
     {
         $events = Double::for(Dispatcher::class);
-        $events->shouldNotReceive('dispatch');
+        $events->expects('dispatch')->never();
 
         $repository = new AccessTokenRepository($events);
         $repository->revokeAccessToken('token-id');

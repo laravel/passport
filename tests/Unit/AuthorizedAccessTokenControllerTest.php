@@ -59,11 +59,11 @@ class AuthorizedAccessTokenControllerTest extends TestCase
             $token1, $token2,
         ]);
 
-        $this->tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
+        $this->tokenRepository->allows('forUser')->returns($userTokens);
 
         $request->setUserResolver(function () {
             $user = Double::for(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+            $user->allows('getAuthIdentifier')->returns(1);
 
             return $user;
         });
@@ -81,14 +81,14 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $token1 = Double::for(Token::class)->passthru();
         $token1->id = 1;
         $token1->refreshToken = Double::for(RefreshToken::class);
-        $token1->refreshToken->shouldReceive('revoke')->once();
-        $token1->shouldReceive('revoke')->once();
+        $token1->refreshToken->expects('revoke');
+        $token1->expects('revoke');
 
-        $this->tokenRepository->shouldReceive('findForUser')->andReturn($token1);
+        $this->tokenRepository->allows('findForUser')->returns($token1);
 
         $request->setUserResolver(function () {
             $user = Double::for(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+            $user->allows('getAuthIdentifier')->returns(1);
 
             return $user;
         });
@@ -101,12 +101,12 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);
 
-        $this->tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
+        $this->tokenRepository->allows('findForUser')->with(3, $user)->returns(null);
 
         $this->assertSame(404, $this->controller->destroy($request, 3)->status());
     }

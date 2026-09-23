@@ -35,11 +35,11 @@ class PersonalAccessTokenControllerTest extends TestCase
         ]);
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->shouldReceive('forUser')->andReturn($userTokens);
+        $tokenRepository->allows('forUser')->returns($userTokens);
 
         $request->setUserResolver(function () {
             $user = Double::for(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+            $user->allows('getAuthIdentifier')->returns(1);
 
             return $user;
         });
@@ -64,23 +64,20 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $request->setUserResolver(function () use ($result) {
             $user = Double::for(Authenticatable::class);
-            $user->shouldReceive('createToken')
-                ->once()
-                ->with('token name', ['user', 'user-admin'])
-                ->andReturn($result);
+            $user->expects('createToken')->with('token name', ['user', 'user-admin'])->returns($result);
 
             return $user;
         });
 
         $validator = Double::for(Factory::class);
-        $validator->shouldReceive('make')->once()->with([
+        $validator->expects('make')->with([
             'name' => 'token name',
             'scopes' => ['user', 'user-admin'],
         ], [
             'name' => ['required', 'max:255'],
             'scopes' => ['array', Rule::in(Passport::scopeIds())],
-        ])->andReturn($validator);
-        $validator->shouldReceive('validate')->once();
+        ])->returns($validator);
+        $validator->expects('validate');
 
         $tokenRepository = Double::for(TokenRepository::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
@@ -94,14 +91,14 @@ class PersonalAccessTokenControllerTest extends TestCase
 
         $token1 = Double::for(Token::class)->passthru();
         $token1->id = 1;
-        $token1->shouldReceive('revoke')->once();
+        $token1->expects('revoke');
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->shouldReceive('findForUser')->andReturn($token1);
+        $tokenRepository->allows('findForUser')->returns($token1);
 
         $request->setUserResolver(function () {
             $user = Double::for(Authenticatable::class);
-            $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+            $user->allows('getAuthIdentifier')->returns(1);
 
             return $user;
         });
@@ -117,10 +114,10 @@ class PersonalAccessTokenControllerTest extends TestCase
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->shouldReceive('findForUser')->with(3, $user)->andReturnNull();
+        $tokenRepository->allows('findForUser')->with(3, $user)->returns(null);
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);

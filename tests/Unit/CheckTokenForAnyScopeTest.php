@@ -24,8 +24,8 @@ class CheckTokenForAnyScopeTest extends TestCase
     public function test_request_is_passed_along_if_token_is_valid()
     {
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -47,10 +47,10 @@ class CheckTokenForAnyScopeTest extends TestCase
     public function test_request_is_passed_along_if_token_is_transient()
     {
         $user = Double::for(OAuthenticatable::class);
-        $user->shouldReceive('currentAccessToken')->andReturn(new TransientToken());
+        $user->allows('currentAccessToken')->returns(new TransientToken());
 
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->shouldNotReceive('validateAuthenticatedRequest');
+        $resourceServer->expects('validateAuthenticatedRequest')->never();
 
         $middleware = new CheckTokenForAnyScope($resourceServer);
 
@@ -68,8 +68,8 @@ class CheckTokenForAnyScopeTest extends TestCase
     public function test_request_is_passed_along_if_token_has_any_required_scope()
     {
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -93,9 +93,7 @@ class CheckTokenForAnyScopeTest extends TestCase
         $this->expectException(AuthenticationException::class);
 
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
-            new OAuthServerException('message', 500, 'error type')
-        );
+        $resourceServer->allows('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
 
         $middleware = new CheckTokenForAnyScope($resourceServer);
 
@@ -112,8 +110,8 @@ class CheckTokenForAnyScopeTest extends TestCase
         $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
 
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -135,10 +133,10 @@ class CheckTokenForAnyScopeTest extends TestCase
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = Double::for(Request::class);
-        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
-        $user->shouldReceive('currentAccessToken')->andReturn($token = Double::for(AccessToken::class));
-        $token->shouldReceive('can')->with('foo')->andReturn(true);
-        $token->shouldReceive('can')->with('bar')->andReturn(false);
+        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
+        $token->allows('can')->with('foo')->returns(true);
+        $token->allows('can')->with('bar')->returns(false);
 
         $response = $middleware->handle($request, function () {
             return new Response('response');
@@ -154,10 +152,10 @@ class CheckTokenForAnyScopeTest extends TestCase
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
         $request = Double::for(Request::class);
-        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
-        $user->shouldReceive('currentAccessToken')->andReturn($token = Double::for(AccessToken::class));
-        $token->shouldReceive('can')->with('foo')->andReturn(false);
-        $token->shouldReceive('can')->with('bar')->andReturn(false);
+        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
+        $token->allows('can')->with('foo')->returns(false);
+        $token->allows('can')->with('bar')->returns(false);
 
         $middleware->handle($request, function () {
             return new Response('response');

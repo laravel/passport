@@ -27,28 +27,21 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $request = Double::for(Request::class);
 
-        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
-        $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
+        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('isNotFilled')->with('auth_token')->returns(false);
+        $request->allows('input')->with('auth_token')->returns('foo');
 
         $authRequest = new AuthorizationRequest;
         $authRequest->setGrantTypeId('authorization_code');
 
-        $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('pull')
-            ->once()
-            ->with('authRequest')
-            ->andReturn(serialize($authRequest));
+        $session->expects('pull')->with('authToken')->returns('foo');
+        $session->expects('pull')->with('authRequest')->returns(serialize($authRequest));
 
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $server->shouldReceive('completeAuthorizationRequest')
-            ->with(
-                m::on(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
-                m::type(ResponseInterface::class)
-            )
-            ->andReturnUsing(function () {
+        $server->allows('completeAuthorizationRequest')->with(m::on(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
+                m::type(ResponseInterface::class))->resolves(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 
@@ -66,18 +59,18 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $request = Double::for(Request::class);
 
-        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
-        $request->shouldReceive('user')->never();
-        $request->shouldReceive('input')->never();
-        $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
+        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->expects('user')->never();
+        $request->expects('input')->never();
+        $request->allows('isNotFilled')->with('auth_token')->returns(false);
+        $request->allows('input')->with('auth_token')->returns('foo');
 
-        $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('pull')->once()->with('authRequest')->andReturnNull();
+        $session->expects('pull')->with('authToken')->returns('foo');
+        $session->expects('pull')->with('authRequest')->returns(null);
 
         $psrResponse = Double::for(ResponseInterface::class);
 
-        $server->shouldReceive('completeAuthorizationRequest')->never();
+        $server->expects('completeAuthorizationRequest')->never();
 
         $controller->deny($request, $psrResponse);
     }

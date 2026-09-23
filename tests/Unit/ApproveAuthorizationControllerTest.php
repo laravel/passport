@@ -25,30 +25,23 @@ class ApproveAuthorizationControllerTest extends TestCase
         $controller = new ApproveAuthorizationController($server);
 
         $request = Double::for(Request::class);
-        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
-        $request->shouldReceive('isNotFilled')->with('auth_token')->andReturn(false);
-        $request->shouldReceive('input')->with('auth_token')->andReturn('foo');
+        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('isNotFilled')->with('auth_token')->returns(false);
+        $request->allows('input')->with('auth_token')->returns('foo');
 
         $authRequest = new AuthorizationRequest;
         $authRequest->setGrantTypeId('authorization_code');
 
-        $session->shouldReceive('pull')->once()->with('authToken')->andReturn('foo');
-        $session->shouldReceive('pull')
-            ->once()
-            ->with('authRequest')
-            ->andReturn(serialize($authRequest));
+        $session->expects('pull')->with('authToken')->returns('foo');
+        $session->expects('pull')->with('authRequest')->returns(serialize($authRequest));
 
-        $request->shouldReceive('user')->andReturn(new ApproveAuthorizationControllerFakeUser);
+        $request->allows('user')->returns(new ApproveAuthorizationControllerFakeUser);
 
         $psrResponse = (new PsrHttpFactory)->createResponse(new Response);
         $psrResponse->getBody()->write('response');
 
-        $server->shouldReceive('completeAuthorizationRequest')
-            ->with(
-                m::on(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
-                m::type(ResponseInterface::class)
-            )
-            ->andReturn($psrResponse);
+        $server->allows('completeAuthorizationRequest')->with(m::on(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
+                m::type(ResponseInterface::class))->returns($psrResponse);
 
         $this->assertSame('response', $controller->approve($request, $psrResponse)->getContent());
     }

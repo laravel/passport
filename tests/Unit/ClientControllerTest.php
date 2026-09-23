@@ -23,11 +23,10 @@ class ClientControllerTest extends TestCase
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $clientRepository = Double::for(ClientRepository::class);
-        $clientRepository->shouldReceive('forUser')->once()->with($user)
-            ->andReturn($clients = (new Client)->newCollection());
+        $clientRepository->expects('forUser')->with($user)->returns($clients = (new Client)->newCollection());
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);
@@ -48,15 +47,12 @@ class ClientControllerTest extends TestCase
 
         $clients = Double::for(ClientRepository::class);
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('createAuthorizationCodeGrantClient')
-            ->once()
-            ->with('client name', ['http://localhost'], true, $user)
-            ->andReturn($client = new Client([
+        $clients->expects('createAuthorizationCodeGrantClient')->with('client name', ['http://localhost'], true, $user)->returns($client = new Client([
                 'name' => 'client name',
                 'redirect' => 'http://localhost',
                 'secret' => 'secret',
@@ -65,15 +61,15 @@ class ClientControllerTest extends TestCase
         $redirectRule = Double::for(RedirectRule::class);
 
         $validator = Double::for(Factory::class);
-        $validator->shouldReceive('make')->once()->with([
+        $validator->expects('make')->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
-        ])->andReturn($validator);
-        $validator->shouldReceive('validate')->once();
+        ])->returns($validator);
+        $validator->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule
@@ -92,7 +88,7 @@ class ClientControllerTest extends TestCase
     {
         $clients = Double::for(ClientRepository::class);
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $request = Request::create(
             '/',
@@ -101,10 +97,7 @@ class ClientControllerTest extends TestCase
         );
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('createAuthorizationCodeGrantClient')
-            ->once()
-            ->with('client name', ['http://localhost'], false, $user)
-            ->andReturn($client = new Client([
+        $clients->expects('createAuthorizationCodeGrantClient')->with('client name', ['http://localhost'], false, $user)->returns($client = new Client([
                 'name' => 'client name',
                 'redirect' => 'http://localhost',
                 'secret' => null,
@@ -113,7 +106,7 @@ class ClientControllerTest extends TestCase
         $redirectRule = Double::for(RedirectRule::class);
 
         $validator = Double::for(Factory::class);
-        $validator->shouldReceive('make')->once()->with([
+        $validator->expects('make')->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
             'confidential' => false,
@@ -121,8 +114,8 @@ class ClientControllerTest extends TestCase
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
             'confidential' => 'boolean',
-        ])->andReturn($validator);
-        $validator->shouldReceive('validate')->once();
+        ])->returns($validator);
+        $validator->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule
@@ -139,30 +132,28 @@ class ClientControllerTest extends TestCase
     public function test_clients_can_be_updated()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $clients = Double::for(ClientRepository::class);
         $client = Double::for(Client::class);
-        $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
+        $clients->allows('findForUser')->with(1, $user)->returns($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('update')->once()->with(
-            $client, 'client name', ['http://localhost']
-        )->andReturn(true);
+        $clients->expects('update')->with($client, 'client name', ['http://localhost'])->returns(true);
 
         $redirectRule = Double::for(RedirectRule::class);
 
         $validator = Double::for(Factory::class);
-        $validator->shouldReceive('make')->once()->with([
+        $validator->expects('make')->with([
             'name' => 'client name',
             'redirect' => 'http://localhost',
         ], [
             'name' => ['required', 'string', 'max:255'],
             'redirect' => ['required', $redirectRule],
-        ])->andReturn($validator);
-        $validator->shouldReceive('validate')->once();
+        ])->returns($validator);
+        $validator->expects('validate');
 
         $controller = new ClientController(
             $clients, $validator, $redirectRule
@@ -174,15 +165,15 @@ class ClientControllerTest extends TestCase
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $clients = Double::for(ClientRepository::class);
-        $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
+        $clients->allows('findForUser')->with(1, $user)->returns(null);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('update')->never();
+        $clients->expects('update')->never();
 
         $validator = Double::for(Factory::class);
 
@@ -196,18 +187,16 @@ class ClientControllerTest extends TestCase
     public function test_clients_can_be_deleted()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $clients = Double::for(ClientRepository::class);
         $client = Double::for(Client::class);
-        $clients->shouldReceive('findForUser')->with(1, $user)->andReturn($client);
+        $clients->allows('findForUser')->with(1, $user)->returns($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('delete')->once()->with(
-            m::type(Client::class)
-        );
+        $clients->expects('delete')->with(m::type(Client::class));
 
         $validator = Double::for(Factory::class);
 
@@ -223,15 +212,15 @@ class ClientControllerTest extends TestCase
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
         $user = Double::for(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $user->allows('getAuthIdentifier')->returns(1);
 
         $clients = Double::for(ClientRepository::class);
-        $clients->shouldReceive('findForUser')->with(1, $user)->andReturnNull();
+        $clients->allows('findForUser')->with(1, $user)->returns(null);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
-        $clients->shouldReceive('delete')->never();
+        $clients->expects('delete')->never();
 
         $validator = Double::for(Factory::class);
 

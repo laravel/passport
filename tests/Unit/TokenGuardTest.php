@@ -46,19 +46,19 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_access_token_id')->returns('token');
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
             'oauth_scopes' => [],
         ]);
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+        $userProvider->allows('retrieveById')->with(1)->returns(new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $user = $guard->user();
 
@@ -78,23 +78,23 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_access_token_id')->returns('token');
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
             'oauth_scopes' => [],
         ]);
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+        $userProvider->allows('retrieveById')->with(1)->returns(new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $user = $guard->user();
 
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->expects('retrieveById')->never();
 
         $user2 = $guard->user();
 
@@ -108,7 +108,7 @@ class TokenGuardTest extends TestCase
         $container = new Container;
         Container::setInstance($container);
         $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
-        $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
+        $handler->expects('report')->with(m::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
         $userProvider = Double::for(PassportUserProvider::class);
@@ -120,9 +120,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
-            new OAuthServerException('message', 500, 'error type')
-        );
+        $resourceServer->allows('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
 
         $this->assertNull($guard->user());
 
@@ -137,20 +135,18 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = Double::for(Encrypter::class);
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(null);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $userProvider->allows('retrieveById')->with(1)->returns(null);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $this->assertNull($guard->user());
     }
@@ -167,20 +163,18 @@ class TokenGuardTest extends TestCase
         $client = new TokenGuardTestClient;
         $client->grant_types = ['client_credentials'];
 
-        $clients->shouldReceive('findActive')
-            ->with($clientId)
-            ->andReturn($client);
+        $clients->allows('findActive')->with($clientId)->returns($client);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn($clientId);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn($clientId);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $userProvider->shouldReceive('retrieveById')->never();
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_user_id')->returns($clientId);
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns($clientId);
+        $userProvider->allows('getProviderName')->returns(null);
+        $userProvider->expects('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
@@ -192,27 +186,25 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = Double::for(Encrypter::class);
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('Authorization', 'Bearer token');
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_user_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $psr->shouldReceive('getAttribute')->with('oauth_access_token_id')->andReturn('token');
-        $psr->shouldReceive('getAttributes')->andReturn([
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $psr->allows('getAttribute')->with('oauth_access_token_id')->returns('token');
+        $psr->allows('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
             'oauth_scopes' => [],
         ]);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn(new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
+        $userProvider->allows('retrieveById')->with(1)->returns(new TokenGuardTestUser);
 
         $user = $guard->user();
 
@@ -227,9 +219,7 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('X-CSRF-TOKEN', 'token');
@@ -244,8 +234,8 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->allows('retrieveById')->with(1)->returns($expectedUser = new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $user = $guard->user();
 
@@ -259,9 +249,7 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
@@ -276,8 +264,8 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->allows('retrieveById')->with(1)->returns($expectedUser = new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $user = $guard->user();
 
@@ -304,7 +292,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->expects('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
@@ -329,7 +317,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->expects('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
@@ -345,9 +333,7 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
@@ -362,8 +348,8 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->allows('retrieveById')->with(1)->returns($expectedUser = new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $user = $guard->user();
 
@@ -385,9 +371,7 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $request = Request::create('/');
         $request->headers->set('X-XSRF-TOKEN', $encrypter->encrypt(CookieValuePrefix::create('X-XSRF-TOKEN', $encrypter->getKey()).'token', false));
@@ -402,8 +386,8 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->allows('retrieveById')->with(1)->returns($expectedUser = new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $user = $guard->user();
 
@@ -434,7 +418,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->expects('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
@@ -459,7 +443,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->never();
+        $userProvider->expects('retrieveById')->never();
 
         $this->assertNull($guard->user());
     }
@@ -471,9 +455,7 @@ class TokenGuardTest extends TestCase
         $clients = Double::for(ClientRepository::class);
         $encrypter = new Encrypter($key = str_repeat('a', 32), 'aes-256-cbc');
 
-        $clients->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn(new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         Passport::ignoreCsrfToken();
 
@@ -488,8 +470,8 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $userProvider->shouldReceive('retrieveById')->with(1)->andReturn($expectedUser = new TokenGuardTestUser);
-        $userProvider->shouldReceive('getProviderName')->andReturn(null);
+        $userProvider->allows('retrieveById')->with(1)->returns($expectedUser = new TokenGuardTestUser);
+        $userProvider->allows('getProviderName')->returns(null);
 
         $user = $guard->user();
 
@@ -508,9 +490,9 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $client = $guard->client();
 
@@ -529,13 +511,13 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $clients->shouldReceive('findActive')->with(1)->andReturn(new TokenGuardTestClient);
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $clients->allows('findActive')->with(1)->returns(new TokenGuardTestClient);
 
         $client = $guard->client();
 
-        $clients->shouldReceive('findActive')->never();
+        $clients->expects('findActive')->never();
 
         $client2 = $guard->client();
 
@@ -548,7 +530,7 @@ class TokenGuardTest extends TestCase
         $container = new Container;
         Container::setInstance($container);
         $container->instance(ExceptionHandler::class, $handler = Double::for(\stdClass::class));
-        $handler->shouldReceive('report')->once()->with(m::type(OAuthServerException::class));
+        $handler->expects('report')->with(m::type(OAuthServerException::class));
 
         $resourceServer = Double::for(ResourceServer::class);
         $userProvider = Double::for(PassportUserProvider::class);
@@ -560,9 +542,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andThrow(
-            new OAuthServerException('message', 500, 'error type')
-        );
+        $resourceServer->allows('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
 
         $this->assertNull($guard->client());
 
@@ -582,9 +562,9 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $resourceServer->shouldReceive('validateAuthenticatedRequest')->andReturn($psr = Double::for(ServerRequestInterface::class));
-        $psr->shouldReceive('getAttribute')->with('oauth_client_id')->andReturn(1);
-        $clients->shouldReceive('findActive')->with(1)->andReturn(null);
+        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
+        $clients->allows('findActive')->with(1)->returns(null);
 
         $this->assertNull($guard->client());
     }
@@ -609,7 +589,7 @@ class TokenGuardTest extends TestCase
 
         $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
 
-        $clients->shouldReceive('findActive')->with(1)->andReturn($expectedClient = new TokenGuardTestClient);
+        $clients->allows('findActive')->with(1)->returns($expectedClient = new TokenGuardTestClient);
 
         $client = $guard->client();
 

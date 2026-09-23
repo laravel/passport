@@ -38,10 +38,10 @@ class RedirectRuleTest extends TestCase
     private function rule(bool $fails): RedirectRule
     {
         $validator = Double::for(Validator::class);
-        $validator->shouldReceive('fails')->andReturn($fails);
+        $validator->allows('fails')->returns($fails);
 
         $factory = Double::for(Factory::class);
-        $factory->shouldReceive('make')->andReturn($validator);
+        $factory->allows('make')->returns($validator);
 
         return new RedirectRule($factory);
     }

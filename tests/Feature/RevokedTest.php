@@ -122,7 +122,7 @@ class RevokedTest extends PassportTestCase
     private function accessTokenRepository(): BridgeAccessTokenRepository
     {
         $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('dispatch');
+        $events->allows('dispatch');
 
         return new BridgeAccessTokenRepository($events);
     }
@@ -130,11 +130,11 @@ class RevokedTest extends PassportTestCase
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
     {
         $accessToken = Double::for(AccessToken::class);
-        $accessToken->shouldReceive('getIdentifier')->andReturn($id);
-        $accessToken->shouldReceive('getUserIdentifier')->andReturn('1');
+        $accessToken->allows('getIdentifier')->returns($id);
+        $accessToken->allows('getUserIdentifier')->returns('1');
         $accessToken->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $accessToken->shouldReceive('getScopes')->andReturn([]);
-        $accessToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $accessToken->allows('getScopes')->returns([]);
+        $accessToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
 
         $repository->persistNewAccessToken($accessToken);
     }
@@ -147,11 +147,11 @@ class RevokedTest extends PassportTestCase
     private function persistNewAuthCode(BridgeAuthCodeRepository $repository, string $id): void
     {
         $authCode = Double::for(AuthCode::class);
-        $authCode->shouldReceive('getIdentifier')->andReturn($id);
-        $authCode->shouldReceive('getUserIdentifier')->andReturn('1');
+        $authCode->allows('getIdentifier')->returns($id);
+        $authCode->allows('getUserIdentifier')->returns('1');
         $authCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $authCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
-        $authCode->shouldReceive('getScopes')->andReturn([]);
+        $authCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $authCode->allows('getScopes')->returns([]);
 
         $repository->persistNewAuthCode($authCode);
     }
@@ -159,7 +159,7 @@ class RevokedTest extends PassportTestCase
     private function refreshTokenRepository(): BridgeRefreshTokenRepository
     {
         $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('dispatch');
+        $events->allows('dispatch');
 
         return new BridgeRefreshTokenRepository($events);
     }
@@ -167,9 +167,9 @@ class RevokedTest extends PassportTestCase
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void
     {
         $refreshToken = Double::for(RefreshToken::class);
-        $refreshToken->shouldReceive('getIdentifier')->andReturn($id);
+        $refreshToken->allows('getIdentifier')->returns($id);
         $refreshToken->shouldReceive('getAccessToken->getIdentifier')->andReturn('accessTokenId');
-        $refreshToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $refreshToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
     }
@@ -182,14 +182,14 @@ class RevokedTest extends PassportTestCase
     private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
     {
         $deviceCode = Double::for(DeviceCode::class);
-        $deviceCode->shouldReceive('getIdentifier')->andReturn($id);
-        $deviceCode->shouldReceive('getUserIdentifier')->andReturn(null);
+        $deviceCode->allows('getIdentifier')->returns($id);
+        $deviceCode->allows('getUserIdentifier')->returns(null);
         $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $deviceCode->shouldReceive('getUserCode')->andReturn('userCode');
-        $deviceCode->shouldReceive('getScopes')->andReturn([]);
-        $deviceCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
-        $deviceCode->shouldReceive('getLastPolledAt')->andReturn(null);
-        $deviceCode->shouldReceive('getUserApproved')->andReturn(false);
+        $deviceCode->allows('getUserCode')->returns('userCode');
+        $deviceCode->allows('getScopes')->returns([]);
+        $deviceCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $deviceCode->allows('getLastPolledAt')->returns(null);
+        $deviceCode->allows('getUserApproved')->returns(false);
 
         $repository->persistDeviceCode($deviceCode);
     }

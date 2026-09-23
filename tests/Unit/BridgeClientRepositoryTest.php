@@ -28,13 +28,11 @@ class BridgeClientRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $clientModelRepository = Double::for(ClientRepository::class);
-        $clientModelRepository->shouldReceive('findActive')
-            ->with(1)
-            ->andReturn($client = new BridgeClientRepositoryTestClientStub);
+        $clientModelRepository->allows('findActive')->with(1)->returns($client = new BridgeClientRepositoryTestClientStub);
 
         $hasher = Double::for(Hasher::class);
-        $hasher->shouldReceive('check')->with('secret', $client->secret)->andReturn(true);
-        $hasher->shouldReceive('check')->withAnyArgs()->andReturn(false);
+        $hasher->allows('check')->with('secret', $client->secret)->returns(true);
+        $hasher->allows('check')->returns(false);
 
         $this->clientModelRepository = $clientModelRepository;
         $this->repository = new BridgeClientRepository($clientModelRepository, $hasher);

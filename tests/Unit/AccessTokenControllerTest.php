@@ -29,9 +29,7 @@ class AccessTokenControllerTest extends TestCase
         $psrResponse->getBody()->write(json_encode(['access_token' => 'access-token']));
 
         $server = Double::for(AuthorizationServer::class);
-        $server->shouldReceive('respondToAccessTokenRequest')
-            ->with($request, $response)
-            ->andReturn($psrResponse);
+        $server->allows('respondToAccessTokenRequest')->with($request, $response)->returns($psrResponse);
 
         $controller = new AccessTokenController($server);
 
@@ -45,9 +43,7 @@ class AccessTokenControllerTest extends TestCase
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
         $server = Double::for(AuthorizationServer::class);
-        $server->shouldReceive('respondToAccessTokenRequest')->with(
-            $request, m::type(ResponseInterface::class)
-        )->andThrow(LeagueException::invalidCredentials());
+        $server->allows('respondToAccessTokenRequest')->with($request, m::type(ResponseInterface::class))->throws(LeagueException::invalidCredentials());
 
         $controller = new AccessTokenController($server);
 

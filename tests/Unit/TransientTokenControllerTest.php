@@ -18,11 +18,11 @@ class TransientTokenControllerTest extends TestCase
     public function test_token_can_be_refreshed()
     {
         $cookieFactory = Double::for(ApiTokenCookieFactory::class);
-        $cookieFactory->shouldReceive('make')->once()->with(1, 'token')->andReturn(new Cookie('cookie'));
+        $cookieFactory->expects('make')->with(1, 'token')->returns(new Cookie('cookie'));
 
         $request = Double::for(Request::class);
-        $request->shouldReceive('user')->andReturn($user = Double::for(\stdClass::class));
-        $user->shouldReceive('getAuthIdentifier')->andReturn(1);
+        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $user->allows('getAuthIdentifier')->returns(1);
         $request->shouldReceive('session->token')->andReturn('token');
 
         $controller = new TransientTokenController($cookieFactory);

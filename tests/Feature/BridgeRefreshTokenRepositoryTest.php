@@ -24,7 +24,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 
         $events = Double::for(Dispatcher::class);
 
-        $events->shouldReceive('dispatch')->once();
+        $events->expects('dispatch');
 
         $accessToken = new AccessToken('3', [], Double::for(Client::class));
         $accessToken->setIdentifier('2');

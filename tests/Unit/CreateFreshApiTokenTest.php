@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Matching\Argument;
 use JMac\Testing\Double;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -32,15 +33,12 @@ class CreateFreshApiTokenTest extends TestCase
             ->andReturn($userKey = 1)
             ->getMock();
 
-        $request->shouldReceive('session')->andReturn($session = Double::for(\stdClass::class));
-        $request->shouldReceive('isMethod')->with('GET')->once()->andReturn(true);
-        $request->shouldReceive('user')->with($guard)->twice()->andReturn($user);
-        $session->shouldReceive('token')->withNoArgs()->once()->andReturn($token = 't0k3n');
+        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->expects('isMethod')->with('GET')->returns(true);
+        $request->expects('user')->with($guard)->times(2)->returns($user);
+        $session->expects('token')->with(Argument::none())->returns($token = 't0k3n');
 
-        $cookieFactory->shouldReceive('make')
-            ->with($userKey, $token)
-            ->once()
-            ->andReturn(new Cookie(Passport::cookie()));
+        $cookieFactory->expects('make')->with($userKey, $token)->returns(new Cookie(Passport::cookie()));
 
         $result = $middleware->handle($request, function () use ($response) {
             return $response;
