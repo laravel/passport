@@ -11,7 +11,6 @@ use Laravel\Passport\Http\Controllers\AuthorizedAccessTokenController;
 use Laravel\Passport\RefreshToken;
 use Laravel\Passport\Token;
 use Laravel\Passport\TokenRepository;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -19,7 +18,7 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 {
     use VerifiesDoubles;
     /**
-     * @var \Mockery\Mock|\Laravel\Passport\TokenRepository
+     * @var \Laravel\Passport\TokenRepository
      */
     protected $tokenRepository;
 
@@ -36,8 +35,6 @@ class AuthorizedAccessTokenControllerTest extends TestCase
 
     protected function tearDown(): void
     {
-        m::close();
-
         unset($this->tokenRepository, $this->controller);
     }
 

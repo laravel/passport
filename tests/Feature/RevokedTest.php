@@ -12,6 +12,8 @@ use Laravel\Passport\Bridge\DeviceCode;
 use Laravel\Passport\Bridge\DeviceCodeRepository as BridgeDeviceCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
+use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class RevokedTest extends PassportTestCase
@@ -131,7 +133,8 @@ class RevokedTest extends PassportTestCase
         $accessToken = Double::for(AccessToken::class);
         $accessToken->allows('getIdentifier')->returns($id);
         $accessToken->allows('getUserIdentifier')->returns('1');
-        $accessToken->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
+        $accessToken->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->allows('getIdentifier')->returns('clientId');
         $accessToken->allows('getScopes')->returns([]);
         $accessToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
 
@@ -148,7 +151,8 @@ class RevokedTest extends PassportTestCase
         $authCode = Double::for(AuthCode::class);
         $authCode->allows('getIdentifier')->returns($id);
         $authCode->allows('getUserIdentifier')->returns('1');
-        $authCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
+        $authCode->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->allows('getIdentifier')->returns('clientId');
         $authCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
         $authCode->allows('getScopes')->returns([]);
 
@@ -167,7 +171,8 @@ class RevokedTest extends PassportTestCase
     {
         $refreshToken = Double::for(RefreshToken::class);
         $refreshToken->allows('getIdentifier')->returns($id);
-        $refreshToken->shouldReceive('getAccessToken->getIdentifier')->andReturn('accessTokenId');
+        $refreshToken->allows('getAccessToken')->returns($accessTokenEntity = Double::for(AccessTokenEntityInterface::class));
+        $accessTokenEntity->allows('getIdentifier')->returns('accessTokenId');
         $refreshToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
@@ -183,7 +188,8 @@ class RevokedTest extends PassportTestCase
         $deviceCode = Double::for(DeviceCode::class);
         $deviceCode->allows('getIdentifier')->returns($id);
         $deviceCode->allows('getUserIdentifier')->returns(null);
-        $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
+        $deviceCode->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->allows('getIdentifier')->returns('clientId');
         $deviceCode->allows('getUserCode')->returns('userCode');
         $deviceCode->allows('getScopes')->returns([]);
         $deviceCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());

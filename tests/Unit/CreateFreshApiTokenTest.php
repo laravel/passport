@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JMac\Testing\Double;
@@ -22,24 +24,22 @@ class CreateFreshApiTokenTest extends TestCase
         $cookieFactory = Double::for(ApiTokenCookieFactory::class);
 
         $middleware = new CreateFreshApiToken($cookieFactory);
-        $request = Double::for(Request::class)->passthru();
+        $request = Double::for(Request::class, override: true)->passthru();
 
         $response = new Response;
 
         $guard = 'guard';
-        $user = Double::for(\stdClass::class)
-            ->shouldReceive('getAuthIdentifier')
-            ->andReturn($userKey = 1)
-            ->getMock();
+        $user = Double::for(Authenticatable::class);
+        $user->allows('getAuthIdentifier')->returns($userKey = 1);
 
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $request->expects('isMethod')->with('GET')->returns(true);
         $request->expects('user')->with($guard)->times(2)->returns($user);
         $session->expects('token')->with(Argument::none())->returns($token = 't0k3n');
 
         $cookieFactory->expects('make')->with($userKey, $token)->returns(new Cookie(Passport::cookie()));
 
-        $result = $middleware->handle($request, function () use ($response) {
+        $result = $middleware->handle($request->instance(), function () use ($response) {
             return $response;
         }, $guard);
 
@@ -94,10 +94,10 @@ class CreateFreshApiTokenTest extends TestCase
         );
 
         $request->setUserResolver(function () {
-            return Double::for(\stdClass::class)
-                ->shouldReceive('getAuthIdentifier')
-                ->andReturn(1)
-                ->getMock();
+            $user = Double::for(Authenticatable::class);
+            $user->allows('getAuthIdentifier')->returns(1);
+
+            return $user;
         });
 
         $result = $middleware->handle($request, function () use ($response) {

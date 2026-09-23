@@ -4,6 +4,8 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Contracts\Session\Session;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use JMac\Testing\Double;
@@ -18,6 +20,7 @@ use Laravel\Passport\Exceptions\OAuthServerException;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use PHPUnit\Framework\TestCase;
@@ -51,24 +54,24 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest = Double::for(ServerRequestInterface::class);
         $psrRequest->allows('getQueryParams')->returns([]);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
-        $session->shouldReceive('put')->withSomeOfArgs('authToken');
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
+        $session->allows('put')->with('authToken', Argument::remaining());
         $session->expects('put')->with('authRequest', Argument::satisfies(fn ($value) => is_string($value)));
         $session->expects('forget')->with('promptedForLogin');
         $request->allows('string')->with('prompt')->returns(Str::of(null));
 
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('find')->with(1)->returns($client = Double::for(Client::class));
+        $clients->allows('find')->with('1')->returns($client = Double::for(Client::class));
         $client->allows('skipsAuthorization')->returns(false);
-        $client->shouldReceive('tokens->where->pluck')->andReturn(collect());
+        $client->allows('tokens')->returns(new AuthorizationControllerTestTokensStub(collect()));
 
         $user->allows('getAuthIdentifier')->returns(1);
 
         $response->expects('withParameters')->resolves(function ($data) use ($client, $user, $request, $response) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
-            $this->assertEquals($request, $data['request']);
+            $this->assertEquals($request->instance(), $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return $response;
@@ -78,7 +81,7 @@ class AuthorizationControllerTest extends TestCase
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame($response, $controller->authorize($psrRequest, $request, $psrResponse, $response));
+        $this->assertSame($response, $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response));
     }
 
     public function test_authorization_exceptions_are_handled()
@@ -96,7 +99,7 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $request = Double::for(Request::class);
+        $request = Double::for(Request::class, override: true);
 
         $clients = Double::for(ClientRepository::class);
 
@@ -104,7 +107,7 @@ class AuthorizationControllerTest extends TestCase
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize($psrRequest, $request, $psrResponse, $response);
+        $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response);
     }
 
     public function test_request_is_approved_if_valid_token_exists()
@@ -127,29 +130,30 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest = Double::for(ServerRequestInterface::class);
         $psrRequest->allows('getQueryParams')->returns([]);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $session->expects('forget')->with('promptedForLogin');
         $user->allows('getAuthIdentifier')->returns(1);
         $request->expects('session')->never();
         $request->allows('string')->with('prompt')->returns(Str::of(null));
 
-        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->times(1)->returns('1');
         $authRequest->expects('getScopes')->returns([new Scope('scope-1')]);
         $authRequest->expects('setUser')->returns(null);
         $authRequest->expects('setAuthorizationApproved')->with(true);
         $authRequest->expects('getGrantTypeId')->returns('authorization_code');
 
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('find')->with(1)->returns($client = Double::for(Client::class));
+        $clients->allows('find')->with('1')->returns($client = Double::for(Client::class));
 
         $client->allows('skipsAuthorization')->returns(false);
         $client->allows('getKey')->returns(1);
-        $client->shouldReceive('tokens->where->pluck')->andReturn(collect([['scope-1']]));
+        $client->allows('tokens')->returns(new AuthorizationControllerTestTokensStub(collect([['scope-1']])));
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame('approved', $controller->authorize($psrRequest, $request, $psrResponse, $response)->getContent());
+        $this->assertSame('approved', $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response)->getContent());
     }
 
     public function test_request_is_approved_if_client_can_skip_authorization()
@@ -172,27 +176,28 @@ class AuthorizationControllerTest extends TestCase
         $psrRequest = Double::for(ServerRequestInterface::class);
         $psrRequest->allows('getQueryParams')->returns([]);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $session->expects('forget')->with('promptedForLogin');
         $user->allows('getAuthIdentifier')->returns(1);
         $request->expects('session')->never();
         $request->allows('string')->with('prompt')->returns(Str::of(null));
 
-        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->times(1)->returns('1');
         $authRequest->expects('getScopes')->returns([new Scope('scope-1')]);
         $authRequest->expects('setUser')->returns(null);
         $authRequest->expects('setAuthorizationApproved')->with(true);
         $authRequest->expects('getGrantTypeId')->returns('authorization_code');
 
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('find')->with(1)->returns($client = Double::for(Client::class));
+        $clients->allows('find')->with('1')->returns($client = Double::for(Client::class));
 
         $client->allows('skipsAuthorization')->returns(true);
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame('approved', $controller->authorize($psrRequest, $request, $psrResponse, $response)->getContent());
+        $this->assertSame('approved', $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response)->getContent());
     }
 
     public function test_authorization_view_is_presented_if_request_has_prompt_equals_to_consent()
@@ -219,21 +224,21 @@ class AuthorizationControllerTest extends TestCase
 
         $psrResponse = Double::for(ResponseInterface::class);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
-        $session->shouldReceive('put')->withSomeOfArgs('authToken');
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
+        $session->allows('put')->with('authToken', Argument::remaining());
         $session->expects('put')->with('authRequest', Argument::satisfies(fn ($value) => is_string($value)));
         $session->expects('forget')->with('promptedForLogin');
         $request->allows('string')->with('prompt')->returns(Str::of('consent'));
 
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('find')->with(1)->returns($client = Double::for(Client::class));
+        $clients->allows('find')->with('1')->returns($client = Double::for(Client::class));
         $client->allows('skipsAuthorization')->returns(false);
 
         $response->expects('withParameters')->resolves(function ($data) use ($client, $user, $request, $response) {
             $this->assertEquals($client, $data['client']);
             $this->assertEquals($user, $data['user']);
-            $this->assertEquals($request, $data['request']);
+            $this->assertEquals($request->instance(), $data['request']);
             $this->assertSame('description', $data['scopes'][0]->description);
 
             return $response;
@@ -241,7 +246,7 @@ class AuthorizationControllerTest extends TestCase
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $this->assertSame($response, $controller->authorize($psrRequest, $request, $psrResponse, $response));
+        $this->assertSame($response, $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response));
     }
 
     public function test_authorization_denied_if_request_has_prompt_equals_to_none()
@@ -264,13 +269,14 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $session->expects('forget')->with('promptedForLogin');
         $user->allows('getAuthIdentifier')->returns(1);
         $request->allows('string')->with('prompt')->returns(Str::of('none'));
 
-        $authRequest->shouldReceive('getClient->getIdentifier')->once()->andReturn(1);
+        $authRequest->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->times(1)->returns('1');
         $authRequest->expects('getScopes')->returns([new Scope('scope-1')]);
         $authRequest->expects('setUser')->returns(null);
         $authRequest->expects('getRedirectUri')->returns('http://localhost');
@@ -278,15 +284,15 @@ class AuthorizationControllerTest extends TestCase
         $authRequest->expects('getGrantTypeId')->returns('authorization_code');
 
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('find')->with(1)->returns($client = Double::for(Client::class));
+        $clients->allows('find')->with('1')->returns($client = Double::for(Client::class));
         $client->allows('skipsAuthorization')->returns(false);
         $client->allows('getKey')->returns(1);
-        $client->shouldReceive('tokens->where->pluck')->andReturn(collect());
+        $client->allows('tokens')->returns(new AuthorizationControllerTestTokensStub(collect()));
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
         try {
-            $controller->authorize($psrRequest, $request, $psrResponse, $response);
+            $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response);
         } catch (OAuthServerException $e) {
             $this->assertSame($e->getMessage(), 'The authorization server requires end-user consent.');
             $this->assertStringStartsWith(
@@ -316,14 +322,15 @@ class AuthorizationControllerTest extends TestCase
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $request = Double::for(Request::class);
+        $request = Double::for(Request::class, override: true);
         $request->expects('user')->never();
         $request->allows('string')->with('prompt')->returns(Str::of('none'));
 
         $authRequest->expects('setUser')->never();
         $authRequest->allows('setAuthorizationApproved')->with(false);
         $authRequest->allows('getRedirectUri')->returns('http://localhost');
-        $authRequest->shouldReceive('getClient->getRedirectUri')->andReturn('http://localhost');
+        $authRequest->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->allows('getRedirectUri')->returns('http://localhost');
         $authRequest->expects('getState')->returns('state');
         $authRequest->expects('getGrantTypeId')->returns('authorization_code');
 
@@ -332,7 +339,7 @@ class AuthorizationControllerTest extends TestCase
         $controller = new AuthorizationController($server, $guard, $clients);
 
         try {
-            $controller->authorize($psrRequest, $request, $psrResponse, $response);
+            $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response);
         } catch (OAuthServerException $e) {
             $this->assertSame($e->getMessage(), 'The authorization server requires end-user authentication.');
             $this->assertStringStartsWith(
@@ -363,8 +370,8 @@ class AuthorizationControllerTest extends TestCase
 
         $psrResponse = Double::for(ResponseInterface::class);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $session->expects('invalidate');
         $session->expects('regenerateToken');
         $session->expects('get')->with('promptedForLogin', false)->returns(false);
@@ -376,7 +383,7 @@ class AuthorizationControllerTest extends TestCase
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize($psrRequest, $request, $psrResponse, $response);
+        $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response);
     }
 
     public function test_user_should_be_authenticated()
@@ -395,9 +402,9 @@ class AuthorizationControllerTest extends TestCase
 
         $psrResponse = Double::for(ResponseInterface::class);
 
-        $request = Double::for(Request::class);
+        $request = Double::for(Request::class, override: true);
         $request->expects('user')->never();
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $session->expects('put')->with('promptedForLogin', true);
         $session->expects('forget')->with('promptedForLogin')->never();
         $request->allows('string')->with('prompt')->returns(Str::of(null));
@@ -406,6 +413,23 @@ class AuthorizationControllerTest extends TestCase
 
         $controller = new AuthorizationController($server, $guard, $clients);
 
-        $controller->authorize($psrRequest, $request, $psrResponse, $response);
+        $controller->authorize($psrRequest, $request->instance(), $psrResponse, $response);
+    }
+}
+
+class AuthorizationControllerTestTokensStub extends HasMany
+{
+    public function __construct(protected $pluckResult)
+    {
+    }
+
+    public function where($column, $operator = null, $value = null, $boolean = 'and')
+    {
+        return $this;
+    }
+
+    public function pluck($column, $key = null)
+    {
+        return $this->pluckResult;
     }
 }

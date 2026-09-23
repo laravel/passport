@@ -2,6 +2,8 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
@@ -19,14 +21,15 @@ class TransientTokenControllerTest extends TestCase
         $cookieFactory = Double::for(ApiTokenCookieFactory::class);
         $cookieFactory->expects('make')->with(1, 'token')->returns(new Cookie('cookie'));
 
-        $request = Double::for(Request::class);
-        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('user')->returns($user = Double::for(Authenticatable::class));
         $user->allows('getAuthIdentifier')->returns(1);
-        $request->shouldReceive('session->token')->andReturn('token');
+        $request->allows('session')->returns($session = Double::for(Session::class));
+        $session->allows('token')->returns('token');
 
         $controller = new TransientTokenController($cookieFactory);
 
-        $response = $controller->refresh($request);
+        $response = $controller->refresh($request->instance());
 
         $this->assertSame(200, $response->status());
         $this->assertSame('Refreshed.', $response->getOriginalContent());

@@ -8,7 +8,6 @@ use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\ClientRepository as BridgeClientRepository;
 use Laravel\Passport\ClientRepository;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class BridgeClientRepositoryTest extends TestCase
@@ -28,7 +27,7 @@ class BridgeClientRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $clientModelRepository = Double::for(ClientRepository::class);
-        $clientModelRepository->allows('findActive')->with(1)->returns($client = new BridgeClientRepositoryTestClientStub);
+        $clientModelRepository->allows('findActive')->with('1')->returns($client = new BridgeClientRepositoryTestClientStub);
 
         $hasher = Double::for(Hasher::class);
         $hasher->allows('check')->with('secret', $client->secret)->returns(true);
@@ -40,8 +39,6 @@ class BridgeClientRepositoryTest extends TestCase
 
     protected function tearDown(): void
     {
-        m::close();
-
         unset($this->clientModelRepository, $this->repository);
     }
 
