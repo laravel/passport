@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
@@ -25,9 +26,9 @@ class DenyAuthorizationControllerTest extends TestCase
         $server = Double::for(AuthorizationServer::class);
         $controller = new DenyAuthorizationController($server);
 
-        $request = Double::for(Request::class);
+        $request = Double::for(Request::class, override: true);
 
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $request->allows('isNotFilled')->with('auth_token')->returns(false);
         $request->allows('input')->with('auth_token')->returns('foo');
 
@@ -45,7 +46,7 @@ class DenyAuthorizationControllerTest extends TestCase
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
 
-        $controller->deny($request, $psrResponse);
+        $controller->deny($request->instance(), $psrResponse);
     }
 
     public function test_auth_request_should_exist()
@@ -57,9 +58,9 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $controller = new DenyAuthorizationController($server);
 
-        $request = Double::for(Request::class);
+        $request = Double::for(Request::class, override: true);
 
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $request->expects('user')->never();
         $request->expects('input')->never();
         $request->allows('isNotFilled')->with('auth_token')->returns(false);
@@ -72,6 +73,6 @@ class DenyAuthorizationControllerTest extends TestCase
 
         $server->expects('completeAuthorizationRequest')->never();
 
-        $controller->deny($request, $psrResponse);
+        $controller->deny($request->instance(), $psrResponse);
     }
 }

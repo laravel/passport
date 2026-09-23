@@ -131,13 +131,13 @@ class CheckTokenForAnyScopeTest extends TestCase
     {
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
-        $request = Double::for(Request::class);
-        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
         $token->allows('can')->with('foo')->returns(true);
         $token->allows('can')->with('bar')->returns(false);
 
-        $response = $middleware->handle($request, function () {
+        $response = $middleware->handle($request->instance(), function () {
             return new Response('response');
         }, 'foo', 'bar');
 
@@ -150,13 +150,13 @@ class CheckTokenForAnyScopeTest extends TestCase
 
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckTokenForAnyScope($resourceServer);
-        $request = Double::for(Request::class);
-        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
         $token->allows('can')->with('foo')->returns(false);
         $token->allows('can')->with('bar')->returns(false);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($request->instance(), function () {
             return new Response('response');
         }, 'foo', 'bar');
     }

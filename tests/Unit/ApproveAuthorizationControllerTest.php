@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
@@ -24,8 +25,8 @@ class ApproveAuthorizationControllerTest extends TestCase
 
         $controller = new ApproveAuthorizationController($server);
 
-        $request = Double::for(Request::class);
-        $request->allows('session')->returns($session = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('session')->returns($session = Double::for(Session::class));
         $request->allows('isNotFilled')->with('auth_token')->returns(false);
         $request->allows('input')->with('auth_token')->returns('foo');
 
@@ -43,7 +44,7 @@ class ApproveAuthorizationControllerTest extends TestCase
         $server->allows('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => $request->isAuthorizationApproved()),
             Argument::type(ResponseInterface::class))->returns($psrResponse);
 
-        $this->assertSame('response', $controller->approve($request, $psrResponse)->getContent());
+        $this->assertSame('response', $controller->approve($request->instance(), $psrResponse)->getContent());
     }
 }
 

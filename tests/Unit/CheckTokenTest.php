@@ -131,13 +131,13 @@ class CheckTokenTest extends TestCase
     {
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckToken($resourceServer);
-        $request = Double::for(Request::class);
-        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
         $token->allows('cant')->with('foo')->returns(false);
         $token->allows('cant')->with('bar')->returns(false);
 
-        $response = $middleware->handle($request, function () {
+        $response = $middleware->handle($request->instance(), function () {
             return new Response('response');
         }, 'foo', 'bar');
 
@@ -150,12 +150,12 @@ class CheckTokenTest extends TestCase
 
         $resourceServer = Double::for(ResourceServer::class);
         $middleware = new CheckToken($resourceServer);
-        $request = Double::for(Request::class);
-        $request->allows('user')->returns($user = Double::for(\stdClass::class));
+        $request = Double::for(Request::class, override: true);
+        $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
         $token->allows('cant')->with('foo')->returns(true);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($request->instance(), function () {
             return new Response('response');
         }, 'foo', 'bar');
     }
