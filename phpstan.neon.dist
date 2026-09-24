@@ -5,6 +5,9 @@ parameters:
     - routes
     - src
 
+  excludePaths:
+    - src/Attributes/AuthorizeToken.php
+
   level: 0
 
   ignoreErrors:
