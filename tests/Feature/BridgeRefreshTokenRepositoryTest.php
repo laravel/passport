@@ -4,7 +4,6 @@ namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Event;
-use JMac\Testing\Double;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\RefreshToken;
@@ -22,7 +21,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 
         Event::fake();
 
-        $accessToken = new AccessToken('3', [], Double::for(Client::class));
+        $accessToken = new AccessToken('3', [], new Client('client-id', 'name', ['redirect']));
         $accessToken->setIdentifier('2');
 
         $refreshToken = new RefreshToken;

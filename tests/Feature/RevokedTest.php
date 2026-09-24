@@ -3,17 +3,15 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
-use JMac\Testing\Double;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository as BridgeAccessTokenRepository;
 use Laravel\Passport\Bridge\AuthCode;
 use Laravel\Passport\Bridge\AuthCodeRepository as BridgeAuthCodeRepository;
+use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\DeviceCode;
 use Laravel\Passport\Bridge\DeviceCodeRepository as BridgeDeviceCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class RevokedTest extends PassportTestCase
@@ -127,13 +125,9 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
     {
-        $accessToken = Double::for(AccessToken::class);
-        $accessToken->expects('getIdentifier')->returns($id);
-        $accessToken->expects('getUserIdentifier')->returns('1');
-        $accessToken->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->expects('getIdentifier')->returns('clientId');
-        $accessToken->expects('getScopes')->returns([]);
-        $accessToken->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $accessToken = new AccessToken('1', [], new Client('clientId'));
+        $accessToken->setIdentifier($id);
+        $accessToken->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewAccessToken($accessToken);
     }
@@ -145,13 +139,11 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewAuthCode(BridgeAuthCodeRepository $repository, string $id): void
     {
-        $authCode = Double::for(AuthCode::class);
-        $authCode->expects('getIdentifier')->returns($id);
-        $authCode->expects('getUserIdentifier')->returns('1');
-        $authCode->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->expects('getIdentifier')->returns('clientId');
-        $authCode->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
-        $authCode->expects('getScopes')->returns([]);
+        $authCode = new AuthCode;
+        $authCode->setIdentifier($id);
+        $authCode->setUserIdentifier('1');
+        $authCode->setClient(new Client('clientId'));
+        $authCode->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewAuthCode($authCode);
     }
@@ -163,11 +155,13 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void
     {
-        $refreshToken = Double::for(RefreshToken::class);
-        $refreshToken->expects('getIdentifier')->returns($id);
-        $refreshToken->expects('getAccessToken')->returns($accessTokenEntity = Double::for(AccessTokenEntityInterface::class));
-        $accessTokenEntity->expects('getIdentifier')->returns('accessTokenId');
-        $refreshToken->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $accessToken = new AccessToken('1', [], new Client('clientId'));
+        $accessToken->setIdentifier('accessTokenId');
+
+        $refreshToken = new RefreshToken;
+        $refreshToken->setIdentifier($id);
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
     }
@@ -179,15 +173,8 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
     {
-        $deviceCode = Double::for(DeviceCode::class);
-        $deviceCode->expects('getIdentifier')->returns($id);
-        $deviceCode->expects('getUserIdentifier')->returns(null);
-        $deviceCode->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->expects('getIdentifier')->returns('clientId');
-        $deviceCode->expects('getUserCode')->returns('userCode');
-        $deviceCode->expects('getScopes')->returns([]);
-        $deviceCode->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
-        $deviceCode->expects('getLastPolledAt')->returns(null);
+        $deviceCode = new DeviceCode($id, clientIdentifier: 'clientId', expiryDateTime: CarbonImmutable::now());
+        $deviceCode->setUserCode('userCode');
 
         $repository->persistDeviceCode($deviceCode);
     }

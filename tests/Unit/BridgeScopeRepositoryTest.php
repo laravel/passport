@@ -27,7 +27,7 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $client = Double::for(ClientModel::class)->passthru();
+        $client = new ClientModel;
 
         $clients = Double::for(ClientRepository::class);
         $clients->expects('findActive')->returns($client);
@@ -48,7 +48,7 @@ class BridgeScopeRepositoryTest extends TestCase
         ]);
 
         $clients = Double::for(ClientRepository::class);
-        $clients->expects('findActive')->with('id')->returns(Double::for(ClientModel::class)->passthru());
+        $clients->expects('findActive')->with('id')->returns(new ClientModel);
 
         $repository = new ScopeRepository($clients);
 
@@ -66,7 +66,7 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = Double::for(ClientModel::class)->passthru();
+        $client = new ClientModel;
         $client->scopes = null;
 
         $clients = Double::for(ClientRepository::class);
@@ -88,7 +88,7 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = Double::for(ClientModel::class)->passthru();
+        $client = new ClientModel;
         $client->scopes = ['scope-1'];
 
         $clients = Double::for(ClientRepository::class);
@@ -113,7 +113,7 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = Double::for(ClientModel::class)->passthru();
+        $client = new ClientModel;
         $client->scopes = ['scope-1'];
 
         $clients = Double::for(ClientRepository::class);
@@ -134,7 +134,7 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $client = Double::for(ClientModel::class)->passthru();
+        $client = new ClientModel;
 
         $clients = Double::for(ClientRepository::class);
         $clients->expects('findActive')->returns($client);
@@ -155,7 +155,7 @@ class BridgeScopeRepositoryTest extends TestCase
         ]);
 
         $clients = Double::for(ClientRepository::class);
-        $clients->expects('findActive')->with('id')->returns(Double::for(ClientModel::class)->passthru());
+        $clients->expects('findActive')->with('id')->returns(new ClientModel);
 
         $repository = new ScopeRepository($clients);
 
