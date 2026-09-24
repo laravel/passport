@@ -2,9 +2,9 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
-use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
