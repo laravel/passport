@@ -5,6 +5,8 @@ namespace Laravel\Passport;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -37,7 +39,7 @@ class ClientRepository
      */
     public function findForUser(string|int $clientId, Authenticatable $user): ?Client
     {
-        return $user->clients()->where('revoked', false)->find($clientId);
+        return $this->clientsFor($user)->where('revoked', false)->find($clientId);
     }
 
     /**
@@ -50,7 +52,20 @@ class ClientRepository
      */
     public function forUser(Authenticatable $user): Collection
     {
-        return $user->clients()->where('revoked', false)->orderBy('name')->get();
+        return $this->clientsFor($user)->where('revoked', false)->orderBy('name')->get();
+    }
+
+    /**
+     * Get the client relationship for the given user, supporting the legacy "user_id" column.
+     *
+     * @param  \Laravel\Passport\Contracts\OAuthenticatable  $user
+     */
+    protected function clientsFor(Authenticatable $user): HasMany|MorphMany
+    {
+        $client = Passport::client();
+        $columns = $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+
+        return in_array('user_id', $columns) ? $user->clients() : $user->oauthApps();
     }
 
     /*
