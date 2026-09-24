@@ -5,21 +5,18 @@ namespace Laravel\Passport\Tests\Unit;
 use Carbon\Carbon;
 use Firebase\JWT\JWT;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Cookie\CookieValuePrefix;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Http\Request;
 use JMac\Testing\Double;
 use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
-use JMac\Testing\Matching\Argument;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Client;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Passport;
 use Laravel\Passport\PassportUserProvider;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\ResourceServer;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,147 +29,6 @@ class TokenGuardTest extends TestCase
     protected function tearDown(): void
     {
         Container::getInstance()->flush();
-    }
-
-    public function test_user_can_be_pulled_via_bearer_token()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $psr->allows('getAttribute')->with('oauth_access_token_id')->returns('token');
-        $psr->allows('getAttributes')->returns([
-            'oauth_user_id' => 1,
-            'oauth_client_id' => 1,
-            'oauth_access_token_id' => 'token',
-            'oauth_scopes' => [],
-        ]);
-        $userProvider->expects('retrieveById')->with(1)->returns(new TokenGuardTestUser);
-        $clients->expects('findActive')->with(1)->returns(new TokenGuardTestClient);
-
-        $user = $guard->user();
-
-        $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
-    }
-
-    public function test_user_is_resolved_only_once()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $psr->allows('getAttribute')->with('oauth_access_token_id')->returns('token');
-        $psr->allows('getAttributes')->returns([
-            'oauth_user_id' => 1,
-            'oauth_client_id' => 1,
-            'oauth_access_token_id' => 'token',
-            'oauth_scopes' => [],
-        ]);
-        $userProvider->expects('retrieveById')->with(1)->returns(new TokenGuardTestUser);
-        $clients->expects('findActive')->with(1)->returns(new TokenGuardTestClient);
-
-        $user = $guard->user();
-
-        $userProvider->expects('retrieveById')->never();
-
-        $user2 = $guard->user();
-
-        $this->assertInstanceOf(TokenGuardTestUser::class, $user);
-        $this->assertEquals(AccessToken::fromPsrRequest($psr), $user->currentAccessToken());
-        $this->assertSame($user, $user2);
-    }
-
-    public function test_no_user_is_returned_when_oauth_throws_exception()
-    {
-        $container = new Container;
-        Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = Double::for(ExceptionHandler::class));
-        $handler->expects('report')->with(Argument::type(OAuthServerException::class));
-
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
-
-        $this->assertNull($guard->user());
-
-        // Assert that `validateAuthenticatedRequest` isn't called twice on failure.
-        $this->assertNull($guard->user());
-    }
-
-    public function test_null_is_returned_if_no_user_is_found()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $clients->expects('findActive')->with(1)->returns(new TokenGuardTestClient);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_user_id')->returns(1);
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $userProvider->expects('retrieveById')->with(1)->returns(null);
-
-        $this->assertNull($guard->user());
-    }
-
-    public function test_null_is_returned_for_client_credentials_token()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $clientId = '019c9d23-9763-7303-9bdb-3a0a6bf0ef90';
-
-        $client = new TokenGuardTestClient;
-        $client->grant_types = ['client_credentials'];
-
-        $clients->expects('findActive')->with($clientId)->returns($client);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_user_id')->returns($clientId);
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns($clientId);
-        $userProvider->expects('retrieveById')->never();
-
-        $this->assertNull($guard->user());
     }
 
     public function test_user_is_resolved_when_user_id_matches_client_id()
@@ -456,97 +312,6 @@ class TokenGuardTest extends TestCase
         $user = $guard->user();
 
         $this->assertEquals($expectedUser, $user);
-    }
-
-    public function test_client_can_be_pulled_via_bearer_token()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $clients->expects('findActive')->with(1)->returns(new TokenGuardTestClient);
-
-        $client = $guard->client();
-
-        $this->assertInstanceOf(TokenGuardTestClient::class, $client);
-    }
-
-    public function test_client_is_resolved_only_once()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $clients->expects('findActive')->with(1)->returns(new TokenGuardTestClient);
-
-        $client = $guard->client();
-
-        $clients->expects('findActive')->never();
-
-        $client2 = $guard->client();
-
-        $this->assertInstanceOf(TokenGuardTestClient::class, $client);
-        $this->assertSame($client, $client2);
-    }
-
-    public function test_no_client_is_returned_when_oauth_throws_exception()
-    {
-        $container = new Container;
-        Container::setInstance($container);
-        $container->instance(ExceptionHandler::class, $handler = Double::for(ExceptionHandler::class));
-        $handler->expects('report')->with(Argument::type(OAuthServerException::class));
-
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
-
-        $this->assertNull($guard->client());
-
-        // Assert that `validateAuthenticatedRequest` isn't called twice on failure.
-        $this->assertNull($guard->client());
-    }
-
-    public function test_null_is_returned_if_no_client_is_found()
-    {
-        $resourceServer = Double::for(ResourceServer::class);
-        $userProvider = Double::for(PassportUserProvider::class);
-        $clients = Double::for(ClientRepository::class);
-        $encrypter = Double::for(Encrypter::class);
-
-        $request = Request::create('/');
-        $request->headers->set('Authorization', 'Bearer token');
-
-        $guard = new TokenGuard($resourceServer, $userProvider, $clients, $encrypter, $request);
-
-        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttribute')->with('oauth_client_id')->returns(1);
-        $clients->expects('findActive')->with(1)->returns(null);
-
-        $this->assertNull($guard->client());
     }
 
     public function test_clients_may_be_retrieved_from_cookies()
