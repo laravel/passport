@@ -29,8 +29,8 @@ class DenyAuthorizationControllerTest extends TestCase
         $request = Double::for(Request::class, override: true);
 
         $request->allows('session')->returns($session = Double::for(Session::class));
-        $request->allows('isNotFilled')->with('auth_token')->returns(false);
-        $request->allows('input')->with('auth_token')->returns('foo');
+        $request->expects('isNotFilled')->with('auth_token')->returns(false);
+        $request->expects('input')->with('auth_token')->returns('foo');
 
         $authRequest = new AuthorizationRequest;
         $authRequest->setGrantTypeId('authorization_code');
@@ -41,7 +41,7 @@ class DenyAuthorizationControllerTest extends TestCase
         $psrResponse = Double::for(ResponseInterface::class);
         app()->instance(ResponseInterface::class, (new PsrHttpFactory)->createResponse(new Response));
 
-        $server->allows('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
+        $server->expects('completeAuthorizationRequest')->with(Argument::satisfies(fn (AuthorizationRequest $request) => ! $request->isAuthorizationApproved()),
             Argument::type(ResponseInterface::class))->resolves(function () {
                 throw new \League\OAuth2\Server\Exception\OAuthServerException('', 0, '');
             });
@@ -63,8 +63,8 @@ class DenyAuthorizationControllerTest extends TestCase
         $request->allows('session')->returns($session = Double::for(Session::class));
         $request->expects('user')->never();
         $request->expects('input')->never();
-        $request->allows('isNotFilled')->with('auth_token')->returns(false);
-        $request->allows('input')->with('auth_token')->returns('foo');
+        $request->expects('isNotFilled')->with('auth_token')->returns(false);
+        $request->expects('input')->with('auth_token')->returns('foo');
 
         $session->expects('pull')->with('authToken')->returns('foo');
         $session->expects('pull')->with('authRequest')->returns(null);

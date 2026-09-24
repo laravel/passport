@@ -30,9 +30,9 @@ class CreateFreshApiTokenTest extends TestCase
 
         $guard = 'guard';
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns($userKey = 1);
+        $user->expects('getAuthIdentifier')->returns($userKey = 1);
 
-        $request->allows('session')->returns($session = Double::for(Session::class));
+        $request->expects('session')->returns($session = Double::for(Session::class));
         $request->expects('isMethod')->with('GET')->returns(true);
         $request->expects('user')->with($guard)->times(2)->returns($user);
         $session->expects('token')->with(Argument::none())->returns($token = 't0k3n');
@@ -93,12 +93,7 @@ class CreateFreshApiTokenTest extends TestCase
             new Cookie(Passport::cookie())
         );
 
-        $request->setUserResolver(function () {
-            $user = Double::for(Authenticatable::class);
-            $user->allows('getAuthIdentifier')->returns(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => Double::for(Authenticatable::class));
 
         $result = $middleware->handle($request, function () use ($response) {
             return $response;

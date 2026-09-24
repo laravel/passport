@@ -19,7 +19,7 @@ class ApiTokenCookieFactoryTest extends TestCase
     public function test_cookie_can_be_successfully_created()
     {
         $config = Double::for(Repository::class);
-        $config->allows('get')->with('session')->returns([
+        $config->expects('get')->with('session')->returns([
             'lifetime' => 120,
             'path' => '/',
             'domain' => null,
@@ -41,7 +41,7 @@ class ApiTokenCookieFactoryTest extends TestCase
         });
 
         $config = Double::for(Repository::class);
-        $config->allows('get')->with('session')->returns([
+        $config->expects('get')->with('session')->returns([
             'lifetime' => 120,
             'path' => '/',
             'domain' => null,

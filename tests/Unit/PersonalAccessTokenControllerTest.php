@@ -36,20 +36,17 @@ class PersonalAccessTokenControllerTest extends TestCase
         ]);
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->allows('forUser')->returns($userTokens);
+        $tokenRepository->expects('forUser')->returns($userTokens);
 
-        $request->setUserResolver(function () {
-            $user = Double::for(Authenticatable::class);
-            $user->allows('getAuthIdentifier')->returns(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => Double::for(Authenticatable::class));
 
         $validator = Double::for(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
 
-        $this->assertCount(1, $controller->forUser($request));
-        $this->assertEquals($token1, $controller->forUser($request)[0]);
+        $tokens = $controller->forUser($request);
+
+        $this->assertCount(1, $tokens);
+        $this->assertEquals($token1, $tokens[0]);
     }
 
     public function test_tokens_can_be_updated()
@@ -95,14 +92,9 @@ class PersonalAccessTokenControllerTest extends TestCase
         $token1->expects('revoke');
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->allows('findForUser')->returns($token1);
+        $tokenRepository->expects('findForUser')->returns($token1);
 
-        $request->setUserResolver(function () {
-            $user = Double::for(Authenticatable::class);
-            $user->allows('getAuthIdentifier')->returns(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => Double::for(Authenticatable::class));
 
         $validator = Double::for(Factory::class);
         $controller = new PersonalAccessTokenController($tokenRepository, $validator);
@@ -115,10 +107,9 @@ class PersonalAccessTokenControllerTest extends TestCase
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
 
         $tokenRepository = Double::for(TokenRepository::class);
-        $tokenRepository->allows('findForUser')->with(3, $user)->returns(null);
+        $tokenRepository->expects('findForUser')->with('3', $user)->returns(null);
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);

@@ -24,8 +24,8 @@ class HasApiTokensTest extends TestCase
     {
         $user = new HasApiTokensTestStub;
         $token = Double::for(AccessToken::class);
-        $token->allows('can')->with('scope')->returns(true);
-        $token->allows('can')->with('another-scope')->returns(false);
+        $token->expects('can')->with('scope')->returns(true);
+        $token->expects('can')->with('another-scope')->returns(false);
 
         $this->assertTrue($user->withAccessToken($token)->tokenCan('scope'));
         $this->assertFalse($user->withAccessToken($token)->tokenCan('another-scope'));

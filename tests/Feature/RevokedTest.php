@@ -131,12 +131,12 @@ class RevokedTest extends PassportTestCase
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
     {
         $accessToken = Double::for(AccessToken::class);
-        $accessToken->allows('getIdentifier')->returns($id);
-        $accessToken->allows('getUserIdentifier')->returns('1');
-        $accessToken->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->allows('getIdentifier')->returns('clientId');
-        $accessToken->allows('getScopes')->returns([]);
-        $accessToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $accessToken->expects('getIdentifier')->returns($id);
+        $accessToken->expects('getUserIdentifier')->returns('1');
+        $accessToken->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->returns('clientId');
+        $accessToken->expects('getScopes')->returns([]);
+        $accessToken->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
 
         $repository->persistNewAccessToken($accessToken);
     }
@@ -149,12 +149,12 @@ class RevokedTest extends PassportTestCase
     private function persistNewAuthCode(BridgeAuthCodeRepository $repository, string $id): void
     {
         $authCode = Double::for(AuthCode::class);
-        $authCode->allows('getIdentifier')->returns($id);
-        $authCode->allows('getUserIdentifier')->returns('1');
-        $authCode->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->allows('getIdentifier')->returns('clientId');
-        $authCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
-        $authCode->allows('getScopes')->returns([]);
+        $authCode->expects('getIdentifier')->returns($id);
+        $authCode->expects('getUserIdentifier')->returns('1');
+        $authCode->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->returns('clientId');
+        $authCode->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $authCode->expects('getScopes')->returns([]);
 
         $repository->persistNewAuthCode($authCode);
     }
@@ -170,10 +170,10 @@ class RevokedTest extends PassportTestCase
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void
     {
         $refreshToken = Double::for(RefreshToken::class);
-        $refreshToken->allows('getIdentifier')->returns($id);
-        $refreshToken->allows('getAccessToken')->returns($accessTokenEntity = Double::for(AccessTokenEntityInterface::class));
-        $accessTokenEntity->allows('getIdentifier')->returns('accessTokenId');
-        $refreshToken->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $refreshToken->expects('getIdentifier')->returns($id);
+        $refreshToken->expects('getAccessToken')->returns($accessTokenEntity = Double::for(AccessTokenEntityInterface::class));
+        $accessTokenEntity->expects('getIdentifier')->returns('accessTokenId');
+        $refreshToken->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
     }
@@ -186,15 +186,14 @@ class RevokedTest extends PassportTestCase
     private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
     {
         $deviceCode = Double::for(DeviceCode::class);
-        $deviceCode->allows('getIdentifier')->returns($id);
-        $deviceCode->allows('getUserIdentifier')->returns(null);
-        $deviceCode->allows('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
-        $clientEntity->allows('getIdentifier')->returns('clientId');
-        $deviceCode->allows('getUserCode')->returns('userCode');
-        $deviceCode->allows('getScopes')->returns([]);
-        $deviceCode->allows('getExpiryDateTime')->returns(CarbonImmutable::now());
-        $deviceCode->allows('getLastPolledAt')->returns(null);
-        $deviceCode->allows('getUserApproved')->returns(false);
+        $deviceCode->expects('getIdentifier')->returns($id);
+        $deviceCode->expects('getUserIdentifier')->returns(null);
+        $deviceCode->expects('getClient')->returns($clientEntity = Double::for(ClientEntityInterface::class));
+        $clientEntity->expects('getIdentifier')->returns('clientId');
+        $deviceCode->expects('getUserCode')->returns('userCode');
+        $deviceCode->expects('getScopes')->returns([]);
+        $deviceCode->expects('getExpiryDateTime')->returns(CarbonImmutable::now());
+        $deviceCode->expects('getLastPolledAt')->returns(null);
 
         $repository->persistDeviceCode($deviceCode);
     }

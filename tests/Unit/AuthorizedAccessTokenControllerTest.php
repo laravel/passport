@@ -56,14 +56,9 @@ class AuthorizedAccessTokenControllerTest extends TestCase
             $token1, $token2,
         ]);
 
-        $this->tokenRepository->allows('forUser')->returns($userTokens);
+        $this->tokenRepository->expects('forUser')->returns($userTokens);
 
-        $request->setUserResolver(function () {
-            $user = Double::for(Authenticatable::class);
-            $user->allows('getAuthIdentifier')->returns(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => Double::for(Authenticatable::class));
 
         $tokens = $this->controller->forUser($request);
 
@@ -81,14 +76,9 @@ class AuthorizedAccessTokenControllerTest extends TestCase
         $token1->refreshToken->expects('revoke');
         $token1->expects('revoke');
 
-        $this->tokenRepository->allows('findForUser')->returns($token1);
+        $this->tokenRepository->expects('findForUser')->returns($token1);
 
-        $request->setUserResolver(function () {
-            $user = Double::for(Authenticatable::class);
-            $user->allows('getAuthIdentifier')->returns(1);
-
-            return $user;
-        });
+        $request->setUserResolver(fn () => Double::for(Authenticatable::class));
 
         $response = $this->controller->destroy($request, 1);
 
@@ -98,12 +88,11 @@ class AuthorizedAccessTokenControllerTest extends TestCase
     public function test_not_found_response_is_returned_if_user_doesnt_have_token()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
 
         $request = Request::create('/', 'GET');
         $request->setUserResolver(fn () => $user);
 
-        $this->tokenRepository->allows('findForUser')->with(3, $user)->returns(null);
+        $this->tokenRepository->expects('findForUser')->with('3', $user)->returns(null);
 
         $this->assertSame(404, $this->controller->destroy($request, 3)->status());
     }

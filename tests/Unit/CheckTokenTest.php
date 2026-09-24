@@ -23,8 +23,8 @@ class CheckTokenTest extends TestCase
     public function test_request_is_passed_along_if_token_is_valid()
     {
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttributes')->returns([
+        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->expects('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -67,8 +67,8 @@ class CheckTokenTest extends TestCase
     public function test_request_is_passed_along_if_token_and_scope_are_valid()
     {
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttributes')->returns([
+        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->expects('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -92,7 +92,7 @@ class CheckTokenTest extends TestCase
         $this->expectException(AuthenticationException::class);
 
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->allows('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
+        $resourceServer->expects('validateAuthenticatedRequest')->throws(new OAuthServerException('message', 500, 'error type'));
 
         $middleware = new CheckToken($resourceServer);
 
@@ -109,8 +109,8 @@ class CheckTokenTest extends TestCase
         $this->expectException('Laravel\Passport\Exceptions\MissingScopeException');
 
         $resourceServer = Double::for(ResourceServer::class);
-        $resourceServer->allows('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
-        $psr->allows('getAttributes')->returns([
+        $resourceServer->expects('validateAuthenticatedRequest')->returns($psr = Double::for(ServerRequestInterface::class));
+        $psr->expects('getAttributes')->returns([
             'oauth_user_id' => 1,
             'oauth_client_id' => 1,
             'oauth_access_token_id' => 'token',
@@ -134,8 +134,8 @@ class CheckTokenTest extends TestCase
         $request = Double::for(Request::class, override: true);
         $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
-        $token->allows('cant')->with('foo')->returns(false);
-        $token->allows('cant')->with('bar')->returns(false);
+        $token->expects('cant')->with('foo')->returns(false);
+        $token->expects('cant')->with('bar')->returns(false);
 
         $response = $middleware->handle($request->instance(), function () {
             return new Response('response');
@@ -153,7 +153,7 @@ class CheckTokenTest extends TestCase
         $request = Double::for(Request::class, override: true);
         $request->allows('user')->returns($user = Double::for(OAuthenticatable::class));
         $user->allows('currentAccessToken')->returns($token = Double::for(AccessToken::class));
-        $token->allows('cant')->with('foo')->returns(true);
+        $token->expects('cant')->with('foo')->returns(true);
 
         $middleware->handle($request->instance(), function () {
             return new Response('response');

@@ -24,8 +24,6 @@ class ClientControllerTest extends TestCase
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $clientRepository = Double::for(ClientRepository::class);
         $clientRepository->expects('forUser')->with($user)->returns($clients = (new Client)->newCollection());
 
@@ -48,8 +46,6 @@ class ClientControllerTest extends TestCase
 
         $clients = Double::for(ClientRepository::class);
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
 
@@ -89,8 +85,6 @@ class ClientControllerTest extends TestCase
     {
         $clients = Double::for(ClientRepository::class);
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $request = Request::create(
             '/',
             'GET',
@@ -133,11 +127,9 @@ class ClientControllerTest extends TestCase
     public function test_clients_can_be_updated()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $clients = Double::for(ClientRepository::class);
         $client = Double::for(Client::class);
-        $clients->allows('findForUser')->with(1, $user)->returns($client);
+        $clients->expects('findForUser')->with(1, $user)->returns($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
@@ -166,10 +158,8 @@ class ClientControllerTest extends TestCase
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('findForUser')->with(1, $user)->returns(null);
+        $clients->expects('findForUser')->with(1, $user)->returns(null);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
@@ -188,11 +178,9 @@ class ClientControllerTest extends TestCase
     public function test_clients_can_be_deleted()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $clients = Double::for(ClientRepository::class);
         $client = Double::for(Client::class);
-        $clients->allows('findForUser')->with(1, $user)->returns($client);
+        $clients->expects('findForUser')->with(1, $user)->returns($client);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
@@ -213,10 +201,8 @@ class ClientControllerTest extends TestCase
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
         $user = Double::for(Authenticatable::class);
-        $user->allows('getAuthIdentifier')->returns(1);
-
         $clients = Double::for(ClientRepository::class);
-        $clients->allows('findForUser')->with(1, $user)->returns(null);
+        $clients->expects('findForUser')->with(1, $user)->returns(null);
 
         $request = Request::create('/', 'GET', ['name' => 'client name', 'redirect' => 'http://localhost']);
         $request->setUserResolver(fn () => $user);
