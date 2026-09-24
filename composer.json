@@ -35,6 +35,7 @@
         "symfony/psr-http-message-bridge": "^7.1|^8.0"
     },
     "require-dev": {
+        "jasonmccreary/double": "~0.10",
         "orchestra/testbench": "^9.15|^10.8|^11.0",
         "phpstan/phpstan": "^2.0"
     },

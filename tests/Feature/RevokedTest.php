@@ -7,11 +7,11 @@ use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\AccessTokenRepository as BridgeAccessTokenRepository;
 use Laravel\Passport\Bridge\AuthCode;
 use Laravel\Passport\Bridge\AuthCodeRepository as BridgeAuthCodeRepository;
+use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\DeviceCode;
 use Laravel\Passport\Bridge\DeviceCodeRepository as BridgeDeviceCodeRepository;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository as BridgeRefreshTokenRepository;
-use Mockery as m;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class RevokedTest extends PassportTestCase
@@ -120,20 +120,14 @@ class RevokedTest extends PassportTestCase
 
     private function accessTokenRepository(): BridgeAccessTokenRepository
     {
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('dispatch');
-
-        return new BridgeAccessTokenRepository($events);
+        return new BridgeAccessTokenRepository(app('events'));
     }
 
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
     {
-        $accessToken = m::mock(AccessToken::class);
-        $accessToken->shouldReceive('getIdentifier')->andReturn($id);
-        $accessToken->shouldReceive('getUserIdentifier')->andReturn('1');
-        $accessToken->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $accessToken->shouldReceive('getScopes')->andReturn([]);
-        $accessToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $accessToken = new AccessToken('1', [], new Client('clientId'));
+        $accessToken->setIdentifier($id);
+        $accessToken->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewAccessToken($accessToken);
     }
@@ -145,30 +139,29 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewAuthCode(BridgeAuthCodeRepository $repository, string $id): void
     {
-        $authCode = m::mock(AuthCode::class);
-        $authCode->shouldReceive('getIdentifier')->andReturn($id);
-        $authCode->shouldReceive('getUserIdentifier')->andReturn('1');
-        $authCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $authCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
-        $authCode->shouldReceive('getScopes')->andReturn([]);
+        $authCode = new AuthCode;
+        $authCode->setIdentifier($id);
+        $authCode->setUserIdentifier('1');
+        $authCode->setClient(new Client('clientId'));
+        $authCode->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewAuthCode($authCode);
     }
 
     private function refreshTokenRepository(): BridgeRefreshTokenRepository
     {
-        $events = m::mock('Illuminate\Contracts\Events\Dispatcher');
-        $events->shouldReceive('dispatch');
-
-        return new BridgeRefreshTokenRepository($events);
+        return new BridgeRefreshTokenRepository(app('events'));
     }
 
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void
     {
-        $refreshToken = m::mock(RefreshToken::class);
-        $refreshToken->shouldReceive('getIdentifier')->andReturn($id);
-        $refreshToken->shouldReceive('getAccessToken->getIdentifier')->andReturn('accessTokenId');
-        $refreshToken->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
+        $accessToken = new AccessToken('1', [], new Client('clientId'));
+        $accessToken->setIdentifier('accessTokenId');
+
+        $refreshToken = new RefreshToken;
+        $refreshToken->setIdentifier($id);
+        $refreshToken->setAccessToken($accessToken);
+        $refreshToken->setExpiryDateTime(CarbonImmutable::now());
 
         $repository->persistNewRefreshToken($refreshToken);
     }
@@ -180,15 +173,8 @@ class RevokedTest extends PassportTestCase
 
     private function persistNewDeviceCode(BridgeDeviceCodeRepository $repository, string $id): void
     {
-        $deviceCode = m::mock(DeviceCode::class);
-        $deviceCode->shouldReceive('getIdentifier')->andReturn($id);
-        $deviceCode->shouldReceive('getUserIdentifier')->andReturn(null);
-        $deviceCode->shouldReceive('getClient->getIdentifier')->andReturn('clientId');
-        $deviceCode->shouldReceive('getUserCode')->andReturn('userCode');
-        $deviceCode->shouldReceive('getScopes')->andReturn([]);
-        $deviceCode->shouldReceive('getExpiryDateTime')->andReturn(CarbonImmutable::now());
-        $deviceCode->shouldReceive('getLastPolledAt')->andReturn(null);
-        $deviceCode->shouldReceive('getUserApproved')->andReturn(false);
+        $deviceCode = new DeviceCode($id, clientIdentifier: 'clientId', expiryDateTime: CarbonImmutable::now());
+        $deviceCode->setUserCode('userCode');
 
         $repository->persistDeviceCode($deviceCode);
     }

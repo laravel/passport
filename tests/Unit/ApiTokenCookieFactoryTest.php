@@ -2,30 +2,25 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
-use Illuminate\Contracts\Config\Repository;
+use Illuminate\Config\Repository;
 use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 use Illuminate\Encryption\Encrypter;
 use Laravel\Passport\ApiTokenCookieFactory;
 use Laravel\Passport\Passport;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 
 class ApiTokenCookieFactoryTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
     public function test_cookie_can_be_successfully_created()
     {
-        $config = m::mock(Repository::class);
-        $config->shouldReceive('get')->with('session')->andReturn([
+        $config = new Repository(['session' => [
             'lifetime' => 120,
             'path' => '/',
             'domain' => null,
             'secure' => true,
             'same_site' => 'lax',
-        ]);
+        ]]);
         $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 
@@ -40,14 +35,13 @@ class ApiTokenCookieFactoryTest extends TestCase
             return $encrypter->getKey().'.mykey';
         });
 
-        $config = m::mock(Repository::class);
-        $config->shouldReceive('get')->with('session')->andReturn([
+        $config = new Repository(['session' => [
             'lifetime' => 120,
             'path' => '/',
             'domain' => null,
             'secure' => true,
             'same_site' => 'lax',
-        ]);
+        ]]);
         $encrypter = new Encrypter(str_repeat('a', 32), 'aes-256-cbc');
         $factory = new ApiTokenCookieFactory($config, $encrypter);
 

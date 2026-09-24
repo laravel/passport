@@ -3,29 +3,25 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\Event;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery as m;
+use Laravel\Passport\Events\RefreshTokenCreated;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class BridgeRefreshTokenRepositoryTest extends PassportTestCase
 {
     use WithLaravelMigrations;
-    use MockeryPHPUnitIntegration;
 
     public function test_access_tokens_can_be_persisted()
     {
         $expiration = CarbonImmutable::now();
 
-        $events = m::mock(Dispatcher::class);
+        Event::fake();
 
-        $events->shouldReceive('dispatch')->once();
-
-        $accessToken = new AccessToken('3', [], m::mock(Client::class));
+        $accessToken = new AccessToken('3', [], new Client('client-id', 'name', ['redirect']));
         $accessToken->setIdentifier('2');
 
         $refreshToken = new RefreshToken;
@@ -33,7 +29,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
         $refreshToken->setExpiryDateTime($expiration);
         $refreshToken->setAccessToken($accessToken);
 
-        $repository = new RefreshTokenRepository($events);
+        $repository = new RefreshTokenRepository(app('events'));
 
         $repository->persistNewRefreshToken($refreshToken);
 
@@ -43,12 +39,14 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
             'revoked' => false,
             'expires_at' => $expiration,
         ]);
+
+        Event::assertDispatched(fn (RefreshTokenCreated $event) => $event->refreshTokenId === '1'
+            && $event->accessTokenId === '2');
     }
 
     public function test_can_get_new_refresh_token()
     {
-        $events = m::mock(Dispatcher::class);
-        $repository = new RefreshTokenRepository($events);
+        $repository = new RefreshTokenRepository(app('events'));
 
         $token = $repository->getNewRefreshToken();
 

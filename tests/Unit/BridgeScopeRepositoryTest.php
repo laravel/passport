@@ -2,19 +2,19 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\Scope;
 use Laravel\Passport\Bridge\ScopeRepository;
 use Laravel\Passport\Client as ClientModel;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class BridgeScopeRepositoryTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     protected function tearDown(): void
     {
@@ -27,10 +27,10 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $client = m::mock(ClientModel::class)->makePartial();
+        $client = new ClientModel;
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->returns($client);
 
         $repository = new ScopeRepository($clients);
 
@@ -47,10 +47,8 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')
-            ->with('id')
-            ->andReturn(m::mock(ClientModel::class)->makePartial());
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->with('id')->returns(new ClientModel);
 
         $repository = new ScopeRepository($clients);
 
@@ -68,11 +66,11 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = m::mock(ClientModel::class)->makePartial();
+        $client = new ClientModel;
         $client->scopes = null;
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->returns($client);
 
         $repository = new ScopeRepository($clients);
 
@@ -90,11 +88,11 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = m::mock(ClientModel::class)->makePartial();
+        $client = new ClientModel;
         $client->scopes = ['scope-1'];
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->returns($client);
 
         $repository = new ScopeRepository($clients);
 
@@ -115,11 +113,11 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-2' => 'description',
         ]);
 
-        $client = m::mock(ClientModel::class)->makePartial();
+        $client = new ClientModel;
         $client->scopes = ['scope-1'];
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->returns($client);
 
         $repository = new ScopeRepository($clients);
 
@@ -136,10 +134,10 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $client = m::mock(ClientModel::class)->makePartial();
+        $client = new ClientModel;
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')->withAnyArgs()->andReturn($client);
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->returns($client);
 
         $repository = new ScopeRepository($clients);
 
@@ -156,10 +154,8 @@ class BridgeScopeRepositoryTest extends TestCase
             'scope-1' => 'description',
         ]);
 
-        $clients = m::mock(ClientRepository::class);
-        $clients->shouldReceive('findActive')
-            ->with('id')
-            ->andReturn(m::mock(ClientModel::class)->makePartial());
+        $clients = Double::for(ClientRepository::class);
+        $clients->expects('findActive')->with('id')->returns(new ClientModel);
 
         $repository = new ScopeRepository($clients);
 

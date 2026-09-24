@@ -2,9 +2,11 @@
 
 namespace Laravel\Passport\Tests\Feature;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Laravel\Passport\Client;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Attributes\WithConfig;
@@ -458,6 +460,47 @@ class AuthorizationCodeGrantTest extends PassportTestCase
 
         $response->assertSessionHas('promptedForLogin', true);
         $response->assertRedirectToRoute('login');
+        $this->assertGuest('web');
+    }
+
+    public function testSkipsAuthorizationWhenClientSkipsAuthorization()
+    {
+        Passport::useClientModel(AuthorizationCodeGrantTestSkipsAuthorizationClient::class);
+        $this->beforeApplicationDestroyed(fn () => Passport::useClientModel(Client::class));
+
+        $client = ClientFactory::new()->create();
+
+        $query = http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => $redirect = $client->redirect_uris[0],
+            'response_type' => 'code',
+            'scope' => 'create read',
+            'state' => $state = Str::random(40),
+        ]);
+
+        $this->actingAs(UserFactory::new()->create(), 'web');
+
+        $response = $this->get('/oauth/authorize?'.$query);
+        $response->assertRedirect();
+        $response->assertSessionMissing(['authRequest', 'authToken']);
+
+        $location = $response->headers->get('Location');
+        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+
+        $this->assertStringStartsWith($redirect.'?', $location);
+        $this->assertSame($state, $params['state']);
+        $this->assertArrayHasKey('code', $params);
+    }
+
+    public function testAuthRequestMustBePresentInSession()
+    {
+        $this->actingAs(UserFactory::new()->create(), 'web');
+
+        $this->withoutExceptionHandling();
+        $this->expectExceptionMessage('Authorization request was not present in the session.');
+
+        $this->withSession(['authToken' => 'token'])
+            ->post('/oauth/authorize', ['auth_token' => 'token']);
     }
 
     public function testPromptLoginConsent()
@@ -604,5 +647,15 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $this->assertArrayNotHasKey('refresh_token', $json);
         $this->assertSame('Bearer', $json['token_type']);
         $this->assertArrayHasKey('expires_in', $json);
+    }
+}
+
+class AuthorizationCodeGrantTestSkipsAuthorizationClient extends Client
+{
+    protected $table = 'oauth_clients';
+
+    public function skipsAuthorization(Authenticatable $user, array $scopes): bool
+    {
+        return true;
     }
 }

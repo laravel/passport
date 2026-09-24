@@ -4,16 +4,16 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Illuminate\Container\Container;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use JMac\Testing\Double;
+use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\AccessToken;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
 class HasApiTokensTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
+    use VerifiesDoubles;
 
     protected function tearDown(): void
     {
@@ -23,9 +23,9 @@ class HasApiTokensTest extends TestCase
     public function test_token_can_indicates_if_token_has_given_scope()
     {
         $user = new HasApiTokensTestStub;
-        $token = m::mock(AccessToken::class);
-        $token->shouldReceive('can')->with('scope')->andReturn(true);
-        $token->shouldReceive('can')->with('another-scope')->andReturn(false);
+        $token = Double::for(AccessToken::class);
+        $token->expects('can')->with('scope')->returns(true);
+        $token->expects('can')->with('another-scope')->returns(false);
 
         $this->assertTrue($user->withAccessToken($token)->tokenCan('scope'));
         $this->assertFalse($user->withAccessToken($token)->tokenCan('another-scope'));
