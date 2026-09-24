@@ -122,10 +122,7 @@ class RevokedTest extends PassportTestCase
 
     private function accessTokenRepository(): BridgeAccessTokenRepository
     {
-        $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
-        $events->allows('dispatch');
-
-        return new BridgeAccessTokenRepository($events);
+        return new BridgeAccessTokenRepository(app('events'));
     }
 
     private function persistNewAccessToken(BridgeAccessTokenRepository $repository, string $id): void
@@ -161,10 +158,7 @@ class RevokedTest extends PassportTestCase
 
     private function refreshTokenRepository(): BridgeRefreshTokenRepository
     {
-        $events = Double::for('Illuminate\Contracts\Events\Dispatcher');
-        $events->allows('dispatch');
-
-        return new BridgeRefreshTokenRepository($events);
+        return new BridgeRefreshTokenRepository(app('events'));
     }
 
     private function persistNewRefreshToken(BridgeRefreshTokenRepository $repository, string $id): void

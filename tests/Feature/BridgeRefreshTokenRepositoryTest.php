@@ -3,12 +3,13 @@
 namespace Laravel\Passport\Tests\Feature;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\Event;
 use JMac\Testing\Double;
 use Laravel\Passport\Bridge\AccessToken;
 use Laravel\Passport\Bridge\Client;
 use Laravel\Passport\Bridge\RefreshToken;
 use Laravel\Passport\Bridge\RefreshTokenRepository;
+use Laravel\Passport\Events\RefreshTokenCreated;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 class BridgeRefreshTokenRepositoryTest extends PassportTestCase
@@ -19,9 +20,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
     {
         $expiration = CarbonImmutable::now();
 
-        $events = Double::for(Dispatcher::class);
-
-        $events->expects('dispatch');
+        Event::fake();
 
         $accessToken = new AccessToken('3', [], Double::for(Client::class));
         $accessToken->setIdentifier('2');
@@ -31,7 +30,7 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
         $refreshToken->setExpiryDateTime($expiration);
         $refreshToken->setAccessToken($accessToken);
 
-        $repository = new RefreshTokenRepository($events);
+        $repository = new RefreshTokenRepository(app('events'));
 
         $repository->persistNewRefreshToken($refreshToken);
 
@@ -41,12 +40,14 @@ class BridgeRefreshTokenRepositoryTest extends PassportTestCase
             'revoked' => false,
             'expires_at' => $expiration,
         ]);
+
+        Event::assertDispatched(fn (RefreshTokenCreated $event) => $event->refreshTokenId === '1'
+            && $event->accessTokenId === '2');
     }
 
     public function test_can_get_new_refresh_token()
     {
-        $events = Double::for(Dispatcher::class);
-        $repository = new RefreshTokenRepository($events);
+        $repository = new RefreshTokenRepository(app('events'));
 
         $token = $repository->getNewRefreshToken();
 
