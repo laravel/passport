@@ -14,16 +14,6 @@ class ClientControllerTest extends PassportTestCase
 {
     use WithLaravelMigrations;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // The deprecated JSON API resolves clients through the legacy `user_id` column.
-        Schema::table('oauth_clients', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->index();
-        });
-    }
-
     protected function tearDown(): void
     {
         Passport::$registersJsonApiRoutes = false;
@@ -41,9 +31,9 @@ class ClientControllerTest extends PassportTestCase
     public function test_all_the_clients_for_the_current_user_can_be_retrieved()
     {
         $user = UserFactory::new()->create();
-        $client = ClientFactory::new()->create(['user_id' => $user->getKey(), 'name' => 'Mine']);
-        ClientFactory::new()->create(['user_id' => $user->getKey(), 'revoked' => true]);
-        ClientFactory::new()->create(['user_id' => UserFactory::new()->create()->getKey()]);
+        $client = ClientFactory::new()->for($user, 'owner')->create(['name' => 'Mine']);
+        ClientFactory::new()->for($user, 'owner')->create(['revoked' => true]);
+        ClientFactory::new()->for(UserFactory::new(), 'owner')->create();
 
         $this->actingAs($user)
             ->getJson('/oauth/clients')
@@ -66,9 +56,14 @@ class ClientControllerTest extends PassportTestCase
 
         $client = Passport::client()->findOrFail($response->json('id'));
 
-        $this->assertEquals($user->getKey(), $client->user_id);
+        $this->assertTrue($user->is($client->owner));
         $this->assertTrue($client->confidential());
         $this->assertTrue(Hash::check($response->json('plain_secret'), $client->secret));
+
+        $this->actingAs($user)
+            ->getJson('/oauth/clients')
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', $client->getKey());
     }
 
     public function test_public_clients_can_be_stored()
@@ -94,7 +89,7 @@ class ClientControllerTest extends PassportTestCase
     public function test_clients_can_be_updated()
     {
         $user = UserFactory::new()->create();
-        $client = ClientFactory::new()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->for($user, 'owner')->create();
 
         $this->actingAs($user)
             ->putJson('/oauth/clients/'.$client->getKey(), ['name' => 'new name', 'redirect' => 'https://one.test,https://two.test'])
@@ -109,7 +104,7 @@ class ClientControllerTest extends PassportTestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user()
     {
-        $client = ClientFactory::new()->create(['user_id' => UserFactory::new()->create()->getKey(), 'name' => 'original']);
+        $client = ClientFactory::new()->for(UserFactory::new(), 'owner')->create(['name' => 'original']);
 
         $this->actingAs(UserFactory::new()->create())
             ->putJson('/oauth/clients/'.$client->getKey(), ['name' => 'new name', 'redirect' => 'https://localhost'])
@@ -121,7 +116,7 @@ class ClientControllerTest extends PassportTestCase
     public function test_clients_can_be_deleted()
     {
         $user = UserFactory::new()->create();
-        $client = ClientFactory::new()->create(['user_id' => $user->getKey()]);
+        $client = ClientFactory::new()->for($user, 'owner')->create();
 
         $this->actingAs($user)
             ->deleteJson('/oauth/clients/'.$client->getKey())
@@ -132,12 +127,71 @@ class ClientControllerTest extends PassportTestCase
 
     public function test_404_response_if_client_doesnt_belong_to_user_on_delete()
     {
-        $client = ClientFactory::new()->create(['user_id' => UserFactory::new()->create()->getKey()]);
+        $client = ClientFactory::new()->for(UserFactory::new(), 'owner')->create();
 
         $this->actingAs(UserFactory::new()->create())
             ->deleteJson('/oauth/clients/'.$client->getKey())
             ->assertNotFound();
 
         $this->assertFalse($client->refresh()->revoked);
+    }
+
+    public function test_all_the_clients_for_the_current_user_can_be_retrieved_via_legacy_user_id()
+    {
+        $this->addLegacyUserIdColumn();
+
+        $user = UserFactory::new()->create();
+        $client = ClientFactory::new()->create(['user_id' => $user->getKey()]);
+        ClientFactory::new()->create(['user_id' => $user->getKey(), 'revoked' => true]);
+        ClientFactory::new()->create(['user_id' => UserFactory::new()->create()->getKey()]);
+
+        $this->actingAs($user)
+            ->getJson('/oauth/clients')
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', $client->getKey());
+    }
+
+    public function test_clients_can_be_stored_via_legacy_user_id()
+    {
+        $this->addLegacyUserIdColumn();
+
+        $user = UserFactory::new()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/oauth/clients', ['name' => 'client name', 'redirect' => 'https://localhost'])
+            ->assertCreated();
+
+        $this->assertEquals($user->getKey(), Passport::client()->findOrFail($response->json('id'))->user_id);
+
+        $this->actingAs($user)
+            ->getJson('/oauth/clients')
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.id', $response->json('id'));
+    }
+
+    public function test_clients_can_be_updated_via_legacy_user_id()
+    {
+        $this->addLegacyUserIdColumn();
+
+        $user = UserFactory::new()->create();
+        $client = ClientFactory::new()->create(['user_id' => $user->getKey()]);
+        $other = ClientFactory::new()->create(['user_id' => UserFactory::new()->create()->getKey()]);
+
+        $this->actingAs($user)
+            ->putJson('/oauth/clients/'.$client->getKey(), ['name' => 'new name', 'redirect' => 'https://localhost'])
+            ->assertOk()
+            ->assertJsonPath('name', 'new name');
+
+        $this->actingAs($user)
+            ->putJson('/oauth/clients/'.$other->getKey(), ['name' => 'new name', 'redirect' => 'https://localhost'])
+            ->assertNotFound();
+    }
+
+    protected function addLegacyUserIdColumn(): void
+    {
+        Schema::table('oauth_clients', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+        });
     }
 }
