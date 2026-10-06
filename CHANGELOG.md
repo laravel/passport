@@ -1,6 +1,13 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.8.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.9.0...13.x)
+
+## [v13.9.0](https://github.com/laravel/passport/compare/v13.8.0...v13.9.0) - 2026-09-28
+
+* Fix JSON API client lookups for owner columns by [@jasonmccreary](https://github.com/jasonmccreary) in https://github.com/laravel/passport/pull/1943
+* Migration from Mockery to Double by [@jasonmccreary](https://github.com/jasonmccreary) in https://github.com/laravel/passport/pull/1942
+* [13.x] Fix CI and consolidate HTTP tests by [@jasonmccreary](https://github.com/jasonmccreary) in https://github.com/laravel/passport/pull/1944
+* Bump to Double v1 by [@jasonmccreary](https://github.com/jasonmccreary) in https://github.com/laravel/passport/pull/1945
 
 ## [v13.8.0](https://github.com/laravel/passport/compare/v13.7.6...v13.8.0) - 2026-08-28
 
