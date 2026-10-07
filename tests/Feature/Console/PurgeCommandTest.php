@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
 
-class PurgeCommand extends TestCase
+class PurgeCommandTest extends TestCase
 {
     use WithWorkbench;
 
