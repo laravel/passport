@@ -132,21 +132,16 @@ class RefreshTokenGrantTest extends PassportTestCase
         $accessToken = Passport::token()->where('user_id', $user->getAuthIdentifier())->firstOrFail();
         $refreshToken = $accessToken->refreshToken;
 
+        $this->assertDatabaseHas('oauth_access_tokens', ['id' => $accessToken->getKey()]);
+        $this->assertDatabaseHas('oauth_refresh_tokens', ['id' => $refreshToken->getKey()]);
+
         $accessToken->forceFill(['expires_at' => now()->subDays(8)])->save();
         $refreshToken->forceFill(['expires_at' => now()->addDays(30)])->save();
 
         artisan($this, 'passport:purge');
 
         $this->assertDatabaseMissing('oauth_access_tokens', ['id' => $accessToken->getKey()]);
-        $this->assertDatabaseMissing('oauth_refresh_tokens', [
-            'id' => $refreshToken->getKey(),
-            'revoked' => false,
-        ]);
-
-        // $user->tokens()->each(function ($token): void {
-        //     $token->revoke();
-        //     $token->refreshToken->revoke();
-        // });
+        $this->assertDatabaseMissing('oauth_refresh_tokens', ['id' => $refreshToken->getKey()]);
 
         $this->post('/oauth/token', [
             'grant_type' => 'refresh_token',
