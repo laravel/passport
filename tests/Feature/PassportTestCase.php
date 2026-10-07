@@ -10,6 +10,8 @@ use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
 use Workbench\App\Models\User;
 
+use function Orchestra\Testbench\artisan;
+
 abstract class PassportTestCase extends TestCase
 {
     use VerifiesDoubles;
@@ -28,7 +30,7 @@ abstract class PassportTestCase extends TestCase
             @unlink(self::PUBLIC_KEY);
             @unlink(self::PRIVATE_KEY);
 
-            $this->artisan('passport:keys');
+            artisan($this, 'passport:keys');
         });
 
         $this->beforeApplicationDestroyed(function () {
