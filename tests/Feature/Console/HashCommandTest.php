@@ -7,14 +7,16 @@ use Illuminate\Support\Str;
 use Laravel\Passport\Database\Factories\ClientFactory;
 use Laravel\Passport\Tests\Feature\PassportTestCase;
 
-class HashCommand extends PassportTestCase
+use function Orchestra\Testbench\artisan;
+
+class HashCommandTest extends PassportTestCase
 {
     public function test_it_can_properly_hash_client_secrets()
     {
         $client = ClientFactory::new()->create(['secret' => $secret = Str::random(40)]);
         $hasher = $this->app->make(Hasher::class);
 
-        $this->artisan('passport:hash', ['--force' => true]);
+        artisan($this, 'passport:hash', ['--force' => true]);
 
         $this->assertTrue($hasher->check($secret, $client->refresh()->secret));
     }
