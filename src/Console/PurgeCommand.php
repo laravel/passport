@@ -38,6 +38,7 @@ class PurgeCommand extends Command
         $expired = $this->option('expired') || ! $this->option('revoked')
             ? Date::now()->subHours($this->option('hours'))
             : false;
+
         $now = Date::now();
 
         $constraint = fn (Builder $query): Builder => $query
@@ -52,6 +53,7 @@ class PurgeCommand extends Command
                     ->whereNull('expires_at')
                     ->orWhere('expires_at', '>', $now)))
             ->delete();
+
         Passport::authCode()->newQuery()->where($constraint)->delete();
         Passport::refreshToken()->newQuery()->where($constraint)->delete();
 
