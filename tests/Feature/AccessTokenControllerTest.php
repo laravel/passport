@@ -91,6 +91,27 @@ class AccessTokenControllerTest extends PassportTestCase
         $this->assertSame(0, Token::count());
     }
 
+    public function testGettingAccessTokenWithMalformedUuidClientId()
+    {
+        $this->withoutExceptionHandling();
+
+        $clientUuids = Passport::$clientUuids;
+        Passport::$clientUuids = true;
+        $this->beforeApplicationDestroyed(fn () => Passport::$clientUuids = $clientUuids);
+
+        $response = $this->post('/oauth/token', [
+            'grant_type' => 'client_credentials',
+            'client_id' => 'x',
+            'client_secret' => 'secret',
+        ]);
+
+        $response->assertStatus(401);
+        $response->assertJsonPath('error', 'invalid_client');
+        $response->assertJsonPath('error_description', 'Client authentication failed');
+
+        $this->assertSame(0, Token::count());
+    }
+
     public function testGettingAccessTokenWithPasswordGrant()
     {
         $this->withoutExceptionHandling();
