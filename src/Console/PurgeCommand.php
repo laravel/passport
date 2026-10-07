@@ -46,14 +46,13 @@ class PurgeCommand extends Command
 
         Passport::token()->newQuery()
             ->where($constraint)
-            ->whereDoesntHave('refreshToken', fn (Builder $query): Builder => $query
-                ->where('revoked', false)
-                ->where(fn (Builder $query): Builder => $query
-                    ->whereNull('expires_at')
-                    ->orWhere('expires_at', '>', $now)))
             ->delete();
         Passport::authCode()->newQuery()->where($constraint)->delete();
-        Passport::refreshToken()->newQuery()->where($constraint)->delete();
+        Passport::refreshToken()->newQuery()
+            ->where(fn (Builder $query): Builder => $query
+                ->where($constraint)
+                ->orWhereDoesntHave('accessToken'))
+            ->delete();
 
         if (Passport::$deviceCodeGrantEnabled) {
             Passport::deviceCode()->newQuery()->where($constraint)->delete();

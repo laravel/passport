@@ -137,16 +137,16 @@ class RefreshTokenGrantTest extends PassportTestCase
 
         artisan($this, 'passport:purge');
 
-        $this->assertDatabaseHas('oauth_access_tokens', ['id' => $accessToken->getKey()]);
-        $this->assertDatabaseHas('oauth_refresh_tokens', [
+        $this->assertDatabaseMissing('oauth_access_tokens', ['id' => $accessToken->getKey()]);
+        $this->assertDatabaseMissing('oauth_refresh_tokens', [
             'id' => $refreshToken->getKey(),
             'revoked' => false,
         ]);
 
-        $user->tokens()->each(function ($token): void {
-            $token->revoke();
-            $token->refreshToken->revoke();
-        });
+        // $user->tokens()->each(function ($token): void {
+        //     $token->revoke();
+        //     $token->refreshToken->revoke();
+        // });
 
         $this->post('/oauth/token', [
             'grant_type' => 'refresh_token',
@@ -154,6 +154,22 @@ class RefreshTokenGrantTest extends PassportTestCase
             'client_secret' => $client->plainSecret,
             'refresh_token' => $oldToken['refresh_token'],
         ])->assertStatus(400);
+    }
+
+    public function test_purge_removes_refresh_tokens_without_access_tokens()
+    {
+        $client = ClientFactory::new()->create();
+
+        $this->getNewAccessToken($client);
+
+        $accessToken = auth('web')->user()->tokens()->firstOrFail();
+        $refreshToken = $accessToken->refreshToken;
+
+        $accessToken->delete();
+
+        artisan($this, 'passport:purge');
+
+        $this->assertDatabaseMissing('oauth_refresh_tokens', ['id' => $refreshToken->getKey()]);
     }
 
     public function testRefreshingTokenWithAdditionalScopes()
