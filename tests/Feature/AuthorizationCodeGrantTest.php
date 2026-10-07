@@ -548,8 +548,6 @@ class AuthorizationCodeGrantTest extends PassportTestCase
         $intendedUrl = session()->get('url.intended');
         parse_str(parse_url($intendedUrl, PHP_URL_QUERY), $params);
 
-        dump($params);
-
         $this->actingAs($user, 'web');
         $json = $this->get($intendedUrl)
             ->assertOk()
