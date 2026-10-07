@@ -10,6 +10,8 @@ use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 use Workbench\Database\Factories\UserFactory;
 
+use function Orchestra\Testbench\artisan;
+
 class RefreshTokenGrantTest extends PassportTestCase
 {
     use WithLaravelMigrations;
@@ -119,6 +121,39 @@ class RefreshTokenGrantTest extends PassportTestCase
         $this->assertArrayHasKey('refresh_token', $json);
         $this->assertEqualsWithDelta(31536000, $json['expires_in'], 2);
         $this->assertSame('Bearer', $json['token_type']);
+    }
+
+    public function test_refresh_token_cannot_be_used_after_user_tokens_are_revoked_after_purge()
+    {
+        $client = ClientFactory::new()->create();
+
+        $oldToken = $this->getNewAccessToken($client);
+        $user = auth('web')->user();
+        $accessToken = Passport::token()->where('user_id', $user->getAuthIdentifier())->firstOrFail();
+        $refreshToken = $accessToken->refreshToken;
+
+        $accessToken->forceFill(['expires_at' => now()->subDays(8)])->save();
+        $refreshToken->forceFill(['expires_at' => now()->addDays(30)])->save();
+
+        artisan($this, 'passport:purge');
+
+        $this->assertDatabaseHas('oauth_access_tokens', ['id' => $accessToken->getKey()]);
+        $this->assertDatabaseHas('oauth_refresh_tokens', [
+            'id' => $refreshToken->getKey(),
+            'revoked' => false,
+        ]);
+
+        $user->tokens()->each(function ($token): void {
+            $token->revoke();
+            $token->refreshToken->revoke();
+        });
+
+        $this->post('/oauth/token', [
+            'grant_type' => 'refresh_token',
+            'client_id' => $client->getKey(),
+            'client_secret' => $client->plainSecret,
+            'refresh_token' => $oldToken['refresh_token'],
+        ])->assertStatus(400);
     }
 
     public function testRefreshingTokenWithAdditionalScopes()

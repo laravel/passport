@@ -21,7 +21,7 @@ class PurgeCommandTest extends TestCase
         });
 
         $this->assertSame([
-            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
+            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\') and not exists (select * from "oauth_refresh_tokens" where "oauth_access_tokens"."id" = "oauth_refresh_tokens"."access_token_id" and "revoked" = 0 and ("expires_at" is null or "expires_at" > \'2000-01-08 00:00:00\'))',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_device_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
@@ -30,13 +30,15 @@ class PurgeCommandTest extends TestCase
 
     public function test_it_can_purge_revoked_tokens()
     {
+        $this->travelTo(Carbon::create(2000, 1, 8));
+
         $query = DB::pretend(function () {
             $this->artisan('passport:purge', ['--revoked' => true])
                 ->expectsOutputToContain('Purged revoked items.');
         });
 
         $this->assertSame([
-            'delete from "oauth_access_tokens" where ("revoked" = 1)',
+            'delete from "oauth_access_tokens" where ("revoked" = 1) and not exists (select * from "oauth_refresh_tokens" where "oauth_access_tokens"."id" = "oauth_refresh_tokens"."access_token_id" and "revoked" = 0 and ("expires_at" is null or "expires_at" > \'2000-01-08 00:00:00\'))',
             'delete from "oauth_auth_codes" where ("revoked" = 1)',
             'delete from "oauth_refresh_tokens" where ("revoked" = 1)',
             'delete from "oauth_device_codes" where ("revoked" = 1)',
@@ -53,7 +55,7 @@ class PurgeCommandTest extends TestCase
         });
 
         $this->assertSame([
-            'delete from "oauth_access_tokens" where ("expires_at" < \'2000-01-01 00:00:00\')',
+            'delete from "oauth_access_tokens" where ("expires_at" < \'2000-01-01 00:00:00\') and not exists (select * from "oauth_refresh_tokens" where "oauth_access_tokens"."id" = "oauth_refresh_tokens"."access_token_id" and "revoked" = 0 and ("expires_at" is null or "expires_at" > \'2000-01-08 00:00:00\'))',
             'delete from "oauth_auth_codes" where ("expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_refresh_tokens" where ("expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_device_codes" where ("expires_at" < \'2000-01-01 00:00:00\')',
@@ -70,7 +72,7 @@ class PurgeCommandTest extends TestCase
         });
 
         $this->assertSame([
-            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
+            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\') and not exists (select * from "oauth_refresh_tokens" where "oauth_access_tokens"."id" = "oauth_refresh_tokens"."access_token_id" and "revoked" = 0 and ("expires_at" is null or "expires_at" > \'2000-01-08 00:00:00\'))',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_device_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
@@ -87,7 +89,7 @@ class PurgeCommandTest extends TestCase
         });
 
         $this->assertSame([
-            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
+            'delete from "oauth_access_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\') and not exists (select * from "oauth_refresh_tokens" where "oauth_access_tokens"."id" = "oauth_refresh_tokens"."access_token_id" and "revoked" = 0 and ("expires_at" is null or "expires_at" > \'2000-01-01 02:00:00\'))',
             'delete from "oauth_auth_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_refresh_tokens" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
             'delete from "oauth_device_codes" where ("revoked" = 1 or "expires_at" < \'2000-01-01 00:00:00\')',
