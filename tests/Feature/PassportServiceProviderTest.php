@@ -9,7 +9,10 @@ class PassportServiceProviderTest extends PassportTestCase
 {
     public function test_can_use_crypto_keys_from_config()
     {
-        $privateKey = openssl_pkey_new();
+        $privateKey = openssl_pkey_new([
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            'private_key_bits' => 4096,
+        ]);
 
         openssl_pkey_export($privateKey, $privateKeyString);
 
@@ -30,7 +33,10 @@ class PassportServiceProviderTest extends PassportTestCase
     {
         Passport::loadKeysFrom(__DIR__.'/../keys');
 
-        $privateKey = openssl_pkey_new();
+        $privateKey = openssl_pkey_new([
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            'private_key_bits' => 4096,
+        ]);
 
         openssl_pkey_export_to_file($privateKey, __DIR__.'/../keys/oauth-private.key');
         openssl_pkey_export($privateKey, $privateKeyString);
