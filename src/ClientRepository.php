@@ -17,7 +17,10 @@ class ClientRepository
      */
     public function find(string|int $id): ?Client
     {
-        if (Passport::$clientUuids && ! Str::isUuid((string) $id)) {
+        $client = Passport::client();
+
+        if (in_array($client->getKeyName(), $client->uniqueIds()) &&
+            ! (fn () => $this->isValidUniqueId($id))->call($client)) {
             return null;
         }
 

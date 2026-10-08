@@ -67,7 +67,7 @@ class Client extends Model
     /**
      * Initialize the trait.
      */
-    public function initializeHasUniqueStringIds(): void
+    public function initializeHasUniqueStringIds()
     {
         $this->usesUniqueIds = Passport::$clientUuids;
     }

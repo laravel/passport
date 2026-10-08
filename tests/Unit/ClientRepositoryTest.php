@@ -4,6 +4,7 @@ namespace Laravel\Passport\Tests\Unit;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Once;
 use Laravel\Passport\Client;
@@ -76,6 +77,26 @@ class ClientRepositoryTest extends TestCase
         }
     }
 
+    public function test_custom_unique_id_client_ids_are_validated_by_the_model()
+    {
+        Passport::useClientModel(ClientRepositoryTestUlidClient::class);
+        ClientRepositoryTestClient::$query = fn () => throw new RuntimeException('Unexpected client lookup.');
+
+        $repository = new ClientRepository;
+
+        $this->assertNull($repository->find('x'));
+        $this->assertNull($repository->find(1));
+        $this->assertNull($repository->find('550e8400-e29b-41d4-a716-446655440000'));
+
+        $id = '01ARZ3NDEKTSV4RRFFQ69G5FAV';
+        $client = new Client;
+        $query = $this->createMock(Builder::class);
+        $query->expects($this->once())->method('find')->with($id)->willReturn($client);
+        ClientRepositoryTestClient::$query = fn () => $query;
+
+        $this->assertSame($client, $repository->find($id));
+    }
+
     public function test_lookup_failures_are_not_caught()
     {
         $exception = new QueryException('testing', 'select * from oauth_clients', [], new PDOException('Database unavailable.'));
@@ -94,4 +115,9 @@ class ClientRepositoryTestClient extends Client
     {
         return (static::$query)();
     }
+}
+
+class ClientRepositoryTestUlidClient extends ClientRepositoryTestClient
+{
+    use HasUlids;
 }
