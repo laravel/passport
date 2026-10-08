@@ -332,10 +332,10 @@ class Passport
     /**
      * Get or set when client credentials grant tokens expire.
      */
-    public static function clientCredentialsTokensExpireIn(DateTimeInterface|DateInterval|null $date = null): ?DateInterval
+    public static function clientCredentialsTokensExpireIn(DateTimeInterface|DateInterval|null $date = null): DateInterval
     {
         if (is_null($date)) {
-            return static::$clientCredentialsTokensExpireIn;
+            return static::$clientCredentialsTokensExpireIn ?? static::tokensExpireIn();
         }
 
         return static::$clientCredentialsTokensExpireIn = $date instanceof DateTimeInterface

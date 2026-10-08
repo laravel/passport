@@ -2,6 +2,7 @@
 
 namespace Laravel\Passport\Tests\Unit;
 
+use DateInterval;
 use Laravel\Passport\AuthCode;
 use Laravel\Passport\Client;
 use Laravel\Passport\DeviceCode;
@@ -73,6 +74,25 @@ class PassportTest extends TestCase
 
         $this->assertInstanceOf(DeviceCode::class, $deviceCode);
         $this->assertInstanceOf(Passport::deviceCodeModel(), $deviceCode);
+    }
+
+    public function test_client_credentials_tokens_expire_in_falls_back_to_tokens_expire_in()
+    {
+        Passport::$tokensExpireIn = null;
+        Passport::$clientCredentialsTokensExpireIn = null;
+
+        $this->assertEquals(new DateInterval('P1Y'), Passport::clientCredentialsTokensExpireIn());
+
+        Passport::tokensExpireIn($interval = new DateInterval('P1D'));
+
+        $this->assertSame($interval, Passport::clientCredentialsTokensExpireIn());
+
+        Passport::clientCredentialsTokensExpireIn($interval = new DateInterval('PT1H'));
+
+        $this->assertSame($interval, Passport::clientCredentialsTokensExpireIn());
+
+        Passport::$tokensExpireIn = null;
+        Passport::$clientCredentialsTokensExpireIn = null;
     }
 }
 
