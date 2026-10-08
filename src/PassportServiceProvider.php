@@ -159,7 +159,7 @@ class PassportServiceProvider extends ServiceProvider
                 }
 
                 $server->enableGrantType(
-                    new ClientCredentialsGrant, Passport::clientCredentialsTokensExpireIn() ?? Passport::tokensExpireIn()
+                    new ClientCredentialsGrant, Passport::clientCredentialsTokensExpireIn()
                 );
 
                 if (Passport::$implicitGrantEnabled) {
