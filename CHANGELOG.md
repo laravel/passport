@@ -1,6 +1,15 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.9.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.10.0...13.x)
+
+## [v13.10.0](https://github.com/laravel/passport/compare/v13.9.0...v13.10.0) - 2026-10-08
+
+* Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1946
+* Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1947
+* Fix `passport:purge` preserve Access Tokens linked to active Refresh Tokens by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1949
+* [13.x] Return invalid client for malformed UUID client IDs by [@0x15f](https://github.com/0x15f) in https://github.com/laravel/passport/pull/1950
+* [13.x] Make `Passport::clientCredentialsTokensExpireIn()` non-nullable by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1952
+* [13.x] Fix validation of client unique IDs by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/passport/pull/1951
 
 ## [v13.9.0](https://github.com/laravel/passport/compare/v13.8.0...v13.9.0) - 2026-09-28
 
