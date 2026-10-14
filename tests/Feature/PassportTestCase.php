@@ -8,6 +8,7 @@ use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
+use phpseclib4\Crypt\RSA;
 use Workbench\App\Models\User;
 
 use function Orchestra\Testbench\artisan;
@@ -30,12 +31,16 @@ abstract class PassportTestCase extends TestCase
             @unlink(self::PUBLIC_KEY);
             @unlink(self::PRIVATE_KEY);
 
+            RSA::forceEngine('PHP');
+
             artisan($this, 'passport:keys');
         });
 
         $this->beforeApplicationDestroyed(function () {
             @unlink(self::PUBLIC_KEY);
             @unlink(self::PRIVATE_KEY);
+
+            RSA::forceEngine(null);
         });
 
         parent::setUp();
