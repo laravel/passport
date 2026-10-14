@@ -15,19 +15,24 @@ permissions:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental || false }}
 
     strategy:
       fail-fast: true
       matrix:
         php: [8.2, 8.3, 8.4, 8.5]
         laravel: [11, 12, 13]
+        include:
+          - php: 8.6
+            laravel: 13
+            experimental: true
         exclude:
           - php: 8.5
             laravel: 11
           - php: 8.2
             laravel: 13
 
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} ${{ matrix.experimental == true && '(experimental)' || '' }}
 
     steps:
       - name: Checkout code
@@ -46,7 +51,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts=^${{ matrix.laravel }}"
+          composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts=^${{ matrix.laravel }}" ${{ matrix.experimental == true && '--ignore-platform-reqs' || '' }}
 
       - name: Execute tests
         run: vendor/bin/phpunit --display-deprecations --display-phpunit-deprecations
