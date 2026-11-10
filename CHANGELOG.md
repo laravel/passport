@@ -1,6 +1,17 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.10.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.11.0...13.x)
+
+## [v13.11.0](https://github.com/laravel/passport/compare/v13.10.0...v13.11.0) - 2026-10-14
+
+### What's Changed
+
+* Remove security policy in favor of the org-wide default by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/passport/pull/1954
+* Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1955
+* Experimental supports for PHP 8.6 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/passport/pull/1953
+* Bump shivammathur/setup-php from 2.37.2 to 2.40.0 in the github-actions group by [@dependabot](https://github.com/dependabot)[bot] in https://github.com/laravel/passport/pull/1956
+
+**Full Changelog**: https://github.com/laravel/passport/compare/v13.10.0...v13.11.0
 
 ## [v13.10.0](https://github.com/laravel/passport/compare/v13.9.0...v13.10.0) - 2026-10-08
 
