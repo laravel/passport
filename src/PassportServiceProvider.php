@@ -70,11 +70,7 @@ class PassportServiceProvider extends ServiceProvider
     protected function registerPublishing(): void
     {
         if ($this->app->runningInConsole()) {
-            $publishesMigrationsMethod = method_exists($this, 'publishesMigrations')
-                ? 'publishesMigrations'
-                : 'publishes';
-
-            $this->{$publishesMigrationsMethod}([
+            $this->publishesMigrations([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
             ], 'passport-migrations');
 

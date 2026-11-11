@@ -21,14 +21,12 @@ jobs:
       fail-fast: true
       matrix:
         php: [8.2, 8.3, 8.4, 8.5]
-        laravel: [11, 12, 13]
+        laravel: [12, 13]
         include:
           - php: 8.6
             laravel: 13
             experimental: true
         exclude:
-          - php: 8.5
-            laravel: 11
           - php: 8.2
             laravel: 13
 
