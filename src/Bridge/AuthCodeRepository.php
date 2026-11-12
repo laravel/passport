@@ -4,6 +4,7 @@ namespace Laravel\Passport\Bridge;
 
 use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
@@ -36,7 +37,12 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function revokeAuthCode(string $codeId): void
     {
-        Passport::authCode()->newQuery()->whereKey($codeId)->update(['revoked' => true]);
+        $affected = Passport::authCode()->newQuery()->whereKey($codeId)
+            ->where('revoked', false)->update(['revoked' => true]);
+
+        if ($affected === 0) {
+            throw OAuthServerException::invalidGrant('Authorization code has already been used');
+        }
     }
 
     /**
