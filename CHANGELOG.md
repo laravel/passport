@@ -1,6 +1,19 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/passport/compare/v13.11.0...13.x)
+## [Unreleased](https://github.com/laravel/passport/compare/v13.12.0...13.x)
+
+## [v13.12.0](https://github.com/laravel/passport/compare/v13.11.0...v13.12.0) - 2026-11-12
+
+### What's Changed
+
+* Dependency floor bump by [@pushpak1300](https://github.com/pushpak1300) in https://github.com/laravel/passport/pull/1960
+* [13.x] Allow compatible phpseclib updates by [@raghavji2050](https://github.com/raghavji2050) in https://github.com/laravel/passport/pull/1961
+
+### New Contributors
+
+* [@raghavji2050](https://github.com/raghavji2050) made their first contribution in https://github.com/laravel/passport/pull/1961
+
+**Full Changelog**: https://github.com/laravel/passport/compare/v13.11.0...v13.12.0
 
 ## [v13.11.0](https://github.com/laravel/passport/compare/v13.10.0...v13.11.0) - 2026-10-14
 
