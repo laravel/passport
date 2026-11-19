@@ -163,6 +163,8 @@ Passport 13 introduces a new schema for the `oauth_clients` table. However, thes
 
 > **Note:** If you use integer-based client IDs (`Passport::$clientUuids = false`), running this migration is **strongly recommended**. Without it, any user whose integer ID matches a client ID will have their token requests incorrectly rejected with a 401. See [#1912](https://github.com/laravel/passport/issues/1912) for details.
 
+> **Note:** On the legacy schema, the `client_credentials` grant is only allowed for confidential clients without a `user_id`. Passport 12 allowed it for every confidential client, so confidential clients with a `user_id` that rely on this grant will receive an `unauthorized_client` error. To keep it, you may override the `firstParty` method on your `Client` model, or run the migration below and add `client_credentials` to the `grant_types` of these clients.
+
 For reference, here are the changes on the `oauth_clients` table:
 
 - The `user_id` column has been replaced with `owner_type` and `owner_id` columns.

@@ -166,8 +166,7 @@ class Client extends Model
         return Attribute::make(
             get: fn (?string $value): array => isset($value) ? $this->fromJson($value) : array_keys(array_filter([
                 'authorization_code' => ! empty($this->redirect_uris),
-                // Clients on the legacy schema could use this grant whether or not they had a user...
-                'client_credentials' => $this->confidential() && ($this->firstParty() || array_key_exists('user_id', $this->attributes)),
+                'client_credentials' => $this->confidential() && $this->firstParty(),
                 'implicit' => ! empty($this->redirect_uris),
                 'password' => $this->password_client,
                 'personal_access' => $this->personal_access_client && $this->confidential(),
