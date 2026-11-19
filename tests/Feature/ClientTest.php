@@ -102,6 +102,31 @@ final class ClientTest extends TestCase
         $this->assertTrue($client->hasGrantType('client_credentials'));
     }
 
+    public function testClientCredentialsGrantForLegacyClientWithUserId(): void
+    {
+        $client = new Client(['user_id' => 1, 'personal_access_client' => false, 'password_client' => false]);
+        $client->exists = true;
+
+        $this->assertFalse($client->hasGrantType('client_credentials'));
+
+        $client->secret = 'secret';
+
+        $this->assertTrue($client->hasGrantType('client_credentials'));
+    }
+
+    public function testClientCredentialsGrantRequiresFirstPartyClientWithOwner(): void
+    {
+        $client = new Client(['owner_id' => 1, 'personal_access_client' => false, 'password_client' => false]);
+        $client->exists = true;
+        $client->secret = 'secret';
+
+        $this->assertFalse($client->hasGrantType('client_credentials'));
+
+        $client->owner_id = null;
+
+        $this->assertTrue($client->hasGrantType('client_credentials'));
+    }
+
     public function testGrantTypesWhenColumnIsNull(): void
     {
         $client = new Client(['grant_types' => null]);
