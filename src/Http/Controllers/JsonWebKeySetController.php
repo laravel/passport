@@ -5,6 +5,9 @@ namespace Laravel\Passport\Http\Controllers;
 use Firebase\JWT\JWT;
 use Illuminate\Http\JsonResponse;
 use League\OAuth2\Server\CryptKey;
+use phpseclib4\Crypt\PublicKeyLoader;
+use phpseclib4\Crypt\RSA\PublicKey;
+use Throwable;
 
 class JsonWebKeySetController
 {
@@ -21,16 +24,17 @@ class JsonWebKeySetController
      */
     public function __invoke(): JsonResponse
     {
-        $key = $this->publicKey ? openssl_pkey_get_public($this->publicKey->getKeyContents()) : false;
+        try {
+            $key = $this->publicKey ? PublicKeyLoader::loadPublicKey($this->publicKey->getKeyContents()) : null;
+        } catch (Throwable) {
+            $key = null;
+        }
 
-        $rsa = $key ? openssl_pkey_get_details($key)['rsa'] ?? null : null;
-
-        if (! $rsa) {
+        if (! $key instanceof PublicKey) {
             return new JsonResponse(['keys' => []]);
         }
 
-        $n = JWT::urlsafeB64Encode($rsa['n']);
-        $e = JWT::urlsafeB64Encode($rsa['e']);
+        ['n' => $n, 'e' => $e] = json_decode($key->toString('JWK'), true)['keys'][0];
 
         return new JsonResponse(['keys' => [[
             'kty' => 'RSA',
@@ -38,7 +42,7 @@ class JsonWebKeySetController
             'e' => $e,
             'alg' => 'RS256',
             'use' => 'sig',
-            'kid' => JWT::urlsafeB64Encode(hash('sha256', '{"e":"'.$e.'","kty":"RSA","n":"'.$n.'"}', true)),
+            'kid' => JWT::urlsafeB64Encode(hash('sha256', json_encode(['e' => $e, 'kty' => 'RSA', 'n' => $n]), true)),
         ]]]);
     }
 }
