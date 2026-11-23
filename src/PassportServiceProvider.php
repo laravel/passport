@@ -20,6 +20,7 @@ use Laravel\Passport\Contracts\DeniedDeviceAuthorizationResponse as DeniedDevice
 use Laravel\Passport\Guards\TokenGuard;
 use Laravel\Passport\Http\Controllers\AuthorizationController;
 use Laravel\Passport\Http\Controllers\DeviceAuthorizationController;
+use Laravel\Passport\Http\Controllers\JsonWebKeySetController;
 use Laravel\Passport\Http\Responses\ApprovedDeviceAuthorizationResponse;
 use Laravel\Passport\Http\Responses\DeniedDeviceAuthorizationResponse;
 use League\OAuth2\Server\AuthorizationServer;
@@ -32,6 +33,7 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\ResourceServer;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
+use LogicException;
 
 class PassportServiceProvider extends ServiceProvider
 {
@@ -107,6 +109,14 @@ class PassportServiceProvider extends ServiceProvider
             AuthorizationController::class,
             DeviceAuthorizationController::class,
         ])->needs(StatefulGuard::class)->give(fn () => Auth::guard(config('passport.guard', null)));
+
+        $this->app->when(JsonWebKeySetController::class)->needs(CryptKey::class)->give(function () {
+            try {
+                return $this->makeCryptKey('public');
+            } catch (LogicException) {
+                return null;
+            }
+        });
 
         $this->app->singleton(ClientRepository::class);
 

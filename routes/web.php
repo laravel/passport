@@ -9,6 +9,11 @@ Route::post('/token', [
     'middleware' => 'throttle',
 ]);
 
+Route::get('/jwks', [
+    'uses' => 'JsonWebKeySetController',
+    'as' => 'jwks',
+]);
+
 Route::get('/authorize', [
     'uses' => 'AuthorizationController@authorize',
     'as' => 'authorizations.authorize',
