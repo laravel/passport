@@ -4,6 +4,7 @@ namespace Laravel\Passport\Console;
 
 use Illuminate\Console\Command;
 use Laravel\Passport\Passport;
+use phpseclib3\Crypt\RSA as LegacyRSA;
 use phpseclib4\Crypt\RSA;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -42,7 +43,9 @@ class KeysCommand extends Command
             return Command::FAILURE;
         }
 
-        $key = RSA::createKey((int) $this->option('length'));
+        $key = class_exists(LegacyRSA::class)
+            ? LegacyRSA::createKey((int) $this->option('length'))
+            : RSA::createKey((int) $this->option('length'));
 
         file_put_contents($publicKey, (string) $key->getPublicKey());
         file_put_contents($privateKey, (string) $key);

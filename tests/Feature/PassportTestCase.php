@@ -8,6 +8,7 @@ use JMac\Testing\Integrations\PHPUnit\VerifiesDoubles;
 use Laravel\Passport\Passport;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase;
+use phpseclib3\Crypt\RSA as LegacyRSA;
 use phpseclib4\Crypt\RSA;
 use Workbench\App\Models\User;
 
@@ -25,22 +26,24 @@ abstract class PassportTestCase extends TestCase
 
     protected function setUp(): void
     {
-        $this->afterApplicationCreated(function () {
+        $rsa = class_exists(LegacyRSA::class) ? LegacyRSA::class : RSA::class;
+
+        $this->afterApplicationCreated(function () use ($rsa) {
             Passport::loadKeysFrom(self::KEYS);
 
             @unlink(self::PUBLIC_KEY);
             @unlink(self::PRIVATE_KEY);
 
-            RSA::forceEngine('PHP');
+            $rsa::forceEngine('PHP');
 
             artisan($this, 'passport:keys');
         });
 
-        $this->beforeApplicationDestroyed(function () {
+        $this->beforeApplicationDestroyed(function () use ($rsa) {
             @unlink(self::PUBLIC_KEY);
             @unlink(self::PRIVATE_KEY);
 
-            RSA::forceEngine(null);
+            $rsa::forceEngine(null);
         });
 
         parent::setUp();
